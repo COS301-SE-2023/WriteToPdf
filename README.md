@@ -1,3 +1,5 @@
+[![Issues][issues-shield]][issues-url]
+[![Stargazers][stars-shield]][stars-url]
 # WriteToPdf
 <p align="center"><img src="https://user-images.githubusercontent.com/104741835/235888191-fb700856-aba4-4da2-9bd4-60f80285b6b5.png" /></p>
 
@@ -94,3 +96,10 @@ Julian has experience with design patterns and data structures giving him a good
 ## Documentation
 <a href="https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing">Software Requirement Specification</a><br/>
 <a href="https://github.com/orgs/COS301-SE-2023/projects/16">Project Board</a><br/>
+
+
+<!-- Badge links & images -->
+[issues-shield]: https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf.svg?style=for-the-badge
+[issues-url]: https://github.com/COS301-SE-2023/WriteToPdf/issues
+[stars-shield]: https://img.shields.io/github/stars/COS301-SE-2023/WriteToPdf.svg?style=for-the-badge
+[stars-url]: ttps://github.com/COS301-SE-2023/WriteToPdf/stargazers
