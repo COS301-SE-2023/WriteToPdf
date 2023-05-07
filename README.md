@@ -112,8 +112,6 @@ We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issu
 
 ## Documentation
 <a href="https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing">Software Requirement Specification</a><br/>
-<a href="https://github.com/orgs/COS301-SE-2023/projects/16">Project Board</a><br/>
-
 
 <!-- Badge links & images -->
 [issues-shield]: https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf.svg?style=for-the-badge
