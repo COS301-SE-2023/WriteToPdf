@@ -93,6 +93,23 @@ Julian has experience with design patterns and data structures giving him a good
 </a>
 </details>
 
+
+## Branching strategy
+The main branch is the live/deployed branch.
+Test branch is used to run all tests.
+A feature branch will be created for each feature being worked on.
+
+Merge feature branches into test, then merge test into main.
+
+
+## Git Structure
+We follow a monorepo strategy with both the frontend and backend code in the same repository to allow for easier code management and more streamlined testing.
+
+
+## Organisation & Management
+We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issues</a> and <a href="https://github.com/COS301-SE-2023/WriteToPdf/projects?query=is%3Aopen">Github Projects</a> to organise our team, with different members being assigned to specific tasks to ensure effective use of each member’s time. 
+
+
 ## Documentation
 <a href="https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing">Software Requirement Specification</a><br/>
 <a href="https://github.com/orgs/COS301-SE-2023/projects/16">Project Board</a><br/>
