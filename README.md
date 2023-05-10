@@ -1,8 +1,7 @@
 [![Issues][issues-shield]][issues-url]
 [![Stargazers][stars-shield]][stars-url]
 # WriteToPdf
-<div align="center"><img style="width:400px;" src="https://user-images.githubusercontent.com/104741835/235888191-fb700856-aba4-4da2-9bd4-60f80285b6b5.png" /></div>
-<div align="center"><img style="width:100px;" src="https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/babaf508-dfe8-45fa-bb65-9cb5ecfd07ee" /></div>
+<div align="center"><img src="https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/228e2cc2-c163-477d-ad23-acc6642a8801" /></div>
 
 ## Description
 
