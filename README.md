@@ -6,7 +6,7 @@
 
 ## Description
 
-WriteToPdf is an easy-to-use app that allows users to scan handwritten notes and convert them into structured documents that can be easily shared with others.
+WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritten notes into structured documents that can be edited and shared with others.
 <!--
 ## Tech Stack
 
