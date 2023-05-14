@@ -35,7 +35,7 @@ Janco has experience working as a tutor for the module Data Structures and Algor
 <details>
 <summary>Jake Weatherhead - u04929552</summary>
 <br/>
-<p>Database Engineer</p>
+<p>Database Engineer, Integration Engineer</p>
 <p>
 Jake is a self-motivated and passionate individual who is highly enthusiastic about the practical applications of data science, machine learning and product design. He has experience as a tutor for the module Mathematical Modelling at the University of Pretoria where he tutors students in Pythonic data science. He has experience building, managing and integrating NoSQL databases, such as Google Cloud Firestore and MongoDB. He also has experience building APIs in PHP and Typescript through NestJS. Jake’s other relevant skills include Java, NodeJS, Angular, C++ and LaTeX.
 </p>
