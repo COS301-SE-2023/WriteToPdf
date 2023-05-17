@@ -6,6 +6,10 @@
 ## Description
 
 WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritten notes into structured documents that can be edited and shared with others.
+
+
+## Documentation
+<a href="https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing">Software Requirement Specification</a><br/>
 <!--
 ## Tech Stack
 
@@ -15,6 +19,34 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 <a href="https://ionicframework.com/">
     <img alt="ion" src="https://img.shields.io/badge/Ionic-3880FF?style=for-the-badge&logo=ionic&logoColor=white" />
 </a> -->
+
+## Organisation & Management
+We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issues</a> and <a href="https://github.com/COS301-SE-2023/WriteToPdf/projects?query=is%3Aopen">Github Projects</a> to organise our team, with different members being assigned to specific tasks to ensure effective use of each member’s time. 
+
+## Branching strategy
+The main branch is the live/deployed branch.
+Test branch is used to run all tests.
+A feature branch will be created for each feature being worked on.
+
+Merge feature branches into test, then merge test into main.
+
+
+## Repository Structure
+The repository follows a well-organized structure to meet our client's requirements and ensure efficient development and maintenance. It consists of the following folders:
+```
+.
+|-- /frontend
+|-- /backend
+|-- /infrastructure
+```
+
+The `frontend` folder holds all the code related to the user-facing interface and the client-side functionality. This includes HTML, CSS, JavaScript, and any relevant assets.
+
+The `backend` folder contains the server-side code responsible for handling data processing, business logic, and integration with external services. This includes server-side programming languages, frameworks, and libraries.
+
+To address the need for infrastructure as code, the `infrastructure` folder houses all the necessary configurations and scripts for provisioning and managing the underlying infrastructure components. This allows for automated and reproducible deployment and scaling of the application.
+
+By structuring the repository in this manner, we maintain a clear separation of concerns, enabling efficient collaboration and ease of maintenance across different parts of the project.
 
 ## Team Members
 <details>
@@ -92,40 +124,6 @@ Julian has experience with design patterns and data structures giving him a good
 <img src="https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"/>
 </a>
 </details>
-
-
-## Branching strategy
-The main branch is the live/deployed branch.
-Test branch is used to run all tests.
-A feature branch will be created for each feature being worked on.
-
-Merge feature branches into test, then merge test into main.
-
-
-## Repository Structure
-The repository follows a well-organized structure to meet our client's requirements and ensure efficient development and maintenance. It consists of the following folders:
-```
-.
-|-- /frontend
-|-- /backend
-|-- /infrastructure
-```
-
-The `frontend` folder holds all the code related to the user-facing interface and the client-side functionality. This includes HTML, CSS, JavaScript, and any relevant assets.
-
-The `backend` folder contains the server-side code responsible for handling data processing, business logic, and integration with external services. This includes server-side programming languages, frameworks, and libraries.
-
-To address the need for infrastructure as code, the `infrastructure` folder houses all the necessary configurations and scripts for provisioning and managing the underlying infrastructure components. This allows for automated and reproducible deployment and scaling of the application.
-
-By structuring the repository in this manner, we maintain a clear separation of concerns, enabling efficient collaboration and ease of maintenance across different parts of the project.
-
-
-## Organisation & Management
-We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issues</a> and <a href="https://github.com/COS301-SE-2023/WriteToPdf/projects?query=is%3Aopen">Github Projects</a> to organise our team, with different members being assigned to specific tasks to ensure effective use of each member’s time. 
-
-
-## Documentation
-<a href="https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing">Software Requirement Specification</a><br/>
 
 <!-- Badge links & images -->
 [issues-shield]: https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf.svg?style=for-the-badge
