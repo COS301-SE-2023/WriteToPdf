@@ -102,8 +102,22 @@ A feature branch will be created for each feature being worked on.
 Merge feature branches into test, then merge test into main.
 
 
-## Git Structure
-We follow a monorepo strategy with both the frontend and backend code in the same repository to allow for easier code management and more streamlined testing.
+## Repository Structure
+The repository follows a well-organized structure to meet our client's requirements and ensure efficient development and maintenance. It consists of the following folders:
+```
+.
+|-- /frontend
+|-- /backend
+|-- /infrastructure
+```
+
+The `frontend` folder holds all the code related to the user-facing interface and the client-side functionality. This includes HTML, CSS, JavaScript, and any relevant assets.
+
+The `backend` folder contains the server-side code responsible for handling data processing, business logic, and integration with external services. This includes server-side programming languages, frameworks, and libraries.
+
+To address the need for infrastructure as code, the `infrastructure` folder houses all the necessary configurations and scripts for provisioning and managing the underlying infrastructure components. This allows for automated and reproducible deployment and scaling of the application.
+
+By structuring the repository in this manner, we maintain a clear separation of concerns, enabling efficient collaboration and ease of maintenance across different parts of the project.
 
 
 ## Organisation & Management
