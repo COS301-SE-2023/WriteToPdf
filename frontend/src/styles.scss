@@ -1,1 +1,50 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Global Variables */
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: $primary-color;
+    background-color: #f5f5f5;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 0;
+}
+
+a {
+    color: $primary-color;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+/* Component-specific styles */
+.my-component {
+    background-color: $secondary-color;
+
+    .my-component-title {
+        font-weight: bold;
+        color: $primary-color;
+    }
+
+    .my-component-content {
+        margin-top: 10px;
+    }
+}
+
+body.dark-mode {
+  color: #000000;
+  background-color: #222;
+}
