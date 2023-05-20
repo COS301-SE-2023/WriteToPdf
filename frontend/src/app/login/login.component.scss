@@ -1,0 +1,107 @@
+@import '../../styles.scss';
+
+.loginWrapper {
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    width: -moz-fit-content;
+    width: fit-content;
+
+    height: -moz-fit-content;
+    height: fit-content;
+
+    margin: auto;
+    background-color: $light-grey;
+
+    border-radius: 33px;
+
+    padding-top: 50px;
+    padding-bottom: 50px;
+
+}
+
+.loginForm {
+    margin: auto;
+    width: -moz-fit-content;
+    width: fit-content;
+}
+
+.heading{
+    font-size: 22px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.logoWrapper {
+    display: flex;
+    width: 50%;
+
+
+
+    margin: auto;
+    margin-bottom: 50px;
+}
+
+.logo {
+    width: 20%;
+    margin: auto;
+}
+
+.textBox {
+    border: 2px solid #ffffff;
+    border-radius: 90px;
+
+    background-color: $text-box-color;
+
+    height: 30px;
+
+    width: 100%;
+}
+
+.formElement {
+    display:flex;
+    margin-bottom: 20px !important;
+    width: -moz-fit-content;
+    width: fit-content;
+    width:40%;
+    margin: auto;
+}
+
+.labelElement {
+    margin-bottom: 10px !important;
+    width: -moz-fit-content;
+    width: fit-content;
+    margin: auto;
+    font-size: 18px;
+}
+
+.button{
+    border:none;
+    border-radius: 90px;
+
+    background-color: #ffffff;
+
+    height: 40px;
+
+    font-size: 16px;
+
+    width: 50%;
+    margin: auto;
+    transition: 0.3s;
+}
+
+.button:hover {
+    background-color: darken(#d3a2a2, 10%);
+}
+
+
+hr {
+    border: 1px solid black;
+    width: 30%;
+    margin: auto;
+}
