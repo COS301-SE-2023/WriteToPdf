@@ -1,5 +1,7 @@
 @import '../../styles.scss';
 
+$sidebar-content-width: 225px;
+
 body {
     background-color: red;
 }
@@ -28,18 +30,18 @@ body {
     height: 52px;
 }
 
-.docTitleWrapper{
+.docTitleWrapper {
     display: flex;
-    margin-left:10px;
+    margin-left: 10px;
 }
 
 .toolsWrapper {
     display: flex;
-    margin-left:10px;
+    margin-left: 10px;
 }
 
 .documentTitle {
-    margin:auto;
+    margin: auto;
     font-size: 22px;
     font-weight: bold;
 }
@@ -111,35 +113,154 @@ body {
 }
 
 
-.page{
-    margin:auto;
+.page {
+    margin: auto;
     margin-top: 160px;
-    margin-bottom: 1600px;
-    margin-left: calc(130px + 100vw / 2 - 420px);
+    margin-left: calc(Max(130px + 100vw / 2 - 420px, 300px));
     height: 297*4px;
-    width:210*4px;
+    width: 210*4px;
     background-color: #ffffff;
+    overflow-x: auto;
 }
-.assetSidebar{
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+.assetSidebar {
     position: fixed;
     top: 127px;
     left: 0;
     bottom: 0;
     width: 260px;
-    background-color: #f6f6f6;
-    border-right: 1px solid #ccc;
+    background-color: #ffffff;
+    border-right: 1px solid #c7c7c7;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
 }
 
-.pageName{
-    width:100%;
+.pageName {
+    width: 100%;
     height: 100%;
     position: relative;
-        top: 50px;
-        left: 100px;
+    top: 50px;
+    left: 100px;
 }
 
 div[contenteditable="true"]:focus {
     outline: none;
-    
+
+}
+
+.sidebarHeaderWrapper {
+    background-color: #ffffff;
+    width: 252px;
+    position: fixed;
+}
+
+.sidebarHeader {
+    display: flex;
+    margin: auto;
+    width: $sidebar-content-width;
+}
+
+.sidebarHeaderText {
+    margin: auto;
+    font-size: 22px;
+    font-weight: bold;
+    width: 100%;
+}
+
+.sidebarHeaderTextWrapper {
+    margin: auto;
+    margin-left: 40px;
+    text-align: justify;
+}
+
+.sidebarHeaderIconWrapper {
+    display: flex;
+    margin: 20px;
+    margin-right: 0px;
+}
+
+.backWrapper {
+    margin-left: 0px !important;
+}
+
+.sidebarHeaderIcon {
+    margin: auto;
+}
+
+.assetSidebar hr {
+    border: 1px solid #c7c7c7;
+    margin: auto;
+    width: $sidebar-content-width;
+}
+
+.alignDiv {
+    height: 80px;
+}
+
+.assetWrapper {
+    margin: auto;
+    width: $sidebar-content-width;
+    height: 157px;
+    border-radius: 8px;
+
+    background-color: #f0f0f0;
+    margin-bottom: 30px;
+}
+
+.assetHeader {
+    display: flex;
+    padding: 10px;
+}
+
+.assetNameText {
+    margin: auto;
+    font-size: 18px;
+}
+
+.copyAsset {
+    margin-right: 0;
+    margin-left: auto;
+}
+
+.menu {
+    margin-left: 10px;
+
+}
+
+.menuIcon {
+    margin-bottom: 3px;
+}
+
+.assetContent {
+    display: flex;
+    margin: 10px;
+    margin-top: 0;
+}
+
+.assetImage {
+    margin: 0;
+    border-radius: 10px;
+    width: 100px;
+    height: 100px;
+    border: 1px solid #000000;
+}
+
+.assetDescription{
+    margin-left: 5px;
 }
