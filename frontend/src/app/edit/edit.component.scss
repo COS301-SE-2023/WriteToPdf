@@ -2,10 +2,11 @@
 
 $sidebar-content-width: 225px;
 
-body {
-    background-color: red;
+.container {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
 }
-
 .header {
 
     overflow-x: auto;
