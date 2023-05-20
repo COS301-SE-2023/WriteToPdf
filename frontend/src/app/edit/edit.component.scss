@@ -1,0 +1,127 @@
+@import '../../styles.scss';
+
+body {
+    background-color: red;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    background-image: linear-gradient(to right, #ffffff, #e7e7e7);
+    border-bottom: 1px solid #ccc;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+    width: 100%;
+}
+
+
+.titleWrapper {
+    display: flex;
+    margin: 10px;
+    margin-left: 20px;
+    height: 52px;
+}
+
+.docTitleWrapper{
+    display: flex;
+    margin-left:10px;
+}
+
+.toolsWrapper {
+    display: flex;
+    margin-left:10px;
+}
+
+.documentTitle {
+    margin:auto;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.tool {
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+.tool:hover {
+    cursor: pointer;
+    background-color: $light-grey;
+}
+
+.dropdownWrapper {
+    margin: 10px;
+}
+
+.dropdownInput {
+    margin: 0;
+    background-color: #d9d9d9;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.dropdownText {
+    margin: auto;
+    white-space: nowrap;
+}
+
+.dropdownContent {
+    display: none;
+    position: absolute;
+    background-color: #cacaca;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    padding: 12px 16px;
+    z-index: 1;
+
+    border-radius: 5px;
+}
+
+.dropdownInput:hover {
+    cursor: pointer;
+    background-color: darken($light-grey, 10%);
+}
+
+.dropdownWrapper:hover .dropdownContent {
+    display: block;
+    cursor: pointer;
+}
+
+.logoWrapper {
+    height: 52px;
+}
+
+.logo {
+    width: 50px;
+}
+
+.editor {
+    height: 1000px;
+    margin: 0;
+    width: 100%;
+}
+
+.assetSidebar{
+    position: fixed;
+    top: 127px;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    background-color: #f6f6f6;
+    border-right: 1px solid #ccc;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.page{
+    position: relative;
+    top: 52px;
+    left: 200px;
+    bottom: 0;
+    right: 0;
+    width: calc(100% - 200px);
+    height: 100%;
+    background-color: #f6f6f6;
+}

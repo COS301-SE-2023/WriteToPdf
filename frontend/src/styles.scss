@@ -7,6 +7,8 @@ $font-color: #0C0006;
 $dark-grey: #6F6F6F;
 $light-grey: #E3E3E3;
 
+$highlight: #a6cdff;
+
 $text-box-color: #f6f6f6;
 
 /* Global Styles */
@@ -19,7 +21,6 @@ body {
     font-family: 'Cabin';
     font-size: 16px;
     color: $font-color;
-    background-color: #ffffff;
 }
 
 
