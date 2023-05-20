@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,10 +8,14 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private elementRef: ElementRef) { }
 
   navigateToPage( pageName: string) {
     this.router.navigate([`/${pageName}`]);
+  }
+  ngAfterViewInit() {
+      this.elementRef.nativeElement.ownerDocument
+  .body.style.backgroundColor = '#ffffff';
   }
 
 }

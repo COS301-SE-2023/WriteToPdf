@@ -5,6 +5,9 @@ body {
 }
 
 .header {
+
+    overflow-x: auto;
+
     position: fixed;
     top: 0;
     left: 0;
@@ -99,11 +102,24 @@ body {
 }
 
 .editor {
-    height: 1000px;
+    display: flex;
+    z-index: -10;
     margin: 0;
-    width: 100%;
+    height: -moz-fit-content;
+    height: fit-content;
+    width: 100vw;
 }
 
+
+.page{
+    margin:auto;
+    margin-top: 160px;
+    margin-bottom: 1600px;
+    margin-left: calc(130px + 100vw / 2 - 420px);
+    height: 297*4px;
+    width:210*4px;
+    background-color: #ffffff;
+}
 .assetSidebar{
     position: fixed;
     top: 127px;
@@ -115,13 +131,15 @@ body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.page{
-    position: relative;
-    top: 52px;
-    left: 200px;
-    bottom: 0;
-    right: 0;
-    width: calc(100% - 200px);
+.pageName{
+    width:100%;
     height: 100%;
-    background-color: #f6f6f6;
+    position: relative;
+        top: 50px;
+        left: 100px;
+}
+
+div[contenteditable="true"]:focus {
+    outline: none;
+    
 }

@@ -60,9 +60,9 @@
 
     </div>
 
-    <div class="pageWrapper">
-        <div class="page">
-        
-        </div>
+
+    <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
+        {{ documentContent }}
     </div>
+
 </div>
