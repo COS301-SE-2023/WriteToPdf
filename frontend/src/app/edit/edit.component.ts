@@ -43,17 +43,17 @@ export class EditComponent
   }
 
   getLoremIpsum() {
-    this.api.getLoremIpsum().subscribe(
-      (response) => {
+    this.api.getLoremIpsum().subscribe({
+      next: (response) => {
         this.documentContent = response.data;
       },
-      (error) => {
+      error: (error) => {
         console.error(
           'Error fetching items:',
           error,
         );
       },
-    );
+    });
   }
 
   navigateToPage(pageName: string) {
