@@ -35,6 +35,4 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
 
-
-
 }
