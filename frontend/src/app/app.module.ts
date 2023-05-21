@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { EditComponent } from './edit/edit.component';
+import { EditApi } from './edit/edit.api';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,7 @@ import { EditComponent } from './edit/edit.component';
     AppRoutingModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [EditApi],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
