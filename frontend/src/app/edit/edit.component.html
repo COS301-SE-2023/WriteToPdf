@@ -1,253 +1,249 @@
 <div class="container">
 
-    <div class="header">
-
-        <div class="toolbarWrapper">
-            <div class="titleWrapper">
-                <div class="logoWrapper">
-                    <img class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="">
-                </div>
-                <div class="docTitleWrapper">
-                    <h3 class="documentTitle">Document Title</h3>
-                </div>
-            </div>
-            <div class="toolsWrapper">
-                <div class="tool">
-                    <img src="assets/Icons/editIcons/download.svg" alt="">
-                </div>
-                <div class="tool">
-                    <img src="assets/Icons/editIcons/share.svg" alt="">
-                </div>
-                <div class="tool">
-                    <img src="assets/Icons/editIcons/undo.svg" alt="">
-                </div>
-                <div class="tool">
-                    <img src="assets/Icons/editIcons/redo.svg" alt="">
-                </div>
-                <div class="tool">
-                    <img src="assets/Icons/editIcons/bold.svg" alt="">
-                </div>
-                <div class="tool">
-                    <img src="assets/Icons/editIcons/italic.svg" alt="">
-                </div>
-                <div class="tool">
-                    <img src="assets/Icons/editIcons/strikethrough.svg" alt="">
-                </div>
-                <div class="tool">
-                    <img src="assets/Icons/editIcons/unorderedList.svg" alt="">
-                </div>
-                <div class="tool">
-                    <img src="assets/Icons/editIcons/orderedList.svg" alt="">
-                </div>
-                <div class="dropdownWrapper">
-                    <div class="dropdownInput">
-                        <h4 class="dropdownText">Heading 1</h4>
-                    </div>
-                    <div class="dropdownContent">
-                        <p>HI</p>
-                        <p>HI</p>
-                        <p>HI</p>
-                        <p>HI</p>
-                        <p>HI</p>
-                    </div>
-                </div>
-            </div>
+  <div class="header">
+    <div class="toolbarWrapper">
+      <div class="titleWrapper">
+        <div class="logoWrapper" (click)="navigateToPage('home')">
+          <img class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="">
         </div>
-        <div class="pageIconWrapper"></div>
-        <div class="miscWrapper"></div>
+        <div class="docTitleWrapper">
+          <h3 class="documentTitle">Document Title</h3>
+        </div>
+      </div>
+      <div class="toolsWrapper">
+        <div class="tool">
+          <img src="assets/Icons/editIcons/download.svg" alt="">
+        </div>
+        <div class="tool">
+          <img src="assets/Icons/editIcons/share.svg" alt="">
+        </div>
+        <div class="tool">
+          <img src="assets/Icons/editIcons/undo.svg" alt="">
+        </div>
+        <div class="tool">
+          <img src="assets/Icons/editIcons/redo.svg" alt="">
+        </div>
+        <div class="tool">
+          <img src="assets/Icons/editIcons/bold.svg" alt="">
+        </div>
+        <div class="tool">
+          <img src="assets/Icons/editIcons/italic.svg" alt="">
+        </div>
+        <div class="tool">
+          <img src="assets/Icons/editIcons/strikethrough.svg" alt="">
+        </div>
+        <div class="tool">
+          <img src="assets/Icons/editIcons/unorderedList.svg" alt="">
+        </div>
+        <div class="tool">
+          <img src="assets/Icons/editIcons/orderedList.svg" alt="">
+        </div>
+        <div class="dropdownWrapper">
+          <div class="dropdownInput">
+            <h4 class="dropdownText">Heading 1</h4>
+          </div>
+          <div class="dropdownContent">
+            <p>HI</p>
+            <p>HI</p>
+            <p>HI</p>
+            <p>HI</p>
+            <p>HI</p>
+          </div>
+        </div>
+      </div>
     </div>
+    <div class="pageIconWrapper"></div>
+    <div class="miscWrapper"></div>
+  </div>
 
-    <div class="editor">
+  <div class="editor">
 
-        <div class="assetSidebar">
-            <div class="sidebarHeaderWrapper">
-                <div class="sidebarHeader">
+    <div class="assetSidebar">
+      <div class="sidebarHeaderWrapper">
+        <div class="sidebarHeader">
 
-                    <div class="sidebarHeaderIconWrapper backWrapper">
-                        <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="">
+          <div class="sidebarHeaderIconWrapper backWrapper">
+            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="">
 
-                    </div>
+          </div>
 
-                    <div class="sidebarHeaderTextWrapper">
-                        <h4 class="sidebarHeaderText">Assets</h4>
+          <div class="sidebarHeaderTextWrapper">
+            <h4 class="sidebarHeaderText">Assets</h4>
 
-                    </div>
+          </div>
 
-                    <div class="sidebarHeaderIconWrapper">
-                        <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/uploadAsset.svg" alt="">
+          <div class="sidebarHeaderIconWrapper">
+            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/uploadAsset.svg" alt="">
 
-                    </div>
+          </div>
 
-                    <div class="sidebarHeaderIconWrapper">
-                        <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/refresh.svg" alt="">
+          <div class="sidebarHeaderIconWrapper">
+            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/refresh.svg" alt="">
 
-                    </div>
-
-                </div>
-                <hr />
-            </div>
-
-            <div class="alignDiv"></div>
-
-            <div class="assetWrapper">
-                <div class="assetHeader">
-                    <div class="assetName">
-                        <h4 class="assetNameText">Asset Name</h4>
-                    </div>
-                    <div class="copyAsset">
-                        <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
-                    </div>
-                    <div class="menu">
-                        <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
-                    </div>
-                </div>
-                <div class="assetContent">
-                    <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
-                    <p class="assetDescription">Image</p>
-                </div>
-            </div>
-
-            <div class="assetWrapper">
-                <div class="assetHeader">
-                    <div class="assetName">
-                        <h4 class="assetNameText">Asset Name</h4>
-                    </div>
-                    <div class="copyAsset">
-                        <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
-                    </div>
-                    <div class="menu">
-                        <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
-                    </div>
-                </div>
-                <div class="assetContent">
-                    <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
-                    <p class="assetDescription">Image</p>
-                </div>
-            </div>
-
-            <div class="assetWrapper">
-                <div class="assetHeader">
-                    <div class="assetName">
-                        <h4 class="assetNameText">Asset Name</h4>
-                    </div>
-                    <div class="copyAsset">
-                        <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
-                    </div>
-                    <div class="menu">
-                        <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
-                    </div>
-                </div>
-                <div class="assetContent">
-                    <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
-                    <p class="assetDescription">Image</p>
-                </div>
-            </div>
-
-            <div class="assetWrapper">
-                <div class="assetHeader">
-                    <div class="assetName">
-                        <h4 class="assetNameText">Asset Name</h4>
-                    </div>
-                    <div class="copyAsset">
-                        <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
-                    </div>
-                    <div class="menu">
-                        <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
-                    </div>
-                </div>
-                <div class="assetContent">
-                    <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
-                    <p class="assetDescription">Image</p>
-                </div>
-            </div>
-
-            <div class="assetWrapper">
-                <div class="assetHeader">
-                    <div class="assetName">
-                        <h4 class="assetNameText">Asset Name</h4>
-                    </div>
-                    <div class="copyAsset">
-                        <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
-                    </div>
-                    <div class="menu">
-                        <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
-                    </div>
-                </div>
-                <div class="assetContent">
-                    <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
-                    <p class="assetDescription">Image</p>
-                </div>
-            </div>
-
-            <div class="assetWrapper">
-                <div class="assetHeader">
-                    <div class="assetName">
-                        <h4 class="assetNameText">Asset Name</h4>
-                    </div>
-                    <div class="copyAsset">
-                        <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
-                    </div>
-                    <div class="menu">
-                        <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
-                    </div>
-                </div>
-                <div class="assetContent">
-                    <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
-                    <p class="assetDescription">Image</p>
-                </div>
-            </div>
-
-            <div class="assetWrapper">
-                <div class="assetHeader">
-                    <div class="assetName">
-                        <h4 class="assetNameText">Asset Name</h4>
-                    </div>
-                    <div class="copyAsset">
-                        <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
-                    </div>
-                    <div class="menu">
-                        <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
-                    </div>
-                </div>
-                <div class="assetContent">
-                    <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
-                    <p class="assetDescription">Image</p>
-                </div>
-            </div>
-
-            <div class="assetWrapper">
-                <div class="assetHeader">
-                    <div class="assetName">
-                        <h4 class="assetNameText">Asset Name</h4>
-                    </div>
-                    <div class="copyAsset">
-                        <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
-                    </div>
-                    <div class="menu">
-                        <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
-                    </div>
-                </div>
-                <div class="assetContent">
-                    <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
-                    <p class="assetDescription">Image</p>
-                </div>
-            </div>
+          </div>
 
         </div>
+        <hr/>
+      </div>
 
+      <div class="alignDiv"></div>
 
+      <div class="assetWrapper">
+        <div class="assetHeader">
+          <div class="assetName">
+            <h4 class="assetNameText">Asset Name</h4>
+          </div>
+          <div class="copyAsset">
+            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+          </div>
+          <div class="menu">
+            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+          </div>
+        </div>
+        <div class="assetContent">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <p class="assetDescription">Image</p>
+        </div>
+      </div>
 
+      <div class="assetWrapper">
+        <div class="assetHeader">
+          <div class="assetName">
+            <h4 class="assetNameText">Asset Name</h4>
+          </div>
+          <div class="copyAsset">
+            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+          </div>
+          <div class="menu">
+            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+          </div>
+        </div>
+        <div class="assetContent">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <p class="assetDescription">Image</p>
+        </div>
+      </div>
 
+      <div class="assetWrapper">
+        <div class="assetHeader">
+          <div class="assetName">
+            <h4 class="assetNameText">Asset Name</h4>
+          </div>
+          <div class="copyAsset">
+            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+          </div>
+          <div class="menu">
+            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+          </div>
+        </div>
+        <div class="assetContent">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <p class="assetDescription">Image</p>
+        </div>
+      </div>
+
+      <div class="assetWrapper">
+        <div class="assetHeader">
+          <div class="assetName">
+            <h4 class="assetNameText">Asset Name</h4>
+          </div>
+          <div class="copyAsset">
+            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+          </div>
+          <div class="menu">
+            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+          </div>
+        </div>
+        <div class="assetContent">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <p class="assetDescription">Image</p>
+        </div>
+      </div>
+
+      <div class="assetWrapper">
+        <div class="assetHeader">
+          <div class="assetName">
+            <h4 class="assetNameText">Asset Name</h4>
+          </div>
+          <div class="copyAsset">
+            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+          </div>
+          <div class="menu">
+            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+          </div>
+        </div>
+        <div class="assetContent">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <p class="assetDescription">Image</p>
+        </div>
+      </div>
+
+      <div class="assetWrapper">
+        <div class="assetHeader">
+          <div class="assetName">
+            <h4 class="assetNameText">Asset Name</h4>
+          </div>
+          <div class="copyAsset">
+            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+          </div>
+          <div class="menu">
+            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+          </div>
+        </div>
+        <div class="assetContent">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <p class="assetDescription">Image</p>
+        </div>
+      </div>
+
+      <div class="assetWrapper">
+        <div class="assetHeader">
+          <div class="assetName">
+            <h4 class="assetNameText">Asset Name</h4>
+          </div>
+          <div class="copyAsset">
+            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+          </div>
+          <div class="menu">
+            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+          </div>
+        </div>
+        <div class="assetContent">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <p class="assetDescription">Image</p>
+        </div>
+      </div>
+
+      <div class="assetWrapper">
+        <div class="assetHeader">
+          <div class="assetName">
+            <h4 class="assetNameText">Asset Name</h4>
+          </div>
+          <div class="copyAsset">
+            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+          </div>
+          <div class="menu">
+            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+          </div>
+        </div>
+        <div class="assetContent">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <p class="assetDescription">Image</p>
+        </div>
+      </div>
 
     </div>
-    <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
-        {{ documentContent }}
-    </div>
-    <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
-        {{ documentContent }}
-    </div>
-    <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
-        {{ documentContent }}
-    </div>
+
+
+  </div>
+  <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
+    {{ documentContent }}
+  </div>
+  <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
+    {{ documentContent }}
+  </div>
+  <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
+    {{ documentContent }}
+  </div>
 
 </div>

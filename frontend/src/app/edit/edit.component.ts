@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-edit',
@@ -10,7 +11,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   documentContent: string = '';
 
-  constructor(private elementRef: ElementRef) { }
+  constructor(private elementRef: ElementRef, private router: Router) { }
 
   ngOnInit(): void {
     const savedContent = localStorage.getItem('document');
@@ -27,6 +28,10 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document content to localStorage when changes occur
     const content = event.target.innerHTML;
     localStorage.setItem('document', content);
+  }
+
+  navigateToPage(pageName: string) {
+    this.router.navigate([`/${pageName}`]);
   }
 
 
