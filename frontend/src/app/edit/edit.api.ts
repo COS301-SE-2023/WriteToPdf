@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { ITest } from '../../../../backend/src/api-test/interfaces';
+import { ITest } from './interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +13,8 @@ export class EditApi {
   constructor(private http: HttpClient) {}
 
   getLoremIpsum(): Observable<ITest> {
-    return this.http.get<ITest>(`${this.apiUrl}/test`);
+    return this.http.get<ITest>(
+      `${this.apiUrl}/test`,
+    );
   }
 }
