@@ -4,38 +4,47 @@
   white-space: nowrap;
 }
 .header {
+  position: fixed;
+  display: grid;
+  grid-auto-flow: column;
   overflow-x: auto;
-  right: 0;
   background-image: linear-gradient(to right, #ffffff, #e7e7e7);
   border-bottom: 1px solid #ccc;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   width: 100%;
-  position: absolute;
   height: 112px;
-  left: 0px;
-  top: 0px;
+  justify-content: space-between;
+}
+
+.logoWrapper{
+  display: flex;
   align-items: center;
 }
 
 .logo {
-  position: absolute;
   width: 75px;
   height: 77px;
-  left: 15px;
-  top: 16px;
+
 }
 
 .headerNavigation{
-  display: inline-block;
+  display: flex;
+}
+
+.navigationItems{
+  width:-moz-fit-content;
+  width: fit-content;
+  margin: auto;
 }
 
 .navigationIcon{
   width: 60px;
   height: 50px;
+
 }
 
 .headerToolbarLeft{
-  display: inline-block;
+  display: flex;
 }
 .headerToolbarLeft .icon{
   width: 50px;
