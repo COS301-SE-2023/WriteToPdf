@@ -1,26 +1,27 @@
 import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
 
+import { EditApi } from './edit.api';
+
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
-  styleUrls: ['./edit.component.scss']
+  styleUrls: ['./edit.component.scss'],
 })
-
 export class EditComponent implements AfterViewInit, OnInit {
-
   documentContent: string = '';
 
-  constructor(private elementRef: ElementRef) { }
+  constructor(private elementRef: ElementRef, private api: EditApi) {}
 
   ngOnInit(): void {
-    const savedContent = localStorage.getItem('document');
-    if (savedContent) {
-      this.documentContent = savedContent;
-    }
+    // const savedContent = localStorage.getItem('document');
+    // if (savedContent) {
+    //   this.documentContent = savedContent;
+    // }
+    this.getLoremIpsum();
   }
   ngAfterViewInit() {
-    this.elementRef.nativeElement.ownerDocument
-      .body.style.backgroundColor = '#E3E3E3';
+    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
+      '#E3E3E3';
   }
 
   onContentChange(event: any) {
@@ -29,7 +30,14 @@ export class EditComponent implements AfterViewInit, OnInit {
     localStorage.setItem('document', content);
   }
 
-
-
-
+  getLoremIpsum() {
+    this.api.getLoremIpsum().subscribe(
+      (response) => {
+        this.documentContent = response.data;
+      },
+      (error) => {
+        console.error('Error fetching items:', error);
+      }
+    );
+  }
 }
