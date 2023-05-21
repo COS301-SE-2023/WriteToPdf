@@ -1,0 +1,44 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - test
+  pull_request:
+    branches:
+      - test
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set up Chrome browser
+        run: |
+          export CHROME_BIN=google-chrome-stable
+          if [[ "$OSTYPE" == "darwin"* ]]; then
+            export CHROME_BIN=/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome
+          fi
+
+      - name: Run frontend tests
+        working-directory: frontend
+        run: npm run test -- --browsers=ChromeHeadless
+
+      - name: Stop test runner
+        run: |
+          pkill -f karma
+
+      - name: Run backend tests
+        working-directory: backend
+        run: npm run test
