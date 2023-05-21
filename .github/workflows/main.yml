@@ -1,0 +1,45 @@
+name: Running main tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          
+      - name: Run backend tests
+        working-directory: backend
+        run: npm ci && npm run test
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install
+
+      # - name: Build the application
+      #   run: npm run build
+
+      - name: Serve the application
+        working-directory: frontend
+        run: npm run start &
+        
+      - name: Wait for the application to start
+        working-directory: frontend
+        run: sleep 5s
+        
+      - name: Run Cypress tests
+        working-directory: frontend
+        run: npx cypress run
