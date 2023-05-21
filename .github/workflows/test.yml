@@ -25,20 +25,17 @@ jobs:
         working-directory: frontend
         run: npm install
 
-      - name: Set up Chrome browser
-        run: |
-          export CHROME_BIN=google-chrome-stable
-          if [[ "$OSTYPE" == "darwin"* ]]; then
-            export CHROME_BIN=/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome
-          fi
+      - name: Build the application
+        run: npm run build
 
-      - name: Run frontend tests
-        working-directory: frontend
-        run: npm run test -- --browsers=ChromeHeadless
+      - name: Serve the application
+        run: npm run start &
 
-      - name: Stop test runner
-        run: |
-          pkill -f karma
+      - name: Wait for the application to start
+        run: sleep 5s
+
+      - name: Run Cypress tests
+        run: npx cypress run
 
       - name: Run backend tests
         working-directory: backend
