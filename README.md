@@ -1,7 +1,9 @@
 [![Issues][issues-shield]][issues-url]
 [![Stargazers][stars-shield]][stars-url]
 # WriteToPdf
-<div align="center"><img src="https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/4a85bc1a-dd67-443e-8eae-ef7fb37ea3cc" /></div>
+
+<div align="center"><img src="https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/c151ddb6-fc79-4366-87ea-f91a033dfe10" /></div>
+
 
 ## Description
 
@@ -10,15 +12,24 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 
 ## Documentation
 <a href="https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing">Software Requirement Specification</a><br/>
-<!--
+
 ## Tech Stack
 
- <a href="https://angular.io/docs">
-    <img alt="ion" src="https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white" />
+<a href="https://angular.io">
+    <img alt="Angular" src="https://img.shields.io/badge/angular-dd0031?style=for-the-badge&logo=angular&logoColor=white" />
 </a>
-<a href="https://ionicframework.com/">
-    <img alt="ion" src="https://img.shields.io/badge/Ionic-3880FF?style=for-the-badge&logo=ionic&logoColor=white" />
-</a> -->
+
+<a href="https://nestjs.com/">
+  <img alt="NestJS" src="https://img.shields.io/badge/nestjs-e0234e?style=for-the-badge&logo=nestjs&logoColor=white" />
+</a>
+
+<a href="https://aws.amazon.com/ec2/">
+  <img alt="AWS EC2" src="https://img.shields.io/badge/amazon%20ec2-dd700f?style=for-the-badge&logo=aws&logoColor=white" />
+</a>
+
+<a href="https://aws.amazon.com/dynamodb/">
+  <img alt="AWS DynamoDB" src="https://img.shields.io/badge/AWS%20DynamoDB-246cb2?style=for-the-badge&logo=aws&logoColor=white" />
+</a>
 
 ## Organisation & Management
 We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issues</a> and <a href="https://github.com/COS301-SE-2023/WriteToPdf/projects?query=is%3Aopen">Github Projects</a> to organise our team, with different members being assigned to specific tasks to ensure effective use of each member’s time. 
@@ -59,8 +70,13 @@ Janco has experience working as a tutor for the module Data Structures and Algor
 <img src="https://user-images.githubusercontent.com/104741835/235907674-681152ec-0f46-4b1d-8c3b-4478a2e6290e.png" />
 <br/>
 <a href="https://www.linkedin.com/in/ACoAADDlAbMBzAMuf8KIqa4ZdJtrDAi1qu4EPz4?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3B1J9zjGT%2FSHeIpMlnKxWZvA%3D%3D">
-<img src="https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"/>
+<img src="https://img.shields.io/badge/linkedin-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
 </a>
+ 
+  <a href="https://github.com/JanSpies82">
+<img src="https://img.shields.io/badge/github-161b22?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+</a>
+ 
 </details>
 
 
@@ -74,8 +90,13 @@ Jake is a self-motivated and passionate individual who is highly enthusiastic ab
 <img src="https://user-images.githubusercontent.com/104741835/235907757-81df79c3-b9e8-49ae-a481-c21bbb385913.png" />
 <br/>
 <a href="https://www.linkedin.com/in/ACoAADrYSskBc41A9bb97Sym87rcIbAqpKdQOY4/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BmboD%2FrmkRsKFxJTOheSOsQ%3D%3D">
-<img src="https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"/>
+<img src="https://img.shields.io/badge/linkedin-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
 </a>
+ 
+  <a href="https://github.com/jakeweatherhead">
+<img src="https://img.shields.io/badge/github-161b22?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+</a>
+ 
 </details>
 
 
@@ -89,8 +110,13 @@ Dylan is a highly motivated individual with a solid academic background, finishi
 <img src="https://user-images.githubusercontent.com/104741835/235907809-53427a24-eb95-4ebc-8e3f-1fa38d514741.png" />
 <br/>
 <a href="https://github.com/COS301-SE-2023/WriteToPdf/">
-<img src="https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"/>
+<img src="https://img.shields.io/badge/linkedin-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
 </a>
+ 
+  <a href="https://github.com/dylankapnias-uni">
+<img src="https://img.shields.io/badge/github-161b22?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+</a>
+ 
 </details>
 
 
@@ -104,8 +130,13 @@ Conrad is an avid programmer, yogi and musician. He has experience in Python, R,
 <img src="https://user-images.githubusercontent.com/104741835/235907780-ec7959e3-e747-4264-a2f4-60244e0212ab.png" />
 <br/>
 <a href="https://www.linkedin.com/in/conrad-strasheim-81810a26a?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAAEHeNBQBIAgklS52yGZGLqg_dsFeSpaTy84&lipi=urn%3Ali%3Apage%3Ad_flagship3_search_srp_all%3BIrFwHOqPRhixjO%2F3SKDhWA%3D%3D">
-<img src="https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"/>
+<img src="https://img.shields.io/badge/linkedin-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
 </a>
+ 
+  <a href="https://github.com/ConradStras">
+<img src="https://img.shields.io/badge/github-161b22?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+</a>
+ 
 </details>
 
 
@@ -121,8 +152,13 @@ Julian has experience with design patterns and data structures giving him a good
 <img src="https://user-images.githubusercontent.com/104741835/235907734-cc6ce2a7-ac9a-4d3c-9dfe-03eb772b4b98.png" /> 
 <br/>
 <a href="https://www.linkedin.com/in/julian-pienaar-370208271/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3B0NeumpYtT8e%2FsXo8GIBScQ%3D%3D">
-<img src="https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white"/>
+<img src="https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
 </a>
+ 
+ <a href="https://github.com/JulianPienaar">
+<img src="https://img.shields.io/badge/github-161b22?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
+</a>
+ 
 </details>
 
 <!-- Badge links & images -->
