@@ -22,6 +22,7 @@ jobs:
           node-version: 14
 
       - name: Install dependencies
+        working-directory: frontend
         run: npm ci
 
       - name: Set up Chrome browser
@@ -41,4 +42,4 @@ jobs:
 
       - name: Run backend tests
         working-directory: backend
-        run: npm run test
+        run: npm ci && npm run test
