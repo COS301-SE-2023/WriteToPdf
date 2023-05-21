@@ -109,7 +109,7 @@ Dylan is a highly motivated individual with a solid academic background, finishi
 </p>
 <img src="https://user-images.githubusercontent.com/104741835/235907809-53427a24-eb95-4ebc-8e3f-1fa38d514741.png" />
 <br/>
-<a href="https://github.com/COS301-SE-2023/WriteToPdf/">
+<a href="https://www.linkedin.com/in/dylan-kapnias-b41ab2277?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BDLZJVIFfQUyfGT%2FfBspbpg%3D%3D">
 <img src="https://img.shields.io/badge/linkedin-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
 </a>
  
