@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+} from '@angular/core';
+import { Router } from '@angular/router';
 
 import { EditApi } from './edit.api';
 
@@ -7,10 +13,16 @@ import { EditApi } from './edit.api';
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
 })
-export class EditComponent implements AfterViewInit, OnInit {
+export class EditComponent
+  implements AfterViewInit, OnInit
+{
   documentContent: string = '';
 
-  constructor(private elementRef: ElementRef, private api: EditApi) {}
+  constructor(
+    private elementRef: ElementRef,
+    private api: EditApi,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     // const savedContent = localStorage.getItem('document');
@@ -36,8 +48,15 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.documentContent = response.data;
       },
       (error) => {
-        console.error('Error fetching items:', error);
-      }
+        console.error(
+          'Error fetching items:',
+          error,
+        );
+      },
     );
+  }
+
+  navigateToPage(pageName: string) {
+    this.router.navigate([`/${pageName}`]);
   }
 }

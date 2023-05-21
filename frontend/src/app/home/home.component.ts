@@ -11,4 +11,8 @@ export class HomeComponent {
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
+
+  showNavbar(location: string) {
+
+  }
 }
