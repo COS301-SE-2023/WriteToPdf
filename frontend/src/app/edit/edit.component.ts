@@ -52,6 +52,8 @@ export class EditComponent
           'Error fetching items:',
           error,
         );
+        this.documentContent =
+          'Lorem Ipsum from app';
       },
     });
   }
