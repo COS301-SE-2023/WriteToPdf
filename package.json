@@ -1,0 +1,9 @@
+{
+    "name": "writetopdf",
+    "verison": "0.0.0",
+    "license": "MIT",
+    "scripts": {
+        "frontend": "cd ./frontend && npm start",
+        "backend": "cd ./backend && npm run start:dev"
+    }
+}

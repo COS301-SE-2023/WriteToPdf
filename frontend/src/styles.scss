@@ -1,1 +1,42 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Global Variables */
+$accent: #E61B23;
+$font-color: #0C0006;
+
+$dark-grey: #6F6F6F;
+$light-grey: #E3E3E3;
+
+$highlight: #a6cdff;
+
+$text-box-color: #f6f6f6;
+
+/* Global Styles */
+@font-face {
+    font-family: 'Cabin';
+    src: url('/assets/Fonts/Cabin/Cabin-VariableFont_wdth,wght.ttf');
+}
+
+body {
+    font-family: 'Cabin';
+    font-size: 16px;
+    color: $font-color;
+}
+
+
+
+// a {
+//     color: $primary-color;
+//     text-decoration: none;
+
+//     &:hover {
+//         text-decoration: underline;
+//     }
+// }
+
+/* Component-specific styles */
+
+body.dark-mode {
+  color: #000000;
+  background-color: #222;
+}
