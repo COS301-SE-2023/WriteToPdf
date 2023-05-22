@@ -1,9 +1,11 @@
+@import '../../styles.scss';
+
 .container {
   width: 100%;
   overflow-x: auto;
   white-space: nowrap;
 }
-
+//Code Section Header Styling
 .header {
   position: fixed;
   display: grid;
@@ -52,7 +54,8 @@
   padding-top: 30px;
   height: 50px;
 }
-
+//END Code section header styling
+//Left Sidebar styling
 
 .leftSideBarWrapper {
   //Positioning
@@ -74,53 +77,22 @@
   padding-top: 15px;
   padding-left: 50px;
 }
-
-.documentPreviewSideBar {
-  //positioning
-  //TODO Fix scroll stuff, make positioning dynamic in relation to width
-  position: fixed;
-  width: 351px;
-  height: 911px;
-  margin-left: 1120px;
-  top: 120px;
-  //colours
-  background: linear-gradient(180deg, #E2E2E2 1.15%, #000000 99.99%);
-  /* Main Colours/Dark Gray */
-  border: 1px solid #6F6F6F;
-  //TODO implement infinite length in ts
-}
-
-.documentPreviewTitle {
-  position: relative;
-  left: 20px;
-}
-
 .leftSideBarTools .icon {
   width: 30px;
   height: 30px;
   padding: 4px;
 }
 
-
 .leftSideBarTools {
-  padding: 10px;
-}
-
-
-.mainWindowHome {
-  padding-right: 351px;
-  padding-left: 250px;
-  padding-top: 120px;
-  //TODO make width dynamic with TS
-  width: 700px;
+  padding: 5px;
 }
 
 //Below is the styling for the directory tree
 
-.directoryTree {
-  padding: 0;
-  display: block;
-}
+ .directoryTree {
+   margin-top: -20px;
+   display: block;
+ }
 
 .directoryTree li {
   padding: 5px;
@@ -148,6 +120,36 @@
 .directoryItem li:hover {
   background-color: #ddd
 }
+.documentPreviewSideBar {
+  //positioning
+  //TODO Fix scroll stuff, make positioning dynamic in relation to width
+  position: fixed;
+  width: 351px;
+  height: 911px;
+  margin-left: 1120px;
+  top: 120px;
+  //colours
+  background: linear-gradient(180deg, #E2E2E2 1.15%, #000000 99.99%);
+  /* Main Colours/Dark Gray */
+  border: 1px solid #6F6F6F;
+  //TODO implement infinite length in ts
+}
+
+.documentPreviewTitle {
+  position: relative;
+  left: 20px;
+}
+
+
+
+.mainWindowHome {
+  padding-right: 351px;
+  padding-left: 250px;
+  padding-top: 120px;
+  //TODO make width dynamic with TS
+  width: 700px;
+}
+
 
 //Below is the styling for the directory path
 
@@ -193,20 +195,30 @@
   box-sizing: border-box;
   position: absolute;
   padding: 10px;
-  width: 50%;
+  width: 60%;
   background: #F7F7F7;
   /* Main Colours/Dark Gray */
-
-  border: 2px solid #6F6F6F;
+  border: 1px solid #6F6F6F;
   border-radius: 96px;
 }
 
-.searchBar input{
-  background-color:#F7F7F7;
-  fill: #F7F7F7;
-  caret-color: #F7F7F7;
+.searchBar input[type="text"], textarea {
+  background-color : #F7F7F7;
+  border: none;
+  width: inherit;
+}
+.searchBar input[type=text]:focus{
+  outline: none;
 }
 
 .searchBar img{
   height: 18px;
+}
+
+.searchBar input{
+  padding:10px;
+}
+
+.searchBar:focus-within{
+  border: 1.5px solid black;
 }
