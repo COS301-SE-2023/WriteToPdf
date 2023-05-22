@@ -8,67 +8,87 @@
 
     <div class="headerNavigation">
       <div class="navigationItems">
-
-        <img class="navigationIcon" src="assets/Icons/homeIcons/homeIcon.png" (click)="showNavbar('home')" alt="">
+        <img class="navigationIcon" src="assets/Icons/homeIcons/navbar/homeIcon.png" (click)="showNavbar('home')" alt="">
       </div>
     </div>
 
-    <div class="headerToolbarLeft">
-      <img class="icon" src="assets/Icons/homeIcons/newFile.png" alt="">
-      <img class="icon" src="assets/Icons/homeIcons/openScan.png" alt="">
-      <img class="icon" src="assets/Icons/homeIcons/uploadFile.png" alt="">
-      <img class="icon" src="assets/Icons/homeIcons/settings.png" alt="">
+    <div class="headerToolbarRight">
+      <img class="icon" src="assets/Icons/homeIcons/headerRightToolbar/newFile.png" alt="" (click)="navigateToPage('edit')">
+      <img class="icon" src=" assets/Icons/homeIcons/headerRightToolbar/openScan.png" alt="">
+      <img class="icon" src=" assets/Icons/homeIcons/headerRightToolbar/uploadFile.png" alt="">
+      <img class="icon" src=" assets/Icons/homeIcons/headerRightToolbar/settings.png" alt="">
     </div>
 
   </div>
-  
-  <div class="sideBarWrapper">
-    <div class="sideBarHeading">Conrad's Projects</div>
-    <div class="sideBarTools">
-      <!--    TODO-->
+
+  <div class="leftSideBarWrapper">
+    <div class="leftSideBarHeading">Conrad's Projects</div>
+    <div class="leftSideBarTools">
+      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png" >
+      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png" >
+      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" >
     </div>
-    <div class="directoryStructure">
-      <!--    TODO-->
-    </div>
+    <div class="directoryTree">
+        <ul class = "directoryTree1">
+          <li class="directoryItem">COS 314
+            <ul class = "directoryTree2">
+              <li class="directoryItem">Project 1</li>
+              <ul class = "directoryTree3">
+                <li class="directoryItem">OCR AI.md</li>
+                <li class="directoryItem">ImageRecognition AI.md</li>
+              </ul>
+              <li class="directoryItem">Lectures</li>
+              <ul class = "directoryTree3">
+                <li class="directoryItem">Lecture1.md</li>
+                <li class="directoryItem">Lecture2.md</li>
+              </ul>
+              <li class="directoryItem">Readme.md</li>
+              <li class="directoryItem">NiceToKnow.md</li>
+            </ul>
+          </li>
+        </ul>
   </div>
+    </div>
   <div class="mainWindowHome">
-    <!--  TODO-->
     <div class="directoryPath">
-      <!--    TODO-->
+      <nav id = "topDirectoryPath">
+        <span>
+          <a>COS 314</a>
+        </span>
+        <div class="directoryPathImageWrapper">
+        <img src="assets/Icons/homeIcons/navbar/indicatorArrowNavBar.png">
+        </div>
+        <span id = "lastSpan">
+          <a>Project 1</a>
+        </span>
+<!--     TODO   Below are elements that should be implemented in the future or added as necessary as the
+            file structure deems it necessary-->
+<!--        <span>-->
+<!--          <a>Root</a>-->
+<!--        </span>-->
+<!--        <span>-->
+<!--          <a>Root</a>-->
+<!--        </span>-->
+      </nav>
     </div>
     <div class="searchBar">
-      <!--    TODO-->
+      <img src="assets/Icons/homeIcons/mainWindow/searchIcon.png">
+      <input type="text" class="search-input" placeholder="Search...">
     </div>
     <div class="directoryContents">
-      <!--    TODO-->
+<!--TODO Here we should have the directory content to be loaded intelligently, using IDs or something like that-->
+      <div class = "directoryContent">
+
+      </div>
     </div>
   </div>
   <div class="documentPreviewSideBar">
     <div class="documentPreviewTitle">
       <!--    TODO make the title of the project dynamic-->
-      <h1>Preview - Project 6</h1>
+      <h1>OCR AI.md</h1>
     </div>
     <div class="documentPreview">
       <!--    TODO-->
     </div>
   </div>
 </div>
-<!--<ol>-->
-<!--    <li >-->
-<!--        <button (click)="navigateToPage('edit')" type="button" class="button">Edit Document</button>-->
-<!--    </li>-->
-<!--    <li >-->
-<!--        <button (click)="navigateToPage('edit')" type="button" class="button">Edit Document</button>-->
-<!--    </li>-->
-<!--    <li >-->
-<!--        <button (click)="navigateToPage('edit')" type="button" class="button">Edit Document</button>-->
-<!--    </li>-->
-<!--    <li >-->
-<!--        <button (click)="navigateToPage('edit')" type="button" class="button">Edit Document</button>-->
-<!--    </li>-->
-<!--    <li >-->
-<!--        <button (click)="navigateToPage('edit')" type="button" class="button">Edit Document</button>-->
-<!--    </li>-->
-
-
-<!--</ol>-->

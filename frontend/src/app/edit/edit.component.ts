@@ -43,17 +43,19 @@ export class EditComponent
   }
 
   getLoremIpsum() {
-    this.api.getLoremIpsum().subscribe(
-      (response) => {
+    this.api.getLoremIpsum().subscribe({
+      next: (response) => {
         this.documentContent = response.data;
       },
-      (error) => {
+      error: (error) => {
         console.error(
           'Error fetching items:',
           error,
         );
+        this.documentContent =
+          'Lorem Ipsum from app';
       },
-    );
+    });
   }
 
   navigateToPage(pageName: string) {

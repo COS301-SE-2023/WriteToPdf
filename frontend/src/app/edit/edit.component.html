@@ -7,7 +7,8 @@
           <img class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="">
         </div>
         <div class="docTitleWrapper">
-          <h3 class="documentTitle">Document Title</h3>
+          <label for="editHeading" class="displayNone">a</label>
+          <input type="text" editable="true" id="editHeading" class="documentTitle" value="New Document" maxlength="50">
         </div>
       </div>
       <div class="toolsWrapper">
@@ -62,7 +63,7 @@
       <div class="sidebarHeaderWrapper">
         <div class="sidebarHeader">
 
-          <div class="sidebarHeaderIconWrapper backWrapper">
+          <div class="sidebarHeaderIconWrapper backWrapper" >
             <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="">
 
           </div>
@@ -234,16 +235,10 @@
 
     </div>
 
+    <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
+      {{ documentContent }}
+    </div>
+  </div>
 
-  </div>
-  <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
-    {{ documentContent }}
-  </div>
-  <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
-    {{ documentContent }}
-  </div>
-  <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
-    {{ documentContent }}
-  </div>
 
 </div>

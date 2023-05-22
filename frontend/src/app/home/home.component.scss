@@ -1,8 +1,11 @@
+@import '../../styles.scss';
+
 .container {
   width: 100%;
   overflow-x: auto;
   white-space: nowrap;
 }
+//Code Section Header Styling
 .header {
   position: fixed;
   display: grid;
@@ -16,7 +19,7 @@
   justify-content: space-between;
 }
 
-.logoWrapper{
+.logoWrapper {
   display: flex;
   align-items: center;
 }
@@ -24,43 +27,43 @@
 .logo {
   width: 75px;
   height: 77px;
-
 }
 
-.headerNavigation{
+.headerNavigation {
   display: flex;
 }
 
-.navigationItems{
-  width:-moz-fit-content;
+.navigationItems {
+  width: -moz-fit-content;
   width: fit-content;
   margin: auto;
 }
 
-.navigationIcon{
-  width: 60px;
+.navigationIcon {
+  width: 57px;
   height: 50px;
-
 }
 
-.headerToolbarLeft{
+.headerToolbarRight {
   display: flex;
 }
-.headerToolbarLeft .icon{
+
+.headerToolbarRight .icon {
   width: 50px;
-  padding: 4px;
+  padding: 8px;
   padding-top: 30px;
   height: 50px;
 }
+//END Code section header styling
+//Left Sidebar styling
 
-
-.sideBarWrapper{
+.leftSideBarWrapper {
   //Positioning
-  position: absolute;
+  position: fixed;
   width: 245px;
   height: 100%;
   left: 0px;
-  top: 112px;
+  top: 120px;
   // Colour
   background: linear-gradient(360deg, rgba(255, 255, 255, 0) -3.74%, #D2D2D2 -3.74%, rgba(217, 217, 217, 0) 97.6%);
   /* Main Colours/Dark Gray */
@@ -70,14 +73,61 @@
   //TODO implement infinite length in ts
 }
 
-.documentPreviewSideBar{
+.leftSideBarHeading {
+  padding-top: 15px;
+  padding-left: 50px;
+}
+.leftSideBarTools .icon {
+  width: 30px;
+  height: 30px;
+  padding: 4px;
+}
+
+.leftSideBarTools {
+  padding: 5px;
+}
+
+//Below is the styling for the directory tree
+
+ .directoryTree {
+   margin-top: -20px;
+   display: block;
+ }
+
+.directoryTree li {
+  padding: 5px;
+}
+
+
+.directoryTree1 {
+  padding: 0;
+  list-style-type: none;
+  display: block;
+}
+
+.directoryTree2 {
+  padding: 5px;
+  list-style-type: none;
+  display: block;
+}
+
+.directoryTree3 {
+  padding: 10px;
+  list-style-type: none;
+  display: block;
+}
+
+.directoryItem li:hover {
+  background-color: #ddd
+}
+.documentPreviewSideBar {
   //positioning
-  //TODO Fix scroll stuff
-  position: relative;
+  //TODO Fix scroll stuff, make positioning dynamic in relation to width
+  position: fixed;
   width: 351px;
   height: 911px;
-  float: right;
-  top:105px;
+  margin-left: 1120px;
+  top: 120px;
   //colours
   background: linear-gradient(180deg, #E2E2E2 1.15%, #000000 99.99%);
   /* Main Colours/Dark Gray */
@@ -85,13 +135,90 @@
   //TODO implement infinite length in ts
 }
 
-.documentPreviewTitle{
+.documentPreviewTitle {
   position: relative;
   left: 20px;
 }
 
-.mainWindowHome{
-  padding-right: 50px;
-  padding-left: 50px;
 
+
+.mainWindowHome {
+  padding-right: 351px;
+  padding-left: 250px;
+  padding-top: 120px;
+  //TODO make width dynamic with TS
+  width: 700px;
+}
+
+
+//Below is the styling for the directory path
+
+.directoryPath {
+  padding: 4px;
+}
+
+.directoryPath img {
+  padding-left: 7px;
+  padding-right: 7px;
+  height: 15px;
+  max-height: 100%;
+}
+.directoryPathImageWrapper{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.directoryPath span {
+  width: 89.07px;
+  height: 31.8px;
+  top: 147.79px;
+  align-items: center;
+  justify-items: center;
+  /* Seconday Colours/Light Gray */
+  font-size: 25px;
+  background: rgba(196, 196, 196, 0.42);
+  border-radius: 4px;
+}
+
+.directoryPath span a{
+  padding: 20px 20px 20px 20px;
+}
+
+.directoryPath #lastSpan{
+  border: 1px  solid black;
+}
+
+// Below is the styling for the searchBar
+.searchBar {
+  margin-top: 15px;
+  box-sizing: border-box;
+  position: absolute;
+  padding: 10px;
+  width: 60%;
+  background: #F7F7F7;
+  /* Main Colours/Dark Gray */
+  border: 1px solid #6F6F6F;
+  border-radius: 96px;
+}
+
+.searchBar input[type="text"], textarea {
+  background-color : #F7F7F7;
+  border: none;
+  width: inherit;
+}
+.searchBar input[type=text]:focus{
+  outline: none;
+}
+
+.searchBar img{
+  height: 18px;
+}
+
+.searchBar input{
+  padding:10px;
+}
+
+.searchBar:focus-within{
+  border: 1.5px solid black;
 }
