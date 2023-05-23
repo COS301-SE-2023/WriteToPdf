@@ -30,6 +30,7 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 
 ## Documentation
 <a href="https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing">Software Requirement Specification</a><br/>
+[Member contributions](https://docs.google.com/document/d/14n7aEG_Lwh3dXSq6ltJ8XE_rzAREMGsH-3B-crGn2fM/edit?usp=sharing)
 
 ## Tech Stack
 
