@@ -1,4 +1,4 @@
-name: Running main tests
+name: Build Codebase
 
 on:
   push:
