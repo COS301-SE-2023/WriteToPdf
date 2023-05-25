@@ -33,6 +33,11 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
     <img alt="Angular" src="https://img.shields.io/badge/angular-dd0031?style=for-the-badge&logo=angular&logoColor=white" />
 </a>
 
+
+<a href="https://primeng.org/">
+    <img alt="Angular" src="https://img.shields.io/badge/primeng-dd0031?style=for-the-badge&logo=primeng&logoColor=white" />
+</a>
+
 <a href="https://nestjs.com/">
   <img alt="NestJS" src="https://img.shields.io/badge/nestjs-e0234e?style=for-the-badge&logo=nestjs&logoColor=white" />
 </a>
