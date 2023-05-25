@@ -78,7 +78,7 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: /backend/coverage/lcov.info
+          files: backend/coverage/lcov.info
 
       # - name: Upload Frontend Coverage Report to Codecov
       #   uses: codecov/codecov-action@v2
