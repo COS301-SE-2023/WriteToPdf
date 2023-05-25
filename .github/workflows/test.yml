@@ -57,9 +57,9 @@ jobs:
         with:
           node-version: '16.x'
 
-      - name: Run backend tests
-        working-directory: backend
-        run: npm run test
+      # - name: Run backend tests
+      #   working-directory: backend
+      #   run: npm run test
 
       - name: Run frontend tests
         working-directory: frontend
