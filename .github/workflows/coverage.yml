@@ -43,11 +43,27 @@ jobs:
           
       - name: Install dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm install
       
-      - name: Run frontend tests
+      - name: Install cypress-istanbul
         working-directory: frontend
-        run: npm run test -- --coverage
+        run: npm install --save-dev cypress-istanbul
+
+      - name: Run frontend tests with coverage
+        working-directory: frontend
+        run: npx cypress-istanbul instrument --output coverage --no-compress
+
+      - name: Serve the application
+        working-directory: frontend
+        run: npm run start &
+
+      - name: Wait for the application to start
+        working-directory: frontend
+        run: sleep 5s
+
+      - name: Run Cypress tests
+        working-directory: frontend
+        run: npx cypress run
         env:
           CI: true
 
