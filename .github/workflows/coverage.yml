@@ -26,7 +26,7 @@ jobs:
       
       - name: Run backend tests
         working-directory: backend
-        run: npm run test -- --coverage
+        run: npm run test:cov
         env:
           CI: true
 
