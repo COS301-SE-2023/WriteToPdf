@@ -1,36 +1,41 @@
-name: Test
+name: Test Codebase
 
 on:
   push:
-    branches:
-      - test
+    branches: [ test ]
   pull_request:
-    branches:
-      - test
+    branches: [ test ]
 
 jobs:
-  build:
+  build_backend:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
-          
-      - name: Run backend tests
+          node-version: '16.x'
+        
+      - name: Install dependencies
         working-directory: backend
-        run: npm ci && npm run test
+        run: npm install
+    
+  build_frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Install frontend dependencies
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          
+      - name: Install dependencies
         working-directory: frontend
         run: npm install
-
-      # - name: Build the application
-      #   run: npm run build
 
       - name: Serve the application
         working-directory: frontend
@@ -39,7 +44,23 @@ jobs:
       - name: Wait for the application to start
         working-directory: frontend
         run: sleep 5s
-        
-      - name: Run Cypress tests
+
+  run_tests:
+    runs-on: ubuntu-latest
+    needs: [build_backend, build_frontend]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+
+      - name: Run backend tests
+        working-directory: backend
+        run: npm run test
+
+      - name: Run frontend tests
         working-directory: frontend
-        run: npx cypress run
+        run: npm run test
