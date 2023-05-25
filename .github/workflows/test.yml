@@ -1,45 +1,58 @@
-name: Test
+name: Test Codebase
 
 on:
   push:
-    branches:
-      - test
+    branches: [ test ]
   pull_request:
-    branches:
-      - test
+    branches: [ test ]
 
 jobs:
-  build:
+  test_backend:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
-          
+          node-version: '16.x'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+        
+      - name: Install dependencies
+        working-directory: backend
+        run: npm install
+      
       - name: Run backend tests
         working-directory: backend
-        run: npm ci && npm run test
+        run: npm run test
+    
+  test_frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Install frontend dependencies
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+          
+      - name: Install dependencies
         working-directory: frontend
         run: npm install
-
-      # - name: Build the application
-      #   run: npm run build
-
+      
       - name: Serve the application
         working-directory: frontend
         run: npm run start &
-        
+
       - name: Wait for the application to start
         working-directory: frontend
         run: sleep 5s
-        
-      - name: Run Cypress tests
+
+      - name: Run frontend tests
         working-directory: frontend
-        run: npx cypress run
+        run: npm run test
