@@ -19,6 +19,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '16.x'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
         working-directory: backend
@@ -78,7 +80,7 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./backend/coverage
+          directory: backend/coverage
 
       # - name: Upload Frontend Coverage Report to Codecov
       #   uses: codecov/codecov-action@v2
