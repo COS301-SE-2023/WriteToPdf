@@ -7,6 +7,7 @@
 
 <!-- New badges -->
 ![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/COS301-SE-2023/WriteToPdf)
+[![codecov](https://codecov.io/gh/COS301-SE-2023/WriteToPdf/branch/main/graph/badge.svg?token=2CELOVRCM3)](https://codecov.io/gh/COS301-SE-2023/WriteToPdf)
 ![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf)
 [![MainTests](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test.yml)
 [![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2023/WriteToPdf?color=blue)](https://github.com/COS301-SE-2023/WriteToPdf/issues?q=is%3Aissue+is%3Aclosed)
@@ -14,7 +15,6 @@
 <!-- [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2023_WriteToPdf&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2023_WriteToPdf) -->
 <!-- [![Requirements Status](https://requires.io/github/COS301-SE-2023/WriteToPdf/requirements.svg?branch=main)](https://requires.io/github/COS301-SE-2023/WriteToPdf/requirements/?branch=main) -->
 <!-- [![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml) -->
-<!-- [![codecov](https://codecov.io/gh/COS301-SE-2023/WriteToPdf/branch/main/graph/badge.svg?token=2BANYONTYU)](https://codecov.io/gh/COS301-SE-2023/WriteToPdf) -->
 
 <div align="center"><img src="https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/c151ddb6-fc79-4366-87ea-f91a033dfe10" /></div>
 
