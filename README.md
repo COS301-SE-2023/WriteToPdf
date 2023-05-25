@@ -8,7 +8,7 @@
 <!-- New badges -->
 ![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/COS301-SE-2023/WriteToPdf)
 ![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf)
-[![MainTests](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/main.yml)
+[![MainTests](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test.yml)
 [![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2023/WriteToPdf?color=blue)](https://github.com/COS301-SE-2023/WriteToPdf/issues?q=is%3Aissue+is%3Aclosed)
 [![Commits](https://img.shields.io/github/commit-activity/w/COS301-SE-2023/WriteToPdf)](https://github.com/COS301-SE-2023/WriteToPdf/issues)
 [![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml)
