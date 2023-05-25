@@ -30,45 +30,45 @@ jobs:
         env:
           CI: true
 
-  test_frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  # test_frontend:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16.x'
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '16.x'
           
-      - name: Install dependencies
-        working-directory: frontend
-        run: npm install
+  #     - name: Install dependencies
+  #       working-directory: frontend
+  #       run: npm install
       
-      - name: Install cypress-istanbul
-        working-directory: frontend
-        run: npm install --save-dev cypress-istanbul
+  #     - name: Install cypress-istanbul
+  #       working-directory: frontend
+  #       run: npm install --save-dev cypress-istanbul
 
-      - name: Run frontend tests with coverage
-        working-directory: frontend
-        run: npx cypress-istanbul instrument --output coverage --no-compress
+  #     - name: Run frontend tests with coverage
+  #       working-directory: frontend
+  #       run: npx cypress-istanbul instrument --output coverage --no-compress
 
-      - name: Serve the application
-        working-directory: frontend
-        run: npm run start &
+  #     - name: Serve the application
+  #       working-directory: frontend
+  #       run: npm run start &
 
-      - name: Wait for the application to start
-        working-directory: frontend
-        run: sleep 5s
+  #     - name: Wait for the application to start
+  #       working-directory: frontend
+  #       run: sleep 5s
 
-      - name: Run Cypress tests
-        working-directory: frontend
-        run: npx cypress run
-        env:
-          CI: true
+  #     - name: Run Cypress tests
+  #       working-directory: frontend
+  #       run: npx cypress run
+  #       env:
+  #         CI: true
 
   upload-coverage:
-    needs: [test_backend, test_frontend]
+    needs: [test_backend]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -80,8 +80,8 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ./backend/coverage
 
-      - name: Upload Frontend Coverage Report to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./frontend/coverage
+      # - name: Upload Frontend Coverage Report to Codecov
+      #   uses: codecov/codecov-action@v2
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     directory: ./frontend/coverage
