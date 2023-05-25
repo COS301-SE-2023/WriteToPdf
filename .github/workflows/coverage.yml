@@ -2,11 +2,9 @@ name: Upload Code Coverage
 
 on:
   push:
-    branches:
-      - test
+    branches: [ main, test]
   pull_request:
-    branches:
-      - test
+    branches: [ main, test]
 
 jobs:
   test_backend:
@@ -80,7 +78,7 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: backend/coverage/lcov.info
+          files: */backend/coverage/lcov.info
 
       # - name: Upload Frontend Coverage Report to Codecov
       #   uses: codecov/codecov-action@v2
