@@ -7,7 +7,7 @@ on:
     branches: [ main, test]
 
 jobs:
-  test_backend:
+  upload_test_coverage:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -29,6 +29,12 @@ jobs:
         run: npm run test:cov
         env:
           CI: true
+      
+      - name: Upload Backend Coverage Report to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: backend/coverage/lcov.info
 
   # test_frontend:
   #   runs-on: ubuntu-latest
@@ -67,18 +73,18 @@ jobs:
   #       env:
   #         CI: true
 
-  upload-coverage:
-    needs: [test_backend]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+  # upload-coverage:
+  #   needs: [test_backend]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v2
 
-      - name: Upload Backend Coverage Report to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: backend/coverage/lcov.info
+  #     - name: Upload Backend Coverage Report to Codecov
+  #       uses: codecov/codecov-action@v3
+  #       with:
+  #         token: ${{ secrets.CODECOV_TOKEN }}
+  #         files: backend/coverage/lcov.info
 
       # - name: Upload Frontend Coverage Report to Codecov
       #   uses: codecov/codecov-action@v2
