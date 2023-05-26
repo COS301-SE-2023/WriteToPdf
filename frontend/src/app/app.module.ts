@@ -8,18 +8,22 @@ import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { EditComponent } from './edit/edit.component';
 import { EditApi } from './edit/edit.api';
+import { EditorModule } from 'primeng/editor';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HomeComponent,
-    EditComponent,
+    
+    
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    EditorModule,
+
   ],
   providers: [EditApi],
   bootstrap: [AppComponent],

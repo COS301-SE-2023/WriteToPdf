@@ -7,17 +7,22 @@ import {
 import { Router } from '@angular/router';
 
 import { EditApi } from './edit.api';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { EditorModule } from 'primeng/editor';
 
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
 })
+
+
 export class EditComponent
   implements AfterViewInit, OnInit
 {
   documentContent: string = '';
-
+  text: string = '';
   constructor(
     private elementRef: ElementRef,
     private api: EditApi,
@@ -60,3 +65,12 @@ export class EditComponent
     this.router.navigate([`/${pageName}`]);
   }
 }
+
+@NgModule({
+  imports: [
+    FormsModule,
+    EditorModule
+  ],
+  declarations: [EditComponent]
+})
+export class EditModule { }
