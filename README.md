@@ -51,8 +51,8 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
   <img alt="AWS EC2" src="https://img.shields.io/badge/amazon%20ec2-dd700f?style=for-the-badge&logo=aws&logoColor=white" />
 </a>
 
-<a href="https://aws.amazon.com/dynamodb/">
-  <img alt="AWS DynamoDB" src="https://img.shields.io/badge/AWS%20DynamoDB-246cb2?style=for-the-badge&logo=aws&logoColor=white" />
+<a href="https://mariadb.org/">
+  <img alt="MARIADB" src="https://img.shields.io/badge/mariadb-142958?style=for-the-badge&logo=mariadb&logoColor=white" />
 </a>
 
 ## Organisation & Management
