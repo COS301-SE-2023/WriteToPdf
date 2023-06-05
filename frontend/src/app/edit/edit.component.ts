@@ -10,6 +10,7 @@ import { EditApi } from './edit.api';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EditorModule } from 'primeng/editor';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-edit',
@@ -22,7 +23,13 @@ export class EditComponent
   implements AfterViewInit, OnInit
 {
   documentContent: string = '';
-  text: string = '';
+  text: string = 'HELLO WORDLS';
+
+  cities: any[] = [
+    { name: 'New York', code: 'NY' },
+    { name: 'Rome', code: 'RM' },
+    { name: 'London', code: 'LDN' },
+  ]
   constructor(
     private elementRef: ElementRef,
     private api: EditApi,
@@ -30,10 +37,10 @@ export class EditComponent
   ) {}
 
   ngOnInit(): void {
-    // const savedContent = localStorage.getItem('document');
-    // if (savedContent) {
-    //   this.documentContent = savedContent;
-    // }
+    const savedContent = localStorage.getItem('document');
+    if (savedContent) {
+      this.text = savedContent;
+    }
     this.getLoremIpsum();
   }
   ngAfterViewInit() {
@@ -43,7 +50,7 @@ export class EditComponent
 
   onContentChange(event: any) {
     // Save the document content to localStorage when changes occur
-    const content = event.target.innerHTML;
+    const content = this.text;
     localStorage.setItem('document', content);
   }
 
@@ -64,12 +71,19 @@ export class EditComponent
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
+
+  outputText() {
+    console.log(this.text);
+  }
+
+  
 }
 
 @NgModule({
   imports: [
     FormsModule,
-    EditorModule
+    EditorModule,
+    DropdownModule,
   ],
   declarations: [EditComponent]
 })

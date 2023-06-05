@@ -54,6 +54,7 @@ $sidebar-content-width: 225px;
 .documentTitle:hover {
     border: 1px solid #000000;
 }
+
 .documentTitle:focus {
     border: 1px solid #000000 !important;
 }
@@ -65,9 +66,9 @@ $sidebar-content-width: 225px;
 
 }
 
-.tool img{
+.tool img {
     width: 30px;
-        height: 30px;
+    height: 30px;
 }
 
 .tool:hover {
@@ -125,8 +126,8 @@ $sidebar-content-width: 225px;
     display: flex;
     position: absolute;
 
-    top:127px;
-    left:260px;
+    top: 127px;
+    left: 260px;
     z-index: -10;
     margin: 0;
     overflow: auto;
@@ -139,13 +140,13 @@ $sidebar-content-width: 225px;
 
 .page {
     margin: auto;
-    margin-top:50px;
-    margin-bottom:50px;
-    padding:50px;
-    margin-left: max(50px , auto);
-    height: 297*4px;
-    width: 210*4-100px;
-    min-width: 210*4px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    padding: 50px;
+    margin-left: max(50px, auto);
+    height: 1188px;
+    width: 740px;
+    min-width: 840px;
     background-color: #ffffff;
     overflow-x: auto;
 }
@@ -162,9 +163,6 @@ $sidebar-content-width: 225px;
     border-right: 1px solid #c7c7c7;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-
-    scrollbar-width: thin;
-    scrollbar-color: #888 #f1f1f1;
 }
 
 .pageName {
@@ -206,8 +204,10 @@ div[contenteditable="true"]:focus {
 }
 
 .sidebarHeaderIconWrapper {
+    border-radius: 5px;
+    padding: 5px;
     display: flex;
-    margin: 20px;
+    margin: 15px;
     margin-right: 0px;
 }
 
@@ -217,6 +217,12 @@ div[contenteditable="true"]:focus {
 
 .sidebarHeaderIcon {
     margin: auto;
+    width: 25px;
+}
+
+.sidebarHeaderIconWrapper:hover {
+    cursor: pointer;
+    background-color: $light-grey;
 }
 
 .assetSidebar hr {
@@ -277,10 +283,14 @@ div[contenteditable="true"]:focus {
     border: 1px solid #000000;
 }
 
-.assetDescription{
+.assetDescription {
     margin-left: 5px;
 }
 
 .displayNone {
     display: none;
+}
+
+.quill-editor{
+    border: none;
 }
