@@ -11,6 +11,7 @@ import { EditApi } from './edit/edit.api';
 import { EditorModule } from 'primeng/editor';
 import { CameraComponent } from './camera/camera.component';
 import { EditAssetComponent } from './edit-asset/edit-asset.component';
+import { WebcamModule } from 'ngx-webcam';
 
 @NgModule({
   declarations: [
@@ -19,15 +20,13 @@ import { EditAssetComponent } from './edit-asset/edit-asset.component';
     HomeComponent,
     CameraComponent,
     EditAssetComponent,
-    
-    
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     EditorModule,
-
+    WebcamModule,
   ],
   providers: [EditApi],
   bootstrap: [AppComponent],
