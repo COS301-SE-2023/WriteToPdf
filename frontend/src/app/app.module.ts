@@ -12,6 +12,7 @@ import { EditorModule } from 'primeng/editor';
 import { CameraComponent } from './camera/camera.component';
 import { EditAssetComponent } from './edit-asset/edit-asset.component';
 import { WebcamModule } from 'ngx-webcam';
+import { SignupComponent } from './signup/signup.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { WebcamModule } from 'ngx-webcam';
     HomeComponent,
     CameraComponent,
     EditAssetComponent,
+    SignupComponent,
   ],
   imports: [
     BrowserModule,

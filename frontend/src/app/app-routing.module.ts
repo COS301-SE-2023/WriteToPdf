@@ -5,6 +5,7 @@ import { HomeComponent } from './home/home.component';
 import { EditComponent } from './edit/edit.component';
 import { CameraComponent } from './camera/camera.component';
 import { EditAssetComponent } from './edit-asset/edit-asset.component';
+import { SignupComponent } from './signup/signup.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'edit', component: EditComponent },
   { path: 'camera', component: CameraComponent },
   { path: 'edit-asset', component: EditAssetComponent },
+  { path: 'signup', component: SignupComponent },
 ];
 
 @NgModule({
