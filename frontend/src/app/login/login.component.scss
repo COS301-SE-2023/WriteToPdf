@@ -145,16 +145,19 @@ hr {
     margin: auto;
 }
 
-.noAccount{
-    margin:auto;
+.noAccount {
+    margin: auto;
 }
 
-.noAccountText:hover{
+.noAccountText:hover {
     cursor: pointer;
     text-decoration: underline;
 }
-.noAccountText{
-    margin:auto;
+
+.noAccountText {
+    margin: auto;
     font-size: 16px;
     font-weight: regular;
+    -webkit-user-select: none;
+    user-select: none;
 }
