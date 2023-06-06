@@ -29,24 +29,24 @@
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" >
     </div>
     <div class="directoryTree">
-        <ul class = "directoryTree1">
-          <li class="directoryItem">COS 314
-            <ul class = "directoryTree2">
-              <li class="directoryItem">Project 1</li>
-              <ul class = "directoryTree3">
-                <li class="directoryItem">OCR AI.md</li>
-                <li class="directoryItem">ImageRecognition AI.md</li>
-              </ul>
-              <li class="directoryItem">Lectures</li>
-              <ul class = "directoryTree3">
-                <li class="directoryItem">Lecture1.md</li>
-                <li class="directoryItem">Lecture2.md</li>
-              </ul>
-              <li class="directoryItem">Readme.md</li>
-              <li class="directoryItem">NiceToKnow.md</li>
-            </ul>
-          </li>
-        </ul>
+          <p-treeSelect class="md:w-20rem w-full" containerStyleClass="w-full" [(ngModel)]="selectedNodes" [options]="nodes" placeholder="Select Item"></p-treeSelect>
+<!--          <li class="directoryItem">COS 314-->
+<!--            <ul class = "directoryTree2">-->
+<!--              <li class="directoryItem">Project 1</li>-->
+<!--              <ul class = "directoryTree3">-->
+<!--                <li class="directoryItem">OCR AI.md</li>-->
+<!--                <li class="directoryItem">ImageRecognition AI.md</li>-->
+<!--              </ul>-->
+<!--              <li class="directoryItem">Lectures</li>-->
+<!--              <ul class = "directoryTree3">-->
+<!--                <li class="directoryItem">Lecture1.md</li>-->
+<!--                <li class="directoryItem">Lecture2.md</li>-->
+<!--              </ul>-->
+<!--              <li class="directoryItem">Readme.md</li>-->
+<!--              <li class="directoryItem">NiceToKnow.md</li>-->
+<!--            </ul>-->
+<!--          </li>-->
+<!--        </ul>-->
   </div>
     </div>
   <div class="mainWindowHome">

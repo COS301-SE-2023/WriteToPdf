@@ -76,15 +76,6 @@ export class EditComponent
     console.log(this.text);
   }
 
-  
+
 }
 
-@NgModule({
-  imports: [
-    FormsModule,
-    EditorModule,
-    DropdownModule,
-  ],
-  declarations: [EditComponent]
-})
-export class EditModule { }
