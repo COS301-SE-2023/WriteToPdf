@@ -1,6 +1,21 @@
-[![Issues][issues-shield]][issues-url]
-[![Stargazers][stars-shield]][stars-url]
+<!-- Previous badges -->
+<!-- [![Issues][issues-shield]][issues-url]
+
+[![Stargazers][stars-shield]][stars-url] -->
+
 # WriteToPdf
+
+<!-- New badges -->
+<!--![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/COS301-SE-2023/WriteToPdf) -->
+[![codecov](https://codecov.io/gh/COS301-SE-2023/WriteToPdf/branch/main/graph/badge.svg?token=2CELOVRCM3)](https://codecov.io/gh/COS301-SE-2023/WriteToPdf)
+![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf)
+[![MainTests](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test.yml)
+[![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2023/WriteToPdf?color=blue)](https://github.com/COS301-SE-2023/WriteToPdf/issues?q=is%3Aissue+is%3Aclosed)
+[![Commits](https://img.shields.io/github/commit-activity/w/COS301-SE-2023/WriteToPdf)](https://github.com/COS301-SE-2023/WriteToPdf/issues)
+[![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml)
+<!-- [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2023_WriteToPdf&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2023_WriteToPdf) -->
+<!-- [![Requirements Status](https://requires.io/github/COS301-SE-2023/WriteToPdf/requirements.svg?branch=main)](https://requires.io/github/COS301-SE-2023/WriteToPdf/requirements/?branch=main) -->
+<!-- [![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml) -->
 
 <div align="center"><img src="https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/c151ddb6-fc79-4366-87ea-f91a033dfe10" /></div>
 
@@ -9,14 +24,23 @@
 
 WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritten notes into structured documents that can be edited and shared with others.
 
+## Demos
+- [Demo 1](https://drive.google.com/drive/folders/1D8awdHGBDuI7PGQYF_jtX9iGq_9PWY3x?usp=sharing)
+
 
 ## Documentation
 <a href="https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing">Software Requirement Specification</a><br/>
+[Member contributions](https://docs.google.com/document/d/14n7aEG_Lwh3dXSq6ltJ8XE_rzAREMGsH-3B-crGn2fM/edit?usp=sharing)
 
 ## Tech Stack
 
 <a href="https://angular.io">
     <img alt="Angular" src="https://img.shields.io/badge/angular-dd0031?style=for-the-badge&logo=angular&logoColor=white" />
+</a>
+
+
+<a href="https://primeng.org/">
+    <img alt="Angular" src="https://img.shields.io/badge/primeng-dd0031?style=for-the-badge&logo=primeng&logoColor=white" />
 </a>
 
 <a href="https://nestjs.com/">
@@ -27,8 +51,8 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
   <img alt="AWS EC2" src="https://img.shields.io/badge/amazon%20ec2-dd700f?style=for-the-badge&logo=aws&logoColor=white" />
 </a>
 
-<a href="https://aws.amazon.com/dynamodb/">
-  <img alt="AWS DynamoDB" src="https://img.shields.io/badge/AWS%20DynamoDB-246cb2?style=for-the-badge&logo=aws&logoColor=white" />
+<a href="https://mariadb.org/">
+  <img alt="MARIADB" src="https://img.shields.io/badge/mariadb-142958?style=for-the-badge&logo=mariadb&logoColor=white" />
 </a>
 
 ## Organisation & Management

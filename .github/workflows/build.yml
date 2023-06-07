@@ -1,0 +1,28 @@
+name: Build Codebase
+
+on:
+  push:
+    branches: [ main, test]
+  pull_request:
+    branches: [ main, test]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          
+      - name: Build backend
+        working-directory: backend
+        run: npm ci && npm run build
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm install && npm run build
