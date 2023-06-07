@@ -16,6 +16,8 @@ import { TreeSelectModule } from 'primeng/treeselect';
 import {TreeModule} from "primeng/tree";
 import {FormsModule} from "@angular/forms";
 import {DropdownModule} from "primeng/dropdown";
+import {NodeService} from "./home/home.service";
+import { BreadcrumbModule } from 'primeng/breadcrumb';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,9 +38,10 @@ import {DropdownModule} from "primeng/dropdown";
     TreeModule,
     FormsModule,
     EditorModule,
-    DropdownModule
+    DropdownModule,
+    BreadcrumbModule
   ],
-  providers: [EditApi],
+  providers: [EditApi, NodeService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
