@@ -29,57 +29,53 @@
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" >
     </div>
     <div class="directoryTree">
-        <ul class = "directoryTree1">
-          <li class="directoryItem">COS 314
-            <ul class = "directoryTree2">
-              <li class="directoryItem">Project 1</li>
-              <ul class = "directoryTree3">
-                <li class="directoryItem">OCR AI.md</li>
-                <li class="directoryItem">ImageRecognition AI.md</li>
-              </ul>
-              <li class="directoryItem">Lectures</li>
-              <ul class = "directoryTree3">
-                <li class="directoryItem">Lecture1.md</li>
-                <li class="directoryItem">Lecture2.md</li>
-              </ul>
-              <li class="directoryItem">Readme.md</li>
-              <li class="directoryItem">NiceToKnow.md</li>
-            </ul>
-          </li>
-        </ul>
+      <p-tree class="w-full md:w-30rem" [value]="files"></p-tree><!--          <li class="directoryItem">COS 314-->
+<!--            <ul class = "directoryTree2">-->
+<!--              <li class="directoryItem">Project 1</li>-->
+<!--              <ul class = "directoryTree3">-->
+<!--                <li class="directoryItem">OCR AI.md</li>-->
+<!--                <li class="directoryItem">ImageRecognition AI.md</li>-->
+<!--              </ul>-->
+<!--              <li class="directoryItem">Lectures</li>-->
+<!--              <ul class = "directoryTree3">-->
+<!--                <li class="directoryItem">Lecture1.md</li>-->
+<!--                <li class="directoryItem">Lecture2.md</li>-->
+<!--              </ul>-->
+<!--              <li class="directoryItem">Readme.md</li>-->
+<!--              <li class="directoryItem">NiceToKnow.md</li>-->
+<!--            </ul>-->
+<!--          </li>-->
+<!--        </ul>-->
   </div>
     </div>
   <div class="mainWindowHome">
     <div class="directoryPath">
-      <nav id = "topDirectoryPath">
-        <span>
-          <a>COS 314</a>
-        </span>
-        <div class="directoryPathImageWrapper">
-        <img src="assets/Icons/homeIcons/navbar/indicatorArrowNavBar.png">
-        </div>
-        <span id = "lastSpan">
-          <a>Project 1</a>
-        </span>
-<!--     TODO   Below are elements that should be implemented in the future or added as necessary as the
-            file structure deems it necessary-->
-<!--        <span>-->
-<!--          <a>Root</a>-->
-<!--        </span>-->
-<!--        <span>-->
-<!--          <a>Root</a>-->
-<!--        </span>-->
-      </nav>
+      <p-breadcrumb class="max-w-full" [model]="directoryItems" [home]="directoryHome"></p-breadcrumb>
     </div>
     <div class="searchBar">
       <img src="assets/Icons/homeIcons/mainWindow/searchIcon.png">
       <input type="text" class="search-input" placeholder="Search...">
     </div>
     <div class="directoryContents">
-<!--TODO Here we should have the directory content to be loaded intelligently, using IDs or something like that-->
-      <div class = "directoryContent">
-
-      </div>
+      <p-treeTable [value]="files" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Type</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+          <tr [ttRow]="rowNode">
+            <td>
+              <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+              {{ rowData.name }}
+            </td>
+            <td>{{ rowData.size }}</td>
+            <td>{{ rowData.type }}</td>
+          </tr>
+        </ng-template>
+      </p-treeTable>
     </div>
   </div>
   <div class="documentPreviewSideBar">

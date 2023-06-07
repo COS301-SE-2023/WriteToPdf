@@ -1,6 +1,6 @@
 @import '../../styles.scss';
 
-.loginWrapper {
+.signupWrapper {
 
     position: absolute;
 
@@ -14,7 +14,8 @@
     height: -moz-fit-content;
     height: fit-content;
 
-    margin: auto;
+    margin:auto;
+
     background-color: $light-grey;
 
     border-radius: 33px;
@@ -23,7 +24,7 @@
 
 }
 
-.loginForm {
+.signupForm {
     margin: auto;
     width: 100%;
 }
@@ -79,7 +80,7 @@
     font-weight: regular;
 }
 
-.loginButton {
+.signupButton {
     font-family: Cabin;
     border: none;
     border-radius: 90px;
@@ -95,12 +96,12 @@
     transition: 0.3s;
 }
 
-.loginButton:hover {
+.signupButton:hover {
     box-shadow: 0 5px #666;
     transform: translateY(-4px);
 }
 
-.loginButton:active {
+.signupButton:active {
     box-shadow: 0 0px #666;
     transform: translateY(4px);
 }

@@ -13,7 +13,7 @@
       </div>
       <div class="toolsWrapper">
         <div class="tool">
-          <img src="assets/Icons/editIcons/download.svg" alt="">
+          <img src="assets/Icons/editIcons/download.svg" alt="" (click)="outputText()">
         </div>
         <div class="tool">
           <img src="assets/Icons/editIcons/share.svg" alt="">
@@ -63,7 +63,7 @@
       <div class="sidebarHeaderWrapper">
         <div class="sidebarHeader">
 
-          <div class="sidebarHeaderIconWrapper backWrapper" >
+          <div class="sidebarHeaderIconWrapper backWrapper">
             <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="">
 
           </div>
@@ -74,7 +74,8 @@
           </div>
 
           <div class="sidebarHeaderIconWrapper">
-            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/uploadAsset.svg" alt="">
+            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/addAsset.png" alt=""
+              (click)="navigateToPage('camera')">
 
           </div>
 
@@ -84,7 +85,7 @@
           </div>
 
         </div>
-        <hr/>
+        <hr />
       </div>
 
       <div class="alignDiv"></div>
@@ -234,10 +235,24 @@
       </div>
 
     </div>
+    <div class="page">
 
-    <div data-testid="a4-page" class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
-      {{ documentContent }}
+      <p-editor [(ngModel)]="text" [style]="{ height: '1138px' }" class="quill-editor">
+        <!-- <ng-template pTemplate="header">
+          <span class="ql-formats">
+            <button type="button" class="ql-bold" aria-label="Bold"></button>
+            <button type="button" class="ql-italic" aria-label="Italic"></button>
+            <button type="button" class="ql-underline" aria-label="Underline"></button>
+          </span>
+        </ng-template> -->
+
+      </p-editor>
+
     </div>
+
+    <!-- <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
+      {{ documentContent }}
+    </div> -->
   </div>
 
 

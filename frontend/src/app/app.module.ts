@@ -1,27 +1,49 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { EditComponent } from './edit/edit.component';
 import { EditApi } from './edit/edit.api';
-
+import { EditorModule } from 'primeng/editor';
+import { CameraComponent } from './camera/camera.component';
+import { EditAssetComponent } from './edit-asset/edit-asset.component';
+import { WebcamModule } from 'ngx-webcam';
+import { SignupComponent } from './signup/signup.component';
+import { TreeSelectModule } from 'primeng/treeselect';
+import {TreeModule} from "primeng/tree";
+import {FormsModule} from "@angular/forms";
+import {DropdownModule} from "primeng/dropdown";
+import {NodeService} from "./home/home.service";
+import {BreadcrumbModule} from 'primeng/breadcrumb';
+import {TreeTableModule} from 'primeng/treetable';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HomeComponent,
-    EditComponent,
+    CameraComponent,
+    EditAssetComponent,
+    SignupComponent,
+    EditComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    EditorModule,
+    WebcamModule,
+    TreeSelectModule,
+    TreeModule,
+    FormsModule,
+    EditorModule,
+    DropdownModule,
+    BreadcrumbModule,
+    TreeTableModule
   ],
-  providers: [EditApi],
+  providers: [EditApi, NodeService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
