@@ -13,7 +13,7 @@
       </div>
       <div class="toolsWrapper">
         <div class="tool">
-          <img src="assets/Icons/editIcons/download.svg" alt="" (click)="outputText()">
+          <img src="assets/Icons/editIcons/download.svg" alt="" (click)="extractDeltaJson()">
         </div>
         <div class="tool">
           <img src="assets/Icons/editIcons/share.svg" alt="">
@@ -238,13 +238,6 @@
     <div class="page">
 
       <p-editor [(ngModel)]="text" [style]="{ height: '1138px' }" class="quill-editor">
-        <!-- <ng-template pTemplate="header">
-          <span class="ql-formats">
-            <button type="button" class="ql-bold" aria-label="Bold"></button>
-            <button type="button" class="ql-italic" aria-label="Italic"></button>
-            <button type="button" class="ql-underline" aria-label="Underline"></button>
-          </span>
-        </ng-template> -->
 
       </p-editor>
 

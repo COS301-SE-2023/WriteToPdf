@@ -7,10 +7,6 @@ import {
 import { Router } from '@angular/router';
 
 import { EditApi } from './edit.api';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { EditorModule } from 'primeng/editor';
-import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-edit',
@@ -23,13 +19,8 @@ export class EditComponent
   implements AfterViewInit, OnInit
 {
   documentContent: string = '';
-  text: string = 'HELLO WORDLS';
+  text: any;
 
-  cities: any[] = [
-    { name: 'New York', code: 'NY' },
-    { name: 'Rome', code: 'RM' },
-    { name: 'London', code: 'LDN' },
-  ]
   constructor(
     private elementRef: ElementRef,
     private api: EditApi,
@@ -74,7 +65,9 @@ export class EditComponent
     this.router.navigate([`/${pageName}`]);
   }
 
-  outputText() {
+  extractDeltaJson() {
+    const deltaJson = this.text?.delta;
+    console.log(deltaJson);
     console.log(this.text);
   }
 
