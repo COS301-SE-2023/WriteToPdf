@@ -18,7 +18,7 @@
         </div>
 
         <div class="formElement">
-            <input type="text" name="username" id="username" placeholder="" class="textBox">
+            <input type="text" name="username" id="username" placeholder="" class="textBox" [(ngModel)]="username">
 
         </div>
 
@@ -27,12 +27,12 @@
             <label for="password">Password</label>
         </div>
         <div class="formElement">
-            <input type="password" name="password" id="password" placeholder="" class="textBox">
+            <input type="password" name="password" id="password" placeholder="" class="textBox" [(ngModel)]="password">
         </div>
 
 
         <div class="formElement">
-            <button (click)="navigateToPage('home')" type="button" class="loginButton">Login</button>
+            <button (click)="login()" type="submit" class="loginButton">Login</button>
 
         </div>
         <div class="formElement">

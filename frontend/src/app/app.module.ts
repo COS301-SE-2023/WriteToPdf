@@ -22,7 +22,7 @@ import {TreeTableModule} from 'primeng/treetable';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { UserService } from './user.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -50,7 +50,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ButtonModule,
     BrowserAnimationsModule
   ],
-  providers: [EditApi, NodeService],
+  providers: [EditApi, NodeService, UserService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
