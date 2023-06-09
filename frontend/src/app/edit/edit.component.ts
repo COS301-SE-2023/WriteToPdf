@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -15,17 +16,18 @@ import { EditApi } from './edit.api';
 })
 
 
-export class EditComponent
-  implements AfterViewInit, OnInit
-{
+export class EditComponent implements AfterViewInit, OnInit {
+
+  @ViewChild('quillEditor') quillEditor: any;
   documentContent: string = '';
   text: any;
+  bold: boolean = false;
 
   constructor(
     private elementRef: ElementRef,
     private api: EditApi,
     private router: Router,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const savedContent = localStorage.getItem('document');
@@ -35,6 +37,22 @@ export class EditComponent
     this.getLoremIpsum();
   }
   ngAfterViewInit() {
+    const quill = this.quillEditor.getQuill();
+    quill.focus();
+
+    quill.on('selection-change', (range: any, oldRange: any, source: any) => {
+      if (range) {
+        if (range.length == 0) {
+          this.setBold(quill.getFormat().bold);
+        } else {
+          var text = quill.getText(range.index, range.length);
+          console.log('User has highlighted', text);
+        }
+      } else {
+        console.log('Cursor not in the editor');
+      }
+    });
+
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#E3E3E3';
   }
@@ -66,10 +84,46 @@ export class EditComponent
   }
 
   extractDeltaJson() {
-    const deltaJson = this.text?.delta;
-    console.log(deltaJson);
-    console.log(this.text);
+    const quill = this.quillEditor.getQuill();
+
+    console.log(quill.getContents());
+    console.log(quill.getFormat());
   }
+
+  flipBold() {
+    const quill = this.quillEditor.getQuill();
+    const bold = document.getElementById('bold');
+    if (this.bold) {
+      this.bold = false;
+      if (bold)
+        bold.style.backgroundColor = '#E3E3E300';
+      quill.format('bold', false);
+    }
+    else {
+      quill.format('bold', true);
+      this.bold = true;
+      if (bold)
+        bold.style.backgroundColor = '#E3E0E0';
+    }
+  }
+
+  setBold(isBold:boolean) {
+    const quill = this.quillEditor.getQuill();
+    const bold = document.getElementById('bold');
+    if (this.bold) {
+      this.bold = false;
+      if (bold)
+        bold.style.backgroundColor = '#E3E3E300';
+      quill.format('bold', false);
+    }
+    else {
+      quill.format('bold', true);
+      this.bold = true;
+      if (bold)
+        bold.style.backgroundColor = '#E3E0E0';
+    }
+  }
+
 
 
 }
