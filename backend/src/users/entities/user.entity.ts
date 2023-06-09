@@ -10,6 +10,12 @@ export class User {
   UserID: number;
 
   @Column()
+  FirstName: string;
+
+  @Column()
+  LastName: string;
+
+  @Column()
   Email: string;
 
   @Column()
