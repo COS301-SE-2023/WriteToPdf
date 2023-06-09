@@ -11,6 +11,11 @@ import {
 import { createMock } from '@golevelup/ts-jest';
 import { sign } from 'jsonwebtoken';
 import { jwtConstants } from './constants';
+import { SetMetadata } from '@nestjs/common';
+import {
+  IS_PUBLIC_KEY,
+  Public,
+} from './auth.controller';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
@@ -84,6 +89,26 @@ describe('AuthGuard', () => {
             'Bearer ' + generateValidToken(),
         },
       });
+    const result = await guard.canActivate(
+      context as any,
+    );
+    expect(result).toBe(true);
+  });
+
+  it('should return true for public endpoints', async () => {
+    const context =
+      createMock<ExecutionContext>();
+    const handlerWithDecorator = () => {
+      /* */
+    };
+    Reflect.defineMetadata(
+      IS_PUBLIC_KEY,
+      true,
+      handlerWithDecorator,
+    );
+    context.getHandler.mockReturnValue(
+      handlerWithDecorator,
+    );
     const result = await guard.canActivate(
       context as any,
     );
