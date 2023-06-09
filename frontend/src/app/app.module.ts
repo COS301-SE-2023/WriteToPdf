@@ -22,7 +22,7 @@ import {TreeTableModule} from 'primeng/treetable';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { UserService } from './user.service';
+import { UserService } from './services/user.service';
 @NgModule({
   declarations: [
     AppComponent,
