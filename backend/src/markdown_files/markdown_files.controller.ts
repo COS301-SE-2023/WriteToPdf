@@ -1,15 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { MarkdownFilesService } from './markdown_files.service';
 import { CreateMarkdownFileDto } from './dto/create-markdown_file.dto';
 import { UpdateMarkdownFileDto } from './dto/update-markdown_file.dto';
 
 @Controller('markdown-files')
 export class MarkdownFilesController {
-  constructor(private readonly markdownFilesService: MarkdownFilesService) {}
+  constructor(
+    private readonly markdownFilesService: MarkdownFilesService,
+  ) {}
 
   @Post()
-  create(@Body() createMarkdownFileDto: CreateMarkdownFileDto) {
-    return this.markdownFilesService.create(createMarkdownFileDto);
+  create(
+    @Body()
+    createMarkdownFileDto: CreateMarkdownFileDto,
+  ) {
+    return this.markdownFilesService.create(
+      createMarkdownFileDto,
+    );
   }
 
   @Get()
@@ -23,8 +38,15 @@ export class MarkdownFilesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMarkdownFileDto: UpdateMarkdownFileDto) {
-    return this.markdownFilesService.update(+id, updateMarkdownFileDto);
+  update(
+    @Param('id') id: string,
+    @Body()
+    updateMarkdownFileDto: UpdateMarkdownFileDto,
+  ) {
+    return this.markdownFilesService.update(
+      +id,
+      updateMarkdownFileDto,
+    );
   }
 
   @Delete(':id')

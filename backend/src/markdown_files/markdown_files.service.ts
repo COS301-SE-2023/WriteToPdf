@@ -4,7 +4,9 @@ import { UpdateMarkdownFileDto } from './dto/update-markdown_file.dto';
 
 @Injectable()
 export class MarkdownFilesService {
-  create(createMarkdownFileDto: CreateMarkdownFileDto) {
+  create(
+    createMarkdownFileDto: CreateMarkdownFileDto,
+  ) {
     return 'This action adds a new markdownFile';
   }
 
@@ -16,7 +18,10 @@ export class MarkdownFilesService {
     return `This action returns a #${id} markdownFile`;
   }
 
-  update(id: number, updateMarkdownFileDto: UpdateMarkdownFileDto) {
+  update(
+    id: number,
+    updateMarkdownFileDto: UpdateMarkdownFileDto,
+  ) {
     return `This action updates a #${id} markdownFile`;
   }
 

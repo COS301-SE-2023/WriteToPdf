@@ -16,7 +16,10 @@ export class AssetsService {
     return `This action returns a #${id} asset`;
   }
 
-  update(id: number, updateAssetDto: UpdateAssetDto) {
+  update(
+    id: number,
+    updateAssetDto: UpdateAssetDto,
+  ) {
     return `This action updates a #${id} asset`;
   }
 

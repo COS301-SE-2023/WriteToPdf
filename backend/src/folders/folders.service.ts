@@ -16,7 +16,10 @@ export class FoldersService {
     return `This action returns a #${id} folder`;
   }
 
-  update(id: number, updateFolderDto: UpdateFolderDto) {
+  update(
+    id: number,
+    updateFolderDto: UpdateFolderDto,
+  ) {
     return `This action updates a #${id} folder`;
   }
 

@@ -4,6 +4,6 @@ import { MarkdownFilesController } from './markdown_files.controller';
 
 @Module({
   controllers: [MarkdownFilesController],
-  providers: [MarkdownFilesService]
+  providers: [MarkdownFilesService],
 })
 export class MarkdownFilesModule {}
