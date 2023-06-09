@@ -17,14 +17,14 @@
             <label for="username">Username</label>
         </div>
         <div class="formElement">
-            <input type="text" name="username" id="username" placeholder="" class="textBox">
+            <input type="text" name="username" id="username" placeholder="" class="textBox" [(ngModel)]="username">
 
         </div>
         <div class="labelElement">
             <label for="email">Email</label>
         </div>
         <div class="formElement">
-            <input type="text" name="email" id="email" placeholder="" class="textBox">
+            <input type="text" name="email" id="email" placeholder="" class="textBox" [(ngModel)]="email">
 
         </div>
 
@@ -33,19 +33,19 @@
             <label for="password">Password</label>
         </div>
         <div class="formElement">
-            <input type="password" name="password" id="password" placeholder="" class="textBox">
+            <input type="password" name="password" id="password" placeholder="" class="textBox" [(ngModel)]="password">
         </div>
 
         <div class="labelElement">
             <label for="confirmPassword">Confirm Password</label>
         </div>
         <div class="formElement">
-            <input type="password" name="confirmPassword" id="confirmPassword" placeholder="" class="textBox">
+            <input type="password" name="confirmPassword" id="confirmPassword" placeholder="" class="textBox" [(ngModel)]="confirmPassword">
         </div>
 
 
         <div class="formElement">
-            <button (click)="navigateToPage('home')" type="button" class="signupButton">Signup</button>
+            <button (click)="signup()" type="button" class="signupButton">Signup</button>
 
         </div>
         <div class="formElement">

@@ -21,6 +21,21 @@ export class UserService {
     return false;
   }
 
+  signup(username: string, email:String, password: string, confirmPassword: string): boolean {
+    // Perform validation checks
+    if (username.trim() === '' || email.trim() === '' || password.trim() === '' || password !== confirmPassword) {
+      return false; // Signup failed due to invalid inputs
+    }
+
+    // Perform the signup process (e.g., make an API call to register the user)
+
+    // Assuming the signup process is successful
+    this.isAuthenticated = true;
+    this.authToken = 'sample-auth-token';
+    return true;
+  }
+
+
   logout(): void {
     // Perform logout logic here (e.g., clear authentication token, reset flags)
     this.isAuthenticated = false;
