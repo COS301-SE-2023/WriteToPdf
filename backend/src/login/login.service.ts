@@ -1,6 +1,7 @@
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
@@ -20,7 +21,16 @@ export class LoginService {
       username,
     );
     if (user?.password !== pass) {
-      throw new UnauthorizedException();
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          error:
+            user?.password === undefined
+              ? 'User not found'
+              : 'Invalid password',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
     return this.authService.generateToken(
       username,
