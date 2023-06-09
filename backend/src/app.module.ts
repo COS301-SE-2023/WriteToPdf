@@ -14,6 +14,7 @@ import { EditController } from './edit/edit.controller';
 import { EditModule } from './edit/edit.module';
 import { DatabaseController } from './database/database.controller';
 import { DatabaseModule } from './database/database.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { DatabaseModule } from './database/database.module';
     HomeModule,
     EditModule,
     DatabaseModule,
+    UsersModule,
   ],
   controllers: [
     AppController,
