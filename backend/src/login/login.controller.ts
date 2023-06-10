@@ -2,11 +2,14 @@ import {
   Body,
   Controller,
   HttpCode,
+  HttpException,
   HttpStatus,
   Post,
+  Req,
 } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { SetMetadata } from '@nestjs/common';
+import { Request } from '@nestjs/common';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () =>
@@ -20,7 +23,16 @@ export class LoginController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post()
-  login(@Body() logInDto: Record<string, any>) {
+  login(
+    @Body() logInDto: Record<string, any>,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
     //TODO replace with actual dto
     return this.loginService.login(
       logInDto.username,
