@@ -97,14 +97,12 @@ describe('LoginController', () => {
       };
 
       try {
-        const result = await controller.login(
+        await controller.login(
           loginDto,
           request as any,
         );
-        console.log('Result: ', result);
         expect(true).toBe(false);
       } catch (error) {
-        console.log('Error: ', error);
         expect(error).toBeInstanceOf(
           HttpException,
         );
