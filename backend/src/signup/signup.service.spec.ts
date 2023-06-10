@@ -21,4 +21,5 @@ describe('SignupService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+  //TODO add more tests here (like the ones from login.service.spec.ts)
 });
