@@ -13,7 +13,7 @@
       </div>
       <div class="toolsWrapper">
         <div class="tool">
-          <img src="assets/Icons/editIcons/download.svg" alt="">
+          <img src="assets/Icons/editIcons/download.svg" alt="" (click)="extractDeltaJson()">
         </div>
         <div class="tool">
           <img src="assets/Icons/editIcons/share.svg" alt="">
@@ -24,19 +24,19 @@
         <div class="tool">
           <img src="assets/Icons/editIcons/redo.svg" alt="">
         </div>
-        <div class="tool">
+        <div class="tool" id="bold" (click)="flipBold()">
           <img src="assets/Icons/editIcons/bold.svg" alt="">
         </div>
-        <div class="tool">
+        <div class="tool" id="italic">
           <img src="assets/Icons/editIcons/italic.svg" alt="">
         </div>
-        <div class="tool">
+        <div class="tool" id="strikethrough">
           <img src="assets/Icons/editIcons/strikethrough.svg" alt="">
         </div>
-        <div class="tool">
+        <div class="tool" id="unorderedList">
           <img src="assets/Icons/editIcons/unorderedList.svg" alt="">
         </div>
-        <div class="tool">
+        <div class="tool" id="orderedList">
           <img src="assets/Icons/editIcons/orderedList.svg" alt="">
         </div>
         <div class="dropdownWrapper">
@@ -63,7 +63,7 @@
       <div class="sidebarHeaderWrapper">
         <div class="sidebarHeader">
 
-          <div class="sidebarHeaderIconWrapper backWrapper" >
+          <div class="sidebarHeaderIconWrapper backWrapper">
             <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="">
 
           </div>
@@ -74,7 +74,8 @@
           </div>
 
           <div class="sidebarHeaderIconWrapper">
-            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/uploadAsset.svg" alt="">
+            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/addAsset.png" alt=""
+              (click)="navigateToPage('camera')">
 
           </div>
 
@@ -84,7 +85,7 @@
           </div>
 
         </div>
-        <hr/>
+        <hr />
       </div>
 
       <div class="alignDiv"></div>
@@ -234,10 +235,18 @@
       </div>
 
     </div>
+    <div class="page">
 
-    <div data-testid="a4-page" class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
-      {{ documentContent }}
+      <p-editor #quillEditor [(ngModel)]="text" [style]="{ height: '1138px' }" class="quill-editor">
+
+      </p-editor>
+
+
     </div>
+
+    <!-- <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
+      {{ documentContent }}
+    </div> -->
   </div>
 
 

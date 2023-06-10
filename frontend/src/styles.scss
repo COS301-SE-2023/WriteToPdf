@@ -1,7 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 
 /* Global Variables */
-
+@import '~node_modules/quill/dist/quill.core.css';
+@import '~node_modules/quill/dist/quill.bubble.css';
+@import '~node_modules/quill/dist/quill.snow.css';
 //TODO make global variables for each style element in the figma. Ie identifiers, headings, fonts etc.
 $accent: #E61B23;
 $font-color: #0C0006;
@@ -41,4 +43,18 @@ body {
 body.dark-mode {
   color: #000000;
   background-color: #222;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
 }

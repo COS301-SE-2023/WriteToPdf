@@ -89,37 +89,37 @@
 
 //Below is the styling for the directory tree
 
- .directoryTree {
-   margin-top: -20px;
-   display: block;
- }
-
-.directoryTree li {
-  padding: 5px;
-}
-
-
-.directoryTree1 {
-  padding: 0;
-  list-style-type: none;
-  display: block;
-}
-
-.directoryTree2 {
-  padding: 5px;
-  list-style-type: none;
-  display: block;
-}
-
-.directoryTree3 {
-  padding: 10px;
-  list-style-type: none;
-  display: block;
-}
-
-.directoryItem li:hover {
-  background-color: #ddd
-}
+// .directoryTree {
+//   margin-top: -20px;
+//   display: block;
+// }
+//
+//.directoryTree li {
+//  padding: 5px;
+//}
+//
+//
+//.directoryTree1 {
+//  padding: 0;
+//  list-style-type: none;
+//  display: block;
+//}
+//
+//.directoryTree2 {
+//  padding: 5px;
+//  list-style-type: none;
+//  display: block;
+//}
+//
+//.directoryTree3 {
+//  padding: 10px;
+//  list-style-type: none;
+//  display: block;
+//}
+//
+//.directoryItem li:hover {
+//  background-color: #ddd
+//}
 .documentPreviewSideBar {
   //positioning
   //TODO Fix scroll stuff, make positioning dynamic in relation to width
@@ -147,7 +147,7 @@
   padding-left: 250px;
   padding-top: 120px;
   //TODO make width dynamic with TS
-  width: 700px;
+  //width: 700px;
 }
 
 
@@ -155,39 +155,40 @@
 
 .directoryPath {
   padding: 4px;
+  width: auto;
 }
 
-.directoryPath img {
-  padding-left: 7px;
-  padding-right: 7px;
-  height: 15px;
-  max-height: 100%;
-}
-.directoryPathImageWrapper{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.directoryPath span {
-  width: 89.07px;
-  height: 31.8px;
-  top: 147.79px;
-  align-items: center;
-  justify-items: center;
-  /* Seconday Colours/Light Gray */
-  font-size: 25px;
-  background: rgba(196, 196, 196, 0.42);
-  border-radius: 4px;
-}
-
-.directoryPath span a{
-  padding: 20px 20px 20px 20px;
-}
-
-.directoryPath #lastSpan{
-  border: 1px  solid black;
-}
+//.directoryPath img {
+//  padding-left: 7px;
+//  padding-right: 7px;
+//  height: 15px;
+//  max-height: 100%;
+//}
+//.directoryPathImageWrapper{
+//  display: inline-flex;
+//  align-items: center;
+//  justify-content: center;
+//}
+//
+//.directoryPath span {
+//  width: 89.07px;
+//  height: 31.8px;
+//  top: 147.79px;
+//  align-items: center;
+//  justify-items: center;
+//  /* Seconday Colours/Light Gray */
+//  font-size: 25px;
+//  background: rgba(196, 196, 196, 0.42);
+//  border-radius: 4px;
+//}
+//
+//.directoryPath span a{
+//  padding: 20px 20px 20px 20px;
+//}
+//
+//.directoryPath #lastSpan{
+//  border: 1px  solid black;
+//}
 
 // Below is the styling for the searchBar
 .searchBar {

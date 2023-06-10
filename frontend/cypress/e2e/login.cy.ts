@@ -17,7 +17,17 @@ describe('app', () => {
         cy.get('.loginButton').should('exist').should('be.visible').should('be.enabled');
     });
 
+    it('should popup an alert', () => {
+        cy.get('.loginButton').click();
+        //since test did not enter any details app should not have navigated to home page
+        cy.url().should('not.include', '/home');
+    });
+    
     it('should navigate to home page', () => {
+
+        cy.get('input[name="username"]').type('test');
+        cy.get('input[name="password"]').type('123456');
+
         cy.get('.loginButton').click();
         cy.url().should('include', '/home');
     });

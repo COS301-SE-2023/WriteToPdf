@@ -11,6 +11,7 @@
 
     width: 420px;
 
+    height: -moz-fit-content;
     height: fit-content;
 
     margin: auto;
@@ -142,4 +143,21 @@ hr {
     border: 1px solid black;
     width: 25%;
     margin: auto;
+}
+
+.noAccount {
+    margin: auto;
+}
+
+.noAccountText:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.noAccountText {
+    margin: auto;
+    font-size: 16px;
+    font-weight: regular;
+    -webkit-user-select: none;
+    user-select: none;
 }

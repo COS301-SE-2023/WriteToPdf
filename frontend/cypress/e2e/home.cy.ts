@@ -1,6 +1,7 @@
 describe('app', () => {
     beforeEach(() => {
-        cy.visit('http://localhost:4200/home');
+        cy.login('test','123456');
+        //After login the page loaded should be the home page.
     });
 
     it('should display logo', () => {

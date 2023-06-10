@@ -1,0 +1,164 @@
+@import '../../styles.scss';
+
+.signupWrapper {
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    width: 420px;
+
+    height: -moz-fit-content;
+    height: fit-content;
+
+    margin:auto;
+
+    background-color: $light-grey;
+
+    border-radius: 33px;
+
+    padding-top: 50px;
+
+}
+
+.signupForm {
+    margin: auto;
+    width: 100%;
+}
+
+.heading {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.logoWrapper {
+    display: flex;
+    width: 90%;
+
+
+
+    margin: auto;
+    margin-bottom: 50px;
+}
+
+.logo {
+    width: 130px;
+    margin: auto;
+}
+
+.textBox {
+    border: 2px solid #ffffff;
+    border-radius: 90px;
+
+    background-color: $text-box-color;
+
+    height: 40px;
+    padding: 0 5%;
+    width: 80%;
+    margin: auto;
+}
+
+.formElement {
+    display: flex;
+    margin-bottom: 20px !important;
+    width: -moz-fit-content;
+    width: fit-content;
+    width: 100%;
+    margin: auto;
+}
+
+.labelElement {
+    margin-bottom: 10px !important;
+    width: 80%;
+    margin: auto;
+    font-size: 18px;
+    font-weight: regular;
+}
+
+.signupButton {
+    font-family: Cabin;
+    border: none;
+    border-radius: 90px;
+
+    background-color: #ffffff;
+
+    height: 40px;
+
+    font-size: 16px;
+
+    width: 50%;
+    margin: auto;
+    transition: 0.3s;
+}
+
+.signupButton:hover {
+    box-shadow: 0 5px #666;
+    transform: translateY(-4px);
+}
+
+.signupButton:active {
+    box-shadow: 0 0px #666;
+    transform: translateY(4px);
+}
+
+.googleButton {
+    font-family: Cabin;
+    display: inline-flex;
+    align-items: center;
+    border: none;
+    border-radius: 90px;
+
+    background-color: #ffffff;
+
+    height: 40px;
+
+    font-size: 16px;
+
+    width: 50%;
+    margin: auto;
+    transition: 0.3s;
+}
+
+.googleButton:hover {
+    box-shadow: 0 5px #666;
+    transform: translateY(-4px);
+
+}
+
+.googleButton:active {
+    box-shadow: 0 0px #666;
+    transform: translateY(4px);
+}
+
+.googleIcon {
+    height: 100%;
+    margin-left: 12px;
+}
+
+hr {
+    border: 1px solid black;
+    width: 25%;
+    margin: auto;
+}
+
+.noAccount {
+    margin: auto;
+}
+
+.noAccountText:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.noAccountText {
+    margin: auto;
+    font-size: 16px;
+    font-weight: regular;
+    -webkit-user-select: none;
+    user-select: none;
+}
