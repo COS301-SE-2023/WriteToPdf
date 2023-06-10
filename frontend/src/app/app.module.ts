@@ -19,6 +19,10 @@ import {DropdownModule} from "primeng/dropdown";
 import {NodeService} from "./home/home.service";
 import {BreadcrumbModule} from 'primeng/breadcrumb';
 import {TreeTableModule} from 'primeng/treetable';
+import { SidebarModule } from 'primeng/sidebar';
+import { ButtonModule } from 'primeng/button';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { UserService } from './services/user.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,9 +45,12 @@ import {TreeTableModule} from 'primeng/treetable';
     EditorModule,
     DropdownModule,
     BreadcrumbModule,
-    TreeTableModule
+    TreeTableModule,
+    SidebarModule,
+    ButtonModule,
+    BrowserAnimationsModule
   ],
-  providers: [EditApi, NodeService],
+  providers: [EditApi, NodeService, UserService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

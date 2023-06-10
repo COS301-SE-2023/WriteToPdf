@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
+
 import { Observable, Subject } from 'rxjs';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 
@@ -13,9 +14,17 @@ export class CameraComponent {
   public webcamImage!: WebcamImage;
   private nextWebcam: Subject<any> = new Subject();
   sysImage = '';
+  public webcamWidth: number = 0;
+  public webcamHeight: number = 0;
+  public sidebarVisible = false;
 
-  ngOnInit() { }
-  
+  constructor(private elementRef: ElementRef) { }
+
+  ngOnInit() {
+    this.trigger.next(void 0);
+    this.setWebcamSize();
+  }
+
   public getSnapshot(): void {
     this.trigger.next(void 0);
   }
@@ -32,6 +41,21 @@ export class CameraComponent {
 
   public get nextWebcamObservable(): Observable<any> {
     return this.nextWebcam.asObservable();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onWindowResize(event: Event) {
+    this.setWebcamSize();
+  }
+
+  setWebcamSize() {
+    const deviceWidth = window.innerWidth;
+    const deviceHeight = window.innerHeight;
+
+    // Calculate the desired width and height based on the device size
+    // Adjust the calculations as per your requirements
+    this.webcamWidth = deviceWidth * 0.6;
+    this.webcamHeight = deviceWidth * 0.6;
   }
 
 }
