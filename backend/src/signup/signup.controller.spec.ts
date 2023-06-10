@@ -11,6 +11,9 @@ import {
 } from '@nestjs/common';
 import { SignupController } from './signup.controller';
 import { JwtService } from '@nestjs/jwt';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { User } from '../users/entities/user.entity';
+import { Repository } from 'typeorm';
 
 describe('SignupController', () => {
   let controller: SignupController;
@@ -36,6 +39,10 @@ describe('SignupController', () => {
             useValue: {
               sign: jest.fn(),
             },
+          },
+          {
+            provide: getRepositoryToken(User),
+            useClass: Repository,
           },
         ],
       }).compile();

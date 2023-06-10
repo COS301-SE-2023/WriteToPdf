@@ -9,6 +9,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { User } from '../users/entities/user.entity';
 
 describe('LoginService', () => {
   let service: LoginService;
@@ -29,7 +30,7 @@ describe('LoginService', () => {
           {
             provide: UsersService,
             useValue: {
-              findOne: jest.fn(),
+              findOneByEmail: jest.fn(),
             },
           },
         ],
@@ -48,7 +49,7 @@ describe('LoginService', () => {
       const username = 'test';
       const pass = 'pass';
       jest
-        .spyOn(usersService, 'findOne')
+        .spyOn(usersService, 'findOneByEmail')
         .mockResolvedValue(undefined);
 
       try {
@@ -69,12 +70,13 @@ describe('LoginService', () => {
     it('should throw exception if password is incorrect', async () => {
       const username = 'test';
       const pass = 'pass';
+      const returnedUser = {
+        username,
+        password: 'wrongpass',
+      } as unknown as User;
       jest
-        .spyOn(usersService, 'findOne')
-        .mockResolvedValue({
-          username,
-          password: 'wrongpass',
-        });
+        .spyOn(usersService, 'findOneByEmail')
+        .mockResolvedValue(returnedUser);
 
       try {
         await service.login(username, pass);
@@ -95,12 +97,13 @@ describe('LoginService', () => {
       const username = 'test';
       const pass = 'pass';
       const token = 'token';
+      const returnedUser = {
+        username,
+        password: pass,
+      } as unknown as User;
       jest
-        .spyOn(usersService, 'findOne')
-        .mockResolvedValue({
-          username,
-          password: pass,
-        });
+        .spyOn(usersService, 'findOneByEmail')
+        .mockResolvedValue(returnedUser);
       jest
         .spyOn(authService, 'generateToken')
         .mockReturnValue(Promise.resolve(token));
