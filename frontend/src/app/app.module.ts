@@ -23,6 +23,8 @@ import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserService } from './services/user.service';
+import { PasswordModule } from 'primeng/password';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -48,7 +50,8 @@ import { UserService } from './services/user.service';
     TreeTableModule,
     SidebarModule,
     ButtonModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    PasswordModule
   ],
   providers: [EditApi, NodeService, UserService],
   bootstrap: [AppComponent],

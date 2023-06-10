@@ -14,17 +14,24 @@
         </div>
 
         <div class="labelElement">
-            <label for="username">Username</label>
+            <label for="firstName">First Name</label>
         </div>
         <div class="formElement">
-            <input type="text" name="username" id="username" placeholder="" class="textBox" [(ngModel)]="username">
+            <input type="text" name="firstName" id="firstName" placeholder="" class="textBox" [(ngModel)]="firstName">
+
+        </div>
+        <div class="labelElement">
+            <label for="lastName">Last Name</label>
+        </div>
+        <div class="formElement">
+            <input type="text" name="lastName" id="lastName" placeholder="" class="textBox" [(ngModel)]="lastName">
 
         </div>
         <div class="labelElement">
             <label for="email">Email</label>
         </div>
         <div class="formElement">
-            <input type="text" name="email" id="email" placeholder="" class="textBox" [(ngModel)]="email">
+            <input type="email" name="email" id="email" placeholder="" class="textBox" [(ngModel)]="email">
 
         </div>
 
@@ -33,14 +40,21 @@
             <label for="password">Password</label>
         </div>
         <div class="formElement">
-            <input type="password" name="password" id="password" placeholder="" class="textBox" [(ngModel)]="password">
+            <!-- <input type="password" name="password" id="password" placeholder="" class="textBox" [(ngModel)]="password"> -->
+            <p-password name="password" id="password" placeholder="" class="password w-full" [(ngModel)]="password"
+                [toggleMask]="true" styleClass="p-password p-component p-inputwrapper p-input-icon-right"
+                [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"></p-password>
         </div>
 
         <div class="labelElement">
             <label for="confirmPassword">Confirm Password</label>
         </div>
         <div class="formElement">
-            <input type="password" name="confirmPassword" id="confirmPassword" placeholder="" class="textBox" [(ngModel)]="confirmPassword">
+            <!-- <input type="password" name="confirmPassword" id="confirmPassword" placeholder="" class="textBox" [(ngModel)]="confirmPassword"> -->
+            <p-password name="confirmPassword" id="confirmPassword" placeholder="" class="password w-full"
+                [(ngModel)]="confirmPassword" [(ngModel)]="confirmPassword" [toggleMask]="true"
+                styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{'width':'100%'}"
+                [inputStyle]="{'width':'100%'}"></p-password>
         </div>
 
 

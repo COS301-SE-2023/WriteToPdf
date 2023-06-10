@@ -9,7 +9,7 @@ import { UserService } from '../services/user.service';
 })
 export class LoginComponent {
 
-  username: string = '';
+  email: string = '';
   password: string = '';
 
   constructor(private router: Router, private elementRef: ElementRef, private userService: UserService) { }
@@ -23,7 +23,7 @@ export class LoginComponent {
   }
 
   login(): void {
-    if (this.userService.login(this.username, this.password)) {
+    if (this.userService.login(this.email, this.password)) {
       this.navigateToPage('home');
     } else {
       alert('Invalid credentials');

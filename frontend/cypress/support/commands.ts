@@ -35,7 +35,7 @@ declare namespace Cypress {
 Cypress.Commands.add('login', (username, password) => {
     cy.visit('http://localhost:4200/login');
 
-    cy.get('input[name="username"]').type('test');
+    cy.get('input[name="email"]').type('test');
     cy.get('input[name="password"]').type('123456');
 
     cy.get('.loginButton').click();
