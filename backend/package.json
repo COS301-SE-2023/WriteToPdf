@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "nest": "nest",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -22,11 +23,14 @@
   "dependencies": {
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/jwt": "^10.0.3",
     "@nestjs/platform-express": "^9.0.0",
+    "dotenv": "^16.1.4",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
   "devDependencies": {
+    "@golevelup/ts-jest": "^0.3.7",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
