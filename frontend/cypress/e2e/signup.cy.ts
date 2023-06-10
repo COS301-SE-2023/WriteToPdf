@@ -6,7 +6,8 @@ describe('app', () => {
 
     it('should display signup from', () => {
         cy.get('.signupForm').should('exist').should('be.visible');
-        cy.get('.signupForm').should('contain', 'Username');
+        cy.get('.signupForm').should('contain', 'First Name');
+        cy.get('.signupForm').should('contain', 'Last Name');
         cy.get('.signupForm').should('contain', 'Email');
         cy.get('.signupForm').should('contain', 'Password');
         cy.get('.signupForm').should('contain', 'Confirm Password');
@@ -28,11 +29,11 @@ describe('app', () => {
 
     it('should navigate to home page', () => {
 
-        cy.get('input[name="username"]').type('test');
+        cy.get('input[name="lastName"]').type('Doe');
         cy.get('input[name="email"]').type('example@example.com');
-        cy.get('input[name="password"]').type('123456');
-        cy.get('input[name="confirmPassword"]').type('123456');
-
+        cy.get('p-password#password').find('input').type('123456');
+        cy.get('p-password#confirmPassword').find('input').type('123456');
+        cy.get('input[name="firstName"]').type('John');
         cy.get('.signupButton').click();
         cy.url().should('include', '/home');
     });

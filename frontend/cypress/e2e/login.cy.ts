@@ -5,7 +5,7 @@ describe('app', () => {
 
     it('should display login from', () => {
         cy.get('.loginForm').should('exist').should('be.visible');
-        cy.get('.loginForm').should('contain', 'Username');
+        cy.get('.loginForm').should('contain', 'Email');
         cy.get('.loginForm').should('contain', 'Password');
     });
 
@@ -25,7 +25,7 @@ describe('app', () => {
     
     it('should navigate to home page', () => {
 
-        cy.get('input[name="username"]').type('test');
+        cy.get('input[name="email"]').type('test');
         cy.get('input[name="password"]').type('123456');
 
         cy.get('.loginButton').click();

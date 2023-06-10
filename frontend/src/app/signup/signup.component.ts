@@ -9,7 +9,8 @@ import { UserService } from '../services/user.service';
 })
 export class SignupComponent {
 
-  username: string = '';
+  firstName: string = '';
+  lastName: string = '';
   email: string = '';
   password: string = '';
   confirmPassword: string = '';
@@ -26,7 +27,7 @@ export class SignupComponent {
   }
 
   signup() {
-    if (this.userService.signup(this.username, this.email, this.password, this.confirmPassword)) {
+    if (this.userService.signup(this.firstName, this.lastName, this.email, this.password, this.confirmPassword)) {
       this.navigateToPage('home');
     } else {
       alert('Invalid credentials');

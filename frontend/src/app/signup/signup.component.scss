@@ -14,7 +14,7 @@
     height: -moz-fit-content;
     height: fit-content;
 
-    margin:auto;
+    margin: auto;
 
     background-color: $light-grey;
 
@@ -61,6 +61,24 @@
     padding: 0 5%;
     width: 80%;
     margin: auto;
+}
+
+.password{
+    width: 80%;
+    margin:auto;
+    display:flex;
+}
+
+:host ::ng-deep .p-inputtext {
+    border: 2px solid #ffffff ;
+    border-radius: 90px ;
+
+    background-color: $text-box-color ;
+
+    height: 40px ;
+    width: 100%;
+    margin: auto ;
+    
 }
 
 .formElement {
