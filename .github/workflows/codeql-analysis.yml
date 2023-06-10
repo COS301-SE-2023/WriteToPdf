@@ -18,6 +18,15 @@ on:
   schedule:
     - cron: '37 22 * * 0'
 
+env:
+  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+  DB_TYPE: ${{ secrets.DB_TYPE }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+
 jobs:
   analyze:
     name: Analyze
