@@ -29,13 +29,30 @@ export class UsersService {
     }); // SELECT * FROM users WHERE UserID = {UserID};
   }
 
-  findOneByEmail(Email: string) {
-    return this.usersRepository.findOne({
-      Email: Email
-    })
-    return this.usersRepository.findOneBy({
-      Email: Like(`%${Email}%`),
-    }); // SELECT * FROM users WHERE Email = {Email};
+  // async findOneByEmail(Email: string) {
+  //   return this.usersRepository.findOne({
+  //     where: {
+  //       Email: Email,
+  //     },
+  //   });
+  // }
+  async findOneByEmail(Email: string) {
+    console.log('Searching for: ', Email);
+    console.log(
+      'this.usersRepository: ',
+      this.usersRepository,
+    );
+    const result =
+      await this.usersRepository.query(
+        'SELECT * FROM USERS WHERE Email = ?',
+        [Email],
+      );
+    console.log('Result: ', result);
+    return result[0];
+    // result.then((res) => {
+    //   console.log('res: ', res);
+    //   return res[0];
+    // });
   }
 
   async update(
