@@ -17,6 +17,7 @@ export class LoginService {
     Email: string,
     pass: string,
   ): Promise<any> {
+    console.log('LoginService: ', Email, pass);
     const user =
       await this.usersService.findOneByEmail(
         Email,

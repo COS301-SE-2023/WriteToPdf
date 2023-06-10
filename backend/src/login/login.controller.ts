@@ -10,6 +10,7 @@ import {
 import { LoginService } from './login.service';
 import { SetMetadata } from '@nestjs/common';
 import { Request } from '@nestjs/common';
+import { LoginDto } from './dto/login.dto';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () =>
@@ -24,7 +25,7 @@ export class LoginController {
   @HttpCode(HttpStatus.OK)
   @Post()
   login(
-    @Body() logInDto: Record<string, any>,
+    @Body() logInDto: LoginDto,
     @Req() request: Request,
   ) {
     if (request.method !== 'POST') {
@@ -34,9 +35,10 @@ export class LoginController {
       );
     }
     //TODO replace with actual dto
+    console.log('LoginController: ', logInDto);
     return this.loginService.login(
-      logInDto.username,
-      logInDto.password,
+      logInDto.Email,
+      logInDto.Password,
     );
   }
 }
