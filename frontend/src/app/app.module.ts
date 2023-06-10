@@ -16,13 +16,15 @@ import { TreeSelectModule } from 'primeng/treeselect';
 import {TreeModule} from "primeng/tree";
 import {FormsModule} from "@angular/forms";
 import {DropdownModule} from "primeng/dropdown";
-import {NodeService} from "./home/home.service";
+import {MenuService, NodeService} from "./home/home.service";
 import {BreadcrumbModule} from 'primeng/breadcrumb';
 import {TreeTableModule} from 'primeng/treetable';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserService } from './services/user.service';
+import { VirtualScrollerModule } from 'primeng/virtualscroller';
+import { MenubarModule } from 'primeng/menubar';
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,6 +36,8 @@ import { UserService } from './services/user.service';
     EditComponent
   ],
   imports: [
+    MenubarModule,
+    VirtualScrollerModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
@@ -50,7 +54,7 @@ import { UserService } from './services/user.service';
     ButtonModule,
     BrowserAnimationsModule
   ],
-  providers: [EditApi, NodeService, UserService],
+  providers: [EditApi, NodeService, UserService, MenuService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
