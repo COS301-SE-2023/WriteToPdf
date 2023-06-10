@@ -17,9 +17,10 @@ export class LoginService {
     Email: string,
     pass: string,
   ): Promise<any> {
-    const user = await this.usersService.findOneByEmail(
-      Email,
-    );
+    const user =
+      await this.usersService.findOneByEmail(
+        Email,
+      );
     if (user?.Password !== pass) {
       throw new HttpException(
         {
