@@ -13,11 +13,11 @@ export class SignupService {
   ) {}
 
   async signup(
-    username: string,
+    email: string,
     password: string,
   ): Promise<any> {
-    const user = await this.usersService.findOne(
-      username,
+    const user = await this.usersService.findOneByEmail(
+      email,
     );
     if (user !== undefined) {
       throw new HttpException(
@@ -30,7 +30,7 @@ export class SignupService {
     }
     //TODO add user to database
     return this.authService.generateToken(
-      username,
+      email,
       password,
     );
   }

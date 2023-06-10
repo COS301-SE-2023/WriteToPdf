@@ -14,26 +14,26 @@ export class LoginService {
   ) {}
 
   async login(
-    username: string,
+    Email: string,
     pass: string,
   ): Promise<any> {
-    const user = await this.usersService.findOne(
-      username,
+    const user = await this.usersService.findOneByEmail(
+      Email,
     );
-    if (user?.password !== pass) {
+    if (user?.Password !== pass) {
       throw new HttpException(
         {
           status: HttpStatus.UNAUTHORIZED,
           error:
-            user?.password === undefined
+            user?.Password === undefined
               ? 'User not found'
-              : 'Invalid password',
+              : 'Invalid Password',
         },
         HttpStatus.UNAUTHORIZED,
       );
     }
     return this.authService.generateToken(
-      username,
+      Email,
       pass,
     );
   }

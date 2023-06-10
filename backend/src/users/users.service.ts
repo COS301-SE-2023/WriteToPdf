@@ -29,6 +29,12 @@ export class UsersService {
     }); // SELECT * FROM users WHERE UserID = {UserID};
   }
 
+  findOneByEmail(Email: string) {
+    return this.usersRepository.findOneBy({
+      Email,
+    }); // SELECT * FROM users WHERE Email = {Email};
+  }
+
   async update(
     UserID: number,
     updateUserDto: UpdateUserDto,
