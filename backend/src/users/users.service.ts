@@ -71,20 +71,20 @@ export class UsersService {
   }
 
   async login(loginUserDto: LoginUserDTO) {
-    console.log(loginUserDto);
-    console.log(
-      'Is instance of LoginUserDTO: ',
-      loginUserDto instanceof LoginUserDTO,
-    );
-    if (!loginUserDto.isValid()) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNAUTHORIZED,
-          error: 'Missing Credentials',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
+    // console.log(loginUserDto);
+    // console.log(
+    //   'Is instance of LoginUserDTO: ',
+    //   loginUserDto instanceof LoginUserDTO,
+    // );
+    // if (!loginUserDto.isValid()) {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.UNAUTHORIZED,
+    //       error: 'Missing Credentials',
+    //     },
+    //     HttpStatus.UNAUTHORIZED,
+    //   );
+    // }
     const user = await this.findOneByEmail(
       loginUserDto.Email,
     );
