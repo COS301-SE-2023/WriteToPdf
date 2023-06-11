@@ -61,6 +61,36 @@ export class UsersController {
     return this.usersService.login(loginUserDto);
   }
 
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('signup')
+  signup(
+    @Body() createUserDto: CreateUserDto,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+    const userDto = plainToClass(
+      CreateUserDto,
+      createUserDto,
+    );
+    const errors = validateSync(userDto);
+
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.usersService.signup(
+      createUserDto,
+    );
+  }
+
   @Get()
   findAll() {
     return this.usersService.findAll();
