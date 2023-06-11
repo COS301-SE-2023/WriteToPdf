@@ -4,7 +4,7 @@ describe('app', () => {
         cy.get('.noAccountText').click();
     });
 
-    it('should display signup from', () => {
+    it('should display signup form', () => {
         cy.get('.signupForm').should('exist').should('be.visible');
         cy.get('.signupForm').should('contain', 'First Name');
         cy.get('.signupForm').should('contain', 'Last Name');

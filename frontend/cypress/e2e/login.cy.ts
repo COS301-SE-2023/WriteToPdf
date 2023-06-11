@@ -3,7 +3,7 @@ describe('app', () => {
         cy.visit('http://localhost:4200');
     });
 
-    it('should display login from', () => {
+    it('should display login form', () => {
         cy.get('.loginForm').should('exist').should('be.visible');
         cy.get('.loginForm').should('contain', 'Email');
         cy.get('.loginForm').should('contain', 'Password');
