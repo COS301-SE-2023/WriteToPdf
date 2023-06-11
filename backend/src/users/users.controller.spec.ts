@@ -8,7 +8,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { testingModule } from '../test-utils/testingModule';
-import { CreateUserDto } from './dto/create-user.dto';
 import {
   HttpException,
   HttpStatus,
@@ -35,10 +34,8 @@ describe('UsersController', () => {
     controller = module.get<UsersController>(
       UsersController,
     );
-  });
 
-  afterAll(() => {
-    // close DB connection
+    module.close();
   });
 
   it('should be defined', () => {
