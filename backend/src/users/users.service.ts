@@ -3,7 +3,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { LoginUserDTO } from './dto/login-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -25,17 +26,10 @@ export class UsersService {
 
   findOne(UserID: number) {
     return this.usersRepository.findOneBy({
-      UserID,
+      UserID: UserID,
     }); // SELECT * FROM users WHERE UserID = {UserID};
   }
 
-  // async findOneByEmail(Email: string) {
-  //   return this.usersRepository.findOne({
-  //     where: {
-  //       Email: Email,
-  //     },
-  //   });
-  // }
   async findOneByEmail(Email: string) {
     console.log('Searching for: ', Email);
     console.log(
@@ -46,13 +40,19 @@ export class UsersService {
       await this.usersRepository.query(
         'SELECT * FROM USERS WHERE Email = ?',
         [Email],
-      );
-    console.log('Result: ', result);
-    return result[0];
-    // result.then((res) => {
+      ); // result.then((res) => {
     //   console.log('res: ', res);
     //   return res[0];
     // });
+    console.log('Result: ', result);
+    return result[0];
+  }
+
+  async login(loginUserDto: LoginUserDTO) {
+    const user = await this.findOneByEmail(
+      loginUserDto.Email,
+    );
+    return user;
   }
 
   async update(
