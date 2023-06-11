@@ -10,6 +10,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { AuthService } from '../auth/auth.service';
+import { find } from 'rxjs';
 
 @Injectable()
 export class UsersService {
@@ -45,15 +46,86 @@ export class UsersService {
     return result[0];
   }
 
-  signup(createUserDto: CreateUserDto) {
-    /*TODO add input validation
-    - Valid email
-    - Valid password
-    - Valid first name
-    - Valid last name
+  throwHttpException(
+    httpStatus: HttpStatus,
+    message: string,
+  ) {
+    throw new HttpException(
+      {
+        status: httpStatus,
+        error: message,
+      },
+      httpStatus,
+    );
+  }
 
-    - Check if email already exists
-    */
+  isValidFirstName(firstName: string) {
+    return (
+      firstName.length > 0 &&
+      firstName.length < 50 &&
+      firstName.match(/^[a-zA-Z]+$/)
+    );
+  }
+
+  isValidLastName(lastName: string) {
+    return (
+      lastName.length > 0 &&
+      lastName.length < 50 &&
+      lastName.match(/^[a-zA-Z]+$/)
+    );
+  }
+
+  isValidEmail(email: string) {
+    if (
+      !email.match(
+        /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/,
+      )
+    )
+      return false;
+    return true;
+  }
+
+  async signup(createUserDto: CreateUserDto) {
+    if (
+      !this.isValidFirstName(
+        createUserDto.FirstName,
+      )
+    ) {
+      this.throwHttpException(
+        HttpStatus.BAD_REQUEST,
+        'Invalid first name',
+      );
+    }
+
+    if (
+      !this.isValidLastName(
+        createUserDto.LastName,
+      )
+    ) {
+      this.throwHttpException(
+        HttpStatus.BAD_REQUEST,
+        'Invalid last name',
+      );
+    }
+
+    if (!this.isValidEmail(createUserDto.Email)) {
+      this.throwHttpException(
+        HttpStatus.BAD_REQUEST,
+        'Invalid email',
+      );
+    }
+
+    const emailExists = await this.findOneByEmail(
+      createUserDto.Email,
+    );
+
+    if (emailExists) {
+      this.throwHttpException(
+        HttpStatus.BAD_REQUEST,
+        'Email already exists',
+      );
+    }
+
     this.create(createUserDto);
     return {
       message: 'User created successfully',
