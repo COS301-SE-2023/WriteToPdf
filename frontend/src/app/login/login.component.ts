@@ -14,20 +14,27 @@ export class LoginComponent {
 
   constructor(private router: Router, private elementRef: ElementRef, private userService: UserService) { }
 
-  navigateToPage( pageName: string) {
+  navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
   ngAfterViewInit() {
-      this.elementRef.nativeElement.ownerDocument
-  .body.style.backgroundColor = '#ffffff';
+    this.elementRef.nativeElement.ownerDocument
+      .body.style.backgroundColor = '#ffffff';
   }
 
-  login(): void {
-    if (this.userService.login(this.email, this.password)) {
+  async login(): Promise<void> {
+    if (await this.userService.login(this.email, this.password)) {
       this.navigateToPage('home');
     } else {
       alert('Invalid credentials');
     }
+  }
+
+  async autoLogin(): Promise<void> {
+    this.email="test";
+    this.password="123456";
+
+    console.log(await this.userService.login("test", "123456"));
   }
 
 }

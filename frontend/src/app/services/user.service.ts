@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { HttpResponse } from '@angular/common/http';
+import { LoginUserDTO} from './dto/login-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -10,19 +14,35 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  login(username: string, password: string): boolean {
-    // Perform authentication logic here (e.g., send login request to server)
-    // If authentication is successful, set isAuthenticated to true and store the token
-    if (username === 'test' && password === '123456') {
-      this.isAuthenticated = true;
-      this.authToken = 'sample-auth-token';
-      return true;
-    }
+  async login(email: string, password: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendLoginData(email, password).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          console.log(response.status);
 
-    return false;
+          if (response.status === 200) {
+            console.log("Login successful");
+            console.log(response.body.Token);
+            this.isAuthenticated = true;
+            this.authToken = response.body.Token;
+            this.saveToLocalStorage('token', this.authToken);
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+        error: (error) => {
+          console.error(error); // Handle error if any
+          resolve(false);
+        }
+      });
+    });
   }
 
-  signup(firstName: string, lastName: string, email:String, password: string, confirmPassword: string): boolean {
+  
+
+  signup(firstName: string, lastName: string, email: String, password: string, confirmPassword: string): boolean {
     // Perform validation checks
     if (firstName.trim() === '' || lastName.trim() === '' || email.trim() === '' || password.trim() === '' || password !== confirmPassword) {
       return false; // Signup failed due to invalid inputs
@@ -54,7 +74,7 @@ export class UserService {
   }
 
   fetchData() {
-    const url = 'https://localhost:3000';
+    const url = 'localhost:3000';
 
     this.http.get(url).subscribe({
       next: (response) => {
@@ -68,27 +88,19 @@ export class UserService {
     });
   }
 
-  sendLoginData(email: string, password: string) {
-    const url = 'https://localhost:3000';
-    const body = {
-       Email:  email,
-       Password: password
-    };
 
-    this.http.post(url, body).subscribe({
-      next: (response) => {
-        // Handle the response here
-        console.log(response);
-      },
-      error: (error) => {
-        // Handle error if any
-        console.error(error);
-      }
-    });
+  sendLoginData(email: string, password: string): Observable<HttpResponse<any>> {
+    const url = 'http://localhost:3000/users/login';
+    const body = new LoginUserDTO();
+    body.Email = email;
+    body.Password = password;
+
+    return this.http.post(url, body, { observe: 'response' });
   }
 
-  sendSignupData(email: string, fName:string, lName:string, password: string) {
-    const url = 'https://localhost:3000';
+
+  sendSignupData(email: string, fName: string, lName: string, password: string) {
+    const url = 'localhost:3000';
     const body = {
       Email: email,
       FirstName: fName,
@@ -106,4 +118,15 @@ export class UserService {
     });
   }
 
+  saveToLocalStorage(key: string, value: any): void {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  getFromLocalStorage(key: string): any {
+    const value = localStorage.getItem(key);
+    if (value) {
+      return JSON.parse(value);
+    }
+    return null;
+  }
 }
