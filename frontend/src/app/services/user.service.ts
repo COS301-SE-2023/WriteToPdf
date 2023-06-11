@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { CreateUserDTO } from './dto/create-user.dto';
+import { first } from 'cypress/types/lodash';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,12 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   async login(email: string, password: string): Promise<boolean> {
+    if (email === '' || password === '') {
+      return new Promise<boolean>((resolve, reject) => {
+        resolve(false);
+      });
+    }
+
     return new Promise<boolean>((resolve, reject) => {
       this.sendLoginData(email, password).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -40,30 +47,40 @@ export class UserService {
     });
   }
 
-  signup(
-    firstName: string,
-    lastName: string,
-    email: String,
-    password: string,
-    confirmPassword: string
-  ): boolean {
-    // Perform validation checks
-    if (
-      firstName.trim() === '' ||
-      lastName.trim() === '' ||
-      email.trim() === '' ||
-      password.trim() === '' ||
-      password !== confirmPassword
-    ) {
-      return false; // Signup failed due to invalid inputs
+
+
+
+  async signup(firstName: string, lastName: string, email: string, password: string, confirmPassword: string): Promise<boolean> {
+    if (password !== confirmPassword) {
+      return new Promise<boolean>((resolve, reject) => {
+        resolve(false);
+      });
+    }
+    if (firstName === '' || lastName === '' || email === '' || password === '' || confirmPassword === '') {
+      return new Promise<boolean>((resolve, reject) => {
+        resolve(false);
+      });
     }
 
-    // Perform the signup process (e.g., make an API call to register the user)
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendSignupData(email, firstName, lastName, password).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          console.log(response.status);
 
-    // Assuming the signup process is successful
-    this.isAuthenticated = true;
-    this.authToken = 'sample-auth-token';
-    return true;
+          if (response.status === 200) {
+            console.log("Signup successful");
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+        error: (error) => {
+          console.error(error); // Handle error if any
+          resolve(false);
+        }
+      });
+    });
   }
 
   logout(): void {
@@ -82,25 +99,8 @@ export class UserService {
     return this.authToken;
   }
 
-  fetchData() {
-    const url = 'localhost:3000';
 
-    this.http.get(url).subscribe({
-      next: (response) => {
-        // Handle the response here
-        console.log(response);
-      },
-      error: (error) => {
-        // Handle error if any
-        console.error(error);
-      },
-    });
-  }
-
-  sendLoginData(
-    email: string,
-    password: string
-  ): Observable<HttpResponse<any>> {
+  sendLoginData(email: string, password: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/users/login';
     const body = new LoginUserDTO();
     body.Email = email;
@@ -108,29 +108,17 @@ export class UserService {
 
     return this.http.post(url, body, { observe: 'response' });
   }
+    
 
-  sendSignupData(
-    email: string,
-    fName: string,
-    lName: string,
-    password: string
-  ) {
-    const url = 'localhost:3000';
-    const body = {
-      Email: email,
-      FirstName: fName,
-      LastName: lName,
-      Password: password,
-    };
+  sendSignupData(email: string, fName: string, lName: string, password: string) {
+    const url = 'http://localhost:3000/users/signup';
+    const body = new CreateUserDTO();
+    body.FirstName = fName;
+    body.LastName = lName;
+    body.Email = email;
+    body.Password = password;
 
-    this.http.post(url, body).subscribe({
-      next: (response) => {
-        console.log(response);
-      },
-      error: (error) => {
-        console.error(error);
-      },
-    });
+    return this.http.post(url, body, { observe: 'response' });
   }
 
   saveToLocalStorage(key: string, value: any): void {
