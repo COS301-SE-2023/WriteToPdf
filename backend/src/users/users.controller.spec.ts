@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { AuthService } from '../auth/auth.service';
+import { CreateUserDTO } from './dto/create-user.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -78,9 +79,9 @@ describe('UsersController', () => {
     });
 
     it('should return a user', async () => {
-      const loginUserDto = new LoginUserDTO();
-      loginUserDto.Email = 'test';
-      loginUserDto.Password = 'test';
+      const loginUserDTO = new LoginUserDTO();
+      loginUserDTO.Email = 'test';
+      loginUserDTO.Password = 'test';
 
       const expectedResult = {
         UserID: 1,
@@ -98,7 +99,7 @@ describe('UsersController', () => {
 
       expect(
         await controller.login(
-          loginUserDto,
+          loginUserDTO,
           request as any,
         ),
       ).toBe(expectedResult);
@@ -106,13 +107,13 @@ describe('UsersController', () => {
 
     it('should throw exception if request method is not POST', async () => {
       const request = { method: 'GET' };
-      const loginUserDto = new LoginUserDTO();
-      loginUserDto.Email = 'test';
-      loginUserDto.Password = 'test';
+      const loginUserDTO = new LoginUserDTO();
+      loginUserDTO.Email = 'test';
+      loginUserDTO.Password = 'test';
 
       try {
         await controller.login(
-          loginUserDto,
+          loginUserDTO,
           request as any,
         );
         expect(true).toBe(false);

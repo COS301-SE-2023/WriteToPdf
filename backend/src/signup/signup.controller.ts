@@ -24,7 +24,7 @@ export class SignupController {
   @HttpCode(HttpStatus.OK)
   @Post()
   signup(
-    @Body() signUpDto: Record<string, any>,
+    @Body() signUpDTO: Record<string, any>,
     @Req() request: Request,
   ) {
     if (request.method !== 'POST') {
@@ -35,8 +35,8 @@ export class SignupController {
     }
     //TODO replace with actual dto
     return this.signupService.signup(
-      signUpDto.username,
-      signUpDto.password,
+      signUpDTO.username,
+      signUpDTO.password,
     );
   }
 }

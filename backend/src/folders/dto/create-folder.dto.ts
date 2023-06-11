@@ -1,1 +1,1 @@
-export class CreateFolderDto {}
+export class CreateFolderDTO {}

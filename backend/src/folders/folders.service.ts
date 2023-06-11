@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFolderDto } from './dto/create-folder.dto';
-import { UpdateFolderDto } from './dto/update-folder.dto';
+import { CreateFolderDTO } from './dto/create-folder.dto';
+import { UpdateFolderDTO } from './dto/update-folder.dto';
 
 @Injectable()
 export class FoldersService {
-  create(createFolderDto: CreateFolderDto) {
+  create(createFolderDTO: CreateFolderDTO) {
     return 'This action adds a new folder';
   }
 
@@ -18,7 +18,7 @@ export class FoldersService {
 
   update(
     id: number,
-    updateFolderDto: UpdateFolderDto,
+    updateFolderDTO: UpdateFolderDTO,
   ) {
     return `This action updates a #${id} folder`;
   }

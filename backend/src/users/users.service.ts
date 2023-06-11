@@ -3,8 +3,8 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDTO } from './dto/create-user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -20,9 +20,9 @@ export class UsersService {
     private authService: AuthService,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
+  create(createUserDTO: CreateUserDTO) {
     const newUser = this.usersRepository.create(
-      createUserDto,
+      createUserDTO,
     );
     return this.usersRepository.save(newUser);
   }
@@ -85,10 +85,10 @@ export class UsersService {
     return true;
   }
 
-  async signup(createUserDto: CreateUserDto) {
+  async signup(createUserDTO: CreateUserDTO) {
     if (
       !this.isValidFirstName(
-        createUserDto.FirstName,
+        createUserDTO.FirstName,
       )
     ) {
       this.throwHttpException(
@@ -99,7 +99,7 @@ export class UsersService {
 
     if (
       !this.isValidLastName(
-        createUserDto.LastName,
+        createUserDTO.LastName,
       )
     ) {
       this.throwHttpException(
@@ -108,7 +108,7 @@ export class UsersService {
       );
     }
 
-    if (!this.isValidEmail(createUserDto.Email)) {
+    if (!this.isValidEmail(createUserDTO.Email)) {
       this.throwHttpException(
         HttpStatus.BAD_REQUEST,
         'Invalid email',
@@ -116,7 +116,7 @@ export class UsersService {
     }
 
     const emailExists = await this.findOneByEmail(
-      createUserDto.Email,
+      createUserDTO.Email,
     );
 
     if (emailExists) {
@@ -126,18 +126,18 @@ export class UsersService {
       );
     }
 
-    this.create(createUserDto);
+    this.create(createUserDTO);
     return {
       message: 'User created successfully',
     };
   }
 
-  async login(loginUserDto: LoginUserDTO) {
+  async login(loginUserDTO: LoginUserDTO) {
     const user = await this.findOneByEmail(
-      loginUserDto.Email,
+      loginUserDTO.Email,
     );
     if (
-      user?.Password !== loginUserDto.Password
+      user?.Password !== loginUserDTO.Password
     ) {
       throw new HttpException(
         {
@@ -152,8 +152,8 @@ export class UsersService {
     }
     const token =
       await this.authService.generateToken(
-        loginUserDto.Email,
-        loginUserDto.Password,
+        loginUserDTO.Email,
+        loginUserDTO.Password,
       );
     const response = {
       UserID: user.UserID,
@@ -165,12 +165,12 @@ export class UsersService {
 
   async update(
     UserID: number,
-    updateUserDto: UpdateUserDto,
+    updateUserDTO: UpdateUserDTO,
   ) {
     const user = await this.findOne(UserID);
     return this.usersRepository.save({
       ...user,
-      ...updateUserDto,
+      ...updateUserDTO,
     }); // returns updated user
   }
 

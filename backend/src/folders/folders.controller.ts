@@ -8,8 +8,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { FoldersService } from './folders.service';
-import { CreateFolderDto } from './dto/create-folder.dto';
-import { UpdateFolderDto } from './dto/update-folder.dto';
+import { CreateFolderDTO } from './dto/create-folder.dto';
+import { UpdateFolderDTO } from './dto/update-folder.dto';
 
 @Controller('folders')
 export class FoldersController {
@@ -19,10 +19,10 @@ export class FoldersController {
 
   @Post()
   create(
-    @Body() createFolderDto: CreateFolderDto,
+    @Body() createFolderDTO: CreateFolderDTO,
   ) {
     return this.foldersService.create(
-      createFolderDto,
+      createFolderDTO,
     );
   }
 
@@ -39,11 +39,11 @@ export class FoldersController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateFolderDto: UpdateFolderDto,
+    @Body() updateFolderDTO: UpdateFolderDTO,
   ) {
     return this.foldersService.update(
       +id,
-      updateFolderDto,
+      updateFolderDTO,
     );
   }
 

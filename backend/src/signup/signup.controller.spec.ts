@@ -77,7 +77,7 @@ describe('SignupController', () => {
       const signupSpy = jest
         .spyOn(signupService, 'signup')
         .mockResolvedValue({ username: 'test' });
-      const signupDto = {
+      const signupDTO = {
         username: 'test',
         password: 'pass',
       };
@@ -85,7 +85,7 @@ describe('SignupController', () => {
         method: 'POST',
       };
       const res = await controller.signup(
-        signupDto,
+        signupDTO,
         req,
       );
       expect(res).toEqual({ username: 'test' });
@@ -104,7 +104,7 @@ describe('SignupController', () => {
             HttpStatus.BAD_REQUEST,
           ),
         );
-      const signupDto = {
+      const signupDTO = {
         username: 'test',
         password: 'pass',
       };
@@ -112,7 +112,7 @@ describe('SignupController', () => {
         method: 'POST',
       };
       await expect(
-        controller.signup(signupDto, req),
+        controller.signup(signupDTO, req),
       ).rejects.toThrow(
         new HttpException(
           'User already exists',
@@ -123,14 +123,14 @@ describe('SignupController', () => {
 
     it('should throw exception if request method is not POST', async () => {
       const request = { method: 'GET' };
-      const signupDto = {
+      const signupDTO = {
         username: 'test',
         password: 'pass',
       };
 
       try {
         await controller.signup(
-          signupDto,
+          signupDTO,
           request as any,
         );
         expect(true).toBe(false);
@@ -147,7 +147,7 @@ describe('SignupController', () => {
       }
     });
     it('should return HTTP 200 OK for a valid signup request', () => {
-      const signupDto = {
+      const signupDTO = {
         username: 'testuser',
         password: 'testpassword',
       };
@@ -166,7 +166,7 @@ describe('SignupController', () => {
       } as Request;
 
       const result = controller.signup(
-        signupDto,
+        signupDTO,
         request,
       );
 
@@ -176,8 +176,8 @@ describe('SignupController', () => {
       expect(
         signupService.signup,
       ).toHaveBeenCalledWith(
-        signupDto.username,
-        signupDto.password,
+        signupDTO.username,
+        signupDTO.password,
       );
     });
   });

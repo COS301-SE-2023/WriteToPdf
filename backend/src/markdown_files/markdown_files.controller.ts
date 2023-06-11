@@ -8,8 +8,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { MarkdownFilesService } from './markdown_files.service';
-import { CreateMarkdownFileDto } from './dto/create-markdown_file.dto';
-import { UpdateMarkdownFileDto } from './dto/update-markdown_file.dto';
+import { CreateMarkdownFileDTO } from './dto/create-markdown_file.dto';
+import { UpdateMarkdownFileDTO } from './dto/update-markdown_file.dto';
 
 @Controller('markdown-files')
 export class MarkdownFilesController {
@@ -20,10 +20,10 @@ export class MarkdownFilesController {
   @Post()
   create(
     @Body()
-    createMarkdownFileDto: CreateMarkdownFileDto,
+    createMarkdownFileDTO: CreateMarkdownFileDTO,
   ) {
     return this.markdownFilesService.create(
-      createMarkdownFileDto,
+      createMarkdownFileDTO,
     );
   }
 
@@ -41,11 +41,11 @@ export class MarkdownFilesController {
   update(
     @Param('id') id: string,
     @Body()
-    updateMarkdownFileDto: UpdateMarkdownFileDto,
+    updateMarkdownFileDTO: UpdateMarkdownFileDTO,
   ) {
     return this.markdownFilesService.update(
       +id,
-      updateMarkdownFileDto,
+      updateMarkdownFileDTO,
     );
   }
 

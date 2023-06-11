@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAssetDto } from './dto/create-asset.dto';
-import { UpdateAssetDto } from './dto/update-asset.dto';
+import { CreateAssetDTO } from './dto/create-asset.dto';
+import { UpdateAssetDTO } from './dto/update-asset.dto';
 
 @Injectable()
 export class AssetsService {
-  create(createAssetDto: CreateAssetDto) {
+  create(createAssetDTO: CreateAssetDTO) {
     return 'This action adds a new asset';
   }
 
@@ -18,7 +18,7 @@ export class AssetsService {
 
   update(
     id: number,
-    updateAssetDto: UpdateAssetDto,
+    updateAssetDTO: UpdateAssetDTO,
   ) {
     return `This action updates a #${id} asset`;
   }
