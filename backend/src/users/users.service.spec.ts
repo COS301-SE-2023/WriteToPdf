@@ -6,6 +6,7 @@ import { UsersService } from './users.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { AuthService } from '../auth/auth.service';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -18,6 +19,12 @@ describe('UsersService', () => {
           {
             provide: getRepositoryToken(User),
             useClass: Repository,
+          },
+          {
+            provide: AuthService,
+            useValue: {
+              generateToken: jest.fn(),
+            },
           },
         ],
       }).compile();

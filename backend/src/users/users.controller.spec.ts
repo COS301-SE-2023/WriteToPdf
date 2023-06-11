@@ -13,6 +13,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { LoginUserDTO } from './dto/login-user.dto';
+import { AuthService } from '../auth/auth.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -27,6 +28,12 @@ describe('UsersController', () => {
           {
             provide: getRepositoryToken(User),
             useClass: Repository,
+          },
+          {
+            provide: AuthService,
+            useValue: {
+              generateToken: jest.fn(),
+            },
           },
         ],
       }).compile();
