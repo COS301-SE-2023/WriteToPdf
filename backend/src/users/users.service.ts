@@ -13,6 +13,31 @@ import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UsersService {
+  signup(createUserDto: CreateUserDto) {
+    if (!createUserDto.Email) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Email is required',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (!createUserDto.Password) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Password is required',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    this.create(createUserDto);
+    return {
+      message: 'User created successfully',
+    };
+  }
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
@@ -47,10 +72,11 @@ export class UsersService {
 
   async login(loginUserDto: LoginUserDTO) {
     console.log(loginUserDto);
-    if (
-      !loginUserDto.Email ||
-      !loginUserDto.Password
-    ) {
+    console.log(
+      'Is instance of LoginUserDTO: ',
+      loginUserDto instanceof LoginUserDTO,
+    );
+    if (!loginUserDto.isValid()) {
       throw new HttpException(
         {
           status: HttpStatus.UNAUTHORIZED,
