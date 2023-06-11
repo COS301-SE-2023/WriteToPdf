@@ -130,4 +130,68 @@ describe('UsersController', () => {
       }
     });
   });
+
+  describe('signup', () => {
+    it('should be decorated with @Public', () => {
+      const isPublic = Reflect.getMetadata(
+        'isPublic',
+        controller.signup,
+      );
+      expect(isPublic).toBe(true);
+    });
+
+    it('should return a user', async () => {
+      const createUserDTO = new CreateUserDTO();
+      createUserDTO.FirstName = 'Test';
+      createUserDTO.LastName = 'Test';
+      createUserDTO.Email = 'test';
+      createUserDTO.Password = 'test';
+
+      const expectedResult = {
+        message: 'User created successfully',
+      };
+
+      const request = { method: 'POST' };
+
+      jest
+        .spyOn(controller, 'signup')
+        .mockImplementation(
+          async () => expectedResult,
+        );
+
+      expect(
+        await controller.signup(
+          createUserDTO,
+          request as any,
+        ),
+      ).toBe(expectedResult);
+    });
+
+    it('should throw exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const createUserDTO = new CreateUserDTO();
+      createUserDTO.FirstName = 'Test';
+      createUserDTO.LastName = 'Test';
+      createUserDTO.Email = 'test';
+      createUserDTO.Password = 'test';
+
+      try {
+        await controller.signup(
+          createUserDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+  });
 });
