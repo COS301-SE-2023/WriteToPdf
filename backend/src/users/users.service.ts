@@ -46,6 +46,19 @@ export class UsersService {
   }
 
   async login(loginUserDto: LoginUserDTO) {
+    console.log(loginUserDto);
+    if (
+      !loginUserDto.Email ||
+      !loginUserDto.Password
+    ) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          error: 'Missing Credentials',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
     const user = await this.findOneByEmail(
       loginUserDto.Email,
     );
