@@ -15,6 +15,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Public } from '../auth/auth.controller';
+import { LoginUserDTO } from './dto/login-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -33,7 +34,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   login(
-    @Body() createUserDto: CreateUserDto,
+    @Body() loginUserDto: LoginUserDTO,
     @Req() request: Request,
   ) {
     if (request.method !== 'POST') {
@@ -42,7 +43,7 @@ export class UsersController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    return this.usersService.login(createUserDto);
+    return this.usersService.login(loginUserDto);
   }
 
   @Get()
