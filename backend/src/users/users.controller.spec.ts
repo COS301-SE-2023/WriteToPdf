@@ -77,10 +77,8 @@ describe('UsersController', () => {
 
       const expectedResult = {
         UserID: 1,
-        FirstName: 'test',
-        LastName: 'test',
         Email: 'test',
-        Password: 'test',
+        Token: Promise.resolve('test'),
       };
 
       const request = { method: 'POST' };

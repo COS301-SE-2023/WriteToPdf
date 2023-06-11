@@ -9,12 +9,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { LoginUserDTO } from './dto/login-user.dto';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private authService: AuthService,
   ) {}
 
   create(createUserDto: CreateUserDto) {
@@ -47,7 +49,6 @@ export class UsersService {
     const user = await this.findOneByEmail(
       loginUserDto.Email,
     );
-    console.log('user: ', user);
     if (
       user?.Password !== loginUserDto.Password
     ) {
@@ -62,7 +63,17 @@ export class UsersService {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    return user;
+    const token =
+      await this.authService.generateToken(
+        loginUserDto.Email,
+        loginUserDto.Password,
+      );
+    const response = {
+      UserID: user.UserID,
+      Email: user.Email,
+      Token: token.access_token,
+    };
+    return response;
   }
 
   async update(
