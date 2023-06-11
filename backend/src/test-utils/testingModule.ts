@@ -1,6 +1,6 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
-import 'dotenv/config'
+import 'dotenv/config';
 
 export const testingModule = () => [
   TypeOrmModule.forRoot({

@@ -9,8 +9,6 @@ import { AssetsModule } from './assets/assets.module';
 import { FoldersModule } from './folders/folders.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
-import { LoginController } from './login/login.controller';
-import { LoginModule } from './login/login.module';
 import { SignupController } from './signup/signup.controller';
 import { SignupModule } from './signup/signup.module';
 import { HomeController } from './home/home.controller';
@@ -22,12 +20,10 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import 'dotenv/config';
 
-
 @Module({
   imports: [
     ApiTestModule,
     AuthModule,
-    LoginModule,
     SignupModule,
     HomeModule,
     EditModule,
@@ -41,7 +37,6 @@ import 'dotenv/config';
   controllers: [
     AppController,
     AuthController,
-    LoginController,
     SignupController,
     HomeController,
     EditController,
