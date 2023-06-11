@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -31,20 +35,11 @@ export class UsersService {
   }
 
   async findOneByEmail(Email: string) {
-    console.log('Searching for: ', Email);
-    console.log(
-      'this.usersRepository: ',
-      this.usersRepository,
-    );
     const result =
       await this.usersRepository.query(
         'SELECT * FROM USERS WHERE Email = ?',
         [Email],
-      ); // result.then((res) => {
-    //   console.log('res: ', res);
-    //   return res[0];
-    // });
-    console.log('Result: ', result);
+      );
     return result[0];
   }
 
@@ -52,6 +47,21 @@ export class UsersService {
     const user = await this.findOneByEmail(
       loginUserDto.Email,
     );
+    console.log('user: ', user);
+    if (
+      user?.Password !== loginUserDto.Password
+    ) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          error:
+            user?.Password === undefined
+              ? 'User not found'
+              : 'Invalid Password',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
     return user;
   }
 
