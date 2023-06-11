@@ -18,6 +18,7 @@ import { Public } from '../auth/auth.controller';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
+import { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
