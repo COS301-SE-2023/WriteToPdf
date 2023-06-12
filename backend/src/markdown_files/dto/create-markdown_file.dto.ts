@@ -1,1 +1,1 @@
-export class CreateMarkdownFileDto {}
+export class CreateMarkdownFileDTO {}

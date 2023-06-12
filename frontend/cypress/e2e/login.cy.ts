@@ -26,7 +26,7 @@ describe('app', () => {
     it('should navigate to home page', () => {
 
         cy.get('input[name="email"]').type('test');
-        cy.get('input[name="password"]').type('123456');
+        cy.get('p-password#password').find('input').type('123456');
 
         cy.get('.loginButton').click();
         cy.url().should('include', '/home');

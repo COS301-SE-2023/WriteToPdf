@@ -7,8 +7,6 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { EditApi } from './edit.api';
-
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
@@ -25,7 +23,6 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   constructor(
     private elementRef: ElementRef,
-    private api: EditApi,
     private router: Router,
   ) { }
 
@@ -34,7 +31,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (savedContent) {
       this.text = savedContent;
     }
-    this.getLoremIpsum();
   }
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
@@ -61,22 +57,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document content to localStorage when changes occur
     const content = this.text;
     localStorage.setItem('document', content);
-  }
-
-  getLoremIpsum() {
-    this.api.getLoremIpsum().subscribe({
-      next: (response) => {
-        this.documentContent = response.data;
-      },
-      error: (error) => {
-        console.error(
-          'Error fetching items:',
-          error,
-        );
-        this.documentContent =
-          'Lorem Ipsum from app';
-      },
-    });
   }
 
   navigateToPage(pageName: string) {

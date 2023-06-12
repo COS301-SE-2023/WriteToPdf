@@ -3,12 +3,12 @@
     <form action="" class="loginForm">
 
         <div class="logoWrapper" (click)="autoLogin()">
-            <hr/>
+            <hr />
             <img src="assets/Logos/WriteToPdf_Logo_white.svg" alt="" class="logo">
-            <hr/>
+            <hr />
         </div>
-        
-        <div >
+
+        <div>
             <h3 class="heading">Login</h3>
 
         </div>
@@ -27,7 +27,9 @@
             <label for="password">Password</label>
         </div>
         <div class="formElement">
-            <input type="password" name="password" id="password" placeholder="" class="textBox" [(ngModel)]="password">
+            <p-password name="password" id="password" placeholder="" class="password w-full" [(ngModel)]="password"
+                [toggleMask]="true" styleClass="p-password p-component p-inputwrapper p-input-icon-right"
+                [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [feedback]="false"></p-password>
         </div>
 
 
@@ -39,12 +41,14 @@
 
             <button (click)="navigateToPage('home')" type="button" class="googleButton">
 
-                    <img src="assets/Icons/loginIcons/google.png" alt="" class="googleIcon">
-                    Login With Google
+                <img src="assets/Icons/loginIcons/google.png" alt="" class="googleIcon">
+                Login With Google
             </button>
 
         </div>
 
-        <div class="formElement noAccount" ><p (click)="navigateToPage('signup')" class="noAccountText">Don't have an Account?</p></div>
+        <div class="formElement noAccount">
+            <p (click)="navigateToPage('signup')" class="noAccountText">Don't have an Account?</p>
+        </div>
     </form>
 </div>

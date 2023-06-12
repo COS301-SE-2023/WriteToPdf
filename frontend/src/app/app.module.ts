@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { EditComponent } from './edit/edit.component';
-import { EditApi } from './edit/edit.api';
 import { EditorModule } from 'primeng/editor';
 import { CameraComponent } from './camera/camera.component';
 import { EditAssetComponent } from './edit-asset/edit-asset.component';
@@ -53,7 +52,7 @@ import { PasswordModule } from 'primeng/password';
     BrowserAnimationsModule,
     PasswordModule
   ],
-  providers: [EditApi, NodeService, UserService],
+  providers: [NodeService, UserService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

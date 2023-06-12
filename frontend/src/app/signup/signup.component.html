@@ -2,7 +2,7 @@
 
     <form action="" class="signupForm">
 
-        <div class="logoWrapper">
+        <div (click)="outputForm()" class="logoWrapper">
             <hr />
             <img src="assets/Logos/WriteToPdf_Logo_white.svg" alt="" class="logo">
             <hr />
@@ -54,14 +54,21 @@
             <p-password name="confirmPassword" id="confirmPassword" placeholder="" class="password w-full"
                 [(ngModel)]="confirmPassword" [(ngModel)]="confirmPassword" [toggleMask]="true"
                 styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{'width':'100%'}"
-                [inputStyle]="{'width':'100%'}"></p-password>
+                [inputStyle]="{'width':'100%'}" [feedback]="false" ></p-password>
         </div>
 
 
-        <div class="formElement">
+        <div *ngIf="isFormValid();else formInvalid" class="formElement">
             <button (click)="signup()" type="button" class="signupButton">Signup</button>
-
         </div>
+
+        <ng-template #formInvalid>
+            <div class="formElement">
+                <button type="button" class="signupButtonDisabled" disabled>Signup</button>
+            </div>
+        </ng-template>
+
+
         <div class="formElement">
 
             <button (click)="navigateToPage('home')" type="button" class="googleButton">

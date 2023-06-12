@@ -5,8 +5,4 @@ export class LoginUserDTO {
 
   @IsNotEmpty()
   Password: string;
-
-  public isValid() {
-    return this.Email && this.Password;
-  }
 }

@@ -1,15 +1,14 @@
-export class CreateUserDto {
+import { IsNotEmpty } from 'class-validator';
+export class CreateUserDTO {
+  @IsNotEmpty()
   FirstName: string;
-  LastName: string;
-  Email: string;
-  Password: string;
 
-  isValid() {
-    return (
-      this.Email &&
-      this.Password &&
-      this.FirstName &&
-      this.LastName
-    );
-  }
+  @IsNotEmpty()
+  LastName: string;
+
+  @IsNotEmpty()
+  Email: string;
+
+  @IsNotEmpty()
+  Password: string;
 }
