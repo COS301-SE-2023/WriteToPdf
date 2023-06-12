@@ -1,7 +1,145 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
+/**
+ * @Backend - the functions in this file serve as dummy data for the values of the directory contents.
+ * Please code your API to deliver the database's information in the same format.
+ */
+@Injectable()
+export class MenuService {
+  //This is probably does not have to be a service, will ask the rest.
+  getMenuItemsData() {
+    return [
+      {
+        label: 'File',
+        icon: 'pi pi-fw pi-file',
+        items: [
+          {
+            label: 'New',
+            icon: 'pi pi-fw pi-plus',
+            items: [
+              {
+                label: 'Bookmark',
+                icon: 'pi pi-fw pi-bookmark'
+              },
+              {
+                label: 'Video',
+                icon: 'pi pi-fw pi-video'
+              }
+            ]
+          },
+          {
+            label: 'Delete',
+            icon: 'pi pi-fw pi-trash'
+          },
+          {
+            separator: true
+          },
+          {
+            label: 'Export',
+            icon: 'pi pi-fw pi-external-link'
+          }
+        ]
+      },
+      {
+        label: 'Edit',
+        icon: 'pi pi-fw pi-pencil',
+        items: [
+          {
+            label: 'Left',
+            icon: 'pi pi-fw pi-align-left'
+          },
+          {
+            label: 'Right',
+            icon: 'pi pi-fw pi-align-right'
+          },
+          {
+            label: 'Center',
+            icon: 'pi pi-fw pi-align-center'
+          },
+          {
+            label: 'Justify',
+            icon: 'pi pi-fw pi-align-justify'
+          }
+        ]
+      },
+      {
+        label: 'Users',
+        icon: 'pi pi-fw pi-user',
+        items: [
+          {
+            label: 'New',
+            icon: 'pi pi-fw pi-user-plus'
+          },
+          {
+            label: 'Delete',
+            icon: 'pi pi-fw pi-user-minus'
+          },
+          {
+            label: 'Search',
+            icon: 'pi pi-fw pi-users',
+            items: [
+              {
+                label: 'Filter',
+                icon: 'pi pi-fw pi-filter',
+                items: [
+                  {
+                    label: 'Print',
+                    icon: 'pi pi-fw pi-print'
+                  }
+                ]
+              },
+              {
+                icon: 'pi pi-fw pi-bars',
+                label: 'List'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        label: 'Events',
+        icon: 'pi pi-fw pi-calendar',
+        items: [
+          {
+            label: 'Edit',
+            icon: 'pi pi-fw pi-pencil',
+            items: [
+              {
+                label: 'Save',
+                icon: 'pi pi-fw pi-calendar-plus'
+              },
+              {
+                label: 'Delete',
+                icon: 'pi pi-fw pi-calendar-minus'
+              }
+            ]
+          },
+          {
+            label: 'Archieve',
+            icon: 'pi pi-fw pi-calendar-times',
+            items: [
+              {
+                label: 'Remove',
+                icon: 'pi pi-fw pi-calendar-minus'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        label: 'Quit',
+        icon: 'pi pi-fw pi-power-off'
+      }
+    ];
+  }
+}
 @Injectable()
 export class NodeService {
+  /**
+   * @Backend, below is a function with data that showcases the
+   * format we need the Tree information to be delivered to us for seamless integration
+   * into the PrimeNG component. Not to be confused with the format of the TreeTable.
+   */
   getTreeNodesData() {
     return [
       {
@@ -16,8 +154,8 @@ export class NodeService {
             data: 'Work Folder',
             icon: 'pi pi-fw pi-cog',
             children: [
-              { key: '0-0-0', label: 'Expenses.doc', icon: 'pi pi-fw pi-file', data: 'Expenses Document' },
-              { key: '0-0-1', label: 'Resume.doc', icon: 'pi pi-fw pi-file', data: 'Resume Document' }
+              {key: '0-0-0', label: 'Expenses.doc', icon: 'pi pi-fw pi-file', data: 'Expenses Document'},
+              {key: '0-0-1', label: 'Resume.doc', icon: 'pi pi-fw pi-file', data: 'Resume Document'}
             ]
           },
           {
@@ -25,7 +163,7 @@ export class NodeService {
             label: 'Home',
             data: 'Home Folder',
             icon: 'pi pi-fw pi-home',
-            children: [{ key: '0-1-0', label: 'Invoices.txt', icon: 'pi pi-fw pi-file', data: 'Invoices for this month' }]
+            children: [{key: '0-1-0', label: 'Invoices.txt', icon: 'pi pi-fw pi-file', data: 'Invoices for this month'}]
           }
         ]
       },
@@ -35,9 +173,9 @@ export class NodeService {
         data: 'Events Folder',
         icon: 'pi pi-fw pi-calendar',
         children: [
-          { key: '1-0', label: 'Meeting', icon: 'pi pi-fw pi-calendar-plus', data: 'Meeting' },
-          { key: '1-1', label: 'Product Launch', icon: 'pi pi-fw pi-calendar-plus', data: 'Product Launch' },
-          { key: '1-2', label: 'Report Review', icon: 'pi pi-fw pi-calendar-plus', data: 'Report Review' }
+          {key: '1-0', label: 'Meeting', icon: 'pi pi-fw pi-calendar-plus', data: 'Meeting'},
+          {key: '1-1', label: 'Product Launch', icon: 'pi pi-fw pi-calendar-plus', data: 'Product Launch'},
+          {key: '1-2', label: 'Report Review', icon: 'pi pi-fw pi-calendar-plus', data: 'Report Review'}
         ]
       },
       {
@@ -52,8 +190,8 @@ export class NodeService {
             label: 'Al Pacino',
             data: 'Pacino Movies',
             children: [
-              { key: '2-0-0', label: 'Scarface', icon: 'pi pi-fw pi-video', data: 'Scarface Movie' },
-              { key: '2-0-1', label: 'Serpico', icon: 'pi pi-fw pi-video', data: 'Serpico Movie' }
+              {key: '2-0-0', label: 'Scarface', icon: 'pi pi-fw pi-video', data: 'Scarface Movie'},
+              {key: '2-0-1', label: 'Serpico', icon: 'pi pi-fw pi-video', data: 'Serpico Movie'}
             ]
           },
           {
@@ -62,8 +200,8 @@ export class NodeService {
             icon: 'pi pi-fw pi-star-fill',
             data: 'De Niro Movies',
             children: [
-              { key: '2-1-0', label: 'Goodfellas', icon: 'pi pi-fw pi-video', data: 'Goodfellas Movie' },
-              { key: '2-1-1', label: 'Untouchables', icon: 'pi pi-fw pi-video', data: 'Untouchables Movie' }
+              {key: '2-1-0', label: 'Goodfellas', icon: 'pi pi-fw pi-video', data: 'Goodfellas Movie'},
+              {key: '2-1-1', label: 'Untouchables', icon: 'pi pi-fw pi-video', data: 'Untouchables Movie'}
             ]
           }
         ]
@@ -71,6 +209,11 @@ export class NodeService {
     ];
   }
 
+  /**
+   * @Backend, below is a function with data that showcases the
+   * format we need the TreeTable information to be delivered to us for seamless integration
+   * into the PrimeNG component. Not to be confused with the format of the Tree.
+   */
   getTreeTableNodesData() {
     return [
       {
@@ -453,201 +596,146 @@ export class NodeService {
   getFileSystemNodesData() {
     return [
       {
-        "data":{
-          "name":"Applications",
-          "size":"200mb",
-          "type":"Folder"
-        },
-        "children":[
-          {
-            "data":{
-              "name":"Angular",
-              "size":"25mb",
-              "type":"Folder"
-            },
-            "children":[
-              {
-                "data":{
-                  "name":"angular.app",
-                  "size":"10mb",
-                  "type":"Application"
-                }
-              },
-              {
-                "data":{
-                  "name":"cli.app",
-                  "size":"10mb",
-                  "type":"Application"
-                }
-              },
-              {
-                "data":{
-                  "name":"mobile.app",
-                  "size":"5mb",
-                  "type":"Application"
-                }
-              }
-            ]
-          },
-          {
-            "data":{
-              "name":"editor.app",
-              "size":"25mb",
-              "type":"Application"
-            }
-          },
-          {
-            "data":{
-              "name":"settings.app",
-              "size":"50mb",
-              "type":"Application"
-            }
-          }
-        ]
-      },
-      {
-        "data":{
-          "name":"Cloud",
-          "size":"20mb",
-          "type":"Folder"
-        },
-        "children":[
-          {
-            "data":{
-              "name":"backup-1.zip",
-              "size":"10mb",
-              "type":"Zip"
-            }
-          },
-          {
-            "data":{
-              "name":"backup-2.zip",
-              "size":"10mb",
-              "type":"Zip"
-            }
-          }
-        ]
-      },
-      {
         "data": {
-          "name":"Desktop",
-          "size":"150kb",
-          "type":"Folder"
+          "name": "Applications",
+          "size": "200mb",
+          "type": "Folder"
         },
-        "children":[
-          {
-            "data":{
-              "name":"note-meeting.txt",
-              "size":"50kb",
-              "type":"Text"
-            }
-          },
-          {
-            "data":{
-              "name":"note-todo.txt",
-              "size":"100kb",
-              "type":"Text"
-            }
-          }
-        ]
-      },
-      {
-        "data":{
-          "name":"Documents",
-          "size":"75kb",
-          "type":"Folder"
-        },
-        "children":[
-          {
-            "data":{
-              "name":"Work",
-              "size":"55kb",
-              "type":"Folder"
-            },
-            "children":[
-              {
-                "data":{
-                  "name":"Expenses.doc",
-                  "size":"30kb",
-                  "type":"Document"
-                }
-              },
-              {
-                "data":{
-                  "name":"Resume.doc",
-                  "size":"25kb",
-                  "type":"Resume"
-                }
-              }
-            ]
-          },
-          {
-            "data":{
-              "name":"Home",
-              "size":"20kb",
-              "type":"Folder"
-            },
-            "children":[
-              {
-                "data":{
-                  "name":"Invoices",
-                  "size":"20kb",
-                  "type":"Text"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "data": {
-          "name":"Downloads",
-          "size":"25mb",
-          "type":"Folder"
-        },
-        "children":[
+        "children": [
           {
             "data": {
-              "name":"Spanish",
-              "size":"10mb",
-              "type":"Folder"
+              "name": "Angular",
+              "size": "25mb",
+              "type": "Folder"
             },
-            "children":[
+            "children": [
               {
-                "data":{
-                  "name":"tutorial-a1.txt",
-                  "size":"5mb",
-                  "type":"Text"
+                "data": {
+                  "name": "angular.app",
+                  "size": "10mb",
+                  "type": "Application"
                 }
               },
               {
-                "data":{
-                  "name":"tutorial-a2.txt",
-                  "size":"5mb",
-                  "type":"Text"
+                "data": {
+                  "name": "cli.app",
+                  "size": "10mb",
+                  "type": "Application"
+                }
+              },
+              {
+                "data": {
+                  "name": "mobile.app",
+                  "size": "5mb",
+                  "type": "Application"
                 }
               }
             ]
           },
           {
-            "data":{
-              "name":"Travel",
-              "size":"15mb",
-              "type":"Text"
+            "data": {
+              "name": "editor.app",
+              "size": "25mb",
+              "type": "Application"
+            }
+          },
+          {
+            "data": {
+              "name": "settings.app",
+              "size": "50mb",
+              "type": "Application"
+            }
+          }
+        ]
+      },
+      {
+        "data": {
+          "name": "Cloud",
+          "size": "20mb",
+          "type": "Folder"
+        },
+        "children": [
+          {
+            "data": {
+              "name": "backup-1.zip",
+              "size": "10mb",
+              "type": "Zip"
+            }
+          },
+          {
+            "data": {
+              "name": "backup-2.zip",
+              "size": "10mb",
+              "type": "Zip"
+            }
+          }
+        ]
+      },
+      {
+        "data": {
+          "name": "Desktop",
+          "size": "150kb",
+          "type": "Folder"
+        },
+        "children": [
+          {
+            "data": {
+              "name": "note-meeting.txt",
+              "size": "50kb",
+              "type": "Text"
+            }
+          },
+          {
+            "data": {
+              "name": "note-todo.txt",
+              "size": "100kb",
+              "type": "Text"
+            }
+          }
+        ]
+      },
+      {
+        "data": {
+          "name": "Documents",
+          "size": "75kb",
+          "type": "Folder"
+        },
+        "children": [
+          {
+            "data": {
+              "name": "Work",
+              "size": "55kb",
+              "type": "Folder"
             },
-            "children":[
+            "children": [
               {
-                "data":{
-                  "name":"Hotel.pdf",
-                  "size":"10mb",
-                  "type":"PDF"
+                "data": {
+                  "name": "Expenses.doc",
+                  "size": "30kb",
+                  "type": "Document"
                 }
               },
               {
-                "data":{
-                  "name":"Flight.pdf",
-                  "size":"5mb",
-                  "type":"PDF"
+                "data": {
+                  "name": "Resume.doc",
+                  "size": "25kb",
+                  "type": "Resume"
+                }
+              }
+            ]
+          },
+          {
+            "data": {
+              "name": "Home",
+              "size": "20kb",
+              "type": "Folder"
+            },
+            "children": [
+              {
+                "data": {
+                  "name": "Invoices",
+                  "size": "20kb",
+                  "type": "Text"
                 }
               }
             ]
@@ -656,106 +744,161 @@ export class NodeService {
       },
       {
         "data": {
-          "name":"Main",
-          "size":"50mb",
-          "type":"Folder"
+          "name": "Downloads",
+          "size": "25mb",
+          "type": "Folder"
         },
-        "children":[
+        "children": [
           {
-            "data":{
-              "name":"bin",
-              "size":"50kb",
-              "type":"Link"
+            "data": {
+              "name": "Spanish",
+              "size": "10mb",
+              "type": "Folder"
+            },
+            "children": [
+              {
+                "data": {
+                  "name": "tutorial-a1.txt",
+                  "size": "5mb",
+                  "type": "Text"
+                }
+              },
+              {
+                "data": {
+                  "name": "tutorial-a2.txt",
+                  "size": "5mb",
+                  "type": "Text"
+                }
+              }
+            ]
+          },
+          {
+            "data": {
+              "name": "Travel",
+              "size": "15mb",
+              "type": "Text"
+            },
+            "children": [
+              {
+                "data": {
+                  "name": "Hotel.pdf",
+                  "size": "10mb",
+                  "type": "PDF"
+                }
+              },
+              {
+                "data": {
+                  "name": "Flight.pdf",
+                  "size": "5mb",
+                  "type": "PDF"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "data": {
+          "name": "Main",
+          "size": "50mb",
+          "type": "Folder"
+        },
+        "children": [
+          {
+            "data": {
+              "name": "bin",
+              "size": "50kb",
+              "type": "Link"
             }
           },
           {
-            "data":{
-              "name":"etc",
-              "size":"100kb",
-              "type":"Link"
+            "data": {
+              "name": "etc",
+              "size": "100kb",
+              "type": "Link"
             }
           },
           {
-            "data":{
-              "name":"var",
-              "size":"100kb",
-              "type":"Link"
+            "data": {
+              "name": "var",
+              "size": "100kb",
+              "type": "Link"
             }
           }
         ]
       },
       {
-        "data":{
-          "name":"Other",
-          "size":"5mb",
-          "type":"Folder"
+        "data": {
+          "name": "Other",
+          "size": "5mb",
+          "type": "Folder"
         },
-        "children":[
+        "children": [
           {
-            "data":{
-              "name":"todo.txt",
-              "size":"3mb",
-              "type":"Text"
+            "data": {
+              "name": "todo.txt",
+              "size": "3mb",
+              "type": "Text"
             }
           },
           {
-            "data":{
-              "name":"logo.png",
-              "size":"2mb",
-              "type":"Picture"
+            "data": {
+              "name": "logo.png",
+              "size": "2mb",
+              "type": "Picture"
             }
           }
         ]
       },
       {
-        "data":{
-          "name":"Pictures",
-          "size":"150kb",
-          "type":"Folder"
+        "data": {
+          "name": "Pictures",
+          "size": "150kb",
+          "type": "Folder"
         },
-        "children":[
+        "children": [
           {
-            "data":{
-              "name":"barcelona.jpg",
-              "size":"90kb",
-              "type":"Picture"
+            "data": {
+              "name": "barcelona.jpg",
+              "size": "90kb",
+              "type": "Picture"
             }
           },
           {
-            "data":{
-              "name":"primeng.png",
-              "size":"30kb",
-              "type":"Picture"
+            "data": {
+              "name": "primeng.png",
+              "size": "30kb",
+              "type": "Picture"
             }
           },
           {
-            "data":{
-              "name":"prime.jpg",
-              "size":"30kb",
-              "type":"Picture"
+            "data": {
+              "name": "prime.jpg",
+              "size": "30kb",
+              "type": "Picture"
             }
           }
         ]
       },
       {
-        "data":{
-          "name":"Videos",
-          "size":"1500mb",
-          "type":"Folder"
+        "data": {
+          "name": "Videos",
+          "size": "1500mb",
+          "type": "Folder"
         },
-        "children":[
+        "children": [
           {
-            "data":{
-              "name":"primefaces.mkv",
-              "size":"1000mb",
-              "type":"Video"
+            "data": {
+              "name": "primefaces.mkv",
+              "size": "1000mb",
+              "type": "Video"
             }
           },
           {
-            "data":{
-              "name":"intro.avi",
-              "size":"500mb",
-              "type":"Video"
+            "data": {
+              "name": "intro.avi",
+              "size": "500mb",
+              "type": "Video"
             }
           }
         ]
