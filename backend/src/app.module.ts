@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ApiTestModule } from './api-test/api-test.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataSourceOptions } from 'db/data-source';
+import { dataSourceOptions, testDBOptions } from 'db/data-source';
 import { MarkdownFilesModule } from './markdown_files/markdown_files.module';
 import { AssetsModule } from './assets/assets.module';
 import { FoldersModule } from './folders/folders.module';
@@ -30,6 +30,7 @@ import 'dotenv/config';
     DatabaseModule,
     UsersModule,
     TypeOrmModule.forRoot(dataSourceOptions),
+    TypeOrmModule.forRoot(testDBOptions),
     MarkdownFilesModule,
     AssetsModule,
     FoldersModule,
