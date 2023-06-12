@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { FileDTO } from './dto/file.dto';
 import 'dotenv/config';
 import {
+  DeleteObjectCommand,
+  GetObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -33,14 +35,44 @@ export class S3Service {
       '/' +
       fileDTO.FileName;
 
-    await this.s3Client.send(
+    return await this.s3Client.send(
       new PutObjectCommand({
         Bucket: this.awsS3BucketName,
         Key: filePath,
         Body: file,
       }),
     );
-    console.log(filePath);
-    return fileDTO;
+  }
+
+  async download(fileDTO: FileDTO) {
+    const filePath =
+      fileDTO.UserID +
+      '/' +
+      fileDTO.ParentDirectory +
+      '/' +
+      fileDTO.FileName;
+
+    return await this.s3Client.send(
+      new GetObjectCommand({
+        Bucket: this.awsS3BucketName,
+        Key: filePath,
+      }),
+    );
+  }
+
+  async delete(fileDTO: FileDTO) {
+    const filePath =
+      fileDTO.UserID +
+      '/' +
+      fileDTO.ParentDirectory +
+      '/' +
+      fileDTO.FileName;
+
+    return await this.s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: this.awsS3BucketName,
+        Key: filePath,
+      }),
+    );
   }
 }

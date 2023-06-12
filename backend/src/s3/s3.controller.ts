@@ -5,6 +5,7 @@ import {
   UseInterceptors,
   UploadedFile,
   ParseFilePipe,
+  Get,
   // FileTypeValidator,
 } from '@nestjs/common';
 import { S3Service } from './s3.service';
@@ -17,7 +18,7 @@ export class S3Controller {
     private readonly s3Service: S3Service,
   ) {}
 
-  @Post()
+  @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async upload(
     @Body() fileDTO: FileDTO,
@@ -36,5 +37,16 @@ export class S3Controller {
       fileDTO,
       file.buffer,
     );
+  }
+
+  @Get('download')
+  async download(@Body() fileDTO: FileDTO) {
+    return await this.s3Service.download(fileDTO);
+  }
+
+  @Post('delete')
+  @UseInterceptors(FileInterceptor('file'))
+  async delete(@Body() fileDTO: FileDTO) {
+    return await this.s3Service.delete(fileDTO);
   }
 }
