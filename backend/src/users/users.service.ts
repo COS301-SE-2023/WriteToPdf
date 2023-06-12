@@ -145,7 +145,7 @@ export class UsersService {
           error:
             user?.Password === undefined
               ? 'User not found'
-              : 'Invalid Password',
+              : 'Incorrect password',
         },
         HttpStatus.UNAUTHORIZED,
       );
