@@ -44,7 +44,6 @@ export class LoginComponent {
     this.email="test";
     this.password="123456";
 
-    console.log(await this.userService.login("test", "123456"));
   }
 
 }

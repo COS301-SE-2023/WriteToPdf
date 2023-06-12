@@ -104,7 +104,9 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
   }
 
-
+  save() {
+    
+  }
 
 }
 
