@@ -1,9 +1,17 @@
 {
     "name": "writetopdf",
-    "verison": "0.0.0",
+    "verison": "0.1.0",
     "license": "MIT",
     "scripts": {
         "frontend": "cd ./frontend && npm start",
         "backend": "cd ./backend && npm run start:dev"
+    },
+    "dependencies": {
+        "@nestjs/typeorm": "^9.0.1",
+        "mysql2": "^3.3.3",
+        "typeorm": "^0.3.16"
+    },
+    "devDependencies": {
+        "dotenv": "^16.1.4"
     }
 }

@@ -1,0 +1,23 @@
+.webcamWrapper{
+    width: -moz-fit-content;
+    width:fit-content;
+    margin:auto;
+}
+
+.imageWrapper{
+    width: -moz-fit-content;
+    width:fit-content;
+    margin:auto;
+}
+.footer{
+    display:flex;
+}
+
+.capture{
+    margin:auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    background-color: white;
+    border: 1px solid white;
+}
