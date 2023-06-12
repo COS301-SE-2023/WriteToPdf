@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { EditComponent } from './edit/edit.component';
-import { EditApi } from './edit/edit.api';
 import { EditorModule } from 'primeng/editor';
 import { CameraComponent } from './camera/camera.component';
 import { EditAssetComponent } from './edit-asset/edit-asset.component';
@@ -23,6 +22,7 @@ import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserService } from './services/user.service';
+import { PasswordModule } from 'primeng/password';
 import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { MenubarModule } from 'primeng/menubar';
 @NgModule({
@@ -52,7 +52,8 @@ import { MenubarModule } from 'primeng/menubar';
     TreeTableModule,
     SidebarModule,
     ButtonModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    PasswordModule
   ],
   providers: [EditApi, NodeService, UserService, MenuService],
   bootstrap: [AppComponent],

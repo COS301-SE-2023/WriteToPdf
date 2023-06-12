@@ -3,9 +3,9 @@ describe('app', () => {
         cy.visit('http://localhost:4200');
     });
 
-    it('should display login from', () => {
+    it('should display login form', () => {
         cy.get('.loginForm').should('exist').should('be.visible');
-        cy.get('.loginForm').should('contain', 'Username');
+        cy.get('.loginForm').should('contain', 'Email');
         cy.get('.loginForm').should('contain', 'Password');
     });
 
@@ -25,8 +25,8 @@ describe('app', () => {
     
     it('should navigate to home page', () => {
 
-        cy.get('input[name="username"]').type('test');
-        cy.get('input[name="password"]').type('123456');
+        cy.get('input[name="email"]').type('test');
+        cy.get('p-password#password').find('input').type('123456');
 
         cy.get('.loginButton').click();
         cy.url().should('include', '/home');

@@ -46,6 +46,17 @@
 }
 
 .logo {
+    -webkit-user-drag: none;
+    -moz-user-drag: none;
+    -ms-user-drag: none;
+    user-drag: none;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
     width: 130px;
     margin: auto;
 }
@@ -60,6 +71,24 @@
     padding: 0 5%;
     width: 80%;
     margin: auto;
+}
+
+.password {
+    width: 80%;
+    margin: auto;
+    display: flex;
+}
+
+:host ::ng-deep .p-inputtext {
+    border: 2px solid #ffffff;
+    border-radius: 90px;
+
+    background-color: $text-box-color ;
+
+    height: 40px;
+    width: 100%;
+    margin: auto;
+
 }
 
 .formElement {
