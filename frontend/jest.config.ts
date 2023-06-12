@@ -2,6 +2,8 @@
  * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/configuration
  */
+import { Config } from '@jest/types';
+
 
 module.exports = {
   preset: 'jest-preset-angular',
