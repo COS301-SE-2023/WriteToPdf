@@ -55,7 +55,7 @@ import { MenubarModule } from 'primeng/menubar';
     BrowserAnimationsModule,
     PasswordModule
   ],
-  providers: [EditApi, NodeService, UserService, MenuService],
+  providers: [NodeService, UserService, MenuService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
