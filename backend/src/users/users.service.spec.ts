@@ -11,15 +11,18 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import exp from 'constants';
 
 describe('UsersService', () => {
   let service: UsersService;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule =
       await Test.createTestingModule({
         providers: [
           UsersService,
+          AuthService,
           {
             provide: getRepositoryToken(User),
             useClass: Repository,
@@ -35,6 +38,8 @@ describe('UsersService', () => {
 
     service =
       module.get<UsersService>(UsersService);
+    authService =
+      module.get<AuthService>(AuthService);
   });
 
   it('should be defined', () => {
@@ -268,6 +273,104 @@ describe('UsersService', () => {
           error: 'Email already exists',
         });
       }
+    });
+  });
+
+  describe('login', () => {
+    it('should throw exception if user is not found', async () => {
+      const loginDto = {
+        Email: 'test',
+        Password: 'pass',
+      };
+      jest
+        .spyOn(service, 'findOneByEmail')
+        .mockResolvedValue(undefined);
+
+      try {
+        await service.login(loginDto);
+        expect(true).toBe(false);
+      } catch (e) {
+        expect(e).toBeInstanceOf(HttpException);
+        expect(e.getStatus()).toBe(
+          HttpStatus.UNAUTHORIZED,
+        );
+        expect(e.getResponse()).toEqual({
+          status: HttpStatus.UNAUTHORIZED,
+          error: 'User not found',
+        });
+      }
+    });
+
+    it('should throw exception if password is incorrect', async () => {
+      const loginDto = {
+        Email: 'test',
+        Password: 'pass',
+      };
+
+      const returnedUser = {
+        Email: loginDto.Email,
+        Password: 'wrongpass',
+      } as unknown as User;
+
+      jest
+        .spyOn(service, 'findOneByEmail')
+        .mockResolvedValue(returnedUser);
+
+      try {
+        await service.login(loginDto);
+        expect(true).toBe(false);
+      } catch (e) {
+        expect(e).toBeInstanceOf(HttpException);
+        expect(e.getStatus()).toBe(
+          HttpStatus.UNAUTHORIZED,
+        );
+        expect(e.getResponse()).toEqual({
+          status: HttpStatus.UNAUTHORIZED,
+          error: 'Incorrect password',
+        });
+      }
+    });
+
+    it('should return token if credentials are correct', async () => {
+      const loginDto = {
+        Email: 'test',
+        Password: 'pass',
+      };
+
+      const returnedUser = {
+        UserID: 1,
+        FirstName: 'Test',
+        LastName: 'Test',
+        Email: loginDto.Email,
+        Password: loginDto.Password,
+      } as unknown as User;
+
+      const expectedResponse = {
+        UserID: returnedUser.UserID,
+        Email: returnedUser.Email,
+        Token: 'token',
+      };
+
+      const authToken = {
+        access_token: 'token',
+      };
+
+      jest
+        .spyOn(service, 'findOneByEmail')
+        .mockResolvedValue(returnedUser);
+      jest
+        .spyOn(authService, 'generateToken')
+        .mockReturnValue(
+          Promise.resolve(authToken),
+        );
+
+      const result = await service.login(
+        loginDto,
+      );
+
+      expect(result).toStrictEqual(
+        expectedResponse,
+      );
     });
   });
 });
