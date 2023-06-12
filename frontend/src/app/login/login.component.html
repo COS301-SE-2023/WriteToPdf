@@ -2,7 +2,7 @@
 
     <form action="" class="loginForm">
 
-        <div class="logoWrapper">
+        <div class="logoWrapper" (click)="autoLogin()">
             <hr/>
             <img src="assets/Logos/WriteToPdf_Logo_white.svg" alt="" class="logo">
             <hr/>
@@ -14,11 +14,11 @@
         </div>
 
         <div class="labelElement">
-            <label for="username">Username</label>
+            <label for="email">Email</label>
         </div>
 
         <div class="formElement">
-            <input type="text" name="username" id="username" placeholder="" class="textBox">
+            <input type="email" name="email" id="email" placeholder="" class="textBox" [(ngModel)]="email">
 
         </div>
 
@@ -27,12 +27,12 @@
             <label for="password">Password</label>
         </div>
         <div class="formElement">
-            <input type="password" name="password" id="password" placeholder="" class="textBox">
+            <input type="password" name="password" id="password" placeholder="" class="textBox" [(ngModel)]="password">
         </div>
 
 
         <div class="formElement">
-            <button (click)="navigateToPage('home')" type="button" class="loginButton">Login</button>
+            <button (click)="login()" type="submit" class="loginButton">Login</button>
 
         </div>
         <div class="formElement">
@@ -45,5 +45,6 @@
 
         </div>
 
+        <div class="formElement noAccount" ><p (click)="navigateToPage('signup')" class="noAccountText">Don't have an Account?</p></div>
     </form>
 </div>

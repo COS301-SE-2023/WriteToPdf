@@ -9,12 +9,12 @@
 // ***********************************************
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
-// declare namespace Cypress {
-//   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//   interface Chainable<Subject> {
-//     login(email: string, password: string): void;
-//   }
-// }
+declare namespace Cypress {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Chainable<Subject> {
+    login(email: string, password: string): void;
+  }
+}
 //
 // -- This is a parent command --
 // Cypress.Commands.add('login', (email, password) => {
@@ -31,3 +31,13 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('login', (username, password) => {
+    cy.visit('http://localhost:4200/login');
+
+    cy.get('input[name="email"]').type('test');
+    cy.get('input[name="password"]').type('123456');
+
+    cy.get('.loginButton').click();
+    cy.url().should('include', '/home');
+});

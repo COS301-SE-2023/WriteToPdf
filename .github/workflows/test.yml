@@ -6,6 +6,15 @@ on:
   pull_request:
     branches: [ test ]
 
+env:
+  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+  DB_TYPE: ${{ secrets.DB_TYPE }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+
 jobs:
   test_backend:
     runs-on: ubuntu-latest
@@ -28,7 +37,7 @@ jobs:
         working-directory: backend
         run: npm run test
     
-  test_frontend:
+  test_e2e:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -40,8 +49,16 @@ jobs:
           node-version: '16.x'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
+      
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install
+
+      - name: Serve backend
+        working-directory: backend
+        run: npm run start &
           
-      - name: Install dependencies
+      - name: Install frontend dependencies
         working-directory: frontend
         run: npm install
       
