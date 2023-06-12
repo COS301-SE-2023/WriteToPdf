@@ -10,7 +10,6 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { AuthService } from '../auth/auth.service';
-import { find } from 'rxjs';
 
 @Injectable()
 export class UsersService {

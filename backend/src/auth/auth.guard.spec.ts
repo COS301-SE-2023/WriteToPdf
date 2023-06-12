@@ -11,11 +11,7 @@ import {
 import { createMock } from '@golevelup/ts-jest';
 import { sign } from 'jsonwebtoken';
 import { jwtConstants } from './constants';
-import { SetMetadata } from '@nestjs/common';
-import {
-  IS_PUBLIC_KEY,
-  Public,
-} from './auth.controller';
+import { IS_PUBLIC_KEY } from './auth.controller';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;

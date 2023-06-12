@@ -11,7 +11,6 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import exp from 'constants';
 
 describe('UsersService', () => {
   let service: UsersService;

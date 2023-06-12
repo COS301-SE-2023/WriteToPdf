@@ -15,6 +15,8 @@ import { EditModule } from './edit/edit.module';
 import { DatabaseController } from './database/database.controller';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
+import { S3Controller } from './s3/s3.controller';
+import { S3Module } from './s3/s3.module';
 import 'dotenv/config';
 
 @Module({
@@ -28,6 +30,7 @@ import 'dotenv/config';
     MarkdownFilesModule,
     AssetsModule,
     FoldersModule,
+    S3Module,
   ],
   controllers: [
     AppController,
@@ -35,6 +38,7 @@ import 'dotenv/config';
     HomeController,
     EditController,
     DatabaseController,
+    S3Controller,
   ],
   providers: [AppService],
 })
