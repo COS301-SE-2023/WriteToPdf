@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {TreeNode} from "primeng/api";
 
 /**
  * @Backend - the functions in this file serve as dummy data for the values of the directory contents.
@@ -207,6 +208,13 @@ export class NodeService {
         ]
       }
     ];
+  }
+
+  getFilesAndDirectories(directory: TreeNode): TreeNode[] {
+    if (directory.children) {
+      return directory.children.filter(node => !node.children); // Filter out nodes that have children (i.e., directories)
+    }
+    return [];
   }
 
   /**

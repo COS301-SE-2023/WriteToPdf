@@ -7,13 +7,9 @@ $sidebar-content-width: 225px;
 }
 
 .header {
-
     overflow-x: hidden;
-
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+
     display: flex;
     background-image: linear-gradient(to right, #ffffff, #e7e7e7);
     border-bottom: 1px solid #ccc;

@@ -24,33 +24,33 @@
         <div class="tool">
           <img src="assets/Icons/editIcons/redo.svg" alt="">
         </div>
-        <div class="tool" id="bold" (click)="flipBold()">
-          <img src="assets/Icons/editIcons/bold.svg" alt="">
-        </div>
-        <div class="tool" id="italic">
-          <img src="assets/Icons/editIcons/italic.svg" alt="">
-        </div>
-        <div class="tool" id="strikethrough">
-          <img src="assets/Icons/editIcons/strikethrough.svg" alt="">
-        </div>
-        <div class="tool" id="unorderedList">
-          <img src="assets/Icons/editIcons/unorderedList.svg" alt="">
-        </div>
-        <div class="tool" id="orderedList">
-          <img src="assets/Icons/editIcons/orderedList.svg" alt="">
-        </div>
-        <div class="dropdownWrapper">
-          <div class="dropdownInput">
-            <h4 class="dropdownText">Heading 1</h4>
-          </div>
-          <div class="dropdownContent">
-            <p>HI</p>
-            <p>HI</p>
-            <p>HI</p>
-            <p>HI</p>
-            <p>HI</p>
-          </div>
-        </div>
+<!--        <div class="tool" id="bold" (click)="flipBold()">-->
+<!--          <img src="assets/Icons/editIcons/bold.svg" alt="">-->
+<!--        </div>-->
+<!--        <div class="tool" id="italic">-->
+<!--          <img src="assets/Icons/editIcons/italic.svg" alt="">-->
+<!--        </div>-->
+<!--        <div class="tool" id="strikethrough">-->
+<!--          <img src="assets/Icons/editIcons/strikethrough.svg" alt="">-->
+<!--        </div>-->
+<!--        <div class="tool" id="unorderedList">-->
+<!--          <img src="assets/Icons/editIcons/unorderedList.svg" alt="">-->
+<!--        </div>-->
+<!--        <div class="tool" id="orderedList">-->
+<!--          <img src="assets/Icons/editIcons/orderedList.svg" alt="">-->
+<!--        </div>-->
+<!--        <div class="dropdownWrapper">-->
+<!--          <div class="dropdownInput">-->
+<!--            <h4 class="dropdownText">Heading 1</h4>-->
+<!--          </div>-->
+<!--          <div class="dropdownContent">-->
+<!--            <p>HI</p>-->
+<!--            <p>HI</p>-->
+<!--            <p>HI</p>-->
+<!--            <p>HI</p>-->
+<!--            <p>HI</p>-->
+<!--          </div>-->
+<!--        </div>-->
       </div>
     </div>
     <div class="pageIconWrapper"></div>
@@ -197,7 +197,6 @@
           <p class="assetDescription">Image</p>
         </div>
       </div>
-
       <div class="assetWrapper">
         <div class="assetHeader">
           <div class="assetName">
@@ -215,7 +214,6 @@
           <p class="assetDescription">Image</p>
         </div>
       </div>
-
       <div class="assetWrapper">
         <div class="assetHeader">
           <div class="assetName">
@@ -233,20 +231,11 @@
           <p class="assetDescription">Image</p>
         </div>
       </div>
-
     </div>
     <div class="page">
-
       <p-editor #quillEditor [(ngModel)]="text" [style]="{ height: '1138px' }" class="quill-editor">
-
       </p-editor>
-
-
     </div>
-
-    <!-- <div class="page" contenteditable="true" (input)="onContentChange($event)" tabindex="0">
-      {{ documentContent }}
-    </div> -->
   </div>
 
 

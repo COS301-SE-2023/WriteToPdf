@@ -7,6 +7,8 @@
 }
 //Code Section Header Styling
 .header {
+  margin-top:-10px;
+  margin-left:-8px;
   position: fixed;
   display: grid;
   grid-auto-flow: column;
@@ -23,14 +25,16 @@
   z-index:10;
 }
 .speedDialEditMenu{
-  padding-right: 50px;
+  padding-right: 40px;
   margin-right:50px;
+  padding-left:10px;
   padding-top:20px;
 }
 
 .logoWrapper {
   display: flex;
   align-items: center;
+  padding-left: 6px;
 }
 
 .logo {
@@ -43,11 +47,7 @@
   margin:auto;
 }
 
-.menuBar {
-  //margin: auto;
-  //margin-left:245px;
 
-}
 /**
 @Julian, please help me to get this menubar floating in line with the left sidebar's edge, it does not want
 to co-operate.
@@ -55,16 +55,11 @@ to co-operate.
 .menuBar {
   margin-left: 550px;
   position:relative;
-
   .p-menuitem-link{
     z-index:9999999999;
   }
 }
 
-.navigationIcon {
-  width: 57px;
-  height: 50px;
-}
 
 //END Code section header styling
 //Left Sidebar styling
@@ -85,17 +80,21 @@ to co-operate.
   z-index:10000;
   position: fixed;
   width: 245px;
-  height: 100%;
+  height: 110%;
   left: 0px;
-  top: 120px;
+  top: 110px;
   // Colour
-
-  background: linear-gradient(to right, rgba(255, 255, 255, 1) -3.74%, #D2D2D2 -3.74%, rgba(217, 217, 217, 0) 97.6%);
+  overflow:auto;
+  background-color: white;
+  opacity: 100%;
   /* Main Colours/Dark Gray */
   border-width: 0px 1px 1px 1px;
   border-style: solid;
   border-color: #6F6F6F;
-  //TODO implement infinite length in ts
+}
+
+.directoryTree{
+  overflow: auto;
 }
 
 .leftSideBarHeading {
@@ -167,5 +166,5 @@ to co-operate.
 }
 
 .searchBar:focus-within{
-  border: 1.5px solid black;
+  border: 1.3px solid black;
 }
