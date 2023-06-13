@@ -23,6 +23,7 @@ export class LoginComponent {
       this.password = (data['Password']);
     }
   }
+  
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
