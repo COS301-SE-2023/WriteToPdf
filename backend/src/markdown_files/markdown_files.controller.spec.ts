@@ -62,6 +62,10 @@ describe('MarkdownFilesController', () => {
         const result = controller.findAll();
         expect(result).toEqual(expectedMessage);
     });
+
+    // Future tests:
+    // it('should return an empty array if no markdownFiles exist)
+    // it('should return an array of markdownFiles if markdownFiles exist)
   });
 
   describe('create', () => {
@@ -73,6 +77,9 @@ describe('MarkdownFilesController', () => {
         const result = controller.create(createMarkdownFileDTO);
         expect(result).toEqual(expectedMessage);
     });
+
+    // Future tests:
+    // it('should throw an error if an md file of the same name already exists)
   });
 
   describe('update', () => {
@@ -85,6 +92,21 @@ describe('MarkdownFilesController', () => {
         const result = controller.update(id, updateMarkdownFileDTO);
         expect(result).toEqual(expectedMessage);
     });
+
+    // Future tests:
+    // it('should throw an error if the md file does not exist)
+  });
+
+  describe('remove', () => {
+    it('should delete a markdownFile', async () => {
+        const id = 123; // Provide a valid ID for testing
+        const expectedMessage = `This action removes md file with id: #${id}`;
+        const result = controller.remove(id);
+        expect(result).toEqual(expectedMessage);
+    });
+
+    // Future tests:
+    // it('should throw an error if the md file does not exist)
   });
 
 });
