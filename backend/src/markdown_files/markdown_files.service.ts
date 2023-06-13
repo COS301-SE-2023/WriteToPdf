@@ -22,10 +22,10 @@ export class MarkdownFilesService {
     id: number,
     updateMarkdownFileDTO: UpdateMarkdownFileDTO,
   ) {
-    return `This action updates a #${id} markdownFile`;
+    return `This action updates md file with id: #${id}`;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} markdownFile`;
+    return `This action removes md file with id: #${id}`;
   }
 }
