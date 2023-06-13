@@ -50,7 +50,7 @@ export class MarkdownFilesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.markdownFilesService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.markdownFilesService.remove(id);
   }
 }
