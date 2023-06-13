@@ -9,6 +9,7 @@ import {Router} from '@angular/router';
 // import {EditComponent} from "../edit/edit.component";
 import {TreeNode, MenuItem} from 'primeng/api';
 import {NodeService} from "./home.service";
+import {MenuService} from "./home.service";
 
 @Component({
   selector: 'app-home',
@@ -18,10 +19,12 @@ import {NodeService} from "./home.service";
 
 
 export class HomeComponent implements OnInit {
-  public files!: TreeNode[];
-  public directoryItems!: MenuItem[];
+  public filesDirectoryTree!: TreeNode[];
+  public filesDirectoryTreeTable!: TreeNode[];
+  public activeDirectoryItems!: MenuItem[];
   public directoryHome!: MenuItem;
-  constructor(private router: Router, private nodeService: NodeService) {
+  public menuBarItems!: MenuItem[];
+  constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService) {
   }
 
   navigateToPage(pageName: string) {
@@ -32,14 +35,15 @@ export class HomeComponent implements OnInit {
 
   }
 
-//TODO implement function below
   ngOnInit(): void {
     {
       //Below is the function that populates the fileTree
-      this.nodeService.getFiles().then((data) => (this.files = data));
+      this.nodeService.getFiles().then((data) => (this.filesDirectoryTree = data));
+      this.nodeService.getFilesystem().then((data) => (this.filesDirectoryTreeTable = data));
       //Below is the code that populates the directoryPath
-      this.directoryItems = [{ label: 'Computer' }, { label: 'Notebook' }, { label: 'Accessories' }, { label: 'Backpacks' }, { label: 'Item' }];
+      this.activeDirectoryItems = [{ label: 'Computer' }, { label: 'Notebook' }, { label: 'Accessories' }, { label: 'Backpacks' }, { label: 'Item' }];
       this.directoryHome = { icon: 'pi pi-home', routerLink: '/' };
+      this.menuBarItems = this.menuService.getMenuItemsData();
     }
   }
 }

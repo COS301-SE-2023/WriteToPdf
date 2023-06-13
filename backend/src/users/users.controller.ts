@@ -12,8 +12,8 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDTO } from './dto/create-user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
 import { Public } from '../auth/auth.controller';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { plainToClass } from 'class-transformer';
@@ -27,9 +27,9 @@ export class UsersController {
   ) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDTO: CreateUserDTO) {
     return this.usersService.create(
-      createUserDto,
+      createUserDTO,
     );
   }
 
@@ -37,7 +37,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   login(
-    @Body() loginUserDto: LoginUserDTO,
+    @Body() loginUserDTO: LoginUserDTO,
     @Req() request: Request,
   ) {
     if (request.method !== 'POST') {
@@ -46,11 +46,11 @@ export class UsersController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const userDto = plainToClass(
+    const receivedDTO = plainToClass(
       LoginUserDTO,
-      loginUserDto,
+      loginUserDTO,
     );
-    const errors = validateSync(userDto);
+    const errors = validateSync(receivedDTO);
 
     if (errors.length > 0) {
       throw new HttpException(
@@ -58,7 +58,37 @@ export class UsersController {
         HttpStatus.BAD_REQUEST,
       );
     }
-    return this.usersService.login(loginUserDto);
+    return this.usersService.login(loginUserDTO);
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('signup')
+  signup(
+    @Body() createUserDTO: CreateUserDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+    const receivedDTO = plainToClass(
+      CreateUserDTO,
+      createUserDTO,
+    );
+    const errors = validateSync(receivedDTO);
+
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.usersService.signup(
+      createUserDTO,
+    );
   }
 
   @Get()
@@ -74,11 +104,11 @@ export class UsersController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUserDTO: UpdateUserDTO,
   ) {
     return this.usersService.update(
       +id,
-      updateUserDto,
+      updateUserDTO,
     );
   }
 

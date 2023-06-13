@@ -8,8 +8,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { AssetsService } from './assets.service';
-import { CreateAssetDto } from './dto/create-asset.dto';
-import { UpdateAssetDto } from './dto/update-asset.dto';
+import { CreateAssetDTO } from './dto/create-asset.dto';
+import { UpdateAssetDTO } from './dto/update-asset.dto';
 
 @Controller('assets')
 export class AssetsController {
@@ -18,9 +18,9 @@ export class AssetsController {
   ) {}
 
   @Post()
-  create(@Body() createAssetDto: CreateAssetDto) {
+  create(@Body() createAssetDTO: CreateAssetDTO) {
     return this.assetsService.create(
-      createAssetDto,
+      createAssetDTO,
     );
   }
 
@@ -37,11 +37,11 @@ export class AssetsController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateAssetDto: UpdateAssetDto,
+    @Body() updateAssetDTO: UpdateAssetDTO,
   ) {
     return this.assetsService.update(
       +id,
-      updateAssetDto,
+      updateAssetDTO,
     );
   }
 

@@ -3,50 +3,26 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDTO } from './dto/create-user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { AuthService } from '../auth/auth.service';
+import { find } from 'rxjs';
 
 @Injectable()
 export class UsersService {
-  signup(createUserDto: CreateUserDto) {
-    if (!createUserDto.Email) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Email is required',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    if (!createUserDto.Password) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Password is required',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    this.create(createUserDto);
-    return {
-      message: 'User created successfully',
-    };
-  }
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private authService: AuthService,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
+  create(createUserDTO: CreateUserDTO) {
     const newUser = this.usersRepository.create(
-      createUserDto,
+      createUserDTO,
     );
     return this.usersRepository.save(newUser);
   }
@@ -70,26 +46,98 @@ export class UsersService {
     return result[0];
   }
 
-  async login(loginUserDto: LoginUserDTO) {
-    // console.log(loginUserDto);
-    // console.log(
-    //   'Is instance of LoginUserDTO: ',
-    //   loginUserDto instanceof LoginUserDTO,
-    // );
-    // if (!loginUserDto.isValid()) {
-    //   throw new HttpException(
-    //     {
-    //       status: HttpStatus.UNAUTHORIZED,
-    //       error: 'Missing Credentials',
-    //     },
-    //     HttpStatus.UNAUTHORIZED,
-    //   );
-    // }
+  throwHttpException(
+    httpStatus: HttpStatus,
+    message: string,
+  ) {
+    throw new HttpException(
+      {
+        status: httpStatus,
+        error: message,
+      },
+      httpStatus,
+    );
+  }
+
+  isValidFirstName(firstName: string) {
+    return (
+      firstName.length > 0 &&
+      firstName.length < 50 &&
+      firstName.match(/^[a-zA-Z]+$/)
+    );
+  }
+
+  isValidLastName(lastName: string) {
+    return (
+      lastName.length > 0 &&
+      lastName.length < 50 &&
+      lastName.match(/^[a-zA-Z]+$/)
+    );
+  }
+
+  isValidEmail(email: string) {
+    if (
+      !email.match(
+        /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/,
+      )
+    )
+      return false;
+    return true;
+  }
+
+  async signup(createUserDTO: CreateUserDTO) {
+    if (
+      !this.isValidFirstName(
+        createUserDTO.FirstName,
+      )
+    ) {
+      this.throwHttpException(
+        HttpStatus.BAD_REQUEST,
+        'Invalid first name',
+      );
+    }
+
+    if (
+      !this.isValidLastName(
+        createUserDTO.LastName,
+      )
+    ) {
+      this.throwHttpException(
+        HttpStatus.BAD_REQUEST,
+        'Invalid last name',
+      );
+    }
+
+    if (!this.isValidEmail(createUserDTO.Email)) {
+      this.throwHttpException(
+        HttpStatus.BAD_REQUEST,
+        'Invalid email',
+      );
+    }
+
+    const emailExists = await this.findOneByEmail(
+      createUserDTO.Email,
+    );
+
+    if (emailExists) {
+      this.throwHttpException(
+        HttpStatus.BAD_REQUEST,
+        'Email already exists',
+      );
+    }
+
+    this.create(createUserDTO);
+    return {
+      message: 'User created successfully',
+    };
+  }
+
+  async login(loginUserDTO: LoginUserDTO) {
     const user = await this.findOneByEmail(
-      loginUserDto.Email,
+      loginUserDTO.Email,
     );
     if (
-      user?.Password !== loginUserDto.Password
+      user?.Password !== loginUserDTO.Password
     ) {
       throw new HttpException(
         {
@@ -97,15 +145,15 @@ export class UsersService {
           error:
             user?.Password === undefined
               ? 'User not found'
-              : 'Invalid Password',
+              : 'Incorrect password',
         },
         HttpStatus.UNAUTHORIZED,
       );
     }
     const token =
       await this.authService.generateToken(
-        loginUserDto.Email,
-        loginUserDto.Password,
+        loginUserDTO.Email,
+        loginUserDTO.Password,
       );
     const response = {
       UserID: user.UserID,
@@ -117,12 +165,12 @@ export class UsersService {
 
   async update(
     UserID: number,
-    updateUserDto: UpdateUserDto,
+    updateUserDTO: UpdateUserDTO,
   ) {
     const user = await this.findOne(UserID);
     return this.usersRepository.save({
       ...user,
-      ...updateUserDto,
+      ...updateUserDTO,
     }); // returns updated user
   }
 
