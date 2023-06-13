@@ -44,6 +44,7 @@ export class HomeComponent implements OnInit {
       this.activeDirectoryItems = [{ label: 'Computer' }, { label: 'Notebook' }, { label: 'Accessories' }, { label: 'Backpacks' }, { label: 'Item' }];
       this.directoryHome = { icon: 'pi pi-home', routerLink: '/' };
       this.menuBarItems = this.menuService.getMenuItemsData();
+      document.getElementsByClassName("menubar")
     }
   }
 }
