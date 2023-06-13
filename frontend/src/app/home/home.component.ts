@@ -64,7 +64,8 @@ export class HomeComponent implements OnInit {
       this.menuBarItems = this.menuService.getMenuItemsData();
       document.getElementsByClassName("menubar");
       //Below is the code that populates the directories accordingly via the helper function, load directory
-      this.loadDirectory();
+      //TODO make this thing work
+      // this.loadDirectory();
       //Below is the code for the speed dial menu
       //Can be done intelligently with that which is in focus in the main window
       this.speedDialItems = [
