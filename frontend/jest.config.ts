@@ -4,13 +4,9 @@
  */
 import { Config } from '@jest/types';
 
-
-module.exports = {
+export default {
   preset: 'jest-preset-angular',
   setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
-};
-
-export default {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -78,9 +74,9 @@ export default {
   // maxWorkers: "50%",
 
   // An array of directory names to be searched recursively up from the requiring module's location
-  // moduleDirectories: [
-  //   "node_modules"
-  // ],
+  moduleDirectories: [
+    "node_modules"
+  ],
 
   // An array of file extensions your modules use
   // moduleFileExtensions: [
