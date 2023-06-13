@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit} from '@angular/core';
 // import {NgModule} from "@angular/core";
 import {Router} from '@angular/router';
 // import {Tree, TreeModule} from "primeng/tree";
@@ -7,7 +7,7 @@ import {Router} from '@angular/router';
 // import {EditorModule} from "primeng/editor";
 // import {DropdownModule} from "primeng/dropdown";
 // import {EditComponent} from "../edit/edit.component";
-import {TreeNode, MenuItem} from 'primeng/api';
+import {TreeNode, MenuItem, MessageService} from 'primeng/api';
 import {NodeService} from "./home.service";
 import {MenuService} from "./home.service";
 @Component({
@@ -24,7 +24,8 @@ export class HomeComponent implements OnInit {
   public menuBarItems!: MenuItem[];
   public speedDialItems!: MenuItem[];
   public currentDirectory!:TreeNode;
-  constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService) {
+
+  constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService, private elementRef: ElementRef) {
   }
 
   navigateToPage(pageName: string) {
@@ -96,6 +97,11 @@ export class HomeComponent implements OnInit {
         }
       ];
     }
+  }
+
+  ngAfterViewInit() {
+    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#FFFFFF';
+    this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
   }
 }
 
