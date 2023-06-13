@@ -11,17 +11,12 @@
         <p-menubar  [autoZIndex] = false [model]="menuBarItems"></p-menubar>
       </div>
     </div>
-
-<!--    <div class="headerToolbarRight">-->
-<!--      <img class="icon createNew" src="assets/Icons/homeIcons/headerRightToolbar/newFile.png" alt="" (click)="navigateToPage('edit')">-->
-<!--      <img class="icon" src=" assets/Icons/homeIcons/headerRightToolbar/openScan.png" alt="">-->
-<!--      <img class="icon" src=" assets/Icons/homeIcons/headerRightToolbar/uploadFile.png" alt="">-->
-<!--      <img class="icon" src=" assets/Icons/homeIcons/headerRightToolbar/settings.png" alt="">-->
-<!--    </div>-->
-
+    <div class = "speedDialEditMenu">
+      <p-speedDial [model]="speedDialItems" direction="down"></p-speedDial>
+    </div>
   </div>
 
-  <div class="leftSideBarWrapper">
+  <div id ="scrollingDiv" class="leftSideBarWrapper">
     <div class="leftSideBarHeading">Conrad's Projects</div>
     <div class="leftSideBarTools">
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png" >
@@ -32,7 +27,7 @@
       <p-tree class="w-full md:w-30rem" [value]="filesDirectoryTree"></p-tree>
   </div>
     </div>
-  <div class="mainWindowHome">
+  <div id ="fadingDiv" class="mainWindowHome">
     <div class="directoryPath">
       <p-breadcrumb class="max-w-full" [model]="activeDirectoryItems" [home]="directoryHome"></p-breadcrumb>
     </div>

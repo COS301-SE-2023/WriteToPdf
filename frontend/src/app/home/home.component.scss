@@ -22,6 +22,11 @@
   //justify-content: space-between;
   z-index:10;
 }
+.speedDialEditMenu{
+  padding-right: 50px;
+  margin-right:50px;
+  padding-top:20px;
+}
 
 .logoWrapper {
   display: flex;
@@ -48,10 +53,9 @@
 to co-operate.
  */
 .menuBar {
-  margin-right: 655px;
-  //position:relative;
-  .p-menubar{
-  }
+  margin-left: 550px;
+  position:relative;
+
   .p-menuitem-link{
     z-index:9999999999;
   }
@@ -62,18 +66,19 @@ to co-operate.
   height: 50px;
 }
 
-.headerToolbarRight {
-  display: flex;
-}
-
-.headerToolbarRight .icon {
-  width: 50px;
-  padding: 8px;
-  padding-top: 30px;
-  height: 50px;
-}
 //END Code section header styling
 //Left Sidebar styling
+
+#scrollingDiv {
+  overflow: auto;
+  //height: 300px; /* Set an appropriate height */
+}
+
+#fadingDiv {
+  position: relative;
+  //background-color: #FF0000; /* Set the original color */
+  //height: 300px; /* Set an appropriate height */
+}
 
 .leftSideBarWrapper {
   //Positioning
