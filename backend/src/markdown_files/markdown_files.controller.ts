@@ -33,8 +33,8 @@ export class MarkdownFilesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.markdownFilesService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.markdownFilesService.findOne(id);
   }
 
   @Patch(':id')
