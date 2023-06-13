@@ -39,12 +39,12 @@ export class MarkdownFilesController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body()
     updateMarkdownFileDTO: UpdateMarkdownFileDTO,
   ) {
     return this.markdownFilesService.update(
-      +id,
+      id,
       updateMarkdownFileDTO,
     );
   }
