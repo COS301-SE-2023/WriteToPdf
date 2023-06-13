@@ -15,7 +15,7 @@ export class MarkdownFilesService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} markdownFile`;
+    return `This action returns the markdownFile with id: #${id}`;
   }
 
   update(
