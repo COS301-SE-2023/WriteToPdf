@@ -20,7 +20,19 @@ describe('FoldersController', () => {
     );
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('root', () => {
+    it('should be defined', () => {
+      expect(controller).toBeDefined();
+    });
   });
+
+  describe('create', () => {});
+
+  describe('findAll', () => {});
+
+  describe('findOne', () => {});
+
+  describe('update', () => {});
+
+  describe('remove', () => {});
 });
