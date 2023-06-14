@@ -78,7 +78,7 @@ describe('UsersController', () => {
       expect(isPublic).toBe(true);
     });
 
-    it('should return a user', async () => {
+    it('should return a user on successful login', async () => {
       const loginUserDTO = new LoginUserDTO();
       loginUserDTO.Email = 'test';
       loginUserDTO.Password = 'test';
