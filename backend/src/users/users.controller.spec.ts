@@ -39,6 +39,7 @@ describe('UsersController', () => {
         ],
       }).compile();
 
+    // controller is defined by module configured to use testDB
     controller = module.get<UsersController>(
       UsersController,
     );
@@ -46,27 +47,48 @@ describe('UsersController', () => {
     module.close();
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('root', () => {
+    it('should be defined', () => {
+      expect(controller).toBeDefined();
+    });
   });
 
-  it('should return an array of users', async () => {
-    const result = [
-      {
-        UserID: 1,
-        FirstName: 'Test',
-        LastName: 'Test',
-        Email: 'test',
-        Password: 'test',
-      },
-    ];
-    jest
-      .spyOn(controller, 'findAll')
-      .mockImplementation(async () => result);
+  // Create is a concept implemented by signup
+  // describe('create', () => {
+  //   // it('should return the created user')
+  // });
 
-    expect(await controller.findAll()).toBe(
-      result,
-    );
+  describe('findOne', () => {});
+
+  describe('findAll', () => {
+    it('should return an array of all users', async () => {
+      const result = [
+        {
+          UserID: 1,
+          FirstName: 'John',
+          LastName: 'Doe',
+          Email: 'johndoe@example.com',
+          Password: 'mypassword',
+        },
+      ];
+      jest
+        .spyOn(controller, 'findAll')
+        .mockImplementation(async () => result);
+
+      expect(await controller.findAll()).toBe(
+        result,
+      );
+    });
+  });
+
+  describe('update', () => {
+    // it('should return updated user')
+    // it('should throw exception if user not found')
+  });
+
+  describe('remove', () => {
+    // it('should return removed user')
+    // it('should throw exception if user not found')
   });
 
   describe('login', () => {
@@ -140,7 +162,7 @@ describe('UsersController', () => {
       expect(isPublic).toBe(true);
     });
 
-    it('should return a user', async () => {
+    it('should return the newly registered user', async () => {
       const createUserDTO = new CreateUserDTO();
       createUserDTO.FirstName = 'Test';
       createUserDTO.LastName = 'Test';
