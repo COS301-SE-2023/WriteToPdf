@@ -1,4 +1,4 @@
 export class CreateMarkdownFileDTO {
-    Name: string;
-    ID: number;
+  Name: string;
+  ID: number;
 }
