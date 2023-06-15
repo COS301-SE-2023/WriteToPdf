@@ -22,6 +22,7 @@ export class MarkdownFilesController {
     @Body()
     createMarkdownFileDTO: CreateMarkdownFileDTO,
   ) {
+    // insert guards
     return this.markdownFilesService.create(
       createMarkdownFileDTO,
     );
@@ -32,25 +33,27 @@ export class MarkdownFilesController {
     return this.markdownFilesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.markdownFilesService.findOne(id);
+  @Get(':MarkdownID')
+  findOne(@Param('MarkdownID') MarkdownID: string) {
+    return this.markdownFilesService.findOne(MarkdownID);
   }
 
-  @Patch(':id')
+  @Patch(':MarkdownID')
   update(
-    @Param('id') id: number,
+    @Param('MarkdownID') MarkdownID: string,
     @Body()
     updateMarkdownFileDTO: UpdateMarkdownFileDTO,
   ) {
+    // insert guards
     return this.markdownFilesService.update(
-      id,
+      MarkdownID,
       updateMarkdownFileDTO,
     );
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.markdownFilesService.remove(id);
+  @Delete(':MarkdownID')
+  remove(@Param('MarkdownID') MarkdownID: string) {
+    // insert guards
+    return this.markdownFilesService.remove(MarkdownID);
   }
 }

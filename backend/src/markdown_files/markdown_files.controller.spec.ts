@@ -49,7 +49,7 @@ describe('MarkdownFilesController', () => {
 
   describe('findOne', () => {
     it('should return the requested markdownFile by id', async () => {
-        const id = 123; // Provide a valid ID for testing
+        const id = "123"; // Provide a valid ID for testing
         const expectedMessage = `This action returns the markdownFile with id: #${id}`;
         const result = controller.findOne(id);
         expect(result).toEqual(expectedMessage);
@@ -84,7 +84,7 @@ describe('MarkdownFilesController', () => {
 
   describe('update', () => {
     it('should update a markdownFile', async () => {
-        const id = 123; // Provide a valid ID for testing
+        const id = "123"; // Provide a valid ID for testing
         const updateMarkdownFileDTO =  new CreateMarkdownFileDTO();
         updateMarkdownFileDTO.Name = "test.md";
         updateMarkdownFileDTO.ID = 123;
@@ -99,7 +99,7 @@ describe('MarkdownFilesController', () => {
 
   describe('remove', () => {
     it('should delete a markdownFile', async () => {
-        const id = 123; // Provide a valid ID for testing
+        const id = "123";
         const expectedMessage = `This action removes md file with id: #${id}`;
         const result = controller.remove(id);
         expect(result).toEqual(expectedMessage);

@@ -14,18 +14,18 @@ export class MarkdownFilesService {
     return `This action returns all markdownFiles`;
   }
 
-  findOne(id: number) {
-    return `This action returns the markdownFile with id: #${id}`;
+  findOne(MarkdownID: string) {
+    return `This action returns the markdownFile with id: #${MarkdownID}`;
   }
 
   update(
-    id: number,
+    MarkdownID: string,
     updateMarkdownFileDTO: UpdateMarkdownFileDTO,
   ) {
-    return `This action updates md file with id: #${id}`;
+    return `This action updates md file with id: #${MarkdownID}`;
   }
 
-  remove(id: number) {
-    return `This action removes md file with id: #${id}`;
+  remove(MarkdownID: string) {
+    return `This action removes md file with id: #${MarkdownID}`;
   }
 }
