@@ -34,8 +34,12 @@ export class MarkdownFilesController {
   }
 
   @Get(':MarkdownID')
-  findOne(@Param('MarkdownID') MarkdownID: string) {
-    return this.markdownFilesService.findOne(MarkdownID);
+  findOne(
+    @Param('MarkdownID') MarkdownID: string,
+  ) {
+    return this.markdownFilesService.findOne(
+      MarkdownID,
+    );
   }
 
   @Patch(':MarkdownID')
@@ -52,8 +56,12 @@ export class MarkdownFilesController {
   }
 
   @Delete(':MarkdownID')
-  remove(@Param('MarkdownID') MarkdownID: string) {
+  remove(
+    @Param('MarkdownID') MarkdownID: string,
+  ) {
     // insert guards
-    return this.markdownFilesService.remove(MarkdownID);
+    return this.markdownFilesService.remove(
+      MarkdownID,
+    );
   }
 }
