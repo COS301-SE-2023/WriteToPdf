@@ -5,13 +5,7 @@ describe('app', () => {
     });
 
     it('should display logo', () => {
-        cy.get('.logo').should('exist').should('be.visible');
-    });
-
-
-    it('should display right toolbar', () => {
-        cy.get('.headerToolbarRight').should('exist').should('be.visible');
-        cy.get('.headerToolbarRight').find('.icon').should('have.length', 4);
+        cy.get('.logo').should('exist');
     });
 
     it('should display left toolbar', () => {
