@@ -25,7 +25,6 @@ import 'dotenv/config';
     DatabaseModule,
     UsersModule,
     TypeOrmModule.forRoot(dataSourceOptions),
-    TypeOrmModule.forRoot(testDBOptions),
     MarkdownFilesModule,
     AssetsModule,
     FoldersModule,
