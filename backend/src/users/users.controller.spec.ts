@@ -58,13 +58,15 @@ describe('UsersController', () => {
   //   // it('should return the created user')
   // });
 
-  describe('findOne', () => {});
+  describe('findOne', () => {
+    console.log('UsersController.findOne');
+  });
 
   describe('findAll', () => {
     it('should return an array of all users', async () => {
       const result = [
         {
-          UserID: 1,
+          UserID: '1',
           FirstName: 'John',
           LastName: 'Doe',
           Email: 'johndoe@example.com',
@@ -84,11 +86,13 @@ describe('UsersController', () => {
   describe('update', () => {
     // it('should return updated user')
     // it('should throw exception if user not found')
+    console.log('UsersController.update');
   });
 
   describe('remove', () => {
     // it('should return removed user')
     // it('should throw exception if user not found')
+    console.log('UsersController.remove');
   });
 
   describe('login', () => {
