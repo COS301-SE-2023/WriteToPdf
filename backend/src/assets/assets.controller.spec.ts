@@ -20,7 +20,29 @@ describe('AssetsController', () => {
     );
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('root', () => {
+    it('should be defined', () => {
+      expect(controller).toBeDefined();
+    });
+  });
+
+  describe('create', () => {
+    console.log('AssetsController.create');
+  });
+
+  describe('findAll', () => {
+    console.log('AssetsController.findAll');
+  });
+
+  describe('findOne', () => {
+    console.log('AssetsController.findOne');
+  });
+
+  describe('update', () => {
+    console.log('AssetsController.update');
+  });
+
+  describe('remove', () => {
+    console.log('AssetsController.remove');
   });
 });

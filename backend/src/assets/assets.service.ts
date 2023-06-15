@@ -12,18 +12,18 @@ export class AssetsService {
     return `This action returns all assets`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} asset`;
+  findOne(AssetID: string) {
+    return `This action returns a #${AssetID} asset`;
   }
 
   update(
-    id: number,
+    AssetID: string,
     updateAssetDTO: UpdateAssetDTO,
   ) {
-    return `This action updates a #${id} asset`;
+    return `This action updates a #${AssetID} asset`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} asset`;
+  remove(AssetID: string) {
+    return `This action removes a #${AssetID} asset`;
   }
 }
