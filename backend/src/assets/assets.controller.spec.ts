@@ -26,13 +26,23 @@ describe('AssetsController', () => {
     });
   });
 
-  describe('create', () => {});
+  describe('create', () => {
+    console.log('AssetsController.create');
+  });
 
-  describe('findAll', () => {});
+  describe('findAll', () => {
+    console.log('AssetsController.findAll');
+  });
 
-  describe('findOne', () => {});
+  describe('findOne', () => {
+    console.log('AssetsController.findOne');
+  });
 
-  describe('update', () => {});
+  describe('update', () => {
+    console.log('AssetsController.update');
+  });
 
-  describe('remove', () => {});
+  describe('remove', () => {
+    console.log('AssetsController.remove');
+  });
 });
