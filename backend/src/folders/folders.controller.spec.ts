@@ -26,13 +26,23 @@ describe('FoldersController', () => {
     });
   });
 
-  describe('create', () => {});
+  describe('create', () => {
+    console.log('FoldersController.create');
+  });
 
-  describe('findAll', () => {});
+  describe('findAll', () => {
+    console.log('FoldersController.findAll');
+  });
 
-  describe('findOne', () => {});
+  describe('findOne', () => {
+    console.log('FoldersController.findOne');
+  });
 
-  describe('update', () => {});
+  describe('update', () => {
+    console.log('FoldersController.update');
+  });
 
-  describe('remove', () => {});
+  describe('remove', () => {
+    console.log('FoldersController.remove');
+  });
 });
