@@ -11,17 +11,23 @@
           <input type="text" editable="true" id="editHeading" class="documentTitle" value="New Document" maxlength="50">
         </div>
       </div>
-      <div class="toolsWrapper">
-        <div class="tool">
-          <img src="assets/Icons/editIcons/download.svg" alt="" (click)="extractDeltaJson()">
+      <div class="toolsWrapper"> 
+        <div class="tool" (click)="extractDeltaJson()"> <!-- Download -->
+          <img src="assets/Icons/editIcons/download.svg" alt="">
         </div>
-        <div class="tool">
+        <div class="tool" (click)="save()"> <!-- Save -->
+          <img src="assets/Icons/editIcons/save.png" alt="">
+        </div>
+        <div class="tool" (click)="load()"> <!-- Load -->
+          LOAD
+        </div>
+        <div class="tool"> <!-- Share -->
           <img src="assets/Icons/editIcons/share.svg" alt="">
         </div>
-        <div class="tool">
+        <div class="tool" (click)="undo()"> <!-- Undo -->
           <img src="assets/Icons/editIcons/undo.svg" alt="">
         </div>
-        <div class="tool">
+        <div class="tool" (click)="redo()"> <!-- Redo -->
           <img src="assets/Icons/editIcons/redo.svg" alt="">
         </div>
 <!--        <div class="tool" id="bold" (click)="flipBold()">-->

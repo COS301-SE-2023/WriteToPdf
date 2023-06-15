@@ -27,27 +27,24 @@ export class EditComponent implements AfterViewInit, OnInit {
   ) { }
 
   ngOnInit(): void {
-    const savedContent = localStorage.getItem('document');
-    if (savedContent) {
-      this.text = savedContent;
-    }
+
   }
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
     quill.focus();
 
-    quill.on('selection-change', (range: any, oldRange: any, source: any) => {
-      if (range) {
-        if (range.length == 0) {
-          this.setBold(quill.getFormat().bold);
-        } else {
-          var text = quill.getText(range.index, range.length);
-          console.log('User has highlighted', text);
-        }
-      } else {
-        console.log('Cursor not in the editor');
-      }
-    });
+    // quill.on('selection-change', (range: any, oldRange: any, source: any) => {
+    //   if (range) {
+    //     if (range.length == 0) {
+    //       this.setBold(quill.getFormat().bold);
+    //     } else {
+    //       var text = quill.getText(range.index, range.length);
+    //       console.log('User has highlighted', text);
+    //     }
+    //   } else {
+    //     console.log('Cursor not in the editor');
+    //   }
+    // });
 
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#E3E3E3';
@@ -70,41 +67,77 @@ export class EditComponent implements AfterViewInit, OnInit {
     console.log(quill.getFormat());
   }
 
-  flipBold() {
-    const quill = this.quillEditor.getQuill();
-    const bold = document.getElementById('bold');
-    if (this.bold) {
-      this.bold = false;
-      if (bold)
-        bold.style.backgroundColor = '#E3E3E300';
-      quill.format('bold', false);
+  // flipBold() {
+  //   const quill = this.quillEditor.getQuill();
+  //   const bold = document.getElementById('bold');
+  //   if (this.bold) {
+  //     this.bold = false;
+  //     if (bold)
+  //       bold.style.backgroundColor = '#E3E3E300';
+  //     quill.format('bold', false);
+  //   }
+  //   else {
+  //     quill.format('bold', true);
+  //     this.bold = true;
+  //     if (bold)
+  //       bold.style.backgroundColor = '#E3E0E0';
+  //   }
+  // }
+
+  // setBold(isBold:boolean) {
+  //   const quill = this.quillEditor.getQuill();
+  //   const bold = document.getElementById('bold');
+  //   if (this.bold) {
+  //     this.bold = false;
+  //     if (bold)
+  //       bold.style.backgroundColor = '#E3E3E300';
+  //     quill.format('bold', false);
+  //   }
+  //   else {
+  //     quill.format('bold', true);
+  //     this.bold = true;
+  //     if (bold)
+  //       bold.style.backgroundColor = '#E3E0E0';
+  //   }
+  // }
+
+  save()
+  {
+    // Save the document quill content to localStorage when changes occur
+    const quill= this.quillEditor.getQuill();
+    const contents=quill.getContents();
+
+    localStorage.setItem('document', JSON.stringify(contents));
+
+    console.log(contents);
+  }
+
+  load()
+  {
+    // Load the document quill content from localStorage when changes occur
+    const quill= this.quillEditor.getQuill();
+    const contents=localStorage.getItem('document');
+    if(contents)
+    {
+      quill.setContents(JSON.parse(contents));
     }
-    else {
-      quill.format('bold', true);
-      this.bold = true;
-      if (bold)
-        bold.style.backgroundColor = '#E3E0E0';
+    console.log(contents);
+  }
+
+  undo()
+  {
+    const quill = this.quillEditor.getQuill();
+    const history = quill.history;
+
+    if (history.stack.undo.length > 1) {
+      history.undo();
     }
   }
 
-  setBold(isBold:boolean) {
-    const quill = this.quillEditor.getQuill();
-    const bold = document.getElementById('bold');
-    if (this.bold) {
-      this.bold = false;
-      if (bold)
-        bold.style.backgroundColor = '#E3E3E300';
-      quill.format('bold', false);
-    }
-    else {
-      quill.format('bold', true);
-      this.bold = true;
-      if (bold)
-        bold.style.backgroundColor = '#E3E0E0';
-    }
+  redo()
+  {
+    const quill= this.quillEditor.getQuill();
+    quill.history.redo();
   }
-
-
-
 }
 
