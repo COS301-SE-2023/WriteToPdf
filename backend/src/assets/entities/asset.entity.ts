@@ -8,7 +8,7 @@ import {
 @Entity('ASSETS')
 export class Asset {
   @PrimaryGeneratedColumn()
-  AssetID: number;
+  AssetID: string;
 
   @Column()
   Format: string;
@@ -36,5 +36,5 @@ export class Asset {
   Size: number;
 
   @JoinColumn()
-  ParentFolderID: number;
+  ParentFolderID: string;
 }

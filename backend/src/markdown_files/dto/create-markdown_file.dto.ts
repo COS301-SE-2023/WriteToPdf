@@ -1,1 +1,4 @@
-export class CreateMarkdownFileDTO {}
+export class CreateMarkdownFileDTO {
+  Name: string;
+  ID: number;
+}

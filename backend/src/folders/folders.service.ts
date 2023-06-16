@@ -12,18 +12,18 @@ export class FoldersService {
     return `This action returns all folders`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} folder`;
+  findOne(FolderID: string) {
+    return `This action returns a #${FolderID} folder`;
   }
 
   update(
-    id: number,
+    FolderID: string,
     updateFolderDTO: UpdateFolderDTO,
   ) {
-    return `This action updates a #${id} folder`;
+    return `This action updates a #${FolderID} folder`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} folder`;
+  remove(FolderID: string) {
+    return `This action removes a #${FolderID} folder`;
   }
 }

@@ -31,7 +31,7 @@ export class UsersService {
     return this.usersRepository.find(); // SELECT * FROM users;
   }
 
-  findOne(UserID: number) {
+  findOne(UserID: string) {
     return this.usersRepository.findOneBy({
       UserID: UserID,
     }); // SELECT * FROM users WHERE UserID = {UserID};
@@ -164,7 +164,7 @@ export class UsersService {
   }
 
   async update(
-    UserID: number,
+    UserID: string,
     updateUserDTO: UpdateUserDTO,
   ) {
     const user = await this.findOne(UserID);
@@ -174,7 +174,7 @@ export class UsersService {
     }); // returns updated user
   }
 
-  async remove(UserID: number) {
+  async remove(UserID: string) {
     const user = await this.findOne(UserID);
     return this.usersRepository.remove(user); // returns deleted user
   }

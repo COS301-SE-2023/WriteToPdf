@@ -7,17 +7,17 @@
     </div>
 
     <div class="headerNavigation">
-      <div class="navigationItems">
-        <img class="navigationIcon" src="assets/Icons/homeIcons/navbar/homeIcon.png" (click)="showNavbar('home')" alt="">
+      <div class="menuBar">
+        <p-menubar [model]="menuBarItems"></p-menubar>
       </div>
     </div>
 
-    <div class="headerToolbarRight">
-      <img class="icon createNew" src="assets/Icons/homeIcons/headerRightToolbar/newFile.png" alt="" (click)="navigateToPage('edit')">
-      <img class="icon" src=" assets/Icons/homeIcons/headerRightToolbar/openScan.png" alt="">
-      <img class="icon" src=" assets/Icons/homeIcons/headerRightToolbar/uploadFile.png" alt="">
-      <img class="icon" src=" assets/Icons/homeIcons/headerRightToolbar/settings.png" alt="">
-    </div>
+   <div class="headerToolbarRight">
+     <img class="icon createNew" src="assets/Icons/homeIcons/headerRightToolbar/newFile.png" alt="" (click)="navigateToPage('edit')">
+     <img class="icon" src=" assets/Icons/homeIcons/headerRightToolbar/openScan.png" alt="">
+     <img class="icon" src=" assets/Icons/homeIcons/headerRightToolbar/uploadFile.png" alt="">
+     <img class="icon" src=" assets/Icons/homeIcons/headerRightToolbar/settings.png" alt="">
+   </div>
 
   </div>
 
@@ -29,35 +29,19 @@
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" >
     </div>
     <div class="directoryTree">
-      <p-tree class="w-full md:w-30rem" [value]="files"></p-tree><!--          <li class="directoryItem">COS 314-->
-<!--            <ul class = "directoryTree2">-->
-<!--              <li class="directoryItem">Project 1</li>-->
-<!--              <ul class = "directoryTree3">-->
-<!--                <li class="directoryItem">OCR AI.md</li>-->
-<!--                <li class="directoryItem">ImageRecognition AI.md</li>-->
-<!--              </ul>-->
-<!--              <li class="directoryItem">Lectures</li>-->
-<!--              <ul class = "directoryTree3">-->
-<!--                <li class="directoryItem">Lecture1.md</li>-->
-<!--                <li class="directoryItem">Lecture2.md</li>-->
-<!--              </ul>-->
-<!--              <li class="directoryItem">Readme.md</li>-->
-<!--              <li class="directoryItem">NiceToKnow.md</li>-->
-<!--            </ul>-->
-<!--          </li>-->
-<!--        </ul>-->
+      <p-tree class="w-full md:w-30rem" [value]="filesDirectoryTree"></p-tree>
   </div>
     </div>
   <div class="mainWindowHome">
     <div class="directoryPath">
-      <p-breadcrumb class="max-w-full" [model]="directoryItems" [home]="directoryHome"></p-breadcrumb>
+      <p-breadcrumb class="max-w-full" [model]="activeDirectoryItems" [home]="directoryHome"></p-breadcrumb>
     </div>
     <div class="searchBar">
       <img src="assets/Icons/homeIcons/mainWindow/searchIcon.png">
       <input type="text" class="search-input" placeholder="Search...">
     </div>
     <div class="directoryContents">
-      <p-treeTable [value]="files" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
+      <p-treeTable [value]="filesDirectoryTreeTable" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
         <ng-template pTemplate="header">
           <tr>
             <th>Name</th>
@@ -78,13 +62,7 @@
       </p-treeTable>
     </div>
   </div>
-  <div class="documentPreviewSideBar">
-    <div class="documentPreviewTitle">
-      <!--    TODO make the title of the project dynamic-->
-      <h1>OCR AI.md</h1>
-    </div>
-    <div class="documentPreview">
-      <!--    TODO-->
-    </div>
+  <div class = "rightSidebar">
+
   </div>
 </div>

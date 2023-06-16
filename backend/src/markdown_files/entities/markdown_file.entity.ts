@@ -8,7 +8,7 @@ import {
 @Entity('MARKDOWN_FILES')
 export class MarkdownFile {
   @PrimaryGeneratedColumn()
-  MarkdownID: number;
+  MarkdownID: string; // hash string
 
   @Column()
   Name: string;
@@ -32,5 +32,5 @@ export class MarkdownFile {
   Size: number;
 
   @JoinColumn()
-  ParentFolderID: number;
+  ParentFolderID: string; // hash string
 }

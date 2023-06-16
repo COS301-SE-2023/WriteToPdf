@@ -15,6 +15,9 @@ import { EditModule } from './edit/edit.module';
 import { DatabaseController } from './database/database.controller';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
+import { FileManagerController } from './file_manager/file_manager.controller';
+import { FileManagerService } from './file_manager/file_manager.service';
+import { FileManagerModule } from './file_manager/file_manager.module';
 import 'dotenv/config';
 
 @Module({
@@ -28,6 +31,7 @@ import 'dotenv/config';
     MarkdownFilesModule,
     AssetsModule,
     FoldersModule,
+    FileManagerModule,
   ],
   controllers: [
     AppController,
@@ -35,7 +39,8 @@ import 'dotenv/config';
     HomeController,
     EditController,
     DatabaseController,
+    FileManagerController,
   ],
-  providers: [AppService],
+  providers: [AppService, FileManagerService],
 })
 export class AppModule {}

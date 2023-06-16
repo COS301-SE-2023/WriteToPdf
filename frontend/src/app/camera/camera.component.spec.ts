@@ -1,5 +1,6 @@
+import 'zone.js/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { expect } from '@jest/globals';
 import { CameraComponent } from './camera.component';
 
 describe('CameraComponent', () => {
