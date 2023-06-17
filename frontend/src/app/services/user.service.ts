@@ -12,6 +12,7 @@ import { first } from 'cypress/types/lodash';
 export class UserService {
   private isAuthenticated: boolean = false;
   private authToken: string | null = null;
+  private userID: string | null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -30,10 +31,12 @@ export class UserService {
 
           if (response.status === 200) {
             console.log('Login successful');
-            console.log(response.body.Token);
+            console.log(response.body);
             this.isAuthenticated = true;
             this.authToken = response.body.Token;
+            this.userID = response.body.UserID;
             this.saveToLocalStorage('token', this.authToken);
+            this.saveToLocalStorage('userID', this.userID);
             resolve(true);
           } else {
             resolve(false);
