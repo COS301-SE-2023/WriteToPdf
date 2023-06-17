@@ -32,29 +32,40 @@ export class HomeComponent implements OnInit {
     this.router.navigate([`/${pageName}`]);
   }
 
-  loadDirectory() {
-    this.activeDirectoryItems = [{ label: 'Home'}];
-    this.nodeService.getFiles().then((data) => (this.filesDirectoryTree = data));
-    this.nodeService.getFilesystem().then((data) => (this.filesDirectoryTreeTable = data));
-    this.activeDirectoryItems = this.nodeService.getFilesAndDirectories(this.currentDirectory); // Retrieve the active directory's files and directories
+  // loadDirectory() {
+  //   this.activeDirectoryItems = [{ label: 'Home'}];
+  //   this.nodeService.getFiles().then((data) => (this.filesDirectoryTree = data));
+  //   this.nodeService.getFilesystem().then((data) => (this.filesDirectoryTreeTable = data));
+  //   this.activeDirectoryItems = this.nodeService.getFilesAndDirectories(this.currentDirectory); // Retrieve the active directory's files and directories
+  //
+  // }
 
+  onNodeSelect(event: any) {
+    const node = event.node;
+    this.updateBreadcrumb(node);
+    this.updateCurrentDirectory(node);
+  }
+  updateBreadcrumb(selectedNode: TreeNode | undefined) {
+    // Clear the existing breadcrumb items
+    this.activeDirectoryItems = [];
+
+    // Traverse the selected node's ancestors to generate the breadcrumb items
+    let currentNode = selectedNode ;
+    while (currentNode) {
+      this.activeDirectoryItems.unshift({ label: currentNode.label });
+      currentNode = currentNode.parent;
+    }
   }
 
-  //TODO implement the function below to render the Homepage's directory structures appropriately.
-  // onNodeSelect(event) {
-  //   this.currentDirectory = event.node;
-  //   this.activeFilesAndDirectories = this.nodeService.getFilesAndDirectories(this.currentDirectory);
-  //   // Update the breadcrumb with the selected directory
-  //   this.breadcrumbService.setItems([
-  //     { label: 'Home', routerLink: '/' },
-  //     { label: this.currentDirectory.label }
-  //   ]);
-  // }
+  updateCurrentDirectory(selectedNode: TreeNode) {
+    // Update the current directory data based on the selected node
+    this.filesDirectoryTreeTable = []; // Replace with the logic to fetch the directory data for the selected node
+  }
 
 
   ngOnInit(): void {
     {
-      //Below is the function that populates the fileTree
+      //Below is the function that initially populates the fileTree
       this.nodeService.getFiles().then((data) => (this.filesDirectoryTree = data));
       this.nodeService.getFilesystem().then((data) => (this.filesDirectoryTreeTable = data));
       //Below is the code that populates the directoryPath
@@ -65,8 +76,6 @@ export class HomeComponent implements OnInit {
       this.menuBarItems = this.menuService.getMenuItemsData();
       document.getElementsByClassName("menubar");
       //Below is the code that populates the directories accordingly via the helper function, load directory
-      //TODO make this thing work
-      // this.loadDirectory();
       //Below is the code for the speed dial menu
       //Can be done intelligently with that which is in focus in the main window
       this.speedDialItems = [
