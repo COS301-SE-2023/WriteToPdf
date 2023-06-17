@@ -57,4 +57,15 @@ export class FileManagerController {
       markdownFileDTO,
     );
   }
+
+  @Post('save')
+  @HttpCode(HttpStatus.OK)
+  save(
+    @Body()
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    return this.file_manager_service.saveFile(
+      markdownFileDTO,
+    );
+  }
 }

@@ -17,4 +17,8 @@ export class FileManagerService {
   moveFile(markdownFileDTO: MarkdownFileDTO) {
     return 'This action moves a file';
   }
+
+  saveFile(markdownFileDTO: MarkdownFileDTO) {
+    return 'This action saves a file';
+  }
 }
