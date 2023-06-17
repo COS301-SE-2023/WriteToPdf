@@ -22,4 +22,8 @@ export class FileManagerService {
   saveFile(markdownFileDTO: MarkdownFileDTO) {
     return 'File saved successfully';
   }
+
+  retrieveFile(markdownFileDTO: MarkdownFileDTO) {
+    return markdownFileDTO;
+  }
 }

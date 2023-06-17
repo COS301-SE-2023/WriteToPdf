@@ -167,4 +167,34 @@ export class FileManagerController {
       markdownFileDTO,
     );
   }
+
+  @Post('retrieve')
+  @HttpCode(HttpStatus.OK)
+  retrieve(
+    @Body()
+    markdownFileDTO: MarkdownFileDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+    const receivedDTO = plainToClass(
+      MarkdownFileDTO,
+      markdownFileDTO,
+    );
+    const errors = validateSync(receivedDTO);
+
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.file_manager_service.retrieveFile(
+      markdownFileDTO,
+    );
+  }
 }
