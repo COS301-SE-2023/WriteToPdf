@@ -12,7 +12,7 @@ import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 
-@Controller('file-manager')
+@Controller('file_manager')
 export class FileManagerController {
   constructor(
     private readonly file_manager_service: FileManagerService,
