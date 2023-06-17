@@ -143,4 +143,30 @@ describe('FileManagerController', () => {
       }
     });
   });
+
+  describe('retrieve', () => {
+    it('should throw exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+
+      try {
+        await controller.create(
+          markdownFileDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+  });
 });
