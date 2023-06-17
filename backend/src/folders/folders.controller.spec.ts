@@ -27,22 +27,22 @@ describe('FoldersController', () => {
   });
 
   describe('create', () => {
-    console.log('FoldersController.create');
+    // console.log('FoldersController.create');
   });
 
   describe('findAll', () => {
-    console.log('FoldersController.findAll');
+    // console.log('FoldersController.findAll');
   });
 
   describe('findOne', () => {
-    console.log('FoldersController.findOne');
+    // console.log('FoldersController.findOne');
   });
 
   describe('update', () => {
-    console.log('FoldersController.update');
+    // console.log('FoldersController.update');
   });
 
   describe('remove', () => {
-    console.log('FoldersController.remove');
+    // console.log('FoldersController.remove');
   });
 });

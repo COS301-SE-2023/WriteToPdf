@@ -9,7 +9,7 @@ import { MarkdownFile } from './entities/markdown_file.entity';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AuthService } from '../auth/auth.service';
-import { CreateMarkdownFileDTO } from './dto/create-markdown_file.dto';
+import { MarkdownFileDTO } from './dto/markdown_file.dto';
 
 describe('MarkdownFilesController', () => {
   let controller: MarkdownFilesController;
@@ -71,9 +71,9 @@ describe('MarkdownFilesController', () => {
   describe('create', () => {
     it('should create a new markdownFile', async () => {
       const createMarkdownFileDTO =
-        new CreateMarkdownFileDTO();
+        new MarkdownFileDTO();
       createMarkdownFileDTO.Name = 'test.md';
-      createMarkdownFileDTO.ID = 123;
+      createMarkdownFileDTO.MarkdownID = '123';
       const expectedMessage =
         'This action adds a new markdownFile';
       const result = controller.create(
@@ -90,9 +90,9 @@ describe('MarkdownFilesController', () => {
     it('should update a markdownFile', async () => {
       const id = '123'; // Provide a valid ID for testing
       const updateMarkdownFileDTO =
-        new CreateMarkdownFileDTO();
+        new MarkdownFileDTO();
       updateMarkdownFileDTO.Name = 'test.md';
-      updateMarkdownFileDTO.ID = 123;
+      updateMarkdownFileDTO.MarkdownID = '123';
       const expectedMessage = `This action updates md file with id: #${id}`;
       const result = controller.update(
         id,
