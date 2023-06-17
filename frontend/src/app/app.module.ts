@@ -25,6 +25,7 @@ import { UserService } from './services/user.service';
 import { PasswordModule } from 'primeng/password';
 import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { MenubarModule } from 'primeng/menubar';
+import { SpeedDialModule } from 'primeng/speeddial';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,6 +37,7 @@ import { MenubarModule } from 'primeng/menubar';
     EditComponent
   ],
   imports: [
+    SpeedDialModule,
     MenubarModule,
     VirtualScrollerModule,
     BrowserModule,

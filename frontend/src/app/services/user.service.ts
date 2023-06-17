@@ -16,11 +16,11 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   async login(email: string, password: string): Promise<boolean> {
-    if (email === '' || password === '') {
-      return new Promise<boolean>((resolve, reject) => {
-        resolve(false);
-      });
-    }
+    // if (email === 'test' || password === '123456') {
+    //   return new Promise<boolean>((resolve, reject) => {
+    //     resolve(false);
+    //   });
+    // }
 
     return new Promise<boolean>((resolve, reject) => {
       this.sendLoginData(email, password).subscribe({
@@ -108,7 +108,7 @@ export class UserService {
 
     return this.http.post(url, body, { observe: 'response' });
   }
-    
+
 
   sendSignupData(email: string, fName: string, lName: string, password: string) {
     const url = 'http://localhost:3000/users/signup';

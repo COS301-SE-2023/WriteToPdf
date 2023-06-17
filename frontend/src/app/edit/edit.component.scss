@@ -7,19 +7,17 @@ $sidebar-content-width: 225px;
 }
 
 .header {
-
     overflow-x: hidden;
-
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+
     display: flex;
     background-image: linear-gradient(to right, #ffffff, #e7e7e7);
     border-bottom: 1px solid #ccc;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
     width: 100%;
+    top:0;
+    left:0;
 }
 
 
@@ -158,7 +156,7 @@ $sidebar-content-width: 225px;
     top: 127px;
     left: 0;
     bottom: 0;
-    width: 260px;
+    width: 261px;
     background-color: #ffffff;
     border-right: 1px solid #c7c7c7;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);

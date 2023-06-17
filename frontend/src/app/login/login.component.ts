@@ -23,6 +23,7 @@ export class LoginComponent {
       this.password = (data['Password']);
     }
   }
+  
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
@@ -43,7 +44,6 @@ export class LoginComponent {
   async autoLogin(): Promise<void> {
     this.email="test";
     this.password="123456";
-
   }
 
 }

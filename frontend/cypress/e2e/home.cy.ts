@@ -6,6 +6,12 @@ describe('app', () => {
 
     it('should display logo', () => {
         cy.get('.logo').should('exist');
+
+    });
+
+
+    it('should display right toolbar', () => {
+        cy.get('.speedDialEditMenu').find('.p-speeddial').should('be.visible');
     });
 
     it('should display left toolbar', () => {
@@ -26,7 +32,7 @@ describe('app', () => {
     });
 
     it('should open new document', () => {
-        cy.get('.headerToolbarRight').find('.icon').eq(0).click();
+        cy.get('.newDoc').click();
         cy.url().should('include', '/edit');
     });
 
