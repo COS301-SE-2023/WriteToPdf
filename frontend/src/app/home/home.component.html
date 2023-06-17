@@ -13,7 +13,7 @@
     </div>
 
     <div class = "speedDialEditMenu">
-      <p-speedDial [model]="speedDialItems" direction="down"></p-speedDial>
+      <p-speedDial class="speedDial" [model]="speedDialItems" direction="down"></p-speedDial>
     </div>
 
   </div>
@@ -22,7 +22,7 @@
     <div class="leftSideBarHeading">Conrad's Projects</div>
     <div class="leftSideBarTools">
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png" >
-      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png" >
+      <img class="icon newDoc" src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png" (click)="navigateToPage('edit')">
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" >
     </div>
     <div class="directoryTree">
