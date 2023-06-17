@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMarkdownFileDTO } from './dto/create-markdown_file.dto';
-import { UpdateMarkdownFileDTO } from './dto/update-markdown_file.dto';
+import { MarkdownFileDTO } from './dto/markdown_file.dto';
 
 @Injectable()
 export class MarkdownFilesService {
-  create(
-    createMarkdownFileDTO: CreateMarkdownFileDTO,
-  ) {
+  create(createMarkdownFileDTO: MarkdownFileDTO) {
     return 'This action adds a new markdownFile';
   }
 
@@ -20,7 +17,7 @@ export class MarkdownFilesService {
 
   update(
     MarkdownID: string,
-    updateMarkdownFileDTO: UpdateMarkdownFileDTO,
+    updateMarkdownFileDTO: MarkdownFileDTO,
   ) {
     return `This action updates md file with id: #${MarkdownID}`;
   }

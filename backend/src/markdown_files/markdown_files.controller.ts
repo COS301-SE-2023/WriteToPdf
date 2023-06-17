@@ -8,8 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { MarkdownFilesService } from './markdown_files.service';
-import { CreateMarkdownFileDTO } from './dto/create-markdown_file.dto';
-import { UpdateMarkdownFileDTO } from './dto/update-markdown_file.dto';
+import { MarkdownFileDTO } from './dto/markdown_file.dto';
 
 @Controller('markdown-files')
 export class MarkdownFilesController {
@@ -20,7 +19,7 @@ export class MarkdownFilesController {
   @Post()
   create(
     @Body()
-    createMarkdownFileDTO: CreateMarkdownFileDTO,
+    createMarkdownFileDTO: MarkdownFileDTO,
   ) {
     // insert guards
     return this.markdownFilesService.create(
@@ -46,7 +45,7 @@ export class MarkdownFilesController {
   update(
     @Param('MarkdownID') MarkdownID: string,
     @Body()
-    updateMarkdownFileDTO: UpdateMarkdownFileDTO,
+    updateMarkdownFileDTO: MarkdownFileDTO,
   ) {
     // insert guards
     return this.markdownFilesService.update(
