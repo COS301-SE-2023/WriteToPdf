@@ -155,6 +155,7 @@ export class UsersService {
         loginUserDTO.Email,
         loginUserDTO.Password,
       );
+    //TODO create new DTO for this response
     const response = {
       UserID: user.UserID,
       Email: user.Email,
