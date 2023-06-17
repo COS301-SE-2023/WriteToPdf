@@ -59,7 +59,7 @@ describe('UsersController', () => {
   // });
 
   describe('findOne', () => {
-    console.log('UsersController.findOne');
+    // console.log('UsersController.findOne');
   });
 
   describe('findAll', () => {
@@ -86,13 +86,13 @@ describe('UsersController', () => {
   describe('update', () => {
     // it('should return updated user')
     // it('should throw exception if user not found')
-    console.log('UsersController.update');
+    // console.log('UsersController.update');
   });
 
   describe('remove', () => {
     // it('should return removed user')
     // it('should throw exception if user not found')
-    console.log('UsersController.remove');
+    // console.log('UsersController.remove');
   });
 
   describe('login', () => {
