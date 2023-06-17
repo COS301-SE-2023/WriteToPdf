@@ -4,15 +4,14 @@ import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { CreateUserDTO } from './dto/create-user.dto';
-import { first } from 'cypress/types/lodash';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   private isAuthenticated: boolean = false;
-  private authToken: string | null = null;
-  private userID: string | null = null;
+  private authToken: string | undefined = undefined;
+  private userID: string | undefined = undefined;
 
   constructor(private http: HttpClient) {}
 
@@ -89,7 +88,8 @@ export class UserService {
   logout(): void {
     // Perform logout logic here (e.g., clear authentication token, reset flags)
     this.isAuthenticated = false;
-    this.authToken = null;
+    this.authToken = undefined;
+    this.userID = undefined;
   }
 
   isAuthenticatedUser(): boolean {
@@ -97,9 +97,14 @@ export class UserService {
     return this.isAuthenticated;
   }
 
-  getAuthToken(): string | null {
+  getAuthToken(): string | undefined {
     // Return the authentication token
     return this.authToken;
+  }
+
+  getUserID(): string | undefined {
+
+    return this.userID;
   }
 
 

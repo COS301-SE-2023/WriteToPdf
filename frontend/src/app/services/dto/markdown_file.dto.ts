@@ -1,4 +1,4 @@
-export class MarkdownFile{
+export class MarkdownFileDTO{
 
     UserID: string | undefined;
     MarkdownID: string | undefined;
