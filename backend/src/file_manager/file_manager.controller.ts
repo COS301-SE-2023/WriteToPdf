@@ -18,7 +18,7 @@ export class FileManagerController {
     private readonly file_manager_service: FileManagerService,
   ) {}
 
-  @Post('create')
+  @Post('create_file')
   @HttpCode(HttpStatus.OK)
   create(
     @Body()
@@ -48,7 +48,7 @@ export class FileManagerController {
     );
   }
 
-  @Post('delete')
+  @Post('delete_file')
   @HttpCode(HttpStatus.OK)
   delete(
     @Body()
@@ -78,7 +78,7 @@ export class FileManagerController {
     );
   }
 
-  @Post('rename')
+  @Post('rename_file')
   @HttpCode(HttpStatus.OK)
   rename(
     @Body()
@@ -108,7 +108,7 @@ export class FileManagerController {
     );
   }
 
-  @Post('move')
+  @Post('move_file')
   @HttpCode(HttpStatus.OK)
   move(
     @Body()
@@ -138,7 +138,7 @@ export class FileManagerController {
     );
   }
 
-  @Post('save')
+  @Post('save_file')
   @HttpCode(HttpStatus.OK)
   save(
     @Body()
@@ -168,7 +168,7 @@ export class FileManagerController {
     );
   }
 
-  @Post('retrieve')
+  @Post('retrieve_file')
   @HttpCode(HttpStatus.OK)
   retrieve(
     @Body()

@@ -40,7 +40,7 @@ describe('FileManagerController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('create', () => {
+  describe('create_file', () => {
     it('should throw exception if request method is not POST', async () => {
       const request = { method: 'GET' };
       const markdownFileDTO =
@@ -66,7 +66,7 @@ describe('FileManagerController', () => {
     });
   });
 
-  describe('rename', () => {
+  describe('rename_file', () => {
     it('should throw exception if request method is not POST', async () => {
       const request = { method: 'GET' };
       const markdownFileDTO =
@@ -92,7 +92,7 @@ describe('FileManagerController', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('delete_file', () => {
     it('should throw exception if request method is not POST', async () => {
       const request = { method: 'GET' };
       const markdownFileDTO =
@@ -118,7 +118,7 @@ describe('FileManagerController', () => {
     });
   });
 
-  describe('move', () => {
+  describe('move_file', () => {
     it('should throw exception if request method is not POST', async () => {
       const request = { method: 'GET' };
       const markdownFileDTO =
@@ -144,7 +144,7 @@ describe('FileManagerController', () => {
     });
   });
 
-  describe('retrieve', () => {
+  describe('retrieve_file', () => {
     it('should throw exception if request method is not POST', async () => {
       const request = { method: 'GET' };
       const markdownFileDTO =
