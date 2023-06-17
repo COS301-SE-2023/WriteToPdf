@@ -46,4 +46,15 @@ export class FileManagerController {
       markdownFileDTO,
     );
   }
+
+  @Post('move')
+  @HttpCode(HttpStatus.OK)
+  move(
+    @Body()
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    return this.file_manager_service.moveFile(
+      markdownFileDTO,
+    );
+  }
 }

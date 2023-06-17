@@ -1,18 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFileDTO } from './dto/create-file.dto';
-import { RenameFileDTO } from './dto/rename-file.dto';
-import { DeleteFileDTO } from './dto/delete-file.dto';
+import { MarkdownFileDTO } from 'src/markdown_files/dto/markdown_file.dto';
 
 @Injectable()
 export class FileManagerService {
-  renameFile(renameFileDTO: RenameFileDTO) {
-    throw new Error('Method not implemented.');
+  renameFile(markdownFileDTO: MarkdownFileDTO) {
+    return 'This action renames a file';
   }
-  deleteFile(deleteFileDTO: DeleteFileDTO) {
-    throw new Error('Method not implemented.');
+  deleteFile(markdownFileDTO: MarkdownFileDTO) {
+    return 'This action deletes a file';
   }
 
-  createFile(createFileDTO: CreateFileDTO) {
+  createFile(markdownFileDTO: MarkdownFileDTO) {
     return 'This action adds a new file';
+  }
+
+  moveFile(markdownFileDTO: MarkdownFileDTO) {
+    return 'This action moves a file';
   }
 }
