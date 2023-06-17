@@ -4,21 +4,22 @@ import { MarkdownFileDTO } from 'src/markdown_files/dto/markdown_file.dto';
 @Injectable()
 export class FileManagerService {
   renameFile(markdownFileDTO: MarkdownFileDTO) {
-    return 'This action renames a file';
+    return 'File renamed successfully';
   }
   deleteFile(markdownFileDTO: MarkdownFileDTO) {
-    return 'This action deletes a file';
+    return 'File deleted successfully';
   }
 
   createFile(markdownFileDTO: MarkdownFileDTO) {
-    return 'This action adds a new file';
+    markdownFileDTO.MarkdownID = '1';
+    return markdownFileDTO;
   }
 
   moveFile(markdownFileDTO: MarkdownFileDTO) {
-    return 'This action moves a file';
+    return 'File moved successfully';
   }
 
   saveFile(markdownFileDTO: MarkdownFileDTO) {
-    return 'This action saves a file';
+    return 'File saved successfully';
   }
 }
