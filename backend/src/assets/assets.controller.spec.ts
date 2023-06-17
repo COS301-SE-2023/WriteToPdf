@@ -27,22 +27,22 @@ describe('AssetsController', () => {
   });
 
   describe('create', () => {
-    console.log('AssetsController.create');
+    // console.log('AssetsController.create');
   });
 
   describe('findAll', () => {
-    console.log('AssetsController.findAll');
+    // console.log('AssetsController.findAll');
   });
 
   describe('findOne', () => {
-    console.log('AssetsController.findOne');
+    // console.log('AssetsController.findOne');
   });
 
   describe('update', () => {
-    console.log('AssetsController.update');
+    // console.log('AssetsController.update');
   });
 
   describe('remove', () => {
-    console.log('AssetsController.remove');
+    // console.log('AssetsController.remove');
   });
 });
