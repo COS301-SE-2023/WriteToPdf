@@ -6,9 +6,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { FileManagerService } from './file_manager.service';
-import { CreateFileDTO } from './dto/create-file.dto';
-import { DeleteFileDTO } from './dto/delete-file.dto';
-import { RenameFileDTO } from './dto/rename-file.dto';
+import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 
 @Controller('file-manager')
 export class FileManagerController {
@@ -20,10 +18,10 @@ export class FileManagerController {
   @HttpCode(HttpStatus.OK)
   create(
     @Body()
-    createFileDTO: CreateFileDTO,
+    markdownFileDTO: MarkdownFileDTO,
   ) {
     return this.file_manager_service.createFile(
-      createFileDTO,
+      markdownFileDTO,
     );
   }
 
@@ -31,10 +29,10 @@ export class FileManagerController {
   @HttpCode(HttpStatus.OK)
   delete(
     @Body()
-    deleteFileDTO: DeleteFileDTO,
+    markdownFileDTO: MarkdownFileDTO,
   ) {
     return this.file_manager_service.deleteFile(
-      deleteFileDTO,
+      markdownFileDTO,
     );
   }
 
@@ -42,10 +40,10 @@ export class FileManagerController {
   @HttpCode(HttpStatus.OK)
   rename(
     @Body()
-    renameFileDTO: RenameFileDTO,
+    markdownFileDTO: MarkdownFileDTO,
   ) {
     return this.file_manager_service.renameFile(
-      renameFileDTO,
+      markdownFileDTO,
     );
   }
 }
