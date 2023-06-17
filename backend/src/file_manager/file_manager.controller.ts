@@ -2,8 +2,10 @@ import {
   Body,
   Controller,
   HttpCode,
+  HttpException,
   HttpStatus,
   Post,
+  Req,
 } from '@nestjs/common';
 import { FileManagerService } from './file_manager.service';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
@@ -19,7 +21,15 @@ export class FileManagerController {
   create(
     @Body()
     markdownFileDTO: MarkdownFileDTO,
+    @Req() request: Request,
   ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
     return this.file_manager_service.createFile(
       markdownFileDTO,
     );
@@ -30,7 +40,15 @@ export class FileManagerController {
   delete(
     @Body()
     markdownFileDTO: MarkdownFileDTO,
+    @Req() request: Request,
   ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
     return this.file_manager_service.deleteFile(
       markdownFileDTO,
     );
@@ -41,7 +59,15 @@ export class FileManagerController {
   rename(
     @Body()
     markdownFileDTO: MarkdownFileDTO,
+    @Req() request: Request,
   ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
     return this.file_manager_service.renameFile(
       markdownFileDTO,
     );
@@ -52,7 +78,15 @@ export class FileManagerController {
   move(
     @Body()
     markdownFileDTO: MarkdownFileDTO,
+    @Req() request: Request,
   ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
     return this.file_manager_service.moveFile(
       markdownFileDTO,
     );
@@ -63,7 +97,15 @@ export class FileManagerController {
   save(
     @Body()
     markdownFileDTO: MarkdownFileDTO,
+    @Req() request: Request,
   ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
     return this.file_manager_service.saveFile(
       markdownFileDTO,
     );
