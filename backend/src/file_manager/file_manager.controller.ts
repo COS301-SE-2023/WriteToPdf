@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 import { FileManagerService } from './file_manager.service';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
+import { plainToClass } from 'class-transformer';
+import { validateSync } from 'class-validator';
 
 @Controller('file-manager')
 export class FileManagerController {
@@ -29,7 +31,18 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
+    const receivedDTO = plainToClass(
+      MarkdownFileDTO,
+      markdownFileDTO,
+    );
+    const errors = validateSync(receivedDTO);
 
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return this.file_manager_service.createFile(
       markdownFileDTO,
     );
@@ -48,7 +61,18 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
+    const receivedDTO = plainToClass(
+      MarkdownFileDTO,
+      markdownFileDTO,
+    );
+    const errors = validateSync(receivedDTO);
 
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return this.file_manager_service.deleteFile(
       markdownFileDTO,
     );
@@ -67,7 +91,18 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
+    const receivedDTO = plainToClass(
+      MarkdownFileDTO,
+      markdownFileDTO,
+    );
+    const errors = validateSync(receivedDTO);
 
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return this.file_manager_service.renameFile(
       markdownFileDTO,
     );
@@ -86,7 +121,18 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
+    const receivedDTO = plainToClass(
+      MarkdownFileDTO,
+      markdownFileDTO,
+    );
+    const errors = validateSync(receivedDTO);
 
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return this.file_manager_service.moveFile(
       markdownFileDTO,
     );
@@ -105,7 +151,18 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
+    const receivedDTO = plainToClass(
+      MarkdownFileDTO,
+      markdownFileDTO,
+    );
+    const errors = validateSync(receivedDTO);
 
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return this.file_manager_service.saveFile(
       markdownFileDTO,
     );
