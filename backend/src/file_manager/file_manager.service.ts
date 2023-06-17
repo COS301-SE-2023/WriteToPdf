@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { MarkdownFileDTO } from 'src/markdown_files/dto/markdown_file.dto';
+import { FoldersService } from '../folders/folders.service';
+import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
+import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
 
 @Injectable()
 export class FileManagerService {
+  constructor(
+    private markdownFilesService: MarkdownFilesService,
+    private folderService: FoldersService,
+  ) {}
   renameFile(markdownFileDTO: MarkdownFileDTO) {
     return 'File renamed successfully';
   }
