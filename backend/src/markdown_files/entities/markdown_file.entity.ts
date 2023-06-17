@@ -23,7 +23,7 @@ export class MarkdownFile {
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  LastModified: string;
+  LastModified: Date;
 
   @Column()
   Path: string;
