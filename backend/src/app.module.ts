@@ -12,20 +12,19 @@ import { HomeController } from './home/home.controller';
 import { HomeModule } from './home/home.module';
 import { EditController } from './edit/edit.controller';
 import { EditModule } from './edit/edit.module';
-import { DatabaseController } from './database/database.controller';
-import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { FileManagerController } from './file_manager/file_manager.controller';
 import { FileManagerService } from './file_manager/file_manager.service';
 import { FileManagerModule } from './file_manager/file_manager.module';
 import 'dotenv/config';
+import { MarkdownFilesService } from './markdown_files/markdown_files.service';
+import { FoldersService } from './folders/folders.service';
 
 @Module({
   imports: [
     AuthModule,
     HomeModule,
     EditModule,
-    DatabaseModule,
     UsersModule,
     TypeOrmModule.forRoot(dataSourceOptions),
     MarkdownFilesModule,
@@ -38,9 +37,13 @@ import 'dotenv/config';
     AuthController,
     HomeController,
     EditController,
-    DatabaseController,
     FileManagerController,
   ],
-  providers: [AppService, FileManagerService],
+  providers: [
+    AppService,
+    FileManagerService,
+    MarkdownFilesService,
+    FoldersService,
+  ],
 })
 export class AppModule {}
