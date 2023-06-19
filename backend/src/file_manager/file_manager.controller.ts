@@ -11,6 +11,7 @@ import { FileManagerService } from './file_manager.service';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
+import { FolderDTO } from '../folders/dto/folder.dto';
 
 @Controller('file_manager')
 export class FileManagerController {
@@ -20,7 +21,7 @@ export class FileManagerController {
 
   @Post('create_file')
   @HttpCode(HttpStatus.OK)
-  create(
+  createFile(
     @Body()
     markdownFileDTO: MarkdownFileDTO,
     @Req() request: Request,
@@ -50,7 +51,7 @@ export class FileManagerController {
 
   @Post('delete_file')
   @HttpCode(HttpStatus.OK)
-  delete(
+  deleteFile(
     @Body()
     markdownFileDTO: MarkdownFileDTO,
     @Req() request: Request,
@@ -80,7 +81,7 @@ export class FileManagerController {
 
   @Post('rename_file')
   @HttpCode(HttpStatus.OK)
-  rename(
+  renameFile(
     @Body()
     markdownFileDTO: MarkdownFileDTO,
     @Req() request: Request,
@@ -110,7 +111,7 @@ export class FileManagerController {
 
   @Post('move_file')
   @HttpCode(HttpStatus.OK)
-  move(
+  moveFile(
     @Body()
     markdownFileDTO: MarkdownFileDTO,
     @Req() request: Request,
@@ -135,6 +136,126 @@ export class FileManagerController {
     }
     return this.file_manager_service.moveFile(
       markdownFileDTO,
+    );
+  }
+
+  @Post('create_folder')
+  @HttpCode(HttpStatus.OK)
+  createFolder(
+    @Body()
+    folderDTO: FolderDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+    const receivedDTO = plainToClass(
+      FolderDTO,
+      folderDTO,
+    );
+    const errors = validateSync(receivedDTO);
+
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.file_manager_service.createFolder(
+      folderDTO,
+    );
+  }
+
+  @Post('delete_folder')
+  @HttpCode(HttpStatus.OK)
+  deleteFolder(
+    @Body()
+    folderDTO: FolderDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+    const receivedDTO = plainToClass(
+      FolderDTO,
+      folderDTO,
+    );
+    const errors = validateSync(receivedDTO);
+
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.file_manager_service.deleteFolder(
+      folderDTO,
+    );
+  }
+
+  @Post('rename_folder')
+  @HttpCode(HttpStatus.OK)
+  renameFolder(
+    @Body()
+    folderDTO: FolderDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+    const receivedDTO = plainToClass(
+      FolderDTO,
+      folderDTO,
+    );
+    const errors = validateSync(receivedDTO);
+
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.file_manager_service.renameFolder(
+      folderDTO,
+    );
+  }
+
+  @Post('move_folder')
+  @HttpCode(HttpStatus.OK)
+  moveFolder(
+    @Body()
+    folderDTO: FolderDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+    const receivedDTO = plainToClass(
+      FolderDTO,
+      folderDTO,
+    );
+    const errors = validateSync(receivedDTO);
+
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.file_manager_service.moveFolder(
+      folderDTO,
     );
   }
 
@@ -170,7 +291,7 @@ export class FileManagerController {
 
   @Post('retrieve_file')
   @HttpCode(HttpStatus.OK)
-  retrieve(
+  retrieveFile(
     @Body()
     markdownFileDTO: MarkdownFileDTO,
     @Req() request: Request,

@@ -9,6 +9,8 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
+import { FoldersService } from '../folders/folders.service';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -20,11 +22,13 @@ describe('FileManagerController', () => {
         controllers: [FileManagerController],
         providers: [
           FileManagerService,
+          MarkdownFilesService,
+          FoldersService,
           {
             provide: 'FileManagerService',
             useValue: {
-              create: jest.fn(),
-              rename: jest.fn(),
+              createFile: jest.fn(),
+              renameFile: jest.fn(),
             },
           },
         ],
@@ -33,6 +37,10 @@ describe('FileManagerController', () => {
     controller =
       module.get<FileManagerController>(
         FileManagerController,
+      );
+    fileManagerService =
+      module.get<FileManagerService>(
+        'FileManagerService',
       );
   });
 
@@ -47,7 +55,7 @@ describe('FileManagerController', () => {
         new MarkdownFileDTO();
 
       try {
-        await controller.create(
+        await controller.createFile(
           markdownFileDTO,
           request as any,
         );
@@ -73,7 +81,7 @@ describe('FileManagerController', () => {
         new MarkdownFileDTO();
 
       try {
-        await controller.create(
+        await controller.renameFile(
           markdownFileDTO,
           request as any,
         );
@@ -99,7 +107,7 @@ describe('FileManagerController', () => {
         new MarkdownFileDTO();
 
       try {
-        await controller.create(
+        await controller.deleteFile(
           markdownFileDTO,
           request as any,
         );
@@ -125,7 +133,7 @@ describe('FileManagerController', () => {
         new MarkdownFileDTO();
 
       try {
-        await controller.create(
+        await controller.moveFile(
           markdownFileDTO,
           request as any,
         );
@@ -151,7 +159,7 @@ describe('FileManagerController', () => {
         new MarkdownFileDTO();
 
       try {
-        await controller.create(
+        await controller.retrieveFile(
           markdownFileDTO,
           request as any,
         );

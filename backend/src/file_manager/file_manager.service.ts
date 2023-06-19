@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { FoldersService } from '../folders/folders.service';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
+import { FolderDTO } from 'src/folders/dto/folder.dto';
 
 @Injectable()
 export class FileManagerService {
@@ -18,7 +19,8 @@ export class FileManagerService {
   // Nothing else is required
   renameFile(markdownFileDTO: MarkdownFileDTO) {
     // return 'File renamed successfully';
-    return this.markdownFilesService.updateName(
+    return this.markdownFilesService.update(
+      markdownFileDTO.MarkdownID,
       markdownFileDTO,
     );
   }
@@ -53,5 +55,22 @@ export class FileManagerService {
   // Requires the following fields to be initialised in the DTO:
   retrieveFile(markdownFileDTO: MarkdownFileDTO) {
     return markdownFileDTO; // return the file
+  }
+
+  renameFolder(folderDTO: FolderDTO) {
+    return 'File renamed successfully';
+  }
+
+  deleteFolder(folderDTO: FolderDTO) {
+    return 'File deleted successfully';
+  }
+
+  createFolder(folderDTO: FolderDTO) {
+    folderDTO.FolderID = '1';
+    return folderDTO;
+  }
+
+  moveFolder(folderDTO: FolderDTO) {
+    return 'File moved successfully';
   }
 }
