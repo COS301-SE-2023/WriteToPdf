@@ -25,6 +25,7 @@ interface Column {
 export class HomeComponent implements OnInit {
   public filesDirectoryTree!: TreeNode[];
   public filesDirectoryTreeTable!: TreeNode[];
+  public filteredFilesDirectoryTreeTable!: TreeNode[];
   public activeDirectoryItems!: MenuItem[];
   public directoryHome!: MenuItem;
   public menuBarItems!: MenuItem[];
@@ -76,6 +77,7 @@ export class HomeComponent implements OnInit {
       this.nodeService.getFiles().then((data) => (this.filesDirectoryTree = data));
       // Below is the function that populates the treeTable
       this.nodeService.getFilesystem().then((data) => (this.filesDirectoryTreeTable = data));
+      this.nodeService.getFilesystem().then((data) => (this.filteredFilesDirectoryTreeTable = data));
       this.treeTableColumns = [
         { field: 'name', header: 'Name' },
         { field: 'size', header: 'Size' },
@@ -119,6 +121,14 @@ export class HomeComponent implements OnInit {
         }
       ];
     }
+  }
+  filterTable(event: any) {
+    const filterValue = event.target.value;
+    // Perform filtering based on the first column
+    this.filteredFilesDirectoryTreeTable = this.filesDirectoryTreeTable.filter(node => {
+      const name = node.data[this.treeTableColumns[0].field] as string;
+      return name.toLowerCase().includes(filterValue.toLowerCase());
+    });
   }
 
   ngAfterViewInit() {

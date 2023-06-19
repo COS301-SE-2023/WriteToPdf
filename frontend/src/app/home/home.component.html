@@ -35,11 +35,10 @@
 <!--    </div>-->
     <div class="searchBar">
       <img src="assets/Icons/homeIcons/mainWindow/searchIcon.png">
-      <input type="text" class="search-input" placeholder="Search...">
+      <input type="text" class="search-input" placeholder="Search..." (input)="filterTable($event)">
     </div>
     <div class="directoryContents">
-      <p-treeTable [value]="filesDirectoryTreeTable" [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
-        <ng-template pTemplate="header" let-columns>
+      <p-treeTable [value]="filteredFilesDirectoryTreeTable" [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">        <ng-template pTemplate="header" let-columns>
           <tr>
             <th *ngFor="let col of columns">
               {{ col.header }}
