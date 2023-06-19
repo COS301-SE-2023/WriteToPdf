@@ -167,8 +167,9 @@ export class HomeComponent implements OnInit {
    * To see what the data structure of tree components need to look like, refer to home.service.ts, line 144.
    */
 
-  //TODO rather convert Tree Data to TreeTable data, it is a much better implementation as tree data allows for unique keys
-  // which in turn allows for greater leverage of the database's structure.
+  //TODO rather convert Tree Data to TreeTable data, it is a much better implementation as tree data allows for
+  // unique keys which in turn allows for greater leverage of the database's structure.
+  // thus, rework the function below as necessary.
   convertTreetableToTreeData(treetableData: any[]): TreeNode[] {
     const treeData: TreeNode[] = [];
 
