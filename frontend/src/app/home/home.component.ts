@@ -94,9 +94,12 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     {
       //Below is the function that initially populates the fileTree
-      this.nodeService.getFiles().then((data) => (this.filesDirectoryTree = data));
+
       // Below is the function that populates the treeTable
-      this.nodeService.getFilesystem().then((data) => (this.filesDirectoryTreeTable = data));
+      this.nodeService.getFilesystem().then((data) => {
+        this.filesDirectoryTreeTable = data;
+        this.filesDirectoryTree = this.convertTreetableToTreeData(this.filesDirectoryTreeTable)}
+      );
       this.nodeService.getFilesystem().then((data) => (this.filteredFilesDirectoryTreeTable = data));
       this.treeTableColumns = [
         { field: 'name', header: 'Name' },
@@ -142,8 +145,56 @@ export class HomeComponent implements OnInit {
       ];
     }
   }
-  filterTable(filterEvent: any) {
-    let filterValue = filterEvent.target.value;
+  // Below are the functions that implement intelligent routing of the directory tree on the left side of the home page
+  // it routes the relevant directory to the main window
+
+  convertTreetableToTreeData(treetableData: any[]): TreeNode[] {
+    const treeData: TreeNode[] = [];
+
+    treetableData.forEach((item) => {
+      const node: TreeNode = {
+        key: item.data.name,
+        label: item.data.name,
+        data: item.data,
+        icon: this.getIcon(item.data.type),
+        children: []
+      };
+
+      if (item.children) {
+        node.children = this.convertTreetableToTreeData(item.children);
+      }
+
+      treeData.push(node);
+    });
+
+    return treeData;
+  }
+
+  getIcon(type: string): string {
+    // Map the type to appropriate icon class
+    // Return the icon class based on the type
+    // Implement the mapping logic according to your requirements
+    // Example mapping: 'Folder' -> 'pi pi-folder', 'Application' -> 'pi pi-file', etc.
+    return '';
+  }
+
+
+  onNodeExpand(event: any): void {
+    this.filterTable(event, false);
+  }
+
+  onNodeCollapse(event: any): void {
+    this.filterTable(event, true);
+  }
+  // end of functions implementing routing of directory tree to the main window
+  filterTable(filterEvent: any, fromCollapse: boolean) {
+    let filterValue = "";
+    if(fromCollapse){
+      const collapsedNode = filterEvent.node;
+      const parent = collapsedNode.parent as TreeNode;
+      const filterValue = parent?.data.label;
+    }
+    else filterValue = filterEvent.target.value;
     // Perform filtering based on the first column
     this.filteredFilesDirectoryTreeTable = this.filesDirectoryTreeTable.filter(node => {
       const name = node.data[this.treeTableColumns[0].field] as string;

@@ -26,16 +26,17 @@
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" >
     </div>
     <div class="directoryTree">
-      <p-tree class="w-full md:w-30rem" [value]="filesDirectoryTree" (onNodeSelect)="onNodeSelect($event)"></p-tree>
+      <p-tree class="w-full md:w-30rem" [value]="filesDirectoryTree" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"></p-tree>
     </div>
   </div>
   <div id ="fadingDiv" class="mainWindowHome">
+<!--    TODO reimplement the directory path for this breadCrumb component after Demo2 -->
 <!--    <div class="directoryPath">-->
 <!--      <p-breadcrumb class="max-w-full" [model]="activeDirectoryItems" [home]="directoryHome" ></p-breadcrumb>-->
 <!--    </div>-->
     <div class="searchBar">
       <img src="assets/Icons/homeIcons/mainWindow/searchIcon.png">
-      <input type="text" class="search-input" placeholder="Search..." (input)="filterTable($event)">
+      <input type="text" class="search-input" placeholder="Search..." (input)="filterTable($event, false)">
     </div>
     <div class="directoryContents">
       <p-treeTable [value]="filteredFilesDirectoryTreeTable" [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">        <ng-template pTemplate="header" let-columns>
