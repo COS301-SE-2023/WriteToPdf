@@ -1,15 +1,16 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 // import {NgModule} from "@angular/core";
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 // import {Tree, TreeModule} from "primeng/tree";
 // import {TreeSelectModule} from "primeng/treeselect";
 // import {FormsModule} from "@angular/forms";
 // import {EditorModule} from "primeng/editor";
 // import {DropdownModule} from "primeng/dropdown";
 // import {EditComponent} from "../edit/edit.component";
-import {TreeNode, MenuItem, MessageService} from 'primeng/api';
-import {NodeService} from "./home.service";
-import {MenuService} from "./home.service";
+import { TreeNode, MenuItem, MessageService } from 'primeng/api';
+import { NodeService } from "./home.service";
+import { MenuService } from "./home.service";
+import { DocumentService } from "../services/document.service";
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -23,9 +24,9 @@ export class HomeComponent implements OnInit {
   public directoryHome!: MenuItem;
   public menuBarItems!: MenuItem[];
   public speedDialItems!: MenuItem[];
-  public currentDirectory!:TreeNode;
+  public currentDirectory!: TreeNode;
 
-  constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService, private elementRef: ElementRef) {
+  constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService, private elementRef: ElementRef, private documentService: DocumentService) {
   }
 
   navigateToPage(pageName: string) {
@@ -50,7 +51,7 @@ export class HomeComponent implements OnInit {
     this.activeDirectoryItems = [];
 
     // Traverse the selected node's ancestors to generate the breadcrumb items
-    let currentNode = selectedNode ;
+    let currentNode = selectedNode;
     while (currentNode) {
       this.activeDirectoryItems.unshift({ label: currentNode.label });
       currentNode = currentNode.parent;
@@ -63,7 +64,7 @@ export class HomeComponent implements OnInit {
   }
 
 
-  ngOnInit(): void {
+  ngOnInit(): void{
     {
       //Below is the function that initially populates the fileTree
       this.nodeService.getFiles().then((data) => (this.filesDirectoryTree = data));
@@ -81,8 +82,9 @@ export class HomeComponent implements OnInit {
       this.speedDialItems = [
         {
           icon: 'pi pi-pencil',
-          command: () => {
-           this.navigateToPage("edit");
+          command: async () => {
+            if (await this.documentService.createDocument())
+              this.navigateToPage("edit");
           }
         },
         {

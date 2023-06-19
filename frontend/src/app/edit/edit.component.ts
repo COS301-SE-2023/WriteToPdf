@@ -6,7 +6,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { DocumentService } from '../services/document.service';
+import { EditService } from '../services/edit.service';
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
@@ -18,16 +19,19 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   @ViewChild('quillEditor') quillEditor: any;
   documentContent: string = '';
+  fileName: string = '';
   text: any;
   bold: boolean = false;
 
   constructor(
     private elementRef: ElementRef,
     private router: Router,
+    private documentService: DocumentService,
+    private editService: EditService,
   ) { }
 
   ngOnInit(): void {
-
+    this.fileName = this.editService.getName();
   }
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
@@ -139,5 +143,10 @@ export class EditComponent implements AfterViewInit, OnInit {
     const quill= this.quillEditor.getQuill();
     quill.history.redo();
   } 
+
+  rename()
+  {
+    this.documentService.renameDocument(this.fileName);
+  }
 }
 
