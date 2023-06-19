@@ -37,6 +37,15 @@ export class FileManagerService {
   // Name: string; .. THE NEW NAME OF THE FILE
   // Size: number; .. THE SIZE OF THE FILE IN MEGABYTES
   createFile(markdownFileDTO: MarkdownFileDTO) {
+    if (markdownFileDTO.Path === undefined)
+      markdownFileDTO.Path = 'root';
+
+    if (markdownFileDTO.Name === undefined)
+      markdownFileDTO.Name = 'New Document';
+
+    if (markdownFileDTO.Size === undefined)
+      markdownFileDTO.Size = 0;
+
     markdownFileDTO.MarkdownID = '1';
     return markdownFileDTO; // return the file to know ID;
   }
