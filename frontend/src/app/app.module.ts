@@ -26,6 +26,12 @@ import { PasswordModule } from 'primeng/password';
 import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { MenubarModule } from 'primeng/menubar';
 import { SpeedDialModule } from 'primeng/speeddial';
+import { FileUploadModule } from "primeng/fileupload";
+import { ToastModule} from "primeng/toast";
+import {MessageService} from "primeng/api";
+import {DialogService} from "primeng/dynamicdialog";
+import { FileUploadPopupComponent } from './file-upload-popup/file-upload-popup.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,9 +40,12 @@ import { SpeedDialModule } from 'primeng/speeddial';
     CameraComponent,
     EditAssetComponent,
     SignupComponent,
-    EditComponent
+    EditComponent,
+    FileUploadPopupComponent
   ],
   imports: [
+    ToastModule,
+    FileUploadModule,
     SpeedDialModule,
     MenubarModule,
     VirtualScrollerModule,
@@ -57,7 +66,7 @@ import { SpeedDialModule } from 'primeng/speeddial';
     BrowserAnimationsModule,
     PasswordModule
   ],
-  providers: [NodeService, UserService, MenuService],
+  providers: [NodeService, UserService, MenuService, MessageService, DialogService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

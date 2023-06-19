@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit} from '@angular/core';
 // import {NgModule} from "@angular/core";
 import {Router} from '@angular/router';
 // import {Tree, TreeModule} from "primeng/tree";
@@ -10,10 +10,19 @@ import {Router} from '@angular/router';
 import {TreeNode, MenuItem, MessageService} from 'primeng/api';
 import {NodeService} from "./home.service";
 import {MenuService} from "./home.service";
+import {DialogService} from "primeng/dynamicdialog";
+import {FileUploadPopupComponent} from "../file-upload-popup/file-upload-popup.component";
+
 interface Column {
   field: string;
   header: string;
 }
+
+interface UploadEvent {
+  originalEvent: Event;
+  files: File[];
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -22,7 +31,7 @@ interface Column {
 
 
 
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
   public filesDirectoryTree!: TreeNode[];
   public filesDirectoryTreeTable!: TreeNode[];
   public filteredFilesDirectoryTreeTable!: TreeNode[];
@@ -32,8 +41,8 @@ export class HomeComponent implements OnInit {
   public speedDialItems!: MenuItem[];
   public treeTableColumns!: Column[];
   public currentDirectory!:TreeNode;
-
-  constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService, private elementRef: ElementRef) {
+  uploadedFiles: any[] = [];
+  constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService, private elementRef: ElementRef, private messageService:MessageService, private dialogService: DialogService) {
   }
 
   navigateToPage(pageName: string) {
@@ -151,7 +160,9 @@ export class HomeComponent implements OnInit {
         },
         {
           icon: 'pi pi-upload',
-          // routerLink: []
+          command: () => {
+            this.showFileUploadPopup();
+          }
         },
         {
           icon: 'pi pi-external-link',
@@ -209,6 +220,9 @@ export class HomeComponent implements OnInit {
     this.filterTable(event, true);
   }
   // end of functions implementing routing of directory tree to the main window
+
+  // below the code that Filter's the table, which is also called when the tree nodes are expanded
+  // or collapsed.
   filterTable(filterEvent: any, fromCollapse: boolean) {
     let filterValue = "";
     if(fromCollapse){
@@ -224,7 +238,9 @@ export class HomeComponent implements OnInit {
       return name.toLowerCase().includes(filterValue.toLowerCase()) || hasMatchingChild;
     });
   }
-
+  // a helper function for filterTable that searches for child nodes inside the treeTable
+  // that may be included into a parent node
+  // this prevents searching in only the first node layer.
   hasMatchingChildNode(node: TreeNode, filterValue: string): boolean {
     if (node.children) {
       for (const child of node.children) {
@@ -240,7 +256,29 @@ export class HomeComponent implements OnInit {
     }
     return false;
   }
+  // Below is the code that implements file uploading.
+  onUpload(event:any) {
+    for(let file of event.files) {
+      this.uploadedFiles.push(file);
+    }
+    this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
+  }
 
+  showFileUploadPopup(): void {
+    const ref = this.dialogService.open(FileUploadPopupComponent, {
+      header: 'Upload Files',
+      showHeader: true,
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true,
+    });
+
+    // Subscribe to dialog close event if needed
+    ref.onClose.subscribe(() => {
+      // Handle any actions after the dialog is closed
+    });
+  }
+// this code updates the background layer to not be adjusted from the edit page after navigation.
   ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#FFFFFF';
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
