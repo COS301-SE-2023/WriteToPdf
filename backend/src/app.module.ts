@@ -19,6 +19,7 @@ import { FileManagerModule } from './file_manager/file_manager.module';
 import 'dotenv/config';
 import { MarkdownFilesService } from './markdown_files/markdown_files.service';
 import { FoldersService } from './folders/folders.service';
+import { MarkdownFile } from './markdown_files/entities/markdown_file.entity';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { FoldersService } from './folders/folders.service';
     EditModule,
     UsersModule,
     TypeOrmModule.forRoot(dataSourceOptions),
+    TypeOrmModule.forFeature([MarkdownFile]),
     MarkdownFilesModule,
     AssetsModule,
     FoldersModule,
