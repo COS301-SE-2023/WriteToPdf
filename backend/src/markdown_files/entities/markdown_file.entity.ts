@@ -34,6 +34,6 @@ export class MarkdownFile {
   @Column()
   Size: number;
 
-  @JoinColumn()
+  @Column()
   ParentFolderID: string; // hash string
 }
