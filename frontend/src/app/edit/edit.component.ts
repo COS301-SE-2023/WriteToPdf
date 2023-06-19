@@ -20,6 +20,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   documentContent: string = '';
   text: any;
   bold: boolean = false;
+  sidebarVisible: boolean = true;
 
   constructor(
     private elementRef: ElementRef,
@@ -27,7 +28,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   ) { }
 
   ngOnInit(): void {
-
+    this.hideSideBar();
   }
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
@@ -138,6 +139,24 @@ export class EditComponent implements AfterViewInit, OnInit {
   {
     const quill= this.quillEditor.getQuill();
     quill.history.redo();
+  }
+
+  hideSideBar(){
+    // get asset sidebar and set display none
+    const sidebar = document.getElementsByClassName('assetSidebar')[0];
+
+    if(sidebar)
+    {
+      if(this.sidebarVisible){
+        sidebar.setAttribute('style', 'display:none');
+        this.sidebarVisible = false;
+      }
+      else{
+        sidebar.setAttribute('style', 'display:block');
+        this.sidebarVisible = true;
+      }
+    }
+    
   }
 }
 
