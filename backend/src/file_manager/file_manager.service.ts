@@ -9,27 +9,49 @@ export class FileManagerService {
     private markdownFilesService: MarkdownFilesService,
     private folderService: FoldersService,
   ) {}
+
+  // Requires the following fields to be initialised in the DTO:
+  // MarkdownID: string; .. TO IDENTIFY THE FILE
+  // Path: string; .. TO LOCATE THE FILE in S3
+  // Name: string; .. NEW NAME
+  // Size: number; .. NEW SIZE
+  // Nothing else is required
   renameFile(markdownFileDTO: MarkdownFileDTO) {
-    return 'File renamed successfully';
+    // return 'File renamed successfully';
+    return this.markdownFilesService.updateName(
+      markdownFileDTO,
+    );
   }
+
+  // Requires the following fields to be initialised in the DTO:
+  // MarkdownID: string; .. TO IDENTIFY THE FILE
+  // Path: string; .. TO LOCATE THE FILE IN S3
+  // Name: string; .. TO IDENTIFY THE FILE
   deleteFile(markdownFileDTO: MarkdownFileDTO) {
     return 'File deleted successfully';
   }
 
+  // Requires the following fields to be initialised in the DTO:
+  // Path: string; .. TO PLACE THE FILE IN S3
+  // Name: string; .. THE NEW NAME OF THE FILE
+  // Size: number; .. THE SIZE OF THE FILE IN MEGABYTES
   createFile(markdownFileDTO: MarkdownFileDTO) {
     markdownFileDTO.MarkdownID = '1';
-    return markdownFileDTO;
+    return markdownFileDTO; // return the file to know ID;
   }
 
+  // Requires the following fields to be initialised in the DTO:
   moveFile(markdownFileDTO: MarkdownFileDTO) {
     return 'File moved successfully';
   }
 
+  // Requires the following fields to be initialised in the DTO:
   saveFile(markdownFileDTO: MarkdownFileDTO) {
     return 'File saved successfully';
   }
 
+  // Requires the following fields to be initialised in the DTO:
   retrieveFile(markdownFileDTO: MarkdownFileDTO) {
-    return markdownFileDTO;
+    return markdownFileDTO; // return the file
   }
 }
