@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { FoldersService } from '../folders/folders.service';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
@@ -11,21 +15,40 @@ export class FileManagerService {
     private folderService: FoldersService,
   ) {}
 
-  // Requires the following fields to be initialised in the DTO:
+  // DB Requires the following fields to be initialised in the DTO:
   // MarkdownID: string; .. TO IDENTIFY THE FILE
   // Path: string; .. TO LOCATE THE FILE in S3
   // Name: string; .. NEW NAME
   // Size: number; .. NEW SIZE
-  // Nothing else is required
   renameFile(markdownFileDTO: MarkdownFileDTO) {
-    // return 'File renamed successfully';
+    if (markdownFileDTO.MarkdownID === undefined)
+      throw new HttpException(
+        'MarkdownID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (markdownFileDTO.Path === undefined)
+      throw new HttpException(
+        'Path cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (markdownFileDTO.Name === undefined)
+      throw new HttpException(
+        'Name cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    // if (markdownFileDTO.Size === undefined)
+    //will eventually come from s3 bucket
+
     return this.markdownFilesService.update(
       markdownFileDTO.MarkdownID,
       markdownFileDTO,
     );
   }
 
-  // Requires the following fields to be initialised in the DTO:
+  // DB Requires the following fields to be initialised in the DTO:
   // MarkdownID: string; .. TO IDENTIFY THE FILE
   // Path: string; .. TO LOCATE THE FILE IN S3
   // Name: string; .. TO IDENTIFY THE FILE
@@ -33,26 +56,35 @@ export class FileManagerService {
     return 'File deleted successfully';
   }
 
-  // Requires the following fields to be initialised in the DTO:
+  // DB Requires the following fields to be initialised in the DTO:
   // Path: string; .. TO PLACE THE FILE IN S3
   // Name: string; .. THE NEW NAME OF THE FILE
   // Size: number; .. THE SIZE OF THE FILE IN MEGABYTES
   createFile(markdownFileDTO: MarkdownFileDTO) {
+    if (markdownFileDTO.Path === undefined)
+      markdownFileDTO.Path = 'root';
+
+    if (markdownFileDTO.Name === undefined)
+      markdownFileDTO.Name = 'New Document';
+
+    if (markdownFileDTO.Size === undefined)
+      markdownFileDTO.Size = 0; // Will eventually come from s3 bucket
+
     markdownFileDTO.MarkdownID = '1';
     return markdownFileDTO; // return the file to know ID;
   }
 
-  // Requires the following fields to be initialised in the DTO:
+  // DB Requires the following fields to be initialised in the DTO:
   moveFile(markdownFileDTO: MarkdownFileDTO) {
     return 'File moved successfully';
   }
 
-  // Requires the following fields to be initialised in the DTO:
+  // DB Requires the following fields to be initialised in the DTO:
   saveFile(markdownFileDTO: MarkdownFileDTO) {
     return 'File saved successfully';
   }
 
-  // Requires the following fields to be initialised in the DTO:
+  // DB Requires the following fields to be initialised in the DTO:
   retrieveFile(markdownFileDTO: MarkdownFileDTO) {
     return markdownFileDTO; // return the file
   }
