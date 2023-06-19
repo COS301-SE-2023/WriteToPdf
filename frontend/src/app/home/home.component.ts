@@ -10,11 +10,17 @@ import {Router} from '@angular/router';
 import {TreeNode, MenuItem, MessageService} from 'primeng/api';
 import {NodeService} from "./home.service";
 import {MenuService} from "./home.service";
+interface Column {
+  field: string;
+  header: string;
+}
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
+
+
 
 export class HomeComponent implements OnInit {
   public filesDirectoryTree!: TreeNode[];
@@ -23,6 +29,7 @@ export class HomeComponent implements OnInit {
   public directoryHome!: MenuItem;
   public menuBarItems!: MenuItem[];
   public speedDialItems!: MenuItem[];
+  public treeTableColumns!: Column[];
   public currentDirectory!:TreeNode;
 
   constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService, private elementRef: ElementRef) {
@@ -67,9 +74,15 @@ export class HomeComponent implements OnInit {
     {
       //Below is the function that initially populates the fileTree
       this.nodeService.getFiles().then((data) => (this.filesDirectoryTree = data));
+      // Below is the function that populates the treeTable
       this.nodeService.getFilesystem().then((data) => (this.filesDirectoryTreeTable = data));
+      this.treeTableColumns = [
+        { field: 'name', header: 'Name' },
+        { field: 'size', header: 'Size' },
+        { field: 'type', header: 'Type' }
+      ];
       //Below is the code that populates the directoryPath
-      this.activeDirectoryItems = [{ label: 'Computer' }, { label: 'Notebook' }, { label: 'Accessories' }, { label: 'Backpacks' }, { label: 'Item' }];
+      // this.activeDirectoryItems = [{ label: 'Computer' }, { label: 'Notebook' }, { label: 'Accessories' }, { label: 'Backpacks' }, { label: 'Item' }];
       this.directoryHome = { icon: 'pi pi-home', routerLink: '/' };
       //Below is the code that populates the menu items, can be done intelligently with regards to current selection
       //in main window.

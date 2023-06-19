@@ -28,35 +28,42 @@
     <div class="directoryTree">
       <p-tree class="w-full md:w-30rem" [value]="filesDirectoryTree" (onNodeSelect)="onNodeSelect($event)"></p-tree>
     </div>
-    </div>
+  </div>
   <div id ="fadingDiv" class="mainWindowHome">
-    <div class="directoryPath">
-      <p-breadcrumb class="max-w-full" [model]="activeDirectoryItems" [home]="directoryHome" ></p-breadcrumb>
-    </div>
+<!--    <div class="directoryPath">-->
+<!--      <p-breadcrumb class="max-w-full" [model]="activeDirectoryItems" [home]="directoryHome" ></p-breadcrumb>-->
+<!--    </div>-->
     <div class="searchBar">
       <img src="assets/Icons/homeIcons/mainWindow/searchIcon.png">
       <input type="text" class="search-input" placeholder="Search...">
     </div>
     <div class="directoryContents">
-      <p-treeTable [value]="filesDirectoryTreeTable" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
-        <ng-template pTemplate="header">
+      <p-treeTable [value]="filesDirectoryTreeTable" [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
+        <ng-template pTemplate="header" let-columns>
           <tr>
-            <th>Name</th>
-            <th>Size</th>
-            <th>Type</th>
+            <th *ngFor="let col of columns">
+              {{ col.header }}
+            </th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-          <tr [ttRow]="rowNode">
-            <td>
-              <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-              {{ rowData.name }}
+        <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
+          <tr>
+            <td *ngFor="let col of columns; let i = index" ttEditableColumn [ngClass]="{ 'p-toggler-column': i === 0 }">
+              <p-treeTableToggler [rowNode]="rowNode" *ngIf="i === 0"></p-treeTableToggler>
+              <p-treeTableCellEditor *ngIf="i === 0">
+                <ng-template pTemplate="input">
+                  <input pInputText type="text" [(ngModel)]="rowData[col.field]" />
+                </ng-template>
+                <ng-template pTemplate="output">{{ rowData[col.field] }}</ng-template>
+              </p-treeTableCellEditor>
+              <ng-container *ngIf="i > 0">
+                {{ rowData[col.field] }}
+              </ng-container>
             </td>
-            <td>{{ rowData.size }}</td>
-            <td>{{ rowData.type }}</td>
           </tr>
         </ng-template>
       </p-treeTable>
     </div>
+
   </div>
 </div>
