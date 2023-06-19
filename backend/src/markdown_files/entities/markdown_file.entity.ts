@@ -11,6 +11,9 @@ export class MarkdownFile {
   MarkdownID: string; // hash string
 
   @Column()
+  UserID: string; 
+
+  @Column()
   Name: string;
 
   @Column({
