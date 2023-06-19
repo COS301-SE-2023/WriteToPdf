@@ -41,6 +41,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public speedDialItems!: MenuItem[];
   public treeTableColumns!: Column[];
   public currentDirectory!:TreeNode;
+  public recentToggle: boolean = false;
+  public selectToggle: boolean = false;
+  public expandToggle: boolean = false;
+  public sharedToggle: boolean = false;
   uploadedFiles: any[] = [];
   constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService, private elementRef: ElementRef, private messageService:MessageService, private dialogService: DialogService) {
   }
@@ -181,9 +185,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
   //TODO rather convert Tree Data to TreeTable data, it is a much better implementation as tree data allows for
   // unique keys which in turn allows for greater leverage of the database's structure.
   // thus, rework the function below as necessary.
+
+  // Yeh, that's what I want so,
+  // On expansion of a node as follows: is what's suppose to happen, a zoom towards that directory
+  // But, tree table and tree directory linking has been challenging.
+  // Also, recent folders, most visisted etc can be seen in main window. Will have buttons for that.
+
+
   convertTreetableToTreeData(treetableData: any[]): TreeNode[] {
     const treeData: TreeNode[] = [];
-
     treetableData.forEach((item) => {
       const node: TreeNode = {
         key: item.data.name,

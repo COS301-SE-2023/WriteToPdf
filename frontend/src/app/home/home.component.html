@@ -34,6 +34,17 @@
 <!--    <div class="directoryPath">-->
 <!--      <p-breadcrumb class="max-w-full" [model]="activeDirectoryItems" [home]="directoryHome" ></p-breadcrumb>-->
 <!--    </div>-->
+    <div class = "filterButtons">
+      <p-toolbar>
+        <div class="p-toolbar-group-start">
+          <p-toggleButton class = "toolbarItem" [(ngModel)]="recentToggle" onLabel="Recent" offLabel="Recent"></p-toggleButton>
+          <p-toggleButton class = "toolbarItem" [(ngModel)]="selectToggle" onLabel="Select" offLabel="Select"></p-toggleButton>
+          <p-toggleButton class = "toolbarItem" [(ngModel)]="expandToggle" onLabel="Collapse All" offLabel="Expand All"></p-toggleButton>
+          <p-toggleButton class = "toolbarItem" [(ngModel)]="sharedToggle" onLabel="Shared" offLabel="Shared"></p-toggleButton>
+
+        </div>
+      </p-toolbar>
+    </div>
     <div class="searchBar">
       <img src="assets/Icons/homeIcons/mainWindow/searchIcon.png">
       <input type="text" class="search-input" placeholder="Search..." (input)="filterTable($event, false)">

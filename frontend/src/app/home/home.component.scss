@@ -143,8 +143,14 @@ to co-operate.
   padding: 4px;
   width: auto;
 }
-
-
+// Below is the styling for the toolbar above the files in the main window
+.toolbarItem{
+  padding-left:10px;
+  padding-right:10px;
+ }
+.p-toolbar{
+  background-color: white;
+}
 // Below is the styling for the searchBar
 .searchBar {
   margin-top: 15px;
@@ -157,6 +163,7 @@ to co-operate.
   border: 1px solid #6F6F6F;
   border-radius: 96px;
 }
+
 
 .searchBar input[type="text"],
 textarea {

@@ -31,6 +31,8 @@ import { ToastModule} from "primeng/toast";
 import {MessageService} from "primeng/api";
 import {DialogService} from "primeng/dynamicdialog";
 import { FileUploadPopupComponent } from './file-upload-popup/file-upload-popup.component';
+import { ToolbarModule} from "primeng/toolbar";
+import { ToggleButtonModule} from "primeng/togglebutton";
 
 @NgModule({
   declarations: [
@@ -44,6 +46,8 @@ import { FileUploadPopupComponent } from './file-upload-popup/file-upload-popup.
     FileUploadPopupComponent
   ],
   imports: [
+    ToolbarModule,
+    ToggleButtonModule,
     ToastModule,
     FileUploadModule,
     SpeedDialModule,
