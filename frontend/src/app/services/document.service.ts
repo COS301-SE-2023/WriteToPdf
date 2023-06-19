@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserService } from './user.service';
+import { EditService } from './edit.service';
 
 
 @Injectable({
@@ -11,7 +12,7 @@ import { UserService } from './user.service';
 })
 export class DocumentService {
 
-  constructor(private http: HttpClient, private userService: UserService) { }
+  constructor(private http: HttpClient, private userService: UserService, private editService: EditService) { }
 
   saveDocument(content: string) {
     console.log('saveDocument() called');
@@ -20,24 +21,16 @@ export class DocumentService {
   sendSaveData(content: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/save_file';
     const body = new MarkdownFileDTO();
-    
-    body.UserID=this.userService.getUserID();
+
+    body.UserID = this.userService.getUserID();
     body.Content = content;
 
-    const headers = new HttpHeaders().set('Authorization', 'Bearer '+this.userService.getAuthToken());
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
   retrieveDocument() {
 
-  }
-
-  createDocument(): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/create_file';
-    const body = new MarkdownFileDTO();
-
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
-    return this.http.post(url, body, { headers, observe: 'response' });
   }
 
   sendRetrieveData(): Observable<HttpResponse<any>> {
@@ -47,6 +40,46 @@ export class DocumentService {
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
     return this.http.post(url, body, { headers, observe: 'response' });
   }
+
+  createDocument(): Promise<boolean> {
+
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendCreateData().subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          console.log(response.status);
+
+          if (response.status === 200) {
+            console.log('Create successful');
+            
+            this.editService.setMarkdownID(response.body.MarkdownID);
+            this.editService.setPath(response.body.Path);
+            this.editService.setName(response.body.Name);
+            this.editService.setParentFolderID(response.body.ParentFolderID);
+
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }
+      });
+    });
+  }
+
+  sendCreateData(): Observable<HttpResponse<any>> {
+    const url = 'http://localhost:3000/file_manager/create_file';
+    const body = new MarkdownFileDTO();
+
+    body.UserID = this.userService.getUserID();
+    body.Path = 'root';
+    body.Name = 'New Document';
+    body.ParentFolderID = '1 ';
+
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+
 
   deleteDocument() {
 
@@ -60,11 +93,11 @@ export class DocumentService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  renameDocument() {
+  renameDocument(fileName: string) {
 
   }
 
-  sendRenameData(name:string): Observable<HttpResponse<any>> {
+  sendRenameData(name: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/rename_file';
     const body = new MarkdownFileDTO();
 
@@ -76,7 +109,7 @@ export class DocumentService {
 
   }
 
-  sendMoveData(path:string): Observable<HttpResponse<any>> {
+  sendMoveData(path: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/move_file';
     const body = new MarkdownFileDTO();
 

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { FoldersService } from '../folders/folders.service';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
@@ -17,7 +21,27 @@ export class FileManagerService {
   // Name: string; .. NEW NAME
   // Size: number; .. NEW SIZE
   renameFile(markdownFileDTO: MarkdownFileDTO) {
-    // return 'File renamed successfully';
+    if (markdownFileDTO.MarkdownID === undefined)
+      throw new HttpException(
+        'MarkdownID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (markdownFileDTO.Path === undefined)
+      throw new HttpException(
+        'Path cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (markdownFileDTO.Name === undefined)
+      throw new HttpException(
+        'Name cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    // if (markdownFileDTO.Size === undefined)
+    //will eventually come from s3 bucket
+
     return this.markdownFilesService.update(
       markdownFileDTO.MarkdownID,
       markdownFileDTO,
