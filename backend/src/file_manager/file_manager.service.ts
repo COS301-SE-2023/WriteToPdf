@@ -45,9 +45,8 @@ export class FileManagerService {
 
     if (markdownFileDTO.Size === undefined)
       markdownFileDTO.Size = 0;
-
-    markdownFileDTO.MarkdownID = '1';
-    return markdownFileDTO; // return the file to know ID;
+    
+    return this.markdownFilesService.create(markdownFileDTO); // return the file to know ID;
   }
 
   // DB Requires the following fields to be initialised in the DTO:
