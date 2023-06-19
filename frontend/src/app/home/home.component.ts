@@ -72,7 +72,21 @@ export class HomeComponent implements OnInit {
 
   onRowLabelEdit(rowData: TreeNode): void {
     // Send the updated row label to the backend
+    this.updateDirectoryTree(this.filesDirectoryTree, rowData);
     this.sendEditedRowLabel(rowData);
+  }
+  updateDirectoryTree(tree: TreeNode[], editedNode: TreeNode): void {
+    for (let i = 0; i < tree.length; i++) {
+      const node = tree[i];
+      if (node.key === editedNode.key) {
+        node.label = editedNode.label;
+        node.data = editedNode.data;
+        break;
+      }
+      if (node.children) {
+        this.updateDirectoryTree(node.children, editedNode);
+      }
+    }
   }
 
   sendEditedRowLabel(rowData: TreeNode): void {
@@ -147,7 +161,14 @@ export class HomeComponent implements OnInit {
   }
   // Below are the functions that implement intelligent routing of the directory tree on the left side of the home page
   // it routes the relevant directory to the main window
+  /**
+   *
+   * @JakeWeatherhead, the database needs to conform to delivering the information for the Tree
+   * To see what the data structure of tree components need to look like, refer to home.service.ts, line 144.
+   */
 
+  //TODO rather convert Tree Data to TreeTable data, it is a much better implementation as tree data allows for unique keys
+  // which in turn allows for greater leverage of the database's structure.
   convertTreetableToTreeData(treetableData: any[]): TreeNode[] {
     const treeData: TreeNode[] = [];
 
