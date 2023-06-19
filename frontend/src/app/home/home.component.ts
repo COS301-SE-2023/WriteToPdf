@@ -70,6 +70,26 @@ export class HomeComponent implements OnInit {
     this.filesDirectoryTreeTable = []; // Replace with the logic to fetch the directory data for the selected node
   }
 
+  onRowLabelEdit(rowData: TreeNode): void {
+    // Send the updated row label to the backend
+    this.sendEditedRowLabel(rowData);
+  }
+
+  sendEditedRowLabel(rowData: TreeNode): void {
+    const editedLabel = rowData.data[this.treeTableColumns[0].field];
+    // Make an HTTP request to your backend API with the edited label
+    /**
+     * @Backend, here's an event listener that sends the EditedRowLabel data to the
+     * backend, please tell me how I Should implement this.
+     */
+    //TODO Implement this function commented below
+
+    // this.http.post<any>('your-backend-url', { editedLabel })
+    //   .subscribe(response => {
+    //     // Handle the response from the backend if needed
+    //   });
+  }
+
 
   ngOnInit(): void {
     {
@@ -122,13 +142,30 @@ export class HomeComponent implements OnInit {
       ];
     }
   }
-  filterTable(event: any) {
-    const filterValue = event.target.value;
+  filterTable(filterEvent: any) {
+    let filterValue = filterEvent.target.value;
     // Perform filtering based on the first column
     this.filteredFilesDirectoryTreeTable = this.filesDirectoryTreeTable.filter(node => {
       const name = node.data[this.treeTableColumns[0].field] as string;
-      return name.toLowerCase().includes(filterValue.toLowerCase());
+      const hasMatchingChild = this.hasMatchingChildNode(node, filterValue);
+      return name.toLowerCase().includes(filterValue.toLowerCase()) || hasMatchingChild;
     });
+  }
+
+  hasMatchingChildNode(node: TreeNode, filterValue: string): boolean {
+    if (node.children) {
+      for (const child of node.children) {
+        const name = child.data[this.treeTableColumns[0].field] as string;
+        if (name.toLowerCase().includes(filterValue.toLowerCase())) {
+          return true;
+        }
+        const hasMatchingChild = this.hasMatchingChildNode(child, filterValue);
+        if (hasMatchingChild) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   ngAfterViewInit() {
