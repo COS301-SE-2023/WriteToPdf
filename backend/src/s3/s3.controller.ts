@@ -51,9 +51,50 @@ export class S3Controller {
     return await this.s3Service.delete(fileDTO);
   }
 
-  @Post('create')
-  async create(@Body() fileDTO: MarkdownFileDTO) {
+  @Post('delete_file')
+  @UseInterceptors(FileInterceptor('file'))
+  async deleteFile(
+    @Body() fileDTO: MarkdownFileDTO,
+  ) {
+    return await this.s3Service.deleteFile(
+      fileDTO,
+    );
+  }
+
+  @Post('create_file')
+  @UseInterceptors(FileInterceptor('file'))
+  async createFile(
+    @Body() fileDTO: MarkdownFileDTO,
+  ) {
     return await this.s3Service.createFile(
+      fileDTO,
+    );
+  }
+
+  @Post('rename_file')
+  @UseInterceptors(FileInterceptor('file'))
+  async renameFile(
+    @Body() fileDTO: MarkdownFileDTO,
+  ) {
+    return await this.s3Service.renameFile(
+      fileDTO,
+    );
+  }
+
+  @Post('save_file')
+  @UseInterceptors(FileInterceptor('file'))
+  async saveFile(
+    @Body() fileDTO: MarkdownFileDTO,
+  ) {
+    return await this.s3Service.saveFile(fileDTO);
+  }
+
+  @Post('retrieve_file')
+  @UseInterceptors(FileInterceptor('file'))
+  async retrieveFile(
+    @Body() fileDTO: MarkdownFileDTO,
+  ) {
+    return await this.s3Service.retrieveFile(
       fileDTO,
     );
   }

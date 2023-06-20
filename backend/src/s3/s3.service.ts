@@ -13,6 +13,8 @@ import {
   writeFile,
   mkdir,
   access,
+  unlink,
+  readFile,
 } from 'fs/promises';
 
 import { randomBytes } from 'crypto';
@@ -94,6 +96,23 @@ export class S3Service {
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    const filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
+    console.log(filePath);
+
+    try {
+      await access(filePath);
+    } catch (err) {
+      console.log('Access Error --> ' + err);
+      return undefined;
+    }
+
+    try {
+      await unlink(filePath);
+    } catch (err) {
+      console.log('Delete Error --> ' + err);
+      return undefined;
+    }
+
     return markdownFileDTO;
   }
 
@@ -109,40 +128,94 @@ export class S3Service {
     if (markdownFileDTO.UserID === undefined)
       markdownFileDTO.UserID = 'abc123';
 
-    const randomName =
+    markdownFileDTO.MarkdownID =
       randomBytes(16).toString('hex');
 
     const filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
     console.log(filePath);
-    await mkdir(filePath, {
-      recursive: true,
-    });
 
-    writeFile(
-      `${filePath}/${randomName}.txt`,
-      '',
-      'utf-8',
-    );
+    try {
+      await mkdir(filePath, {
+        recursive: true,
+      });
+    } catch (err) {
+      console.log(
+        'Directory Creation Error:' + err,
+      );
+      return undefined;
+    }
 
-    return markdownFileDTO;
-  }
+    try {
+      await writeFile(
+        `${filePath}/${markdownFileDTO.MarkdownID}.txt`,
+        '',
+        'utf-8',
+      );
+    } catch (err) {
+      console.log('Write File Error:' + err);
+      return undefined;
+    }
 
-  async moveFile(
-    markdownFileDTO: MarkdownFileDTO,
-  ) {
     return markdownFileDTO;
   }
 
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    const filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
+    console.log(filePath);
+
+    try {
+      await access(filePath);
+    } catch (err) {
+      console.log('Access Error --> ' + err);
+      return undefined;
+    }
+
+    const fileData = new Uint8Array(
+      Buffer.from(markdownFileDTO.Content),
+    );
+
+    try {
+      await writeFile(
+        `${filePath}`,
+        fileData,
+        'utf-8',
+      );
+    } catch (err) {
+      console.log('Write File Error:' + err);
+      return undefined;
+    }
+
     return markdownFileDTO;
   }
 
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    return markdownFileDTO; // return the file
+    const filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
+    console.log(filePath);
+
+    try {
+      await access(filePath);
+    } catch (err) {
+      console.log('Access Error --> ' + err);
+      return undefined;
+    }
+
+    try {
+      markdownFileDTO.Content = await readFile(
+        `${filePath}`,
+        {
+          encoding: 'utf-8',
+        },
+      );
+    } catch (err) {
+      console.log('Read File Error:' + err);
+      return undefined;
+    }
+
+    return markdownFileDTO;
   }
 
   // renameFolder(folderDTO: FolderDTO) {
