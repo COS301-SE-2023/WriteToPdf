@@ -26,7 +26,7 @@ export class Asset {
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  Date_Created: Date;
+  DateCreated: Date;
 
   @Column({
     type: 'float',
