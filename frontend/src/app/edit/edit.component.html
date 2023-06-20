@@ -8,7 +8,7 @@
         </div>
         <div class="docTitleWrapper">
           <label for="editHeading" class="displayNone">a</label>
-          <input type="text" editable="true" id="editHeading" class="documentTitle" value="New Document" maxlength="50" onblur="rename()" [(ngModel)]="fileName">
+          <input type="text" editable="true" id="editHeading" class="documentTitle" value="New Document" maxlength="50" (blur)="rename()" [(ngModel)]="fileName">
         </div>
       </div>
       <div class="toolsWrapper"> 

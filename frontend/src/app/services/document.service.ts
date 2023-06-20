@@ -51,7 +51,7 @@ export class DocumentService {
 
           if (response.status === 200) {
             console.log('Create successful');
-            
+
             this.editService.setMarkdownID(response.body.MarkdownID);
             this.editService.setPath(response.body.Path);
             this.editService.setName(response.body.Name);
@@ -93,13 +93,33 @@ export class DocumentService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  renameDocument(fileName: string) {
+  renameDocument(fileName: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendRenameData(fileName).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          console.log(response.status);
 
+          if (response.status === 200) {
+            console.log('Rename successful');
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }
+      });
+    });
   }
 
   sendRenameData(name: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/rename_file';
     const body = new MarkdownFileDTO();
+
+    body.UserID = this.userService.getUserID();
+    body.Path = this.editService.getPath();
+    body.MarkdownID = this.editService.getMarkdownID();
+    body.Name = name;
+
 
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
     return this.http.post(url, body, { headers, observe: 'response' });

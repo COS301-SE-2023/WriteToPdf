@@ -146,6 +146,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   rename()
   {
+    console.log('rename');
     this.documentService.renameDocument(this.fileName);
   }
 }
