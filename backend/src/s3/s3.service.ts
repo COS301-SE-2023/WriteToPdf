@@ -15,6 +15,7 @@ import {
   access,
   unlink,
   readFile,
+  stat,
 } from 'fs/promises';
 
 import { randomBytes } from 'crypto';
@@ -96,7 +97,12 @@ export class S3Service {
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    const filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
+    let filePath = '';
+    if (markdownFileDTO.Path === undefined)
+      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}.txt`;
+    else
+      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
+
     console.log(filePath);
 
     try {
@@ -119,9 +125,6 @@ export class S3Service {
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    if (markdownFileDTO.Path === undefined)
-      markdownFileDTO.Path = 'files';
-
     if (markdownFileDTO.Name === undefined)
       markdownFileDTO.Name = 'New Document.txt';
 
@@ -131,7 +134,12 @@ export class S3Service {
     markdownFileDTO.MarkdownID =
       randomBytes(16).toString('hex');
 
-    const filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
+    let filePath = '';
+    if (markdownFileDTO.Path === undefined)
+      filePath = `./storage/${markdownFileDTO.UserID}`;
+    else
+      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
+
     console.log(filePath);
 
     try {
@@ -156,13 +164,27 @@ export class S3Service {
       return undefined;
     }
 
+    const fileStats = await stat(filePath);
+    console.log(fileStats);
+    markdownFileDTO.Content = '';
+    markdownFileDTO.DateCreated =
+      fileStats.birthtime;
+    markdownFileDTO.LastModified =
+      fileStats.mtime;
+    markdownFileDTO.Size = fileStats.size;
+
     return markdownFileDTO;
   }
 
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    const filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
+    let filePath = '';
+    if (markdownFileDTO.Path === undefined)
+      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}.txt`;
+    else
+      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
+
     console.log(filePath);
 
     try {
@@ -187,14 +209,23 @@ export class S3Service {
       return undefined;
     }
 
+    const fileStats = await stat(filePath);
+    console.log(fileStats);
+    markdownFileDTO.LastModified =
+      fileStats.mtime;
+    markdownFileDTO.Size = fileStats.size;
+
     return markdownFileDTO;
   }
 
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    const filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
-    console.log(filePath);
+    let filePath = '';
+    if (markdownFileDTO.Path === undefined)
+      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}.txt`;
+    else
+      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
 
     try {
       await access(filePath);
@@ -214,6 +245,14 @@ export class S3Service {
       console.log('Read File Error:' + err);
       return undefined;
     }
+
+    const fileStats = await stat(filePath);
+    console.log(fileStats);
+    markdownFileDTO.DateCreated =
+      fileStats.birthtime;
+    markdownFileDTO.LastModified =
+      fileStats.mtime;
+    markdownFileDTO.Size = fileStats.size;
 
     return markdownFileDTO;
   }
