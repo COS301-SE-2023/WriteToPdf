@@ -53,7 +53,7 @@ export class FileManagerService {
   // Path: string; .. TO LOCATE THE FILE IN S3
   // Name: string; .. TO IDENTIFY THE FILE
   deleteFile(markdownFileDTO: MarkdownFileDTO) {
-    return 'File deleted successfully';
+    return this.markdownFilesService.remove(markdownFileDTO);
   }
 
   // DB Requires the following fields to be initialised in the DTO:
