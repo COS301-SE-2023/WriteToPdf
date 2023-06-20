@@ -42,7 +42,7 @@ export class FileManagerService {
     // if (markdownFileDTO.Size === undefined)
     //will eventually come from s3 bucket
 
-    return this.markdownFilesService.update(
+    return this.markdownFilesService.updateName(
       markdownFileDTO.MarkdownID,
       markdownFileDTO,
     );
@@ -69,8 +69,10 @@ export class FileManagerService {
 
     if (markdownFileDTO.Size === undefined)
       markdownFileDTO.Size = 0;
-    
-    return this.markdownFilesService.create(markdownFileDTO); // return the file to know ID;
+
+    return this.markdownFilesService.create(
+      markdownFileDTO,
+    ); // return the file to know ID;
   }
 
   // DB Requires the following fields to be initialised in the DTO:

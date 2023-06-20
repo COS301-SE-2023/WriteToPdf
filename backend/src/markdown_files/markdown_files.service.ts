@@ -19,7 +19,6 @@ export class MarkdownFilesService {
     return newMarkdownFile;
   }
 
-
   findAll() {
     return `This action returns all markdownFiles`;
   }
@@ -33,6 +32,21 @@ export class MarkdownFilesService {
     updateMarkdownFileDTO: MarkdownFileDTO,
   ) {
     return `This action updates md file with id: #${MarkdownID}`;
+  }
+
+  async updateName(
+    MarkdownID: string,
+    updateMarkdownFileDTO: MarkdownFileDTO,
+  ) {
+    const markdownFile =
+      await this.markdownFileRepository.findOne({
+        where: { MarkdownID: MarkdownID },
+      });
+    markdownFile.Name =
+      updateMarkdownFileDTO.Name;
+    return this.markdownFileRepository.save(
+      markdownFile,
+    );
   }
 
   remove(MarkdownID: string) {
