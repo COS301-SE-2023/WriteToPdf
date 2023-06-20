@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FileDTO } from './dto/file.dto';
+import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import 'dotenv/config';
 import {
   DeleteObjectCommand,
@@ -7,6 +8,14 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
+// import * as fs from 'fs';
+import {
+  writeFile,
+  mkdir,
+  access,
+} from 'fs/promises';
+
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class S3Service {
@@ -75,4 +84,81 @@ export class S3Service {
       }),
     );
   }
+
+  async renameFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    return markdownFileDTO;
+  }
+
+  async deleteFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    return markdownFileDTO;
+  }
+
+  async createFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    if (markdownFileDTO.Path === undefined)
+      markdownFileDTO.Path = 'files';
+
+    if (markdownFileDTO.Name === undefined)
+      markdownFileDTO.Name = 'New Document.txt';
+
+    if (markdownFileDTO.UserID === undefined)
+      markdownFileDTO.UserID = 'abc123';
+
+    const randomName =
+      randomBytes(16).toString('hex');
+
+    const filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
+    console.log(filePath);
+    await mkdir(filePath, {
+      recursive: true,
+    });
+
+    writeFile(
+      `${filePath}/${randomName}.txt`,
+      '',
+      'utf-8',
+    );
+
+    return markdownFileDTO;
+  }
+
+  async moveFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    return markdownFileDTO;
+  }
+
+  async saveFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    return markdownFileDTO;
+  }
+
+  async retrieveFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    return markdownFileDTO; // return the file
+  }
+
+  // renameFolder(folderDTO: FolderDTO) {
+  //   return 'File renamed successfully';
+  // }
+
+  // deleteFolder(folderDTO: FolderDTO) {
+  //   return 'File deleted successfully';
+  // }
+
+  // createFolder(folderDTO: FolderDTO) {
+  //   folderDTO.FolderID = '1';
+  //   return folderDTO;
+  // }
+
+  // moveFolder(folderDTO: FolderDTO) {
+  //   return 'File moved successfully';
+  // }
 }

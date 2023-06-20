@@ -11,6 +11,7 @@ import {
 import { S3Service } from './s3.service';
 import { FileDTO } from './dto/file.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 
 @Controller('s3')
 export class S3Controller {
@@ -48,5 +49,12 @@ export class S3Controller {
   @UseInterceptors(FileInterceptor('file'))
   async delete(@Body() fileDTO: FileDTO) {
     return await this.s3Service.delete(fileDTO);
+  }
+
+  @Post('create')
+  async create(@Body() fileDTO: MarkdownFileDTO) {
+    return await this.s3Service.createFile(
+      fileDTO,
+    );
   }
 }
