@@ -146,6 +146,8 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   delete() {
     console.log('delete');
+    this.documentService.deleteDocument(this.editService.getMarkdownID());
+    this.navigateToPage('home');
   }
 
 }

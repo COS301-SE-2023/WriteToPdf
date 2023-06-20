@@ -26,6 +26,9 @@ import { PasswordModule } from 'primeng/password';
 import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { MenubarModule } from 'primeng/menubar';
 import { SpeedDialModule } from 'primeng/speeddial';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ToastModule } from 'primeng/toast';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -55,7 +58,9 @@ import { SpeedDialModule } from 'primeng/speeddial';
     SidebarModule,
     ButtonModule,
     BrowserAnimationsModule,
-    PasswordModule
+    PasswordModule,
+    ConfirmPopupModule,
+    ToastModule
   ],
   providers: [NodeService, UserService, MenuService],
   bootstrap: [AppComponent],

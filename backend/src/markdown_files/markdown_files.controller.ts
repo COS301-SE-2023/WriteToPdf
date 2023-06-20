@@ -56,11 +56,12 @@ export class MarkdownFilesController {
 
   @Delete(':MarkdownID')
   remove(
-    @Param('MarkdownID') MarkdownID: string,
+    @Body()
+    removeMarkdownFileDTO: MarkdownFileDTO,
   ) {
     // insert guards
     return this.markdownFilesService.remove(
-      MarkdownID,
+      removeMarkdownFileDTO,
     );
   }
 }

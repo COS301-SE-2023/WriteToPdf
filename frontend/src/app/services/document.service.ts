@@ -81,13 +81,30 @@ export class DocumentService {
 
 
 
-  deleteDocument() {
+  deleteDocument(markdownID: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendDeleteData(markdownID).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          console.log(response.status);
 
+          if (response.status === 200) {
+            console.log('Delete successful');
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }
+      });
+    });
   }
 
-  sendDeleteData(): Observable<HttpResponse<any>> {
+  sendDeleteData(markdownID:string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/delete_file';
     const body = new MarkdownFileDTO();
+
+    body.UserID = this.userService.getUserID();
+    body.MarkdownID = markdownID;
 
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
     return this.http.post(url, body, { headers, observe: 'response' });
