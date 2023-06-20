@@ -49,7 +49,10 @@ export class MarkdownFilesService {
     );
   }
 
-  remove(MarkdownID: string) {
-    return `This action removes md file with id: #${MarkdownID}`;
+  remove(removeMarkdownFileDTO: MarkdownFileDTO) {
+    return this.markdownFileRepository.delete({
+      MarkdownID:
+        removeMarkdownFileDTO.MarkdownID,
+    });
   }
 }
