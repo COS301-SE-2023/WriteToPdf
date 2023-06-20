@@ -105,31 +105,27 @@ export class EditComponent implements AfterViewInit, OnInit {
   //   }
   // }
 
-  save()
-  {
+  save() {
     // Save the document quill content to localStorage when changes occur
-    const quill= this.quillEditor.getQuill();
-    const contents=quill.getContents();
+    const quill = this.quillEditor.getQuill();
+    const contents = quill.getContents();
 
     localStorage.setItem('document', JSON.stringify(contents));
 
     console.log(contents);
   }
 
-  load()
-  {
+  load() {
     // Load the document quill content from localStorage when changes occur
-    const quill= this.quillEditor.getQuill();
-    const contents=localStorage.getItem('document');
-    if(contents)
-    {
+    const quill = this.quillEditor.getQuill();
+    const contents = localStorage.getItem('document');
+    if (contents) {
       quill.setContents(JSON.parse(contents));
     }
     console.log(contents);
   }
 
-  undo()
-  {
+  undo() {
     const quill = this.quillEditor.getQuill();
     const history = quill.history;
 
@@ -138,16 +134,19 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
   }
 
-  redo()
-  {
-    const quill= this.quillEditor.getQuill();
+  redo() {
+    const quill = this.quillEditor.getQuill();
     quill.history.redo();
-  } 
+  }
 
-  rename()
-  {
+  rename() {
     console.log('rename');
     this.documentService.renameDocument(this.fileName);
   }
+
+  delete() {
+    console.log('delete');
+  }
+
 }
 
