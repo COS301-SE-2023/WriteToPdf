@@ -71,16 +71,6 @@ export class S3Controller {
     );
   }
 
-  @Post('rename_file')
-  @UseInterceptors(FileInterceptor('file'))
-  async renameFile(
-    @Body() fileDTO: MarkdownFileDTO,
-  ) {
-    return await this.s3Service.renameFile(
-      fileDTO,
-    );
-  }
-
   @Post('save_file')
   @UseInterceptors(FileInterceptor('file'))
   async saveFile(

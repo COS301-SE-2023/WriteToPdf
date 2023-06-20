@@ -88,12 +88,10 @@ export class S3Service {
     );
   }
 
-  async renameFile(
-    markdownFileDTO: MarkdownFileDTO,
-  ) {
-    return markdownFileDTO;
-  }
-
+  // Requires the following fields to be initialised in the DTO:
+  // MarkdownID: string; .. TO IDENTIFY THE FILE
+  // Path: string; .. TO LOCATE THE FILE in S3
+  // UserID: string; .. TO IDENTIFY ROOT DIRECTORY
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -122,6 +120,9 @@ export class S3Service {
     return markdownFileDTO;
   }
 
+  // Requires the following fields to be initialised in the DTO:
+  // Path: string; .. TO LOCATE THE FILE in S3
+  // UserID: string; .. TO IDENTIFY ROOT DIRECTORY
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -176,6 +177,11 @@ export class S3Service {
     return markdownFileDTO;
   }
 
+  // Requires the following fields to be initialised in the DTO:
+  // MarkdownID: string; .. TO IDENTIFY THE FILE
+  // Content: string; .. TO SAVE into FILE
+  // Path: string; .. TO LOCATE THE FILE in S3
+  // UserID: string; .. TO IDENTIFY ROOT DIRECTORY
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -218,6 +224,10 @@ export class S3Service {
     return markdownFileDTO;
   }
 
+  // Requires the following fields to be initialised in the DTO:
+  // MarkdownID: string; .. TO IDENTIFY THE FILE
+  // Path: string; .. TO LOCATE THE FILE in S3
+  // UserID: string; .. TO IDENTIFY ROOT DIRECTORY
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
