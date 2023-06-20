@@ -1,31 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMarkdownFileDTO } from './dto/create-markdown_file.dto';
-import { UpdateMarkdownFileDTO } from './dto/update-markdown_file.dto';
+import { MarkdownFileDTO } from './dto/markdown_file.dto';
+import { MarkdownFile } from './entities/markdown_file.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class MarkdownFilesService {
-  create(
-    createMarkdownFileDTO: CreateMarkdownFileDTO,
-  ) {
-    return 'This action adds a new markdownFile';
+  constructor(
+    @InjectRepository(MarkdownFile)
+    private markdownFileRepository: Repository<MarkdownFile>,
+  ) {}
+
+  create(createMarkdownFileDTO: MarkdownFileDTO) {
+    const newMarkdownFile =
+      this.markdownFileRepository.save(
+        createMarkdownFileDTO,
+      );
+    return newMarkdownFile;
   }
+
 
   findAll() {
     return `This action returns all markdownFiles`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} markdownFile`;
+  findOne(MarkdownID: string) {
+    return `This action returns the markdownFile with id: #${MarkdownID}`;
   }
 
   update(
-    id: number,
-    updateMarkdownFileDTO: UpdateMarkdownFileDTO,
+    MarkdownID: string,
+    updateMarkdownFileDTO: MarkdownFileDTO,
   ) {
-    return `This action updates a #${id} markdownFile`;
+    return `This action updates md file with id: #${MarkdownID}`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} markdownFile`;
+  remove(MarkdownID: string) {
+    return `This action removes md file with id: #${MarkdownID}`;
   }
 }

@@ -1,17 +1,18 @@
 import 'zone.js/testing';
 import { TestBed } from '@angular/core/testing';
 import { expect } from '@jest/globals';
-import { UserService } from './user.service';
 
-describe('UserService', () => {
-  let service: UserService;
+import { DocumentService } from './document.service';
+
+describe('DocumentService', () => {
+  let service: DocumentService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(UserService);
+    service = TestBed.inject(DocumentService);
   });
 
   it('should be created', () => {
-    expect(service). toBeTruthy();
+    expect(service).toBeTruthy();
   });
 });

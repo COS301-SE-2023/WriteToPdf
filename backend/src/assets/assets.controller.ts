@@ -29,24 +29,24 @@ export class AssetsController {
     return this.assetsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.assetsService.findOne(+id);
+  @Get(':AssetID')
+  findOne(@Param('AssetID') AssetID: string) {
+    return this.assetsService.findOne(AssetID);
   }
 
-  @Patch(':id')
+  @Patch(':AssetID')
   update(
-    @Param('id') id: string,
+    @Param('AssetID') AssetID: string,
     @Body() updateAssetDTO: UpdateAssetDTO,
   ) {
     return this.assetsService.update(
-      +id,
+      AssetID,
       updateAssetDTO,
     );
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.assetsService.remove(+id);
+  @Delete(':AssetID')
+  remove(@Param('AssetID') AssetID: string) {
+    return this.assetsService.remove(AssetID);
   }
 }

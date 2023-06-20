@@ -8,7 +8,10 @@ import {
 @Entity('MARKDOWN_FILES')
 export class MarkdownFile {
   @PrimaryGeneratedColumn()
-  MarkdownID: number;
+  MarkdownID: string; // hash string
+
+  @Column()
+  UserID: string; 
 
   @Column()
   Name: string;
@@ -23,7 +26,7 @@ export class MarkdownFile {
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  LastModified: string;
+  LastModified: Date;
 
   @Column()
   Path: string;
@@ -31,6 +34,6 @@ export class MarkdownFile {
   @Column()
   Size: number;
 
-  @JoinColumn()
-  ParentFolderID: number;
+  @Column()
+  ParentFolderID: string; // hash string
 }

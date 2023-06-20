@@ -7,7 +7,7 @@ import {
 @Entity('USERS')
 export class User {
   @PrimaryGeneratedColumn() // Auto-incremented
-  UserID: number;
+  UserID: string;
 
   @Column()
   FirstName: string;

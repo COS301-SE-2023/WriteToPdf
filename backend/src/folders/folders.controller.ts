@@ -31,24 +31,24 @@ export class FoldersController {
     return this.foldersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.foldersService.findOne(+id);
+  @Get(':FolderID')
+  findOne(@Param('FolderID') FolderID: string) {
+    return this.foldersService.findOne(FolderID);
   }
 
-  @Patch(':id')
+  @Patch(':FolderID')
   update(
-    @Param('id') id: string,
+    @Param('FolderID') FolderID: string,
     @Body() updateFolderDTO: UpdateFolderDTO,
   ) {
     return this.foldersService.update(
-      +id,
+      FolderID,
       updateFolderDTO,
     );
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.foldersService.remove(+id);
+  @Delete(':FolderID')
+  remove(@Param('FolderID') FolderID: string) {
+    return this.foldersService.remove(FolderID);
   }
 }

@@ -4,23 +4,23 @@ import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { CreateUserDTO } from './dto/create-user.dto';
-import { first } from 'cypress/types/lodash';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   private isAuthenticated: boolean = false;
-  private authToken: string | null = null;
+  private authToken: string | undefined = undefined;
+  private userID: string | undefined = undefined;
 
   constructor(private http: HttpClient) {}
 
   async login(email: string, password: string): Promise<boolean> {
-    if (email === '' || password === '') {
-      return new Promise<boolean>((resolve, reject) => {
-        resolve(false);
-      });
-    }
+    // if (email === 'test' || password === '123456') {
+    //   return new Promise<boolean>((resolve, reject) => {
+    //     resolve(false);
+    //   });
+    // }
 
     return new Promise<boolean>((resolve, reject) => {
       this.sendLoginData(email, password).subscribe({
@@ -30,10 +30,12 @@ export class UserService {
 
           if (response.status === 200) {
             console.log('Login successful');
-            console.log(response.body.Token);
+            console.log(response.body);
             this.isAuthenticated = true;
             this.authToken = response.body.Token;
+            this.userID = response.body.UserID;
             this.saveToLocalStorage('token', this.authToken);
+            this.saveToLocalStorage('userID', this.userID);
             resolve(true);
           } else {
             resolve(false);
@@ -86,7 +88,8 @@ export class UserService {
   logout(): void {
     // Perform logout logic here (e.g., clear authentication token, reset flags)
     this.isAuthenticated = false;
-    this.authToken = null;
+    this.authToken = undefined;
+    this.userID = undefined;
   }
 
   isAuthenticatedUser(): boolean {
@@ -94,9 +97,14 @@ export class UserService {
     return this.isAuthenticated;
   }
 
-  getAuthToken(): string | null {
+  getAuthToken(): string | undefined {
     // Return the authentication token
     return this.authToken;
+  }
+
+  getUserID(): string | undefined {
+
+    return this.userID;
   }
 
 
@@ -108,7 +116,7 @@ export class UserService {
 
     return this.http.post(url, body, { observe: 'response' });
   }
-    
+
 
   sendSignupData(email: string, fName: string, lName: string, password: string) {
     const url = 'http://localhost:3000/users/signup';
