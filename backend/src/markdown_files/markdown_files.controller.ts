@@ -43,13 +43,11 @@ export class MarkdownFilesController {
 
   @Patch(':MarkdownID')
   update(
-    @Param('MarkdownID') MarkdownID: string,
     @Body()
     updateMarkdownFileDTO: MarkdownFileDTO,
   ) {
     // insert guards
     return this.markdownFilesService.update(
-      MarkdownID,
       updateMarkdownFileDTO,
     );
   }
