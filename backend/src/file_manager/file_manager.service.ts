@@ -9,6 +9,7 @@ import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
+import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 
 @Injectable()
 export class FileManagerService {
@@ -117,9 +118,40 @@ export class FileManagerService {
     return directoryFoldersDTO;
   }
 
-  retrieveAllFiles(
+  /**
+   *
+   * @param files An array of MarkdownFile entities
+   * @returns An array of MarkdownFileDTOs
+   */
+  convertFilesToDTOs(files: MarkdownFile[]) {
+    const markdownFilesDTOArr: MarkdownFileDTO[] =
+      [];
+    files.forEach((file) => {
+      const markdownFileDTO: MarkdownFileDTO = {
+        MarkdownID: file.MarkdownID,
+        UserID: file.UserID,
+        DateCreated: file.DateCreated,
+        LastModified: file.LastModified,
+        Name: file.Name,
+        Path: file.Path,
+        Size: file.Size,
+        ParentFolderID: file.ParentFolderID,
+        Content: '',
+      };
+      markdownFilesDTOArr.push(markdownFileDTO);
+    });
+    return markdownFilesDTOArr;
+  }
+
+  async retrieveAllFiles(
     directoryFilesDTO: DirectoryFilesDTO,
   ) {
+    const allFiles =
+      await this.markdownFilesService.findAllByUserID(
+        directoryFilesDTO.UserID,
+      );
+    directoryFilesDTO.Files =
+      this.convertFilesToDTOs(allFiles);
     return directoryFilesDTO;
   }
 }

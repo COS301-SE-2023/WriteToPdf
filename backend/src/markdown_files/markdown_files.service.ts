@@ -58,4 +58,10 @@ export class MarkdownFilesService {
         removeMarkdownFileDTO.MarkdownID,
     });
   }
+
+  findAllByUserID(UserID: string) {
+    return this.markdownFileRepository.find({
+      where: { UserID: UserID },
+    });
+  }
 }
