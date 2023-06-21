@@ -2,7 +2,6 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  JoinColumn,
 } from 'typeorm';
 
 @Entity('MARKDOWN_FILES')
@@ -11,7 +10,7 @@ export class MarkdownFile {
   MarkdownID: string; // hash string
 
   @Column()
-  UserID: string; 
+  UserID: string;
 
   @Column()
   Name: string;
