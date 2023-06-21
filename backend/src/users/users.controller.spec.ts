@@ -12,9 +12,8 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { LoginUserDTO } from './dto/login-user.dto';
 import { AuthService } from '../auth/auth.service';
-import { CreateUserDTO } from './dto/create-user.dto';
+import { UserDTO } from './dto/user.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -47,16 +46,11 @@ describe('UsersController', () => {
     module.close();
   });
 
-  describe('root', () => {
-    it('should be defined', () => {
+  describe('root/config', () => {
+    it('user controller should be defined', () => {
       expect(controller).toBeDefined();
     });
   });
-
-  // Create is a concept implemented by signup
-  // describe('create', () => {
-  //   // it('should return the created user')
-  // });
 
   describe('findOne', () => {
     // console.log('UsersController.findOne');
@@ -66,7 +60,7 @@ describe('UsersController', () => {
     it('should return an array of all users', async () => {
       const result = [
         {
-          UserID: '1',
+          UserID: 1,
           FirstName: 'John',
           LastName: 'Doe',
           Email: 'johndoe@example.com',
@@ -105,7 +99,7 @@ describe('UsersController', () => {
     });
 
     it('should return a user on successful login', async () => {
-      const loginUserDTO = new LoginUserDTO();
+      const loginUserDTO = new UserDTO();
       loginUserDTO.Email = 'test';
       loginUserDTO.Password = 'test';
 
@@ -133,7 +127,7 @@ describe('UsersController', () => {
 
     it('should throw exception if request method is not POST', async () => {
       const request = { method: 'GET' };
-      const loginUserDTO = new LoginUserDTO();
+      const loginUserDTO = new UserDTO();
       loginUserDTO.Email = 'test';
       loginUserDTO.Password = 'test';
 
@@ -167,7 +161,7 @@ describe('UsersController', () => {
     });
 
     it('should return the newly registered user', async () => {
-      const createUserDTO = new CreateUserDTO();
+      const createUserDTO = new UserDTO();
       createUserDTO.FirstName = 'Test';
       createUserDTO.LastName = 'Test';
       createUserDTO.Email = 'test';
@@ -195,7 +189,7 @@ describe('UsersController', () => {
 
     it('should throw exception if request method is not POST', async () => {
       const request = { method: 'GET' };
-      const createUserDTO = new CreateUserDTO();
+      const createUserDTO = new UserDTO();
       createUserDTO.FirstName = 'Test';
       createUserDTO.LastName = 'Test';
       createUserDTO.Email = 'test';
