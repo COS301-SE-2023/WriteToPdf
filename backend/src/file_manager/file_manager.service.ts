@@ -6,7 +6,9 @@ import {
 import { FoldersService } from '../folders/folders.service';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
-import { FolderDTO } from 'src/folders/dto/folder.dto';
+import { FolderDTO } from '../folders/dto/folder.dto';
+import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
+import { DirectoryFilesDTO } from './dto/directory_files.dto';
 
 @Injectable()
 export class FileManagerService {
@@ -53,7 +55,9 @@ export class FileManagerService {
   // Path: string; .. TO LOCATE THE FILE IN S3
   // Name: string; .. TO IDENTIFY THE FILE
   deleteFile(markdownFileDTO: MarkdownFileDTO) {
-    return this.markdownFilesService.remove(markdownFileDTO);
+    return this.markdownFilesService.remove(
+      markdownFileDTO,
+    );
   }
 
   // DB Requires the following fields to be initialised in the DTO:
@@ -105,5 +109,17 @@ export class FileManagerService {
 
   moveFolder(folderDTO: FolderDTO) {
     return 'File moved successfully';
+  }
+
+  retrieveAllFolders(
+    directoryFoldersDTO: DirectoryFoldersDTO,
+  ) {
+    return directoryFoldersDTO;
+  }
+
+  retrieveAllFiles(
+    directoryFilesDTO: DirectoryFilesDTO,
+  ) {
+    return directoryFilesDTO;
   }
 }
