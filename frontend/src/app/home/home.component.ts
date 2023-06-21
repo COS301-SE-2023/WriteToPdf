@@ -59,8 +59,27 @@ export class HomeComponent implements OnInit, AfterViewInit {
   onRowLabelEdit(event: any, rowNode: any): void {
     if(event !== this.valueBeforeEdit){
       this.updateTreeNodeLabel(this.filesDirectoryTree, rowNode.node.key, event);
+      this.updateTreeTableData(this.filteredFilesDirectoryTreeTable, rowNode.node.key, event);
+      this.updateTreeTableData(this.filesDirectoryTreeTable, rowNode.node.key, event);
+      this.sendEditedRowLabel(event, rowNode.node.key, rowNode.node.data.type);
+
     }
-    this.sendEditedRowLabel(event, rowNode.node.key, rowNode.node.data.type);
+  }
+  updateTreeTableData(nodes: TreeNode[], key: string, newValue: string): boolean {
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
+      if (node.key === key) {
+        node.data.name = newValue;
+        return true;
+      }
+      if (node.children && node.children.length > 0) {
+        const found = this.updateTreeTableData(node.children, key, newValue);
+        if (found) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
   updateTreeNodeLabel(nodes: TreeNode[], key: string, newValue: string): boolean {
     for (let i = 0; i < nodes.length; i++) {
@@ -110,9 +129,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     {
       // Below is the function that initially populates the fileTree
-      // Below is the function that populates the treeTable
       const data = this.nodeService.getTreeTableNodesData();
       this.filesDirectoryTree = this.generateTreeNodes(data);
+      // Below is the function that populates the treeTable
+      // Note, both filtered and non-filtered needs to be made and kept up to date,
+      // as the non-filtered serves as the filter for the filters for the logic in the filter function
+      // below
       this.nodeService.getTreeTableNodes().then((data) => {
         this.filesDirectoryTreeTable = data;}
       );
