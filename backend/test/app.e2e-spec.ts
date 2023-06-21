@@ -9,7 +9,7 @@ import {
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 
-describe('AppController (e2e)', () => {
+describe('AppController (integration)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -27,7 +27,7 @@ describe('AppController (e2e)', () => {
   });
 
   it('/ (GET)', async () => {
-    jest.setTimeout(10000);
+    // jest.setTimeout(10000);
     return await request(app.getHttpServer())
       .get('/')
       .expect(HttpStatus.UNAUTHORIZED);
