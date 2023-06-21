@@ -112,7 +112,6 @@ describe('MarkdownFilesController', () => {
       updateMarkdownFileDTO.MarkdownID = '123';
       const expectedMessage = `This action updates md file with id: #${id}`;
       const result = controller.update(
-        id,
         updateMarkdownFileDTO,
       );
       expect(result).toEqual(expectedMessage);
