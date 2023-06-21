@@ -12,10 +12,8 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDTO } from './dto/create-user.dto';
-import { UpdateUserDTO } from './dto/update-user.dto';
+import { UserDTO } from './dto/user.dto';
 import { Public } from '../auth/auth.controller';
-import { LoginUserDTO } from './dto/login-user.dto';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { Request } from 'express';
@@ -27,7 +25,7 @@ export class UsersController {
   ) {}
 
   @Post()
-  create(@Body() createUserDTO: CreateUserDTO) {
+  create(@Body() createUserDTO: UserDTO) {
     return this.usersService.create(
       createUserDTO,
     );
@@ -37,7 +35,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   login(
-    @Body() loginUserDTO: LoginUserDTO,
+    @Body() loginUserDTO: UserDTO,
     @Req() request: Request,
   ) {
     if (request.method !== 'POST') {
@@ -47,7 +45,7 @@ export class UsersController {
       );
     }
     const receivedDTO = plainToClass(
-      LoginUserDTO,
+      UserDTO,
       loginUserDTO,
     );
     const errors = validateSync(receivedDTO);
@@ -65,7 +63,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @Post('signup')
   signup(
-    @Body() createUserDTO: CreateUserDTO,
+    @Body() createUserDTO: UserDTO,
     @Req() request: Request,
   ) {
     if (request.method !== 'POST') {
@@ -75,7 +73,7 @@ export class UsersController {
       );
     }
     const receivedDTO = plainToClass(
-      CreateUserDTO,
+      UserDTO,
       createUserDTO,
     );
     const errors = validateSync(receivedDTO);
@@ -97,14 +95,14 @@ export class UsersController {
   }
 
   @Get(':UserID')
-  findOne(@Param('UserID') UserID: string) {
+  findOne(@Param('UserID') UserID: number) {
     return this.usersService.findOne(UserID);
   }
 
   @Patch(':UserID')
   update(
-    @Param('UserID') UserID: string,
-    @Body() updateUserDTO: UpdateUserDTO,
+    @Param('UserID') UserID: number,
+    @Body() updateUserDTO: UserDTO,
   ) {
     return this.usersService.update(
       UserID,
@@ -113,7 +111,7 @@ export class UsersController {
   }
 
   @Delete(':UserID')
-  remove(@Param('UserID') UserID: string) {
+  remove(@Param('UserID') UserID: number) {
     return this.usersService.remove(UserID);
   }
 }
