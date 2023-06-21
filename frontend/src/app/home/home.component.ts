@@ -58,16 +58,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onRowLabelEdit(event: any, rowNode: any): void {
     if(event !== this.valueBeforeEdit){
-      console.log(rowNode)
-      this.updateTreeNodeLabel(this.filesDirectoryTree, rowNode.node.key, event)
+      this.updateTreeNodeLabel(this.filesDirectoryTree, rowNode.node.key, event);
     }
-    // this.updateDirectoryTree(this.filesDirectoryTree, event);
-    // this.sendEditedRowLabel(event);
+    this.sendEditedRowLabel(event, rowNode.node.key, rowNode.node.data.type);
   }
   updateTreeNodeLabel(nodes: TreeNode[], key: string, newValue: string): boolean {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
-      console.log(node);
       if (node.key === key) {
         node.label = newValue;
         return true;
@@ -82,20 +79,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  sendEditedRowLabel(rowData: TreeNode): void {
-    const editedLabel = rowData.data[this.treeTableColumns[0].field];
-    console.log(editedLabel);
-    // Make an HTTP request to your backend API with the edited label
-    /**
-     * @Backend, here's an event listener that sends the EditedRowLabel data to the
-     * backend, please tell me how I Should implement this.
-     */
-    //TODO Implement this function commented below
+  sendEditedRowLabel(event: any, key: string, type:string): void {
+    console.log(event);
+    console.log(key);
+    console.log(type);
+    //TODO Implement this function
+    // sends the relevant information to the backend, that updates the file/folder's name
+    // the name being the event. Yes, event will have to be validated to be sure it is a string
 
-    // this.http.post<any>('your-backend-url', { editedLabel })
-    //   .subscribe(response => {
-    //     // Handle the response from the backend if needed
-    //   });
   }
 
   /**
