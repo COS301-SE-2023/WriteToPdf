@@ -26,7 +26,7 @@
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" >
     </div>
     <div class="directoryTree">
-      <p-tree class="w-full md:w-30rem" [value]="filesDirectoryTree" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)"></p-tree>
+      <p-tree [value]="filesDirectoryTree" class="w-full md:w-30rem" selectionMode="single" [(selection)]="treeSelectedFile"></p-tree>
     </div>
   </div>
   <div id ="fadingDiv" class="mainWindowHome">
@@ -63,8 +63,11 @@
               <p-treeTableToggler [rowNode]="rowNode" *ngIf="i === 0"></p-treeTableToggler>
               <p-treeTableCellEditor *ngIf="i === 0">
                 <ng-template pTemplate="input">
-                  <input pInputText type="text" [(ngModel)]="rowData[col.field]" (input)="onRowLabelEdit(rowData)"/>
+                  <input pInputText type="text" [(ngModel)]="rowData[col.field]"
+                         (focus) = "valueBeforeEdit = rowData[col.field]"
+                         (keydown.enter)="onRowLabelEdit(rowData[col.field] = (rowData[col.field].trim() === '') ? valueBeforeEdit : rowData[col.field], rowNode)"/>
                 </ng-template>
+
                 <ng-template pTemplate="output">{{ rowData[col.field] }}</ng-template>
               </p-treeTableCellEditor>
               <ng-container *ngIf="i > 0">

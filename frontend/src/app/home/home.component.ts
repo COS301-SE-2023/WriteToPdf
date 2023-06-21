@@ -7,9 +7,8 @@ import {Router} from '@angular/router';
 // import {EditorModule} from "primeng/editor";
 // import {DropdownModule} from "primeng/dropdown";
 // import {EditComponent} from "../edit/edit.component";
-import {TreeNode, MenuItem, MessageService} from 'primeng/api';
-import {NodeService} from "./home.service";
-import {MenuService} from "./home.service";
+import {MenuItem, MessageService, TreeNode} from 'primeng/api';
+import {MenuService, NodeService} from "./home.service";
 import {DialogService} from "primeng/dynamicdialog";
 import {FileUploadPopupComponent} from "../file-upload-popup/file-upload-popup.component";
 
@@ -41,10 +40,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public speedDialItems!: MenuItem[];
   public treeTableColumns!: Column[];
   public currentDirectory!:TreeNode;
+  public treeSelectedFile!:any;
   public recentToggle: boolean = false;
   public selectToggle: boolean = false;
   public expandToggle: boolean = false;
   public sharedToggle: boolean = false;
+  public valueBeforeEdit: string = "";
+  public colInspect: any;
   uploadedFiles: any[] = [];
   constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService, private elementRef: ElementRef, private messageService:MessageService, private dialogService: DialogService) {
   }
@@ -53,57 +55,36 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.router.navigate([`/${pageName}`]);
   }
 
-  // loadDirectory() {
-  //   this.activeDirectoryItems = [{ label: 'Home'}];
-  //   this.nodeService.getFiles().then((data) => (this.filesDirectoryTree = data));
-  //   this.nodeService.getFilesystem().then((data) => (this.filesDirectoryTreeTable = data));
-  //   this.activeDirectoryItems = this.nodeService.getFilesAndDirectories(this.currentDirectory); // Retrieve the active directory's files and directories
-  //
-  // }
 
-  onNodeSelect(event: any) {
-    const node = event.node;
-    this.updateBreadcrumb(node);
-    this.updateCurrentDirectory(node);
-  }
-  updateBreadcrumb(selectedNode: TreeNode | undefined) {
-    // Clear the existing breadcrumb items
-    this.activeDirectoryItems = [];
-
-    // Traverse the selected node's ancestors to generate the breadcrumb items
-    let currentNode = selectedNode ;
-    while (currentNode) {
-      this.activeDirectoryItems.unshift({ label: currentNode.label });
-      currentNode = currentNode.parent;
+  onRowLabelEdit(event: any, rowNode: any): void {
+    if(event !== this.valueBeforeEdit){
+      console.log(rowNode)
+      this.updateTreeNodeLabel(this.filesDirectoryTree, rowNode.node.key, event)
     }
+    // this.updateDirectoryTree(this.filesDirectoryTree, event);
+    // this.sendEditedRowLabel(event);
   }
-
-  updateCurrentDirectory(selectedNode: TreeNode) {
-    // Update the current directory data based on the selected node
-    this.filesDirectoryTreeTable = []; // Replace with the logic to fetch the directory data for the selected node
-  }
-
-  onRowLabelEdit(rowData: TreeNode): void {
-    // Send the updated row label to the backend
-    this.updateDirectoryTree(this.filesDirectoryTree, rowData);
-    this.sendEditedRowLabel(rowData);
-  }
-  updateDirectoryTree(tree: TreeNode[], editedNode: TreeNode): void {
-    for (let i = 0; i < tree.length; i++) {
-      const node = tree[i];
-      if (node.key === editedNode.key) {
-        node.label = editedNode.label;
-        node.data = editedNode.data;
-        break;
+  updateTreeNodeLabel(nodes: TreeNode[], key: string, newValue: string): boolean {
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
+      console.log(node);
+      if (node.key === key) {
+        node.label = newValue;
+        return true;
       }
-      if (node.children) {
-        this.updateDirectoryTree(node.children, editedNode);
+      if (node.children && node.children.length > 0) {
+        const found = this.updateTreeNodeLabel(node.children, key, newValue);
+        if (found) {
+          return true;
+        }
       }
     }
+    return false;
   }
 
   sendEditedRowLabel(rowData: TreeNode): void {
     const editedLabel = rowData.data[this.treeTableColumns[0].field];
+    console.log(editedLabel);
     // Make an HTTP request to your backend API with the edited label
     /**
      * @Backend, here's an event listener that sends the EditedRowLabel data to the
@@ -117,17 +98,34 @@ export class HomeComponent implements OnInit, AfterViewInit {
     //   });
   }
 
+  /**
+   *
+   * @JancoSpies, this function over here generates tree nodes from the  treetable data
+   * in essence, all that's important is that the keys remain unique and in the format as seen in
+   * home.service.ts
+   */
+  generateTreeNodes(data: any[]): TreeNode[] {
+    return data.map(item => {
+      const node: TreeNode = {
+        key: item.key,
+        label: item.data.name,
+        data: item.data,
+        children: this.generateTreeNodes(item.children || [])
+      };
+      return node;
+    });
+  }
 
   ngOnInit(): void {
     {
-      //Below is the function that initially populates the fileTree
-
+      // Below is the function that initially populates the fileTree
       // Below is the function that populates the treeTable
-      this.nodeService.getFilesystem().then((data) => {
-        this.filesDirectoryTreeTable = data;
-        this.filesDirectoryTree = this.convertTreetableToTreeData(this.filesDirectoryTreeTable)}
+      const data = this.nodeService.getTreeTableNodesData();
+      this.filesDirectoryTree = this.generateTreeNodes(data);
+      this.nodeService.getTreeTableNodes().then((data) => {
+        this.filesDirectoryTreeTable = data;}
       );
-      this.nodeService.getFilesystem().then((data) => (this.filteredFilesDirectoryTreeTable = data));
+      this.nodeService.getTreeTableNodes().then((data) => (this.filteredFilesDirectoryTreeTable = data));
       this.treeTableColumns = [
         { field: 'name', header: 'Name' },
         { field: 'size', header: 'Size' },
@@ -176,51 +174,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
   // Below are the functions that implement intelligent routing of the directory tree on the left side of the home page
   // it routes the relevant directory to the main window
-  /**
-   *
-   * @JakeWeatherhead, the database needs to conform to delivering the information for the Tree
-   * To see what the data structure of tree components need to look like, refer to home.service.ts, line 144.
-   */
-
-  //TODO rather convert Tree Data to TreeTable data, it is a much better implementation as tree data allows for
-  // unique keys which in turn allows for greater leverage of the database's structure.
-  // thus, rework the function below as necessary.
-
-  // Yeh, that's what I want so,
-  // On expansion of a node as follows: is what's suppose to happen, a zoom towards that directory
-  // But, tree table and tree directory linking has been challenging.
-  // Also, recent folders, most visisted etc can be seen in main window. Will have buttons for that.
-
-
-  convertTreetableToTreeData(treetableData: any[]): TreeNode[] {
-    const treeData: TreeNode[] = [];
-    treetableData.forEach((item) => {
-      const node: TreeNode = {
-        key: item.data.name,
-        label: item.data.name,
-        data: item.data,
-        icon: this.getIcon(item.data.type),
-        children: []
-      };
-
-      if (item.children) {
-        node.children = this.convertTreetableToTreeData(item.children);
-      }
-
-      treeData.push(node);
-    });
-
-    return treeData;
-  }
-
-  getIcon(type: string): string {
-    // Map the type to appropriate icon class
-    // Return the icon class based on the type
-    // Implement the mapping logic according to your requirements
-    // Example mapping: 'Folder' -> 'pi pi-folder', 'Application' -> 'pi pi-file', etc.
-    return '';
-  }
-
 
   onNodeExpand(event: any): void {
     this.filterTable(event, false);
@@ -293,5 +246,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#FFFFFF';
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
   }
+
+  protected readonly focus = focus;
 }
 
