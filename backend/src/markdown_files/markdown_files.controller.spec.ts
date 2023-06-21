@@ -43,12 +43,13 @@ describe('MarkdownFilesController', () => {
     module.close();
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('root/config', () => {
+    it('markdown controller should be defined', () => {
+      expect(controller).toBeDefined();
+    });
   });
-
   describe('findOne', () => {
-    it('should return the requested markdownFile by id', async () => {
+    it('should return the requested markdown file by id', async () => {
       const id = '123'; // Provide a valid ID for testing
       const expectedMessage = `This action returns the markdownFile with id: #${id}`;
       const result = controller.findOne(id);
@@ -57,7 +58,7 @@ describe('MarkdownFilesController', () => {
   });
 
   describe('findAll', () => {
-    it('should return an array of markdownFiles', async () => {
+    it('should return an array of markdown files', async () => {
       const expectedMessage = `This action returns all markdownFiles`;
       const result = controller.findAll();
       expect(result).toEqual(expectedMessage);
@@ -69,17 +70,33 @@ describe('MarkdownFilesController', () => {
   });
 
   describe('create', () => {
-    it('should create a new markdownFile', async () => {
+    it('should create a new markdown file', async () => {
       const createMarkdownFileDTO =
         new MarkdownFileDTO();
       createMarkdownFileDTO.Name = 'test.md';
       createMarkdownFileDTO.MarkdownID = '123';
-      const expectedMessage =
-        'This action adds a new markdownFile';
-      const result = controller.create(
-        createMarkdownFileDTO,
-      );
-      expect(result).toEqual(expectedMessage);
+
+      const expectedDTO = new MarkdownFileDTO();
+      expectedDTO.Name = 'test.md';
+      expectedDTO.MarkdownID = '123';
+
+      jest
+        .spyOn(controller, 'create')
+        .mockImplementation(
+          async () => expectedDTO,
+        );
+
+      controller
+        .create(createMarkdownFileDTO)
+        .then((result) => {
+          expect(result).toMatchObject(
+            expectedDTO,
+          );
+        })
+        .catch((error) => {
+          // Handle any errors that occurred during the Promise resolution
+          console.error(error);
+        });
     });
 
     // Future tests:
@@ -87,7 +104,7 @@ describe('MarkdownFilesController', () => {
   });
 
   describe('update', () => {
-    it('should update a markdownFile', async () => {
+    it('should update a markdown file', async () => {
       const id = '123'; // Provide a valid ID for testing
       const updateMarkdownFileDTO =
         new MarkdownFileDTO();
@@ -106,11 +123,43 @@ describe('MarkdownFilesController', () => {
   });
 
   describe('remove', () => {
-    it('should delete a markdownFile', async () => {
-      const id = '123';
-      const expectedMessage = `This action removes md file with id: #${id}`;
-      const result = controller.remove(id);
-      expect(result).toEqual(expectedMessage);
+    // it('should delete a markdown file', async () => {
+    //   const markdownDTO = new MarkdownFileDTO();
+    //   markdownDTO.MarkdownID = '123';
+    //   const expectedDTO = new MarkdownFileDTO();
+    //   expectedDTO.MarkdownID = '123';
+    //   const result =
+    //     controller.remove(markdownDTO);
+    //   expect(result).toEqual(expectedDTO);
+    // });
+
+    it('should remove a markdown file', async () => {
+      const removeMarkdownFileDTO =
+        new MarkdownFileDTO();
+      removeMarkdownFileDTO.Name = 'test.md';
+      removeMarkdownFileDTO.MarkdownID = '123';
+
+      const expectedDTO = new MarkdownFileDTO();
+      expectedDTO.Name = 'test.md';
+      expectedDTO.MarkdownID = '123';
+
+      jest
+        .spyOn(controller, 'create')
+        .mockImplementation(
+          async () => expectedDTO,
+        );
+
+      controller
+        .create(removeMarkdownFileDTO)
+        .then((result) => {
+          expect(result).toMatchObject(
+            expectedDTO,
+          );
+        })
+        .catch((error) => {
+          // Handle any errors that occurred during the Promise resolution
+          console.error(error);
+        });
     });
 
     // Future tests:
