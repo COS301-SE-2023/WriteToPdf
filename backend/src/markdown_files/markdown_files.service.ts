@@ -11,7 +11,9 @@ export class MarkdownFilesService {
     private markdownFileRepository: Repository<MarkdownFile>,
   ) {}
 
-  create(createMarkdownFileDTO: MarkdownFileDTO) {
+  create(
+    createMarkdownFileDTO: MarkdownFileDTO,
+  ): Promise<MarkdownFileDTO> {
     const newMarkdownFile =
       this.markdownFileRepository.save(
         createMarkdownFileDTO,
@@ -28,16 +30,15 @@ export class MarkdownFilesService {
   }
 
   update(
-    MarkdownID: string,
     updateMarkdownFileDTO: MarkdownFileDTO,
-  ) {
-    return `This action updates md file with id: #${MarkdownID}`;
+  ): string {
+    return `This action updates md file with id: #${updateMarkdownFileDTO.MarkdownID}`;
   }
 
   async updateName(
     MarkdownID: string,
     updateMarkdownFileDTO: MarkdownFileDTO,
-  ) {
+  ): Promise<any> {
     const markdownFile =
       await this.markdownFileRepository.findOne({
         where: { MarkdownID: MarkdownID },
@@ -49,7 +50,9 @@ export class MarkdownFilesService {
     );
   }
 
-  remove(removeMarkdownFileDTO: MarkdownFileDTO) {
+  remove(
+    removeMarkdownFileDTO: MarkdownFileDTO,
+  ): Promise<any> {
     return this.markdownFileRepository.delete({
       MarkdownID:
         removeMarkdownFileDTO.MarkdownID,
