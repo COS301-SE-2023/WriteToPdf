@@ -198,14 +198,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   // Below are the functions that implement intelligent routing of the directory tree on the left side of the home page
   // it routes the relevant directory to the main window
 
-  onNodeExpand(event: any): void {
-    console.log(event);
+  onNodeSelect(event: any): void {
     this.filterTable(event, 2);
   }
 
-  onNodeCollapse(event: any): void {
-    this.filterTable(event, 1);
-  }
   // end of functions implementing routing of directory tree to the main window
 
   // below the code that Filter's the table, which is also called when the tree nodes are expanded
@@ -257,6 +253,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const hasMatchingChild = this.hasMatchingChildNode(node, filterValue);
       return name.toLowerCase().includes(filterValue.toLowerCase()) || hasMatchingChild;
     });
+    // Perform explosion of all those nodes.
     this.toggleAllNodes(this.filteredFilesDirectoryTreeTable, explodeOrCollapse);
   }
   // a helper function for filterTable that searches for child nodes inside the treeTable

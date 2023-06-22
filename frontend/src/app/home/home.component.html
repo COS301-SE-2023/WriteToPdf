@@ -26,7 +26,7 @@
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" >
     </div>
     <div class="directoryTree">
-      <p-tree [value]="filesDirectoryTree" class="w-full md:w-30rem" selectionMode="single"  (onNodeSelect)="onNodeExpand($event)"  [(selection)]="treeSelectedFile"></p-tree>
+      <p-tree [value]="filesDirectoryTree" class="w-full md:w-30rem" selectionMode="single" (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile"></p-tree>
     </div>
   </div>
   <div id ="fadingDiv" class="mainWindowHome">
