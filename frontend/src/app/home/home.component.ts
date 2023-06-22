@@ -45,6 +45,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public selectToggle: boolean = false;
   public expandToggle: boolean = false;
   public sharedToggle: boolean = false;
+  public editToggle: boolean = false;
   public valueBeforeEdit: string = "";
   public colInspect: any;
   uploadedFiles: any[] = [];

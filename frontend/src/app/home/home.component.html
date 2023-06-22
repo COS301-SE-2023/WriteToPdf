@@ -37,11 +37,11 @@
     <div class = "filterButtons">
       <p-toolbar>
         <div class="p-toolbar-group-start">
+          <p-toggleButton class = "toolbarItem" [(ngModel)]="editToggle" onLabel="Edit" offLabel="Edit"></p-toggleButton>
           <p-toggleButton class = "toolbarItem" [(ngModel)]="recentToggle" onLabel="Recent" offLabel="Recent"></p-toggleButton>
           <p-toggleButton class = "toolbarItem" [(ngModel)]="selectToggle" onLabel="Select" offLabel="Select"></p-toggleButton>
           <p-toggleButton class = "toolbarItem" [(ngModel)]="expandToggle" onLabel="Collapse All" offLabel="Expand All"></p-toggleButton>
           <p-toggleButton class = "toolbarItem" [(ngModel)]="sharedToggle" onLabel="Shared" offLabel="Shared"></p-toggleButton>
-
         </div>
       </p-toolbar>
     </div>
@@ -50,26 +50,34 @@
       <input type="text" class="search-input" placeholder="Search..." (input)="filterTable($event, false)">
     </div>
     <div class="directoryContents">
-      <p-treeTable [value]="filteredFilesDirectoryTreeTable" [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">        <ng-template pTemplate="header" let-columns>
+      <p-treeTable [value]="filteredFilesDirectoryTreeTable" [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
+        <ng-template pTemplate="header" let-columns>
           <tr>
             <th *ngFor="let col of columns">
               {{ col.header }}
             </th>
           </tr>
         </ng-template>
+
         <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
           <tr>
             <td *ngFor="let col of columns; let i = index" ttEditableColumn [ngClass]="{ 'p-toggler-column': i === 0 }">
               <p-treeTableToggler [rowNode]="rowNode" *ngIf="i === 0"></p-treeTableToggler>
-              <p-treeTableCellEditor *ngIf="i === 0">
+
+              <p-treeTableCellEditor *ngIf="i === 0 && editToggle">
                 <ng-template pTemplate="input">
                   <input pInputText type="text" [(ngModel)]="rowData[col.field]"
-                         (focus) = "valueBeforeEdit = rowData[col.field]"
-                         (keydown.enter)="onRowLabelEdit(rowData[col.field] = (rowData[col.field].trim() === '') ? valueBeforeEdit : rowData[col.field], rowNode)"/>
+                        (focus)="valueBeforeEdit = rowData[col.field]"
+                        (focusout)="onRowLabelEdit(rowData[col.field] = (rowData[col.field].trim() === '') ? valueBeforeEdit : rowData[col.field], rowNode)"
+                        (keydown.enter)="onRowLabelEdit(rowData[col.field] = (rowData[col.field].trim() === '') ? valueBeforeEdit : rowData[col.field], rowNode)" />
                 </ng-template>
-
                 <ng-template pTemplate="output">{{ rowData[col.field] }}</ng-template>
               </p-treeTableCellEditor>
+
+              <ng-container *ngIf="i === 0 && !editToggle">
+                {{ rowData[col.field] }}
+              </ng-container>
+
               <ng-container *ngIf="i > 0">
                 {{ rowData[col.field] }}
               </ng-container>
@@ -80,6 +88,4 @@
     </div>
   </div>
   <!-- file-upload-popup.component.html -->
-
-
 </div>
