@@ -26,7 +26,7 @@
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" >
     </div>
     <div class="directoryTree">
-      <p-tree [value]="filesDirectoryTree" class="w-full md:w-30rem" selectionMode="single" [(selection)]="treeSelectedFile"></p-tree>
+      <p-tree [value]="filesDirectoryTree" class="w-full md:w-30rem" selectionMode="single"  (onNodeSelect)="onNodeExpand($event)"  [(selection)]="treeSelectedFile"></p-tree>
     </div>
   </div>
   <div id ="fadingDiv" class="mainWindowHome">
@@ -37,20 +37,20 @@
     <div class = "filterButtons">
       <p-toolbar>
         <div class="p-toolbar-group-start">
+          <p-button class = "toolbarItem" (onClick)="reloadMainFromRoot()" label="Root"></p-button>
           <p-toggleButton class = "toolbarItem" [(ngModel)]="editToggle" onLabel="Edit" offLabel="Edit"></p-toggleButton>
           <p-toggleButton class = "toolbarItem" [(ngModel)]="recentToggle" onLabel="Recent" offLabel="Recent"></p-toggleButton>
           <p-toggleButton class = "toolbarItem" [(ngModel)]="selectToggle" onLabel="Select" offLabel="Select"></p-toggleButton>
-          <p-toggleButton class = "toolbarItem" [(ngModel)]="expandToggle" onLabel="Collapse All" offLabel="Expand All"></p-toggleButton>
-          <p-toggleButton class = "toolbarItem" [(ngModel)]="sharedToggle" onLabel="Shared" offLabel="Shared"></p-toggleButton>
         </div>
       </p-toolbar>
     </div>
     <div class="searchBar">
       <img src="assets/Icons/homeIcons/mainWindow/searchIcon.png">
-      <input type="text" class="search-input" placeholder="Search..." (input)="filterTable($event, false)">
+      <input type="text" class="search-input" placeholder="Search..." (input)="filterTable($event, 0)">
     </div>
     <div class="directoryContents">
-      <p-treeTable [value]="filteredFilesDirectoryTreeTable" [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
+<!--      The Current directory variable below in the main view is used to allow for intelligent file placement-->
+      <p-treeTable #myTreeTable [value]="filteredFilesDirectoryTreeTable" selectionMode="single" dataKey="name" [(selection)]="currentDirectory" [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
         <ng-template pTemplate="header" let-columns>
           <tr>
             <th *ngFor="let col of columns">
@@ -60,7 +60,7 @@
         </ng-template>
 
         <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
-          <tr>
+          <tr [ttRow]="rowNode" [ttRow]="rowNode" [ttSelectableRow]="rowNode">
             <td *ngFor="let col of columns; let i = index" ttEditableColumn [ngClass]="{ 'p-toggler-column': i === 0 }">
               <p-treeTableToggler [rowNode]="rowNode" *ngIf="i === 0"></p-treeTableToggler>
 
@@ -77,7 +77,6 @@
               <ng-container *ngIf="i === 0 && !editToggle">
                 {{ rowData[col.field] }}
               </ng-container>
-
               <ng-container *ngIf="i > 0">
                 {{ rowData[col.field] }}
               </ng-container>

@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ElementRef, OnInit} from '@angular/core';
 // import {NgModule} from "@angular/core";
 import {Router} from '@angular/router';
+import {TreeTable} from "primeng/treetable";
 // import {Tree, TreeModule} from "primeng/tree";
 // import {TreeSelectModule} from "primeng/treeselect";
 // import {FormsModule} from "@angular/forms";
@@ -11,7 +12,7 @@ import {MenuItem, MessageService, TreeNode} from 'primeng/api';
 import {MenuService, NodeService} from "./home.service";
 import {DialogService} from "primeng/dynamicdialog";
 import {FileUploadPopupComponent} from "../file-upload-popup/file-upload-popup.component";
-
+import { ViewChild } from '@angular/core';
 interface Column {
   field: string;
   header: string;
@@ -21,7 +22,6 @@ interface UploadEvent {
   originalEvent: Event;
   files: File[];
 }
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -39,24 +39,32 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public menuBarItems!: MenuItem[];
   public speedDialItems!: MenuItem[];
   public treeTableColumns!: Column[];
-  public currentDirectory!:TreeNode;
+  public currentDirectory!:any;
   public treeSelectedFile!:any;
+  public directoryData!:any;
   public recentToggle: boolean = false;
   public selectToggle: boolean = false;
   public expandToggle: boolean = false;
-  public sharedToggle: boolean = false;
+  public rootToggle: boolean = false;
   public editToggle: boolean = false;
   public valueBeforeEdit: string = "";
   public colInspect: any;
   uploadedFiles: any[] = [];
+  @ViewChild('myTreeTable') treeTable!: TreeTable;
+
   constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService, private elementRef: ElementRef, private messageService:MessageService, private dialogService: DialogService) {
   }
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
+  // These functions serve to add intelligent routing and usage for directory management
 
-
+ reloadMainFromRoot():void{
+    this.filterTable("", 3);
+ }
+  // The functions below serve to allow for editing and all other processes involved with editing
+  // file names.
   onRowLabelEdit(event: any, rowNode: any): void {
     if(event !== this.valueBeforeEdit){
       this.updateTreeNodeLabel(this.filesDirectoryTree, rowNode.node.key, event);
@@ -109,6 +117,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   }
 
+  // End of functions that implement editing funcitonality.
   /**
    *
    * @JancoSpies, this function over here generates tree nodes from the  treetable data
@@ -190,30 +199,65 @@ export class HomeComponent implements OnInit, AfterViewInit {
   // it routes the relevant directory to the main window
 
   onNodeExpand(event: any): void {
-    this.filterTable(event, false);
+    console.log(event);
+    this.filterTable(event, 2);
   }
 
   onNodeCollapse(event: any): void {
-    this.filterTable(event, true);
+    this.filterTable(event, 1);
   }
   // end of functions implementing routing of directory tree to the main window
 
   // below the code that Filter's the table, which is also called when the tree nodes are expanded
   // or collapsed.
-  filterTable(filterEvent: any, fromCollapse: boolean) {
+  toggleAllNodes(nodes: TreeNode[], collapseOrExpand: boolean): void {
+    nodes.forEach(node => {
+      node.expanded = collapseOrExpand;
+      if (node.children && node.children.length > 0) {
+        this.toggleAllNodes(node.children, collapseOrExpand);
+      }
+    });
+    this.treeTable.isEmpty();
+  }
+
+//TODO filter events from click on the left side directory contents need to rather use
+// a filter that finds the relevant directories via keys, not the actual text of the
+// file's name or something like that.
+  filterTable(filterEvent: any, searchCollapseExpandRoot: number) {
     let filterValue = "";
-    if(fromCollapse){
+    let explodeOrCollapse: boolean = true;
+    if(1 == searchCollapseExpandRoot){
+      explodeOrCollapse = false;
       const collapsedNode = filterEvent.node;
       const parent = collapsedNode.parent as TreeNode;
-      const filterValue = parent?.data.label;
+      if(parent == undefined){
+        filterValue = "";
+      }
+      else if (parent.label != null) {
+        filterValue = parent.label;
+      }
     }
-    else filterValue = filterEvent.target.value;
+     if(2 == searchCollapseExpandRoot){
+       explodeOrCollapse = true;
+       filterValue = filterEvent.node.label;
+      console.log(filterValue);
+    }
+    if(0 == searchCollapseExpandRoot) {
+      explodeOrCollapse = false;
+      filterValue = filterEvent.target.value;
+    }
+    if(3 == searchCollapseExpandRoot){
+      filterValue = filterEvent;
+      explodeOrCollapse = false;
+    }
+    console.log(filterValue)
     // Perform filtering based on the first column
     this.filteredFilesDirectoryTreeTable = this.filesDirectoryTreeTable.filter(node => {
       const name = node.data[this.treeTableColumns[0].field] as string;
       const hasMatchingChild = this.hasMatchingChildNode(node, filterValue);
       return name.toLowerCase().includes(filterValue.toLowerCase()) || hasMatchingChild;
     });
+    this.toggleAllNodes(this.filteredFilesDirectoryTreeTable, explodeOrCollapse);
   }
   // a helper function for filterTable that searches for child nodes inside the treeTable
   // that may be included into a parent node
