@@ -1,7 +1,7 @@
 import { FolderDTO } from '../../folders/dto/folder.dto';
 
 export class DirectoryFoldersDTO {
-  UserID: string;
+  UserID: number;
   Folders: Array<FolderDTO>;
 
   constructor() {

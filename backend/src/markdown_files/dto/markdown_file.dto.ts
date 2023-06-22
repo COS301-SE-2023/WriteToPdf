@@ -7,7 +7,7 @@ export class MarkdownFileDTO {
   LastModified: Date;
   Size: number;
   ParentFolderID: string;
-  UserID: string;
+  UserID: number;
 
   constructor() {
     this.MarkdownID = undefined;

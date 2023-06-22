@@ -1,7 +1,7 @@
 import { MarkdownFileDTO } from '../../markdown_files/dto/markdown_file.dto';
 
 export class DirectoryFilesDTO {
-  UserID: string;
+  UserID: number;
   Files: Array<MarkdownFileDTO>;
 
   constructor() {

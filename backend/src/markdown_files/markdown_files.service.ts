@@ -59,9 +59,9 @@ export class MarkdownFilesService {
     });
   }
 
-  findAllByUserID(UserID: string) {
+  findAllByUserID(userID: number) {
     return this.markdownFileRepository.find({
-      where: { UserID: UserID },
+      where: { UserID: userID },
     });
   }
 }

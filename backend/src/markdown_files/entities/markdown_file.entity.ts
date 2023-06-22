@@ -10,7 +10,7 @@ export class MarkdownFile {
   MarkdownID: string; // hash string
 
   @Column()
-  UserID: string;
+  UserID: number;
 
   @Column()
   Name: string;
