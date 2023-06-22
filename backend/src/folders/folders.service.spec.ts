@@ -5,6 +5,7 @@ import {
 import { FoldersService } from './folders.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Folder } from './entities/folder.entity';
 
 describe('FoldersService', () => {
   let service: FoldersService;
@@ -15,9 +16,7 @@ describe('FoldersService', () => {
         providers: [
           FoldersService,
           {
-            provide: getRepositoryToken(
-              FoldersService,
-            ),
+            provide: getRepositoryToken(Folder),
             useClass: Repository,
           },
         ],

@@ -10,6 +10,7 @@ import { FolderDTO } from '../folders/dto/folder.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
+import { Folder } from '../folders/entities/folder.entity';
 
 @Injectable()
 export class FileManagerService {
@@ -112,14 +113,7 @@ export class FileManagerService {
     return 'File moved successfully';
   }
 
-  retrieveAllFolders(
-    directoryFoldersDTO: DirectoryFoldersDTO,
-  ) {
-    return directoryFoldersDTO;
-  }
-
   /**
-   *
    * @param files An array of MarkdownFile entities
    * @returns An array of MarkdownFileDTOs
    */
@@ -153,5 +147,34 @@ export class FileManagerService {
     directoryFilesDTO.Files =
       this.convertFilesToDTOs(allFiles);
     return directoryFilesDTO;
+  }
+
+  convertFoldersToDTOs(folders: Folder[]) {
+    const folderDTOArr: FolderDTO[] = [];
+    folders.forEach((folder) => {
+      const folderDTO: FolderDTO = {
+        FolderID: folder.FolderID,
+        UserID: folder.UserID,
+        DateCreated: folder.DateCreated,
+        LastModified: folder.LastModified,
+        FolderName: folder.FolderName,
+        Path: folder.Path,
+        ParentFolderID: folder.ParentFolderID,
+      };
+      folderDTOArr.push(folderDTO);
+    });
+    return folderDTOArr;
+  }
+
+  async retrieveAllFolders(
+    directoryFoldersDTO: DirectoryFoldersDTO,
+  ) {
+    const allFolders =
+      await this.folderService.findAllByUserID(
+        directoryFoldersDTO.UserID,
+      );
+    directoryFoldersDTO.Folders =
+      this.convertFoldersToDTOs(allFolders);
+    return directoryFoldersDTO;
   }
 }

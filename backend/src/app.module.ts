@@ -20,6 +20,7 @@ import 'dotenv/config';
 import { MarkdownFilesService } from './markdown_files/markdown_files.service';
 import { FoldersService } from './folders/folders.service';
 import { MarkdownFile } from './markdown_files/entities/markdown_file.entity';
+import { Folder } from './folders/entities/folder.entity';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { MarkdownFile } from './markdown_files/entities/markdown_file.entity';
     UsersModule,
     TypeOrmModule.forRoot(dataSourceOptions),
     TypeOrmModule.forFeature([MarkdownFile]),
+    TypeOrmModule.forFeature([Folder]),
     MarkdownFilesModule,
     AssetsModule,
     FoldersModule,

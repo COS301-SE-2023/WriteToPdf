@@ -16,11 +16,20 @@ export class Folder {
   })
   DateCreated: Date;
 
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  LastModified: Date;
+
   @Column()
   FolderName: string;
 
   @Column()
   Path: string;
+
+  @Column()
+  UserID: number;
 
   @JoinColumn()
   ParentFolderID: string;

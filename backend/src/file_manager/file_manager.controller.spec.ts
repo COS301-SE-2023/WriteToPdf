@@ -11,6 +11,10 @@ import {
 } from '@nestjs/common';
 import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
 import { FoldersService } from '../folders/folders.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
+import { Repository } from 'typeorm';
+import { Folder } from '../folders/entities/folder.entity';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -30,6 +34,15 @@ describe('FileManagerController', () => {
               createFile: jest.fn(),
               renameFile: jest.fn(),
             },
+          },
+          {
+            provide:
+              getRepositoryToken(MarkdownFile),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(Folder),
+            useClass: Repository,
           },
         ],
       }).compile();
