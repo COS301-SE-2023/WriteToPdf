@@ -190,4 +190,13 @@ export class UsersService {
     const user = await this.findOne(UserID);
     return this.usersRepository.remove(user); // returns deleted user
   }
+
+  async getSalt(userDTO: UserDTO) {
+    const user = await this.findOneByEmail(
+      userDTO.Email,
+    );
+    const returnedUser = new UserDTO();
+    returnedUser.Salt = user.Salt;
+    return returnedUser; // returns user with salt
+  }
 }

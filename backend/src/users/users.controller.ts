@@ -61,6 +61,34 @@ export class UsersController {
 
   @Public()
   @HttpCode(HttpStatus.OK)
+  @Post('get_salt')
+  getSalt(
+    @Body() userDTO: UserDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+    const receivedDTO = plainToClass(
+      UserDTO,
+      userDTO,
+    );
+    const errors = validateSync(receivedDTO);
+
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.usersService.getSalt(userDTO);
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
   @Post('signup')
   signup(
     @Body() createUserDTO: UserDTO,
