@@ -4,6 +4,7 @@ export class UserDTO {
   LastName: string;
   Email: string;
   Password: string;
+  Salt: string;
 
   constructor() {
     this.UserID = undefined;
@@ -11,5 +12,6 @@ export class UserDTO {
     this.LastName = undefined;
     this.Email = undefined;
     this.Password = undefined;
+    this.Salt = undefined;
   }
 }
