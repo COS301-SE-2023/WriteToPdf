@@ -76,16 +76,6 @@ export class UsersService {
     );
   }
 
-  // isValidEmail(email: string) {
-  //   if (
-  //     !email.match(
-  //       /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/,
-  //     )
-  //   )
-  //     return false;
-  //   return true;
-  // }
-
   isValidEmail(email: string): boolean {
     return /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/.test(
       email,
@@ -171,6 +161,7 @@ export class UsersService {
       UserID: user.UserID,
       Email: user.Email,
       Token: token.access_token,
+      ExpiresAt: token.expires_at,
     };
     return response;
   }
