@@ -50,12 +50,6 @@ describe('UsersService', () => {
 
   describe('signup', () => {
     it('should throw an exception if first name is invalid', async () => {
-      // const userFirstNameHasNumber = {
-      //   FirstName: 'Test1',
-      //   LastName: 'Test',
-      //   Email: 'test@test.com',
-      //   Password: 'test',
-      // };
       const userFirstNameHasNumber =
         new UserDTO();
 
@@ -82,13 +76,6 @@ describe('UsersService', () => {
           error: 'Invalid first name',
         });
       }
-
-      // const userFirstNameHasSpecialCharacter = {
-      //   FirstName: 'Test@',
-      //   LastName: 'Test',
-      //   Email: 'test@test.com',
-      //   Password: 'test',
-      // };
 
       const userFirstNameHasSpecialCharacter =
         new UserDTO();
@@ -120,13 +107,6 @@ describe('UsersService', () => {
         });
       }
 
-      // const userFirstNameEmpty = {
-      //   FirstName: '',
-      //   LastName: 'Test',
-      //   Email: 'test@test.com',
-      //   Password: 'test',
-      // };
-
       const userFirstNameEmpty = new UserDTO();
       userFirstNameEmpty.FirstName = '';
       userFirstNameEmpty.LastName = 'Test';
@@ -151,13 +131,6 @@ describe('UsersService', () => {
     });
 
     it('should throw an exception if last name is invalid', async () => {
-      // const userLastNameHasNumber = {
-      //   FirstName: 'Test',
-      //   LastName: 'Test1',
-      //   Email: 'test@test.com',
-      //   Password: 'test',
-      // };
-
       const userLastNameHasNumber = new UserDTO();
       userLastNameHasNumber.FirstName = 'Test';
       userLastNameHasNumber.LastName = 'Test1';
@@ -182,13 +155,6 @@ describe('UsersService', () => {
           error: 'Invalid last name',
         });
       }
-
-      // const userLastNameHasSpecialCharacter = {
-      //   FirstName: 'Test',
-      //   LastName: 'Test@',
-      //   Email: 'test@test.com',
-      //   Password: 'test',
-      // };
 
       const userLastNameHasSpecialCharacter =
         new UserDTO();
@@ -220,13 +186,6 @@ describe('UsersService', () => {
         });
       }
 
-      // const userLastNameEmpty = {
-      //   FirstName: 'Test',
-      //   LastName: '',
-      //   Email: 'test@test.com',
-      //   Password: 'test',
-      // };
-
       const userLastNameEmpty = new UserDTO();
       userLastNameEmpty.FirstName = 'Test';
       userLastNameEmpty.LastName = '';
@@ -251,12 +210,6 @@ describe('UsersService', () => {
     });
 
     it('should throw an exception if email is invalid', async () => {
-      // const userMissingAtEmail = {
-      //   FirstName: 'Test',
-      //   LastName: 'Test',
-      //   Email: 'testtest.com',
-      //   Password: 'test',
-      // };
 
       const userMissingAtEmail = new UserDTO();
       userMissingAtEmail.FirstName = 'Test';
@@ -279,13 +232,6 @@ describe('UsersService', () => {
           error: 'Invalid email',
         });
       }
-
-      // const userEmptyEmail = {
-      //   FirstName: 'Test',
-      //   LastName: 'Test',
-      //   Email: '',
-      //   Password: 'test',
-      // };
 
       const userEmptyEmail = new UserDTO();
       userEmptyEmail.FirstName = 'Test';
@@ -311,12 +257,6 @@ describe('UsersService', () => {
     });
 
     it('should throw an exception if email exists', async () => {
-      // const user = {
-      //   FirstName: 'Test',
-      //   LastName: 'Test',
-      //   Email: 'test@test.com',
-      //   Password: 'test',
-      // };
 
       const user = new UserDTO();
       user.FirstName = 'Test';
@@ -350,10 +290,6 @@ describe('UsersService', () => {
 
   describe('login', () => {
     it('should throw exception if user is not found', async () => {
-      // const loginDto = {
-      //   Email: 'test',
-      //   Password: 'pass',
-      // };
 
       const loginDto = new UserDTO();
       loginDto.Email = 'test';
@@ -379,10 +315,6 @@ describe('UsersService', () => {
     });
 
     it('should throw exception if password is incorrect', async () => {
-      // const loginDto = {
-      //   Email: 'test',
-      //   Password: 'pass',
-      // };
 
       const loginDto = new UserDTO();
       loginDto.Email = 'test';
@@ -413,22 +345,10 @@ describe('UsersService', () => {
     });
 
     it('should return token if credentials are correct', async () => {
-      // const loginDto = {
-      //   Email: 'test',
-      //   Password: 'pass',
-      // };
 
       const loginDto = new UserDTO();
       loginDto.Email = 'test';
       loginDto.Password = 'pass';
-
-      // const returnedUser = {
-      //   UserID: 1,
-      //   FirstName: 'Test',
-      //   LastName: 'Test',
-      //   Email: loginDto.Email,
-      //   Password: loginDto.Password,
-      // } as unknown as User;
 
       const returnedUser = new User();
       returnedUser.UserID = 1;
