@@ -79,7 +79,7 @@ export class S3Controller {
     return await this.s3Service.saveFile(fileDTO);
   }
 
-  @Post('retrieve_file')
+  @Get('retrieve_file')
   @UseInterceptors(FileInterceptor('file'))
   async retrieveFile(
     @Body() fileDTO: MarkdownFileDTO,

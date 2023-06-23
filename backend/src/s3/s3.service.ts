@@ -8,7 +8,6 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-// import * as fs from 'fs';
 import {
   writeFile,
   mkdir,
@@ -168,10 +167,10 @@ export class S3Service {
     const fileStats = await stat(filePath);
     console.log(fileStats);
     markdownFileDTO.Content = '';
-    markdownFileDTO.DateCreated =
-      fileStats.birthtime;
-    markdownFileDTO.LastModified =
-      fileStats.mtime;
+    // markdownFileDTO.DateCreated =
+    //   fileStats.birthtime;
+    // markdownFileDTO.LastModified =
+    //   fileStats.mtime;
     markdownFileDTO.Size = fileStats.size;
 
     return markdownFileDTO;
@@ -217,8 +216,8 @@ export class S3Service {
 
     const fileStats = await stat(filePath);
     console.log(fileStats);
-    markdownFileDTO.LastModified =
-      fileStats.mtime;
+    // markdownFileDTO.LastModified =
+    //   fileStats.mtime;
     markdownFileDTO.Size = fileStats.size;
 
     return markdownFileDTO;
@@ -258,10 +257,10 @@ export class S3Service {
 
     const fileStats = await stat(filePath);
     console.log(fileStats);
-    markdownFileDTO.DateCreated =
-      fileStats.birthtime;
-    markdownFileDTO.LastModified =
-      fileStats.mtime;
+    // markdownFileDTO.DateCreated =
+    //   fileStats.birthtime;
+    // markdownFileDTO.LastModified =
+    //   fileStats.mtime;
     markdownFileDTO.Size = fileStats.size;
 
     return markdownFileDTO;
