@@ -28,4 +28,14 @@ export class FoldersService {
       updateFolderDTO.FolderName;
     return this.folderRepository.save(folder);
   }
+
+  async remove(removeFolderDTO: FolderDTO) {
+    const folder =
+      await this.folderRepository.findOne({
+        where: {
+          FolderID: removeFolderDTO.FolderID,
+        },
+      });
+    return this.folderRepository.remove(folder);
+  }
 }

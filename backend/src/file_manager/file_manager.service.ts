@@ -129,7 +129,13 @@ export class FileManagerService {
   }
 
   deleteFolder(folderDTO: FolderDTO) {
-    return 'File deleted successfully';
+    if (folderDTO.FolderID === undefined)
+      throw new HttpException(
+        'FolderID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.folderService.remove(folderDTO);
   }
 
   createFolder(folderDTO: FolderDTO) {
