@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { UserDTO } from './dto/user.dto';
+import { SHA256 } from 'crypto-js';
+import { PrimeIcons } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +14,7 @@ export class UserService {
   private authToken: string | undefined = undefined;
   private userID: string | undefined = undefined;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   async login(email: string, password: string): Promise<boolean> {
     // if (email === 'test' || password === '123456') {
@@ -21,11 +23,23 @@ export class UserService {
     //   });
     // }
 
-    return new Promise<boolean>((resolve, reject) => {
-      this.sendLoginData(email, password).subscribe({
+    // let salt=await this.retrieveSalt(email);
+    const swalt = this.generateRandomSalt();
+    console.log(swalt);
+    console.log(SHA256('123456' + swalt).toString());
+    let salt: string|null;
+    await this.retrieveSalt(email)
+      .then((result) => {
+        salt = result;
+        // Continue with the code that depends on the salt value
+      })
+      .catch((error) => {
+        console.error(error); // Handle error if any
+      });
+
+    return new Promise<boolean>(async (resolve, reject) => {
+      this.sendLoginData(email, password, salt).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
             console.log('Login successful');
@@ -107,13 +121,33 @@ export class UserService {
   }
 
 
-  sendLoginData(email: string, password: string): Observable<HttpResponse<any>> {
+  sendLoginData(email: string, password: string, salt:string|null): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/users/login';
     const body = new UserDTO();
     body.Email = email;
-    body.Password = password;
+
+    const hash = SHA256(password + salt).toString();
+    body.Password = hash;
+
+    console.log(email);
+    console.log(password);
+    console.log("salt: "+salt);
+    console.log("hash: "+hash);
 
     return this.http.post(url, body, { observe: 'response' });
+  }
+
+  private generateRandomSalt() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=';
+    const saltLength = 255;
+    let salt = '';
+
+    for (let i = 0; i < saltLength; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      salt += characters.charAt(randomIndex);
+    }
+
+    return salt;
   }
 
 
@@ -123,7 +157,10 @@ export class UserService {
     body.FirstName = fName;
     body.LastName = lName;
     body.Email = email;
-    body.Password = password;
+    const salt = this.generateRandomSalt();
+    body.Salt = salt;
+    const hash = SHA256(password + salt).toString();
+    body.Password = hash;
 
     return this.http.post(url, body, { observe: 'response' });
   }
@@ -138,5 +175,39 @@ export class UserService {
       return JSON.parse(value);
     }
     return null;
+  }
+
+  // async retrieveSalt(email: string): Promise<any> {
+  //   const url = 'http://localhost:3000/users/get_salt';
+  //   const body = new UserDTO();
+  //   body.Email = email;
+  //   this.http.post(url, body, { observe: 'response' }).subscribe({
+  //     next: (response: HttpResponse<any>) => {
+  //       console.log(response.body.Salt);
+  //       return response.body.Salt;
+  //     },
+  //     error: (error) => {
+  //       console.error(error); // Handle error if any
+  //       return null;
+  //     }
+  //   });
+  // }
+
+  async retrieveSalt(email: string): Promise<string | null> {
+    const url = 'http://localhost:3000/users/get_salt';
+    const body = new UserDTO();
+    body.Email = email;
+
+    return new Promise((resolve, reject) => {
+      this.http.post(url, body, { observe: 'response' }).subscribe({
+        next: (response: HttpResponse<any>) => {
+          resolve(response.body.Salt);
+        },
+        error: (error) => {
+          console.error(error); // Handle error if any
+          reject(null);
+        }
+      });
+    });
   }
 }
