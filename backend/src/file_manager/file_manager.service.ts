@@ -111,6 +111,18 @@ export class FileManagerService {
   }
 
   renameFolder(folderDTO: FolderDTO) {
+    if (folderDTO.FolderID === undefined)
+      throw new HttpException(
+        'FolderID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (folderDTO.FolderName === undefined)
+      throw new HttpException(
+        'FolderName cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.folderService.updateName(
       folderDTO,
     );
