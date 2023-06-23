@@ -144,7 +144,27 @@ export class FileManagerService {
   }
 
   moveFolder(folderDTO: FolderDTO) {
-    return 'File moved successfully';
+    if (folderDTO.FolderID === undefined)
+      throw new HttpException(
+        'FolderID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (folderDTO.ParentFolderID === undefined)
+      throw new HttpException(
+        'ParentFolderID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (folderDTO.Path === undefined)
+      throw new HttpException(
+        'Path cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.folderService.updatePath(
+      folderDTO,
+    );
   }
 
   /**

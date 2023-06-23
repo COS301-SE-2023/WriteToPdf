@@ -38,4 +38,17 @@ export class FoldersService {
       });
     return this.folderRepository.remove(folder);
   }
+
+  async updatePath(updateFolderDTO: FolderDTO) {
+    const folder =
+      await this.folderRepository.findOne({
+        where: {
+          FolderID: updateFolderDTO.FolderID,
+        },
+      });
+    folder.Path = updateFolderDTO.Path;
+    folder.ParentFolderID =
+      updateFolderDTO.ParentFolderID;
+    return this.folderRepository.save(folder);
+  }
 }
