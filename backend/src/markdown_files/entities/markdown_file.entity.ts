@@ -21,10 +21,7 @@ export class MarkdownFile {
   })
   DateCreated: Date;
 
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
+  @Column("timestamp", { precision: 3, default: () => "CURRENT_TIMESTAMP(3)", onUpdate: "CURRENT_TIMESTAMP(3)" })
   LastModified: Date;
 
   @Column()
