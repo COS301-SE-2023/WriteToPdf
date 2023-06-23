@@ -47,7 +47,6 @@ export class FileManagerService {
     //will eventually come from s3 bucket
 
     return this.markdownFilesService.updateName(
-      markdownFileDTO.MarkdownID,
       markdownFileDTO,
     );
   }
