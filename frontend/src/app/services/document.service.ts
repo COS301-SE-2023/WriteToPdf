@@ -14,16 +14,32 @@ export class DocumentService {
 
   constructor(private http: HttpClient, private userService: UserService, private editService: EditService) { }
 
-  saveDocument(content: string) {
-    console.log('saveDocument() called');
+  save(content: string, markdownID: string, path: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendSaveData(content, markdownID, path).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          console.log(response.status);
+
+          if (response.status === 200) {
+            console.log('Save successful');
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }
+      });
+    });
   }
 
-  sendSaveData(content: string): Observable<HttpResponse<any>> {
+  sendSaveData(content: string, markdownID: string, path: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/save_file';
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
     body.Content = content;
+    body.MarkdownID = markdownID;
+    body.Path = path;
 
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
     return this.http.post(url, body, { headers, observe: 'response' });
@@ -79,8 +95,6 @@ export class DocumentService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-
-
   deleteDocument(markdownID: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(markdownID).subscribe({
@@ -99,7 +113,7 @@ export class DocumentService {
     });
   }
 
-  sendDeleteData(markdownID:string): Observable<HttpResponse<any>> {
+  sendDeleteData(markdownID: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/delete_file';
     const body = new MarkdownFileDTO();
 
