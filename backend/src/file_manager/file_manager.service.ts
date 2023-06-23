@@ -56,6 +56,12 @@ export class FileManagerService {
   // Path: string; .. TO LOCATE THE FILE IN S3
   // Name: string; .. TO IDENTIFY THE FILE
   deleteFile(markdownFileDTO: MarkdownFileDTO) {
+    if (markdownFileDTO.MarkdownID === undefined)
+      throw new HttpException(
+        'MarkdownID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.markdownFilesService.remove(
       markdownFileDTO,
     );
@@ -101,12 +107,24 @@ export class FileManagerService {
 
   // DB Requires the following fields to be initialised in the DTO:
   saveFile(markdownFileDTO: MarkdownFileDTO) {
+    if (markdownFileDTO.MarkdownID === undefined)
+      throw new HttpException(
+        'MarkdownID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return 'File saved successfully';
   }
 
   // DB Requires the following fields to be initialised in the DTO:
   //TODO add code to retrieve from S3 for given MarkdownID
   retrieveFile(markdownFileDTO: MarkdownFileDTO) {
+    if (markdownFileDTO.MarkdownID === undefined)
+      throw new HttpException(
+        'MarkdownID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return markdownFileDTO; // return the file
   }
 
