@@ -65,6 +65,7 @@ describe('UsersController', () => {
           LastName: 'Doe',
           Email: 'johndoe@example.com',
           Password: 'mypassword',
+          Salt: 'mysalt',
         },
       ];
       jest
