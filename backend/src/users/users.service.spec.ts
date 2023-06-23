@@ -351,15 +351,18 @@ describe('UsersService', () => {
       returnedUser.LastName = 'Test';
       returnedUser.Email = loginDto.Email;
       returnedUser.Password = loginDto.Password;
+      returnedUser.Salt = 'salt';
 
       const expectedResponse = {
         UserID: returnedUser.UserID,
         Email: returnedUser.Email,
         Token: 'token',
+        ExpiresAt: 3600,
       };
 
       const authToken = {
         access_token: 'token',
+        expires_at: 3600,
       };
 
       jest

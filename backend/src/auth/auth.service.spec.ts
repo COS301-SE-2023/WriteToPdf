@@ -41,6 +41,7 @@ describe('AuthService', () => {
       };
       const expectedToken = {
         access_token: 'mockToken',
+        expires_at: expect.any(Date),
       };
 
       const actualToken =
@@ -49,7 +50,9 @@ describe('AuthService', () => {
           password,
         );
 
-      expect(actualToken).toEqual(expectedToken);
+      expect(actualToken).toStrictEqual(
+        expectedToken,
+      );
       expect(
         jwtService.signAsync,
       ).toHaveBeenCalledWith(expectedPayload);
