@@ -1,15 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { FoldersService } from './folders.service';
-import { CreateFolderDTO } from './dto/create-folder.dto';
-import { UpdateFolderDTO } from './dto/update-folder.dto';
 
 @Controller('folders')
 export class FoldersController {
