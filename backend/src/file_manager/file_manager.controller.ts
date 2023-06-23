@@ -351,7 +351,7 @@ export class FileManagerController {
     );
   }
 
-  @Post('retrieve_all_files')
+  @Post('retrieve_all_folders')
   @HttpCode(HttpStatus.OK)
   retrieveAllFolders(
     @Body()
