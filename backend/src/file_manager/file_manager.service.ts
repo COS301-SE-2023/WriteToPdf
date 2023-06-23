@@ -105,12 +105,15 @@ export class FileManagerService {
   }
 
   // DB Requires the following fields to be initialised in the DTO:
+  //TODO add code to retrieve from S3 for given MarkdownID
   retrieveFile(markdownFileDTO: MarkdownFileDTO) {
     return markdownFileDTO; // return the file
   }
 
   renameFolder(folderDTO: FolderDTO) {
-    return 'File renamed successfully';
+    return this.folderService.updateName(
+      folderDTO,
+    );
   }
 
   deleteFolder(folderDTO: FolderDTO) {

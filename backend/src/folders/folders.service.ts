@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFolderDTO } from './dto/create-folder.dto';
-import { UpdateFolderDTO } from './dto/update-folder.dto';
 import { Folder } from './entities/folder.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FolderDTO } from './dto/folder.dto';
 
 @Injectable()
 export class FoldersService {
@@ -16,5 +15,17 @@ export class FoldersService {
     return this.folderRepository.find({
       where: { UserID: userID },
     });
+  }
+
+  async updateName(updateFolderDTO: FolderDTO) {
+    const folder =
+      await this.folderRepository.findOne({
+        where: {
+          FolderID: updateFolderDTO.FolderID,
+        },
+      });
+    folder.FolderName =
+      updateFolderDTO.FolderName;
+    return this.folderRepository.save(folder);
   }
 }
