@@ -17,6 +17,13 @@ export class FoldersService {
     });
   }
 
+  async create(createFolderDTO: FolderDTO) {
+    const newFolder = this.folderRepository.save(
+      createFolderDTO,
+    );
+    return newFolder;
+  }
+
   async updateName(updateFolderDTO: FolderDTO) {
     const folder =
       await this.folderRepository.findOne({
