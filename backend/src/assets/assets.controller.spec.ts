@@ -20,29 +20,29 @@ describe('AssetsController', () => {
     );
   });
 
-  describe('root', () => {
+  describe('root/config', () => {
     it('should be defined', () => {
       expect(controller).toBeDefined();
     });
   });
 
   describe('create', () => {
-    // console.log('AssetsController.create');
+    // TO-DO: implement unit tests
   });
 
   describe('findAll', () => {
-    // console.log('AssetsController.findAll');
+    // TO-DO: implement unit tests
   });
 
   describe('findOne', () => {
-    // console.log('AssetsController.findOne');
+    // TO-DO: implement unit tests
   });
 
   describe('update', () => {
-    // console.log('AssetsController.update');
+    // TO-DO: implement unit tests
   });
 
   describe('remove', () => {
-    // console.log('AssetsController.remove');
+    // TO-DO: implement unit tests
   });
 });
