@@ -1,12 +1,12 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity('MARKDOWN_FILES')
 export class MarkdownFile {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   MarkdownID: string; // hash string
 
   @Column()
