@@ -113,7 +113,7 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    return 'File saved successfully';
+    return { message: 'File saved successfully' };
   }
 
   // DB Requires the following fields to be initialised in the DTO:
