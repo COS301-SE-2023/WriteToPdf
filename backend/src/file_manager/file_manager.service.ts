@@ -83,7 +83,21 @@ export class FileManagerService {
 
   // DB Requires the following fields to be initialised in the DTO:
   moveFile(markdownFileDTO: MarkdownFileDTO) {
-    return 'File moved successfully';
+    if (markdownFileDTO.MarkdownID === undefined)
+      throw new HttpException(
+        'MarkdownID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (markdownFileDTO.Path === undefined)
+      throw new HttpException(
+        'Path cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.markdownFilesService.updatePath(
+      markdownFileDTO,
+    );
   }
 
   // DB Requires the following fields to be initialised in the DTO:

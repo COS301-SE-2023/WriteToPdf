@@ -36,6 +36,23 @@ export class MarkdownFilesService {
     );
   }
 
+  async updatePath(
+    updateMarkdownFileDTO: MarkdownFileDTO,
+  ): Promise<any> {
+    const markdownFile =
+      await this.markdownFileRepository.findOne({
+        where: {
+          MarkdownID:
+            updateMarkdownFileDTO.MarkdownID,
+        },
+      });
+    markdownFile.Path =
+      updateMarkdownFileDTO.Path;
+    return this.markdownFileRepository.save(
+      markdownFile,
+    );
+  }
+
   remove(
     removeMarkdownFileDTO: MarkdownFileDTO,
   ): Promise<any> {
