@@ -46,6 +46,13 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (markdownFileDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.file_manager_service.createFile(
       markdownFileDTO,
     );
@@ -76,6 +83,13 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (markdownFileDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.file_manager_service.deleteFile(
       markdownFileDTO,
     );
@@ -106,6 +120,13 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (markdownFileDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.file_manager_service.renameFile(
       markdownFileDTO,
     );
@@ -136,6 +157,13 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (markdownFileDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.file_manager_service.moveFile(
       markdownFileDTO,
     );
@@ -166,6 +194,13 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (folderDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.file_manager_service.createFolder(
       folderDTO,
     );
@@ -196,6 +231,13 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (folderDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.file_manager_service.deleteFolder(
       folderDTO,
     );
@@ -226,6 +268,13 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (folderDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.file_manager_service.renameFolder(
       folderDTO,
     );
@@ -256,6 +305,13 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (folderDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.file_manager_service.moveFolder(
       folderDTO,
     );
@@ -286,6 +342,13 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (markdownFileDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.file_manager_service.saveFile(
       markdownFileDTO,
     );
@@ -316,6 +379,13 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (markdownFileDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.file_manager_service.retrieveFile(
       markdownFileDTO,
     );
@@ -346,6 +416,13 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (directoryFilesDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.file_manager_service.retrieveAllFiles(
       directoryFilesDTO,
     );
@@ -376,6 +453,13 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (directoryFoldersDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     return this.file_manager_service.retrieveAllFolders(
       directoryFoldersDTO,
     );

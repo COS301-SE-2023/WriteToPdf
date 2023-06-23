@@ -157,12 +157,6 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (folderDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
     return this.folderService.create(folderDTO);
   }
 
