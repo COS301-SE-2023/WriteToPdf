@@ -125,11 +125,11 @@ export class S3Service {
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    if (markdownFileDTO.Name === undefined)
-      markdownFileDTO.Name = 'New Document.txt';
+    // if (markdownFileDTO.Name === undefined)
+    //   markdownFileDTO.Name = 'New Document.txt';
 
-    if (markdownFileDTO.UserID === undefined)
-      markdownFileDTO.UserID = 'abc123';
+    // if (markdownFileDTO.UserID === undefined)
+    //   markdownFileDTO.UserID = 1;
 
     markdownFileDTO.MarkdownID =
       randomBytes(16).toString('hex');

@@ -5,6 +5,7 @@ import { FileManagerService } from './file_manager.service';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Folder } from '../folders/entities/folder.entity';
+import { S3Service } from 'src/s3/s3.service';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { Folder } from '../folders/entities/folder.entity';
     FoldersService,
     MarkdownFilesService,
     FileManagerService,
+    S3Service,
   ],
 })
 export class FileManagerModule {}
