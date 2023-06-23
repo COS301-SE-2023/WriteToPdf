@@ -1,10 +1,11 @@
-export class CreateUserDTO {
+export class UserDTO {
+  UserID: number | undefined;
   FirstName: string | undefined;
   LastName: string | undefined;
   Email: string | undefined;
   Password: string | undefined;
 
   isValid() {
-    return this.Email && this.Password && this.FirstName && this.LastName;
+    return this.UserID && this.Email && this.Password && this.FirstName && this.LastName;
   }
 }

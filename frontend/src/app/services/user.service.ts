@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
-import { LoginUserDTO } from './dto/login-user.dto';
-import { CreateUserDTO } from './dto/create-user.dto';
+import { UserDTO } from './dto/user.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -110,7 +109,7 @@ export class UserService {
 
   sendLoginData(email: string, password: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/users/login';
-    const body = new LoginUserDTO();
+    const body = new UserDTO();
     body.Email = email;
     body.Password = password;
 
@@ -120,7 +119,7 @@ export class UserService {
 
   sendSignupData(email: string, fName: string, lName: string, password: string) {
     const url = 'http://localhost:3000/users/signup';
-    const body = new CreateUserDTO();
+    const body = new UserDTO();
     body.FirstName = fName;
     body.LastName = lName;
     body.Email = email;
