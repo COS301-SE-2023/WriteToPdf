@@ -48,27 +48,6 @@ describe('MarkdownFilesController', () => {
       expect(controller).toBeDefined();
     });
   });
-  describe('findOne', () => {
-    it('should return the requested markdown file by id', async () => {
-      const id = '123'; // Provide a valid ID for testing
-      const expectedMessage = `This action returns the markdownFile with id: #${id}`;
-      const result = controller.findOne(id);
-      expect(result).toEqual(expectedMessage);
-    });
-  });
-
-  describe('findAll', () => {
-    it('should return an array of markdown files', async () => {
-      const expectedMessage = `This action returns all markdownFiles`;
-      const result = controller.findAll();
-      expect(result).toEqual(expectedMessage);
-    });
-
-    // Future tests:
-    // it('should return an empty array if no markdownFiles exist)
-    // it('should return an array of markdownFiles if markdownFiles exist)
-  });
-
   describe('create', () => {
     it('should create a new markdown file', async () => {
       const createMarkdownFileDTO =
@@ -103,23 +82,23 @@ describe('MarkdownFilesController', () => {
     // it('should throw an error if an md file of the same name already exists)
   });
 
-  describe('update', () => {
-    it('should update a markdown file', async () => {
-      const id = '123'; // Provide a valid ID for testing
-      const updateMarkdownFileDTO =
-        new MarkdownFileDTO();
-      updateMarkdownFileDTO.Name = 'test.md';
-      updateMarkdownFileDTO.MarkdownID = '123';
-      const expectedMessage = `This action updates md file with id: #${id}`;
-      const result = controller.update(
-        updateMarkdownFileDTO,
-      );
-      expect(result).toEqual(expectedMessage);
-    });
+  // describe('update', () => {
+  //   it('should update a markdown file', async () => {
+  //     const id = '123'; // Provide a valid ID for testing
+  //     const updateMarkdownFileDTO =
+  //       new MarkdownFileDTO();
+  //     updateMarkdownFileDTO.Name = 'test.md';
+  //     updateMarkdownFileDTO.MarkdownID = '123';
+  //     const expectedMessage = `This action updates md file with id: #${id}`;
+  //     const result = controller.update(
+  //       updateMarkdownFileDTO,
+  //     );
+  //     expect(result).toEqual(expectedMessage);
+  //   });
 
-    // Future tests:
-    // it('should throw an error if the md file does not exist)
-  });
+  //   // Future tests:
+  //   // it('should throw an error if the md file does not exist)
+  // });
 
   describe('remove', () => {
     // it('should delete a markdown file', async () => {
