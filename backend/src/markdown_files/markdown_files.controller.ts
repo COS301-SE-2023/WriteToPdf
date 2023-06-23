@@ -27,31 +27,6 @@ export class MarkdownFilesController {
     );
   }
 
-  @Get()
-  findAll() {
-    return this.markdownFilesService.findAll();
-  }
-
-  @Get(':MarkdownID')
-  findOne(
-    @Param('MarkdownID') MarkdownID: string,
-  ) {
-    return this.markdownFilesService.findOne(
-      MarkdownID,
-    );
-  }
-
-  @Patch(':MarkdownID')
-  update(
-    @Body()
-    updateMarkdownFileDTO: MarkdownFileDTO,
-  ) {
-    // insert guards
-    return this.markdownFilesService.update(
-      updateMarkdownFileDTO,
-    );
-  }
-
   @Delete(':MarkdownID')
   remove(
     @Body()

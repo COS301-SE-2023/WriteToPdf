@@ -21,20 +21,6 @@ export class MarkdownFilesService {
     return newMarkdownFile;
   }
 
-  findAll() {
-    return `This action returns all markdownFiles`;
-  }
-
-  findOne(MarkdownID: string) {
-    return `This action returns the markdownFile with id: #${MarkdownID}`;
-  }
-
-  update(
-    updateMarkdownFileDTO: MarkdownFileDTO,
-  ): string {
-    return `This action updates md file with id: #${updateMarkdownFileDTO.MarkdownID}`;
-  }
-
   async updateName(
     MarkdownID: string,
     updateMarkdownFileDTO: MarkdownFileDTO,
