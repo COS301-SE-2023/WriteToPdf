@@ -14,7 +14,7 @@ export class DocumentService {
 
   constructor(private http: HttpClient, private userService: UserService, private editService: EditService) { }
 
-  save(content: string, markdownID: string, path: string): Promise<boolean> {
+  saveDocument(content: string, markdownID: string, path: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSaveData(content, markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -174,13 +174,31 @@ export class DocumentService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  moveDocument() {
+  moveDocument(path: string, markdownID: string, ParentFolderID: string) {// Will need to rerun directory structure function with new moved file.
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendMoveData(path, markdownID, ParentFolderID).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          console.log(response.status);
 
+          if (response.status === 200) {
+            console.log('Move successful');
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }
+      });
+    });
   }
 
-  sendMoveData(path: string): Observable<HttpResponse<any>> {
+  sendMoveData(path: string, markdownID:string, ParentFolderID:string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/move_file';
     const body = new MarkdownFileDTO();
+
+    body.UserID = this.userService.getUserID();
+    body.Path = path;
+    body.MarkdownID = markdownID;
 
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
     return this.http.post(url, body, { headers, observe: 'response' });
