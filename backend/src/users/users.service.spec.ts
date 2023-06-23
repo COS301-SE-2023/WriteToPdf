@@ -210,7 +210,6 @@ describe('UsersService', () => {
     });
 
     it('should throw an exception if email is invalid', async () => {
-
       const userMissingAtEmail = new UserDTO();
       userMissingAtEmail.FirstName = 'Test';
       userMissingAtEmail.LastName = 'Test';
@@ -257,7 +256,6 @@ describe('UsersService', () => {
     });
 
     it('should throw an exception if email exists', async () => {
-
       const user = new UserDTO();
       user.FirstName = 'Test';
       user.LastName = 'Test';
@@ -290,7 +288,6 @@ describe('UsersService', () => {
 
   describe('login', () => {
     it('should throw exception if user is not found', async () => {
-
       const loginDto = new UserDTO();
       loginDto.Email = 'test';
       loginDto.Password = 'pass';
@@ -315,7 +312,6 @@ describe('UsersService', () => {
     });
 
     it('should throw exception if password is incorrect', async () => {
-
       const loginDto = new UserDTO();
       loginDto.Email = 'test';
       loginDto.Password = 'pass';
@@ -345,7 +341,6 @@ describe('UsersService', () => {
     });
 
     it('should return token if credentials are correct', async () => {
-
       const loginDto = new UserDTO();
       loginDto.Email = 'test';
       loginDto.Password = 'pass';

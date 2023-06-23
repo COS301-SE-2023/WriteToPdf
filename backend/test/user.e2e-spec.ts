@@ -39,7 +39,8 @@ describe('UserController (integration)', () => {
   it('users/login/ (POST)', async () => {
     const requestUser = new UserDTO();
     requestUser.Email = process.env.TEST_EMAIL;
-    requestUser.Password = process.env.TEST_PASSWORD;
+    requestUser.Password =
+      process.env.TEST_PASSWORD;
 
     const response = await request(
       app.getHttpServer(),
