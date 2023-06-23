@@ -1,6 +1,6 @@
 export class MarkdownFileDTO{
 
-    UserID: string | undefined;
+    UserID: number | undefined;
     MarkdownID: string | undefined;
     Path: string | undefined;
     Name: string | undefined;

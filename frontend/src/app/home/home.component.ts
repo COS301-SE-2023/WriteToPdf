@@ -11,6 +11,7 @@ import { TreeNode, MenuItem, MessageService } from 'primeng/api';
 import { NodeService } from "./home.service";
 import { MenuService } from "./home.service";
 import { DocumentService } from "../services/document.service";
+import { UserService } from '../services/user.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -26,7 +27,7 @@ export class HomeComponent implements OnInit {
   public speedDialItems!: MenuItem[];
   public currentDirectory!: TreeNode;
 
-  constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService, private elementRef: ElementRef, private documentService: DocumentService) {
+  constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService, private elementRef: ElementRef, private documentService: DocumentService, private userService: UserService) {
   }
 
   navigateToPage(pageName: string) {

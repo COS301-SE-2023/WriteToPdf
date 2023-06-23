@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserDTO } from './dto/user.dto';
+import { RefreshTokenDTO } from './dto/refresh_token.dto';
 import { SHA256 } from 'crypto-js';
+
 import { PrimeIcons } from 'primeng/api';
 
 @Injectable({
@@ -12,7 +14,7 @@ import { PrimeIcons } from 'primeng/api';
 export class UserService {
   private isAuthenticated: boolean = false;
   private authToken: string | undefined = undefined;
-  private userID: string | undefined = undefined;
+  private userID: number | undefined = undefined;
   private expiresAt:string | Date | number | undefined = undefined;
 
   constructor(private http: HttpClient) { }
@@ -113,7 +115,7 @@ export class UserService {
     return this.authToken;
   }
 
-  getUserID(): string | undefined {
+  getUserID(): number | undefined {
 
     return this.userID;
   }
@@ -149,7 +151,7 @@ export class UserService {
   }
 
 
-  sendSignupData(email: string, fName: string, lName: string, password: string) {
+  sendSignupData(email: string, fName: string, lName: string, password: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/users/signup';
     const body = new UserDTO();
     body.FirstName = fName;
@@ -162,34 +164,6 @@ export class UserService {
 
     return this.http.post(url, body, { observe: 'response' });
   }
-
-  saveToLocalStorage(key: string, value: any): void {
-    localStorage.setItem(key, JSON.stringify(value));
-  }
-
-  getFromLocalStorage(key: string): any {
-    const value = localStorage.getItem(key);
-    if (value) {
-      return JSON.parse(value);
-    }
-    return null;
-  }
-
-  // async retrieveSalt(email: string): Promise<any> {
-  //   const url = 'http://localhost:3000/users/get_salt';
-  //   const body = new UserDTO();
-  //   body.Email = email;
-  //   this.http.post(url, body, { observe: 'response' }).subscribe({
-  //     next: (response: HttpResponse<any>) => {
-  //       console.log(response.body.Salt);
-  //       return response.body.Salt;
-  //     },
-  //     error: (error) => {
-  //       console.error(error); // Handle error if any
-  //       return null;
-  //     }
-  //   });
-  // }
 
   async retrieveSalt(email: string): Promise<string | null> {
     const url = 'http://localhost:3000/users/get_salt';
@@ -221,7 +195,6 @@ export class UserService {
   }, checkInterval);
 }
 
-
   private checkExpiration() {
     if (!this.expiresAt) {
       // Handle the case when expiresAt is undefined or falsy
@@ -239,14 +212,37 @@ export class UserService {
     }
 
     if (expiresAtDate.getTime() < currentDate.getTime()) {
-      // ExpiresAt has expired
-      console.log('The expiresAt has expired.');
-    } else {
-      // ExpiresAt is still valid
-      console.log('The expiresAt is still valid.');
+      this.sendRefreshTokenRequest().subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          console.log(response.status);
+
+          if (response.status === 200) {
+            console.log("Refresh token successful");
+            this.authToken = response.body.Token;
+            this.expiresAt = response.body.ExpiresAt;
+          } else {
+            console.log("Refresh token failed");
+          }
+        },
+        error: (error) => {
+          console.error(error); // Handle error if any
+        }
+      });
     }
   }
 
+  sendRefreshTokenRequest(): Observable<HttpResponse<any>> {
+    const url = 'http://localhost:3000/auth/refresh_token';
+    const body = new RefreshTokenDTO();
+    body.UserID = this.userID;
+    body.Token = this.authToken;
+
+
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.authToken);
+    return this.http.post(url, body, { headers, observe: 'response' });
+
+  }
 
 
 }
