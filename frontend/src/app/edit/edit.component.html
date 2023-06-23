@@ -11,7 +11,7 @@
           <input type="text" editable="true" id="editHeading" class="documentTitle" value="New Document" maxlength="50">
         </div>
       </div>
-      <div class="toolsWrapper"> 
+      <div class="toolsWrapper">
         <div class="tool" (click)="extractDeltaJson()"> <!-- Download -->
           <img src="assets/Icons/editIcons/download.svg" alt="">
         </div>
@@ -29,7 +29,7 @@
         </div>
         <div class="tool" (click)="redo()"> <!-- Redo -->
           <img src="assets/Icons/editIcons/redo.svg" alt="">
-        </div>
+
 <!--        <div class="tool" id="bold" (click)="flipBold()">-->
 <!--          <img src="assets/Icons/editIcons/bold.svg" alt="">-->
 <!--        </div>-->
@@ -61,6 +61,10 @@
     </div>
     <div class="pageIconWrapper"></div>
     <div class="miscWrapper"></div>
+  </div>
+    <div class = "speedDialEditMenu">
+      <p-speedDial class="speedDial" [model]="speedDialItems" direction="down"></p-speedDial>
+    </div>
   </div>
 
   <div class="editor">
