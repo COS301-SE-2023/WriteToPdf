@@ -13,6 +13,7 @@ export class UserService {
   private isAuthenticated: boolean = false;
   private authToken: string | undefined = undefined;
   private userID: string | undefined = undefined;
+  private expiresAt:string | Date | number | undefined = undefined;
 
   constructor(private http: HttpClient) { }
 
@@ -24,9 +25,6 @@ export class UserService {
     // }
 
     // let salt=await this.retrieveSalt(email);
-    const swalt = this.generateRandomSalt();
-    console.log(swalt);
-    console.log(SHA256('123456' + swalt).toString());
     let salt: string|null;
     await this.retrieveSalt(email)
       .then((result) => {
@@ -47,8 +45,8 @@ export class UserService {
             this.isAuthenticated = true;
             this.authToken = response.body.Token;
             this.userID = response.body.UserID;
-            this.saveToLocalStorage('token', this.authToken);
-            this.saveToLocalStorage('userID', this.userID);
+            this.expiresAt = response.body.ExpiresAt;
+            this.startExpirationCheck();
             resolve(true);
           } else {
             resolve(false);
@@ -210,4 +208,45 @@ export class UserService {
       });
     });
   }
+
+  private startExpirationCheck() {
+  const checkInterval = 30000; // Set the interval duration in milliseconds
+
+  // Run the expiration check initially
+  this.checkExpiration();
+
+  // Set up a recurring timer to run the expiration check
+  setTimeout(() => {
+    this.checkExpiration();
+  }, checkInterval);
+}
+
+
+  private checkExpiration() {
+    if (!this.expiresAt) {
+      // Handle the case when expiresAt is undefined or falsy
+      console.log('expiresAt is undefined or falsy.');
+      return;
+    }
+
+    const expiresAtDate = new Date(this.expiresAt); // Assuming expiresAt is a string
+    const currentDate = new Date();
+    const notificationTime = new Date(expiresAtDate.getTime() - 60000); // Subtract 1 minute (60000 milliseconds) from the expiration time
+
+    if (currentDate >= notificationTime && currentDate < expiresAtDate) {
+      // Send the expiration notification
+      console.log('Sending expiration notification...');
+    }
+
+    if (expiresAtDate.getTime() < currentDate.getTime()) {
+      // ExpiresAt has expired
+      console.log('The expiresAt has expired.');
+    } else {
+      // ExpiresAt is still valid
+      console.log('The expiresAt is still valid.');
+    }
+  }
+
+
+
 }
