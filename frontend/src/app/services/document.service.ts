@@ -45,13 +45,31 @@ export class DocumentService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveDocument() {
+  retrieveDocument(markdownID: string, path: string) : Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.sendRetrieveData(markdownID, path).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          console.log(response.status);
 
+          if (response.status === 200) {
+            console.log('Retrieve successful');
+            resolve(response.body.Content);
+          } else {
+            resolve(false);
+          }
+        }
+      });
+    });
   }
 
-  sendRetrieveData(): Observable<HttpResponse<any>> {
+  sendRetrieveData(markdownID: string, path: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/retrieve_file';
     const body = new MarkdownFileDTO();
+
+    body.UserID = this.userService.getUserID();
+    body.MarkdownID = markdownID;
+    body.Path = path;
 
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
     return this.http.post(url, body, { headers, observe: 'response' });
