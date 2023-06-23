@@ -32,29 +32,29 @@ describe('FoldersController', () => {
     module.close();
   });
 
-  describe('root', () => {
+  describe('root/config', () => {
     it('should be defined', () => {
       expect(controller).toBeDefined();
     });
   });
 
   describe('create', () => {
-    // console.log('FoldersController.create');
+    // TO-DO: create unit tests
   });
 
   describe('findAll', () => {
-    // console.log('FoldersController.findAll');
+    // TO-DO: create unit tests
   });
 
   describe('findOne', () => {
-    // console.log('FoldersController.findOne');
+    // TO-DO: create unit tests
   });
 
   describe('update', () => {
-    // console.log('FoldersController.update');
+    // TO-DO: create unit tests
   });
 
   describe('remove', () => {
-    // console.log('FoldersController.remove');
+    // TO-DO: create unit tests
   });
 });
