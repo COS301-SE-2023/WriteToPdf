@@ -15,6 +15,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { Repository } from 'typeorm';
 import { Folder } from '../folders/entities/folder.entity';
+import { S3Service } from '../s3/s3.service';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -28,6 +29,7 @@ describe('FileManagerController', () => {
           FileManagerService,
           MarkdownFilesService,
           FoldersService,
+          S3Service,
           {
             provide: 'FileManagerService',
             useValue: {

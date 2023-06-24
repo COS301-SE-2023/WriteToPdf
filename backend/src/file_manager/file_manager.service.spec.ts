@@ -13,6 +13,7 @@ import {
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { testingModule } from '../test-utils/testingModule';
 import { Folder } from '../folders/entities/folder.entity';
+import { S3Service } from '../s3/s3.service';
 
 describe('FileManagerService', () => {
   let fileManagerService: FileManagerService;
@@ -27,6 +28,7 @@ describe('FileManagerService', () => {
           FileManagerService,
           MarkdownFilesService,
           FoldersService,
+          S3Service,
           {
             provide:
               getRepositoryToken(MarkdownFile),
