@@ -18,7 +18,9 @@ describe('AssetsService', () => {
     );
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('root/config', () => {
+    it('should be defined', () => {
+      expect(service).toBeDefined();
+    });
   });
 });
