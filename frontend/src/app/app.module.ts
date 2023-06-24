@@ -12,12 +12,12 @@ import { EditAssetComponent } from './edit-asset/edit-asset.component';
 import { WebcamModule } from 'ngx-webcam';
 import { SignupComponent } from './signup/signup.component';
 import { TreeSelectModule } from 'primeng/treeselect';
-import {TreeModule} from "primeng/tree";
-import {FormsModule} from "@angular/forms";
-import {DropdownModule} from "primeng/dropdown";
-import {MenuService, NodeService} from "./services/home.service";
-import {BreadcrumbModule} from 'primeng/breadcrumb';
-import {TreeTableModule} from 'primeng/treetable';
+import { TreeModule } from "primeng/tree";
+import { FormsModule } from "@angular/forms";
+import { DropdownModule } from "primeng/dropdown";
+import { MenuService, NodeService } from "./services/home.service";
+import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { TreeTableModule } from 'primeng/treetable';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -27,12 +27,12 @@ import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { MenubarModule } from 'primeng/menubar';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { FileUploadModule } from "primeng/fileupload";
-import { ToastModule} from "primeng/toast";
-import {MessageService} from "primeng/api";
-import {DialogService} from "primeng/dynamicdialog";
+import { ToastModule } from "primeng/toast";
+import { MessageService } from "primeng/api";
+import { DialogService } from "primeng/dynamicdialog";
 import { FileUploadPopupComponent } from './file-upload-popup/file-upload-popup.component';
-import { ToolbarModule} from "primeng/toolbar";
-import { ToggleButtonModule} from "primeng/togglebutton";
+import { ToolbarModule } from "primeng/toolbar";
+import { ToggleButtonModule } from "primeng/togglebutton";
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 @NgModule({
@@ -76,4 +76,4 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
   providers: [NodeService, UserService, MenuService, MessageService, DialogService],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

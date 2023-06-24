@@ -1,7 +1,7 @@
-import {AfterViewInit, Component, ElementRef, OnInit} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
 // import {NgModule} from "@angular/core";
-import {Router} from '@angular/router';
-import {TreeTable} from "primeng/treetable";
+import { Router } from '@angular/router';
+import { TreeTable } from "primeng/treetable";
 // import {Tree, TreeModule} from "primeng/tree";
 // import {TreeSelectModule} from "primeng/treeselect";
 // import {FormsModule} from "@angular/forms";
@@ -9,12 +9,12 @@ import {TreeTable} from "primeng/treetable";
 // import {DropdownModule} from "primeng/dropdown";
 // import {EditComponent} from "../edit/edit.component";
 
-import {MenuItem, MessageService, TreeNode} from 'primeng/api';
-import {MenuService, NodeService} from "../services/home.service";
-import {DialogService} from "primeng/dynamicdialog";
+import { MenuItem, MessageService, TreeNode } from 'primeng/api';
+import { MenuService, NodeService } from "../services/home.service";
+import { DialogService } from "primeng/dynamicdialog";
 import { DocumentService } from "../services/document.service";
 import { UserService } from '../services/user.service';
-import {FileUploadPopupComponent} from "../file-upload-popup/file-upload-popup.component";
+import { FileUploadPopupComponent } from "../file-upload-popup/file-upload-popup.component";
 import { ViewChild } from '@angular/core';
 
 interface Column {
@@ -44,9 +44,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public menuBarItems!: MenuItem[];
   public speedDialItems!: MenuItem[];
   public treeTableColumns!: Column[];
-  public currentDirectory!:any;
-  public treeSelectedFile!:any;
-  public directoryData!:any;
+  public currentDirectory!: any;
+  public treeSelectedFile!: any;
+  public directoryData!: any;
   public recentToggle: boolean = false;
   public selectToggle: boolean = false;
   public expandToggle: boolean = false;
@@ -57,13 +57,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
   uploadedFiles: any[] = [];
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
-  constructor(private router: Router, 
-              private nodeService: NodeService, 
-              private menuService: MenuService, 
-              private elementRef: ElementRef, 
-              private messageService:MessageService, 
-              private dialogService: DialogService,  private documentService: DocumentService,
-              private userService: UserService) {
+  constructor(private router: Router,
+    private nodeService: NodeService,
+    private menuService: MenuService,
+    private elementRef: ElementRef,
+    private messageService: MessageService,
+    private dialogService: DialogService, private documentService: DocumentService,
+    private userService: UserService) {
   }
 
   navigateToPage(pageName: string) {
@@ -71,13 +71,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
   // These functions serve to add intelligent routing and usage for directory management
 
- reloadMainFromRoot():void{
+  reloadMainFromRoot(): void {
     this.filterTable("", 3);
- }
+  }
   // The functions below serve to allow for editing and all other processes involved with editing
   // file names.
   onRowLabelEdit(event: any, rowNode: any): void {
-    if(event !== this.valueBeforeEdit){
+    if (event !== this.valueBeforeEdit) {
       this.updateTreeNodeLabel(this.filesDirectoryTree, rowNode.node.key, event);
       this.updateTreeTableData(this.filteredFilesDirectoryTreeTable, rowNode.node.key, event);
       this.updateTreeTableData(this.filesDirectoryTreeTable, rowNode.node.key, event);
@@ -132,7 +132,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  sendEditedRowLabel(event: any, key: string, type:string): void {
+  sendEditedRowLabel(event: any, key: string, type: string): void {
     console.log(event);
     console.log(key);
     console.log(type);
@@ -161,7 +161,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngOnInit(): void{
+  ngOnInit(): void {
     {
       // Below is the function that initially populates the fileTree
       const data = this.nodeService.getTreeTableNodesData();
@@ -171,7 +171,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // as the non-filtered serves as the filter for the filters for the logic in the filter function
       // below
       this.nodeService.getTreeTableNodes().then((data) => {
-        this.filesDirectoryTreeTable = data;}
+        this.filesDirectoryTreeTable = data;
+      }
       );
       this.nodeService.getTreeTableNodes().then((data) => (this.filteredFilesDirectoryTreeTable = data));
       this.treeTableColumns = [
@@ -242,33 +243,33 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.treeTable.isEmpty();
   }
 
-//TODO filter events from click on the left side directory contents need to rather use
-// a filter that finds the relevant directories via keys, not the actual text of the
-// file's name or something like that.
+  //TODO filter events from click on the left side directory contents need to rather use
+  // a filter that finds the relevant directories via keys, not the actual text of the
+  // file's name or something like that.
   filterTable(filterEvent: any, searchCollapseExpandRoot: number) {
     let filterValue = "";
     let explodeOrCollapse: boolean = true;
-    if(1 == searchCollapseExpandRoot){
+    if (1 == searchCollapseExpandRoot) {
       explodeOrCollapse = false;
       const collapsedNode = filterEvent.node;
       const parent = collapsedNode.parent as TreeNode;
-      if(parent == undefined){
+      if (parent == undefined) {
         filterValue = "";
       }
       else if (parent.label != null) {
         filterValue = parent.label;
       }
     }
-     if(2 == searchCollapseExpandRoot){
-       explodeOrCollapse = true;
-       filterValue = filterEvent.node.label;
+    if (2 == searchCollapseExpandRoot) {
+      explodeOrCollapse = true;
+      filterValue = filterEvent.node.label;
       console.log(filterValue);
     }
-    if(0 == searchCollapseExpandRoot) {
+    if (0 == searchCollapseExpandRoot) {
       explodeOrCollapse = false;
       filterValue = filterEvent.target.value;
     }
-    if(3 == searchCollapseExpandRoot){
+    if (3 == searchCollapseExpandRoot) {
       filterValue = filterEvent;
       explodeOrCollapse = false;
     }
@@ -301,11 +302,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return false;
   }
   // Below is the code that implements file uploading.
-  onUpload(event:any) {
-    for(let file of event.files) {
+  onUpload(event: any) {
+    for (let file of event.files) {
       this.uploadedFiles.push(file);
     }
-    this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
+    this.messageService.add({ severity: 'info', summary: 'File Uploaded', detail: '' });
   }
 
   showFileUploadPopup(): void {
@@ -322,10 +323,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // Handle any actions after the dialog is closed
     });
   }
-// this code updates the background layer to not be adjusted from the edit page after navigation.
+  // this code updates the background layer to not be adjusted from the edit page after navigation.
   ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#FFFFFF';
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
+  }
+
+  getUserDirectory(): void {
+    this.nodeService.setFileAndFolderData();
   }
 
   protected readonly focus = focus;

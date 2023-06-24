@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
 import { TreeNode } from "primeng/api";
+import { DirectoryFilesDTO } from './dto/directory_files.dto';
+import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
+import { UserService } from './user.service';
+import { HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 /**
  * @Backend - the functions in this file serve as dummy data for the values of the directory contents.
@@ -141,6 +147,12 @@ export class NodeService {
    * format we need the TreeTable information to be delivered to us for seamless integration
    * into the PrimeNG component. Not to be confused with the format of the Tree.
    */
+
+  constructor(private userService: UserService, private http: HttpClient) { }
+
+  private files: any[]=[];
+  private folders: any[]=[];
+
   getTreeTableNodesData() {
     return [
       {
@@ -492,10 +504,112 @@ export class NodeService {
         ]
       }
     ];
+  
+  }
+
+  getFiles():any[] {
+    return this.files;
+  }
+
+  setFiles(files:any[]) {
+    this.files = files;
+  }
+
+  getFolders():any[] {
+    return this.folders;
+  }
+
+  setFolders(folders:any[]) {
+    this.folders = folders;
   }
 
   getTreeTableNodes() {
     return Promise.resolve(this.getTreeTableNodesData());
   }
 
+  setFileAndFolderData() {
+    this.retrieveAllFiles().then(nodes => {
+      this.setFiles(nodes);
+      console.log("Files: "+this.getFiles());
+    });
+
+    this.retrieveAllFolders().then(nodes => {
+      this.setFolders(nodes);
+      console.log("Folders: "+this.getFolders());
+    });
+  }
+
+  retrieveAllFiles(): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.sendRetrieveAllFiles().subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log("File object: "+response);
+
+          if (response.status === 200) {
+            console.log('Retrieve successful');
+            const body = response.body;
+            console.log(body);
+            resolve(body.Files);
+          } else {
+            console.log('Retrieve failed');
+            reject();
+          }
+        },
+        error: (error) => {
+          console.log('Retrieve failed');
+          reject();
+        },
+      });
+    });
+  }
+  
+  sendRetrieveAllFiles(): Observable<HttpResponse<any>> {
+    const url = 'http://localhost:3000/file_manager/retrieve_all_files';
+    const body = new DirectoryFilesDTO();
+
+    body.UserID = this.userService.getUserID();
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  retrieveAllFolders(): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.sendRetrieveAllFolders().subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log("Folder object: "+response);
+
+          if (response.status === 200) {
+            console.log('Retrieve successful');
+            const body = response.body;
+            console.log(body);
+            resolve(body.Folders);
+          } else {
+            console.log('Retrieve unsuccessful');
+            reject();
+          }
+        },
+        error: (error) => {
+          console.log(error);
+          reject();
+        }
+      });
+    });
+  }
+
+  sendRetrieveAllFolders(): Observable<HttpResponse<any>> {
+    const url = 'http://localhost:3000/file_manager/retrieve_all_folders';
+    const body = new DirectoryFoldersDTO();
+
+    body.UserID = this.userService.getUserID();
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
 };
