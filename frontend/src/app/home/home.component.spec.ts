@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { expect } from '@jest/globals';
 import { HomeComponent } from './home.component';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
-import { MenuService, NodeService } from './home.service';
+import { MenuService, NodeService } from '../services/home.service';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { TreeSelectModule } from 'primeng/treeselect';

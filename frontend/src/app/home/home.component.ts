@@ -161,11 +161,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     {
       // Below is the function that initially populates the fileTree
-      const data = this.nodeService.getTreeTableNodesData();
-      this.filesDirectoryTree = this.generateTreeNodes(data);
+
+      this.nodeService.getTreeTableNodesData().then((data) => {
+        console.log("The Data: ", data);
+        this.filesDirectoryTree = this.generateTreeNodes(data);
+      });
+
+
       // Below is the function that populates the treeTable
       // Note, both filtered and non-filtered needs to be made and kept up to date,
       // as the non-filtered serves as the filter for the filters for the logic in the filter function
@@ -227,6 +232,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onNodeSelect(event: any): void {
     this.filterTable(event, 2);
+  }
+  onTableNodeSelect(event: any): void {
+    console.log(event.node);
+    
   }
 
   // end of functions implementing routing of directory tree to the main window
@@ -331,6 +340,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   getUserDirectory(): void {
     this.nodeService.setFileAndFolderData();
+  }
+
+  open(): void {
+    console.log("double click");
+    console.log(this.currentDirectory);
   }
 
   protected readonly focus = focus;

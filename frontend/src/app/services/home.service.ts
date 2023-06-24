@@ -194,8 +194,8 @@ export class NodeService {
   }
 
 
-  getTreeTableNodesData(){
-    return [
+  async getTreeTableNodesData(): Promise<any> {
+    [
       {
         key: '0',
         data: {
@@ -546,24 +546,28 @@ export class NodeService {
       }
     ];
 
-    // this.retrieveAllFolders().then(nodes => {
-    //   this.setFolders(nodes);
+   return this.retrieveAllFiles().then(nodes => {
+      this.setFiles(nodes);
 
-    //   let directoryObject: {
-    //     RootChildren: {
-    //       key: string | undefined,
-    //       data: { name: string | undefined, size: number | undefined, type: string | undefined },
-    //     }[]
-    //   } = { RootChildren: [] };
+      let directoryObject: {
+        RootChildren: {
+          key: string | undefined,
+          data: { name: string | undefined, size: number | undefined, type: string | undefined },
+        }[]
+      } = { RootChildren: [] };
+      for (let file of this.files) {
+        directoryObject.RootChildren.push({
+          key: file.MarkdownID,
+          data: { name: file.Name, size: file.Size, type: 'file' }
+        });
+      }
+      console.log(directoryObject.RootChildren);
+      return Promise.resolve(
+        
 
-    //   for (let file of this.files) {
-    //     directoryObject.RootChildren.push({
-    //       key: file.Name,
-    //       data: { name: file.Name, size: file.Size, type: 'file' }
-    //     });
-    //   }
-    //   return Promise.resolve(directoryObject.RootChildren);
-    // });
+            directoryObject.RootChildren
+        );
+    });
   }
 
 
@@ -583,21 +587,21 @@ export class NodeService {
     this.folders = folders;
   }
 
-  getTreeTableNodes() {
-    return Promise.resolve(this.getTreeTableNodesData());
+  async getTreeTableNodes() {
+    return Promise.resolve(await this.getTreeTableNodesData());
   }
 
   setFileAndFolderData() {
     this.retrieveAllFiles().then(nodes => {
       this.setFiles(nodes);
-      for(let file of this.files) {
+      for (let file of this.files) {
         console.log(file.Name);
       }
     });
 
     this.retrieveAllFolders().then(nodes => {
       this.setFolders(nodes);
-      for(let folder of this.folders) {
+      for (let folder of this.folders) {
         console.log(folder.FolderName);
       }
 
