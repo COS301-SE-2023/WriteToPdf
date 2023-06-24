@@ -6,8 +6,12 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { MenuItem} from "primeng/api";
+import {FileUploadPopupComponent} from "../file-upload-popup/file-upload-popup.component";
+import {DialogService} from "primeng/dynamicdialog";
 import { DocumentService } from '../services/document.service';
 import { EditService } from '../services/edit.service';
+
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
@@ -19,20 +23,64 @@ export class EditComponent implements AfterViewInit, OnInit {
   fileName: string = '';
   text: any;
   bold: boolean = false;
+  sidebarVisible: boolean = true;
+  public speedDialItems!: MenuItem[]
 
   constructor(
     private elementRef: ElementRef,
     private router: Router,
+    private dialogService: DialogService
+  ) { }
     private documentService: DocumentService,
     private editService: EditService
   ) {}
 
+  showFileUploadPopup(): void {
+    const ref = this.dialogService.open(FileUploadPopupComponent, {
+      header: 'Upload Files',
+      showHeader: true,
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true,
+    });
+  }
   ngOnInit(): void {
+    this.hideSideBar();
+    this.speedDialItems = [
+      {
+        icon: 'pi pi-pencil',
+        command: () => {
+          this.navigateToPage("edit");
+        }
+      },
+      {
+        icon: 'pi pi-refresh',
+        command: () => {
+          // this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
+        }
+      },
+      {
+        icon: 'pi pi-trash',
+        command: () => {
+          // this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+        }
+      },
+      {
+        icon: 'pi pi-upload',
+        command: () => {
+          this.showFileUploadPopup();
+        }
+      },
+      {
+        icon: 'pi pi-external-link',
+      }
+    ];
     this.fileName = this.editService.getName();
   }
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
     quill.focus();
+
 
     // quill.on('selection-change', (range: any, oldRange: any, source: any) => {
     //   if (range) {
@@ -142,6 +190,25 @@ export class EditComponent implements AfterViewInit, OnInit {
     const quill = this.quillEditor.getQuill();
     quill.history.redo();
   }
+
+  hideSideBar(){
+    // get asset sidebar and set display none
+    const sidebar = document.getElementsByClassName('assetSidebar')[0];
+
+    if(sidebar)
+    {
+      if(this.sidebarVisible){
+        sidebar.setAttribute('style', 'display:none');
+        this.sidebarVisible = false;
+      }
+      else{
+        sidebar.setAttribute('style', 'display:block');
+        this.sidebarVisible = true;
+      }
+    }
+
+  }
+}
 
   rename() {
     console.log('rename');

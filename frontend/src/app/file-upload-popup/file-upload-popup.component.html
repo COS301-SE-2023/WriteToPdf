@@ -1,0 +1,31 @@
+<!--<div class="popup-overlay">-->
+  <div class="popup-container">
+    <p-fileUpload name="demo[]" url="https://www.primefaces.org/cdn/api/upload.php" (onUpload)="onUpload($event)"  [multiple]="true">
+      <ng-template pTemplate="content">
+        <ul *ngIf="uploadedFiles.length">
+          <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
+        </ul>
+      </ng-template>
+    </p-fileUpload>
+  </div>
+<!--  TODO reimplement the code below after demo 2 -->
+<!--    <p-fileUpload name="myfile[]" url="https://www.primefaces.org/cdn/api/upload.php" [multiple]="true">-->
+<!--      &lt;!&ndash; Customize the toolbar &ndash;&gt;-->
+<!--      <ng-template pTemplate="toolbar">-->
+<!--      </ng-template>-->
+<!--      <div class = "spacer"></div>-->
+<!--      &lt;!&ndash; Customize the file item UI &ndash;&gt;-->
+<!--      <ng-template let-file pTemplate="file">-->
+<!--&lt;!&ndash;        TODO implement this UI to show the file details using the file variable stated above&ndash;&gt;-->
+<!--        <div>Conrad must code the custom UI to display a file, primeNG itemview works</div>-->
+<!--        <div class = "spacer"></div>-->
+<!--      </ng-template>-->
+<!--      <div class = "spacer"></div>-->
+<!--      &lt;!&ndash; Add additional content if needed &ndash;&gt;-->
+<!--      <ng-template pTemplate="content" let-files>-->
+<!--        <div class = "uploadUI">Drag/Drop or Use Buttons.</div>-->
+<!--      </ng-template>-->
+<!--      <div class = "spacer"></div>-->
+<!--    </p-fileUpload>-->
+<!--  </div>-->
+<!--</div>-->

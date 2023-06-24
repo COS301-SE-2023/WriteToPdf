@@ -29,7 +29,7 @@
         </div>
         <div class="tool" (click)="redo()"> <!-- Redo -->
           <img src="assets/Icons/editIcons/redo.svg" alt="">
-        </div>
+
 <!--        <div class="tool" id="bold" (click)="flipBold()">-->
 <!--          <img src="assets/Icons/editIcons/bold.svg" alt="">-->
 <!--        </div>-->
@@ -62,14 +62,17 @@
     <div class="pageIconWrapper"></div>
     <div class="miscWrapper"></div>
   </div>
+    <div class = "speedDialEditMenu">
+      <p-speedDial class="speedDial" [model]="speedDialItems" direction="down"></p-speedDial>
+    </div>
+  </div>
 
   <div class="editor">
-
     <div class="assetSidebar">
       <div class="sidebarHeaderWrapper">
         <div class="sidebarHeader">
 
-          <div class="sidebarHeaderIconWrapper backWrapper">
+          <div class="sidebarHeaderIconWrapper backWrapper" (click)="hideSideBar()">
             <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="">
 
           </div>

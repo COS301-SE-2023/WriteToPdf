@@ -7,14 +7,18 @@ $sidebar-content-width: 225px;
 }
 
 .header {
-    overflow-x: hidden;
-    position: fixed;
+  position: fixed;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  z-index: 10;
+  margin:0;
+  background-image: linear-gradient(to right, #ffffff, #e7e7e7);
+  border-bottom: 1px solid #ccc;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
-    display: flex;
-    background-image: linear-gradient(to right, #ffffff, #e7e7e7);
-    border-bottom: 1px solid #ccc;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-
+}
+.header {
     width: 100%;
     top:0;
     left:0;
@@ -33,7 +37,12 @@ $sidebar-content-width: 225px;
     margin-left: 10px;
 }
 
+.speedDialEditMenu{
+  z-index:20;
+  margin-right:100px;
+  margin-top:24px;
 
+}
 
 .toolsWrapper {
     display: flex;
@@ -125,13 +134,15 @@ $sidebar-content-width: 225px;
     position: absolute;
 
     top: 127px;
-    left: 260px;
+    // left: 260px;
+
     z-index: -10;
     margin: 0;
     overflow: auto;
     flex-grow: 1;
 
-    width: calc(100% - 260px);
+    // width: calc(100% - 260px);
+    width: 100%;
     max-height: calc(100svh - 127px);
 }
 

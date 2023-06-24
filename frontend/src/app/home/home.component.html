@@ -27,37 +27,65 @@
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" >
     </div>
     <div class="directoryTree">
-      <p-tree class="w-full md:w-30rem" [value]="filesDirectoryTree" (onNodeSelect)="onNodeSelect($event)"></p-tree>
+      <p-tree [value]="filesDirectoryTree" class="w-full md:w-30rem" selectionMode="single" (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile"></p-tree>
     </div>
-    </div>
+  </div>
   <div id ="fadingDiv" class="mainWindowHome">
-    <div class="directoryPath">
-      <p-breadcrumb class="max-w-full" [model]="activeDirectoryItems" [home]="directoryHome" ></p-breadcrumb>
+<!--    TODO reimplement the directory path for this breadCrumb component after Demo2 -->
+<!--    <div class="directoryPath">-->
+<!--      <p-breadcrumb class="max-w-full" [model]="activeDirectoryItems" [home]="directoryHome" ></p-breadcrumb>-->
+<!--    </div>-->
+    <div class = "filterButtons">
+      <p-toolbar>
+        <div class="p-toolbar-group-start">
+          <p-button class = "toolbarItem" (onClick)="reloadMainFromRoot()" label="Root"></p-button>
+          <p-toggleButton class = "toolbarItem" [(ngModel)]="editToggle" onLabel="Edit" offLabel="Edit"></p-toggleButton>
+          <p-toggleButton class = "toolbarItem" [(ngModel)]="recentToggle" onLabel="Recent" offLabel="Recent"></p-toggleButton>
+          <p-toggleButton class = "toolbarItem" [(ngModel)]="selectToggle" onLabel="Select" offLabel="Select"></p-toggleButton>
+        </div>
+      </p-toolbar>
     </div>
     <div class="searchBar">
       <img src="assets/Icons/homeIcons/mainWindow/searchIcon.png">
-      <input type="text" class="search-input" placeholder="Search...">
+      <input type="text" class="search-input" placeholder="Search..." (input)="filterTable($event, 0)">
     </div>
     <div class="directoryContents">
-      <p-treeTable [value]="filesDirectoryTreeTable" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
-        <ng-template pTemplate="header">
+<!--      The Current directory variable below in the main view is used to allow for intelligent file placement-->
+      <p-treeTable #myTreeTable [value]="filteredFilesDirectoryTreeTable" selectionMode="single" dataKey="name" [(selection)]="currentDirectory" [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
+        <ng-template pTemplate="header" let-columns>
           <tr>
-            <th>Name</th>
-            <th>Size</th>
-            <th>Type</th>
+            <th *ngFor="let col of columns">
+              {{ col.header }}
+            </th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-          <tr [ttRow]="rowNode">
-            <td>
-              <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
-              {{ rowData.name }}
+
+        <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
+          <tr [ttRow]="rowNode" [ttRow]="rowNode" [ttSelectableRow]="rowNode">
+            <td *ngFor="let col of columns; let i = index" ttEditableColumn [ngClass]="{ 'p-toggler-column': i === 0 }">
+              <p-treeTableToggler [rowNode]="rowNode" *ngIf="i === 0"></p-treeTableToggler>
+
+              <p-treeTableCellEditor *ngIf="i === 0 && editToggle">
+                <ng-template pTemplate="input">
+                  <input pInputText type="text" [(ngModel)]="rowData[col.field]"
+                        (focus)="valueBeforeEdit = rowData[col.field]"
+                        (focusout)="onRowLabelEdit(rowData[col.field] = (rowData[col.field].trim() === '') ? valueBeforeEdit : rowData[col.field], rowNode)"
+                        (keydown.enter)="onRowLabelEdit(rowData[col.field] = (rowData[col.field].trim() === '') ? valueBeforeEdit : rowData[col.field], rowNode)" />
+                </ng-template>
+                <ng-template pTemplate="output">{{ rowData[col.field] }}</ng-template>
+              </p-treeTableCellEditor>
+
+              <ng-container *ngIf="i === 0 && !editToggle">
+                {{ rowData[col.field] }}
+              </ng-container>
+              <ng-container *ngIf="i > 0">
+                {{ rowData[col.field] }}
+              </ng-container>
             </td>
-            <td>{{ rowData.size }}</td>
-            <td>{{ rowData.type }}</td>
           </tr>
         </ng-template>
       </p-treeTable>
     </div>
   </div>
+  <!-- file-upload-popup.component.html -->
 </div>
