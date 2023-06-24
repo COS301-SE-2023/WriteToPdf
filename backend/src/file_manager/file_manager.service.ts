@@ -66,6 +66,8 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
+    console.log(markdownFileDTO);
+
     await this.s3service.deleteFile(
       markdownFileDTO,
     );
@@ -83,7 +85,7 @@ export class FileManagerService {
     markdownFileDTO: MarkdownFileDTO,
   ) {
     if (markdownFileDTO.Path === undefined)
-      markdownFileDTO.Path = 'root';
+      markdownFileDTO.Path = '';
 
     if (markdownFileDTO.Name === undefined)
       markdownFileDTO.Name = 'New Document';

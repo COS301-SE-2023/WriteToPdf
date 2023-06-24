@@ -6,15 +6,21 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserService } from './user.service';
 import { EditService } from './edit.service';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DocumentService {
+  constructor(
+    private http: HttpClient,
+    private userService: UserService,
+    private editService: EditService
+  ) {}
 
-  constructor(private http: HttpClient, private userService: UserService, private editService: EditService) { }
-
-  saveDocument(content: string, markdownID: string, path: string): Promise<boolean> {
+  saveDocument(
+    content: string,
+    markdownID: string,
+    path: string
+  ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSaveData(content, markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -27,12 +33,16 @@ export class DocumentService {
           } else {
             resolve(false);
           }
-        }
+        },
       });
     });
   }
 
-  sendSaveData(content: string, markdownID: string, path: string): Observable<HttpResponse<any>> {
+  sendSaveData(
+    content: string,
+    markdownID: string,
+    path: string
+  ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/save_file';
     const body = new MarkdownFileDTO();
 
@@ -41,11 +51,14 @@ export class DocumentService {
     body.MarkdownID = markdownID;
     body.Path = path;
 
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveDocument(markdownID: string, path: string) : Promise<any> {
+  retrieveDocument(markdownID: string, path: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveData(markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -58,12 +71,15 @@ export class DocumentService {
           } else {
             resolve(false);
           }
-        }
+        },
       });
     });
   }
 
-  sendRetrieveData(markdownID: string, path: string): Observable<HttpResponse<any>> {
+  sendRetrieveData(
+    markdownID: string,
+    path: string
+  ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/retrieve_file';
     const body = new MarkdownFileDTO();
 
@@ -71,12 +87,14 @@ export class DocumentService {
     body.MarkdownID = markdownID;
     body.Path = path;
 
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
   createDocument(): Promise<boolean> {
-
     return new Promise<boolean>((resolve, reject) => {
       this.sendCreateData().subscribe({
         next: (response: HttpResponse<any>) => {
@@ -95,7 +113,7 @@ export class DocumentService {
           } else {
             resolve(false);
           }
-        }
+        },
       });
     });
   }
@@ -105,11 +123,14 @@ export class DocumentService {
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
-    body.Path = 'root';
+    body.Path = '';
     body.Name = 'New Document';
     body.ParentFolderID = '1 ';
 
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
@@ -126,7 +147,7 @@ export class DocumentService {
           } else {
             resolve(false);
           }
-        }
+        },
       });
     });
   }
@@ -136,9 +157,13 @@ export class DocumentService {
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
+    body.Path = '';
     body.MarkdownID = markdownID;
 
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
@@ -155,7 +180,7 @@ export class DocumentService {
           } else {
             resolve(false);
           }
-        }
+        },
       });
     });
   }
@@ -169,12 +194,15 @@ export class DocumentService {
     body.MarkdownID = this.editService.getMarkdownID();
     body.Name = name;
 
-
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  moveDocument(path: string, markdownID: string, ParentFolderID: string) {// Will need to rerun directory structure function with new moved file.
+  moveDocument(path: string, markdownID: string, ParentFolderID: string) {
+    // Will need to rerun directory structure function with new moved file.
     return new Promise<boolean>((resolve, reject) => {
       this.sendMoveData(path, markdownID, ParentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -187,12 +215,16 @@ export class DocumentService {
           } else {
             resolve(false);
           }
-        }
+        },
       });
     });
   }
 
-  sendMoveData(path: string, markdownID:string, ParentFolderID:string): Observable<HttpResponse<any>> {
+  sendMoveData(
+    path: string,
+    markdownID: string,
+    ParentFolderID: string
+  ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/move_file';
     const body = new MarkdownFileDTO();
 
@@ -200,8 +232,10 @@ export class DocumentService {
     body.Path = path;
     body.MarkdownID = markdownID;
 
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
-
 }

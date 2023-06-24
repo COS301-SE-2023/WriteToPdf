@@ -16,8 +16,7 @@ import {
   readFile,
   stat,
 } from 'fs/promises';
-
-import { randomBytes } from 'crypto';
+import { SHA256 } from 'crypto-js';
 
 @Injectable()
 export class S3Service {
@@ -95,7 +94,7 @@ export class S3Service {
     markdownFileDTO: MarkdownFileDTO,
   ) {
     let filePath = '';
-    if (markdownFileDTO.Path === undefined)
+    if (markdownFileDTO.Path === '')
       filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}.txt`;
     else
       filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
@@ -131,11 +130,17 @@ export class S3Service {
     // if (markdownFileDTO.UserID === undefined)
     //   markdownFileDTO.UserID = 1;
 
-    markdownFileDTO.MarkdownID =
-      randomBytes(16).toString('hex');
+    const markdownID = SHA256(
+      markdownFileDTO.UserID.toString() +
+        new Date().getTime().toString(),
+    ).toString();
+    markdownFileDTO.MarkdownID = markdownID;
+
+    console.log('HERE');
+    console.log(markdownFileDTO);
 
     let filePath = '';
-    if (markdownFileDTO.Path === undefined)
+    if (markdownFileDTO.Path === '')
       filePath = `./storage/${markdownFileDTO.UserID}`;
     else
       filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
@@ -185,7 +190,7 @@ export class S3Service {
     markdownFileDTO: MarkdownFileDTO,
   ) {
     let filePath = '';
-    if (markdownFileDTO.Path === undefined)
+    if (markdownFileDTO.Path === '')
       filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}.txt`;
     else
       filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
@@ -231,7 +236,7 @@ export class S3Service {
     markdownFileDTO: MarkdownFileDTO,
   ) {
     let filePath = '';
-    if (markdownFileDTO.Path === undefined)
+    if (markdownFileDTO.Path === '')
       filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}.txt`;
     else
       filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
