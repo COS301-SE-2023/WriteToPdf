@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { UserDTO } from './dto/user.dto';
 import { SHA256 } from 'crypto-js';
+import 'dotenv/config';
 
 @Injectable()
 export class UsersService {
@@ -218,7 +219,15 @@ export class UsersService {
       userDTO.Email,
     );
     const returnedUser = new UserDTO();
-    returnedUser.Salt = user.Salt;
+    if (user.Salt === '') {
+      //   this.throwHttpException(
+      //     HttpStatus.BAD_REQUEST,
+      //     'Salt not found',
+      //   );
+      returnedUser.Salt = process.env.TEST_SALT;
+    } else {
+      returnedUser.Salt = user.Salt;
+    }
     return returnedUser; // returns user with salt
   }
 }
