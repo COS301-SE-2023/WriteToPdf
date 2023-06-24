@@ -8,6 +8,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { UserDTO } from './dto/user.dto';
+import { SHA256 } from 'crypto-js';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +19,16 @@ export class UsersService {
   ) {}
 
   create(createUserDTO: UserDTO): Promise<User> {
+    const pepper = process.env.PEPPER;
+    if (!pepper) {
+      throw new Error(
+        'Pepper value is not defined in the environment variables.',
+      );
+    }
+    createUserDTO.Password = SHA256(
+      createUserDTO.Password + pepper,
+      10,
+    ).toString();
     const newUser = this.usersRepository.create(
       createUserDTO,
     );
@@ -138,7 +149,10 @@ export class UsersService {
       loginUserDTO.Email,
     );
     if (
-      user?.Password !== loginUserDTO.Password
+      user?.Password !==
+      this.getPepperedPassword(
+        loginUserDTO.Password,
+      )
     ) {
       throw new HttpException(
         {
@@ -164,6 +178,23 @@ export class UsersService {
       ExpiresAt: token.expires_at,
     };
     return response;
+  }
+
+  private getPepperedPassword(
+    password: string,
+  ): string {
+    const pepper = process.env.PEPPER;
+
+    if (!pepper) {
+      throw new Error(
+        'Pepper value is not defined in the environment variables.',
+      );
+    }
+
+    return SHA256(
+      password + pepper,
+      10,
+    ).toString();
   }
 
   async update(

@@ -110,7 +110,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     const quill = this.quillEditor.getQuill();
     const contents = quill.getContents();
 
-    this.documentService.save(contents, this.editService.getMarkdownID(), this.editService.getMarkdownID());
+    this.documentService.saveDocument(contents, this.editService.getMarkdownID(), this.editService.getMarkdownID());
   }
 
   load() {
