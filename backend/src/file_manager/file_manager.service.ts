@@ -135,7 +135,9 @@ export class FileManagerService {
       markdownFileDTO,
     );
 
-    return { message: 'File saved successfully' };
+    return this.markdownFilesService.updateLastModified(
+      markdownFileDTO,
+    );
   }
 
   // DB Requires the following fields to be initialised in the DTO:

@@ -33,6 +33,7 @@ export class MarkdownFilesService {
       });
     markdownFile.Name =
       updateMarkdownFileDTO.Name;
+
     return this.markdownFileRepository.save(
       markdownFile,
     );
@@ -50,6 +51,7 @@ export class MarkdownFilesService {
       });
     markdownFile.Path =
       updateMarkdownFileDTO.Path;
+
     return this.markdownFileRepository.save(
       markdownFile,
     );
@@ -68,5 +70,20 @@ export class MarkdownFilesService {
     return this.markdownFileRepository.find({
       where: { UserID: userID },
     });
+  }
+
+  async updateLastModified(
+    markdownDTO: MarkdownFileDTO,
+  ) {
+    const markdownToUpdate =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownDTO.MarkdownID,
+        },
+      );
+    markdownToUpdate.LastModified = new Date();
+    return this.markdownFileRepository.save(
+      markdownToUpdate,
+    );
   }
 }
