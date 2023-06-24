@@ -4,6 +4,7 @@ import {
 } from '@nestjs/testing';
 import { AssetsController } from './assets.controller';
 import { AssetsService } from './assets.service';
+import { Asset } from './entities/asset.entity';
 
 describe('AssetsController', () => {
   let controller: AssetsController;
@@ -21,8 +22,13 @@ describe('AssetsController', () => {
   });
 
   describe('root/config', () => {
-    it('should be defined', () => {
+    it('controller should be defined', () => {
       expect(controller).toBeDefined();
+    });
+
+    it('new asset object should be of type Asset', () => {
+      const asset = new Asset();
+      expect(asset).toBeInstanceOf(Asset);
     });
   });
 
