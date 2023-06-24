@@ -24,7 +24,7 @@
     <div class="leftSideBarTools">
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png" >
       <img class="icon newDoc" src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png" (click)="navigateToPage('edit')">
-      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" (click)="getUserDirectory()">
+      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png">
     </div>
     <div class="directoryTree">
       <p-tree [value]="filesDirectoryTree" class="w-full md:w-30rem" selectionMode="single" (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile"></p-tree>

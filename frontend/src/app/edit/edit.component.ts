@@ -19,8 +19,8 @@ import { EditService } from '../services/edit.service';
 })
 export class EditComponent implements AfterViewInit, OnInit {
   @ViewChild('quillEditor') quillEditor: any;
-  documentContent: string = '';
-  fileName: string = '';
+  documentContent: string | undefined = '';
+  fileName: string|undefined = '';
   text: any;
   bold: boolean = false;
   sidebarVisible: boolean = true;
@@ -43,7 +43,9 @@ export class EditComponent implements AfterViewInit, OnInit {
       dismissableMask: true,
     });
   }
+
   ngOnInit(): void {
+    
     this.hideSideBar();
     this.speedDialItems = [
       {
@@ -78,6 +80,15 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
+    
+    setTimeout(() => {//Why wait 0ms? I don't know but it works
+      const contents = this.editService.getContent();
+      this.documentContent = contents;
+      if (contents) {
+        quill.setContents(JSON.parse(contents));
+      }
+    }, 0);
+    
     quill.focus();
 
 
@@ -96,12 +107,6 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#E3E3E3';
-  }
-
-  onContentChange(event: any) {
-    // Save the document content to localStorage when changes occur
-    const content = this.text;
-    localStorage.setItem('document', content);
   }
 
   navigateToPage(pageName: string) {

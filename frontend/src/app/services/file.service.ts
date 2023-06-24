@@ -17,9 +17,9 @@ export class FileService {
   ) {}
 
   saveDocument(
-    content: string,
-    markdownID: string,
-    path: string
+    content: string | undefined,
+    markdownID: string | undefined,
+    path: string | undefined
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSaveData(content, markdownID, path).subscribe({
@@ -39,9 +39,9 @@ export class FileService {
   }
 
   sendSaveData(
-    content: string,
-    markdownID: string,
-    path: string
+    content: string | undefined,
+    markdownID: string | undefined,
+    path: string | undefined
   ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/save_file';
     const body = new MarkdownFileDTO();
@@ -58,7 +58,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveDocument(markdownID: string, path: string): Promise<any> {
+  retrieveDocument(markdownID: string|undefined, path: string|undefined): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveData(markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -77,8 +77,8 @@ export class FileService {
   }
 
   sendRetrieveData(
-    markdownID: string,
-    path: string
+    markdownID: string|undefined,
+    path: string|undefined
   ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/retrieve_file';
     const body = new MarkdownFileDTO();
@@ -134,7 +134,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  deleteDocument(markdownID: string): Promise<boolean> {
+  deleteDocument(markdownID: string | undefined): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -152,7 +152,7 @@ export class FileService {
     });
   }
 
-  sendDeleteData(markdownID: string): Observable<HttpResponse<any>> {
+  sendDeleteData(markdownID: string | undefined): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/delete_file';
     const body = new MarkdownFileDTO();
 
@@ -167,7 +167,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  renameDocument(fileName: string): Promise<boolean> {
+  renameDocument(fileName: string|undefined): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameData(fileName).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -185,7 +185,7 @@ export class FileService {
     });
   }
 
-  sendRenameData(name: string): Observable<HttpResponse<any>> {
+  sendRenameData(name: string|undefined): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/rename_file';
     const body = new MarkdownFileDTO();
 

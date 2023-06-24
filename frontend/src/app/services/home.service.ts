@@ -591,23 +591,6 @@ export class NodeService {
     return Promise.resolve(await this.getTreeTableNodesData());
   }
 
-  setFileAndFolderData() {
-    this.retrieveAllFiles().then(nodes => {
-      this.setFiles(nodes);
-      for (let file of this.files) {
-        console.log(file.Name);
-      }
-    });
-
-    this.retrieveAllFolders().then(nodes => {
-      this.setFolders(nodes);
-      for (let folder of this.folders) {
-        console.log(folder.FolderName);
-      }
-
-    });
-  }
-
   retrieveAllFiles(): Promise<MarkdownFileDTO[]> {
     return new Promise<MarkdownFileDTO[]>((resolve, reject) => {
       this.sendRetrieveAllFiles().subscribe({
@@ -703,5 +686,14 @@ export class NodeService {
       'Bearer ' + this.userService.getAuthToken()
     );
     return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  getFileDTOByID(MarkdownID: string): MarkdownFileDTO {
+    for (let file of this.files) {
+      if (file.MarkdownID === MarkdownID) {
+        return file;
+      }
+    }
+    return new MarkdownFileDTO();
   }
 };

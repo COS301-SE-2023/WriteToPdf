@@ -16,6 +16,7 @@ import { FileService } from "../services/file.service";
 import { UserService } from '../services/user.service';
 import { FileUploadPopupComponent } from "../file-upload-popup/file-upload-popup.component";
 import { ViewChild } from '@angular/core';
+import { EditService } from '../services/edit.service';
 
 interface Column {
   field: string;
@@ -63,7 +64,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private elementRef: ElementRef,
     private messageService: MessageService,
     private dialogService: DialogService, private fileService: FileService,
-    private userService: UserService) {
+    private userService: UserService,
+    private editService: EditService) {
   }
 
   navigateToPage(pageName: string) {
@@ -233,10 +235,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   onNodeSelect(event: any): void {
     this.filterTable(event, 2);
   }
-  onTableNodeSelect(event: any): void {
-    console.log(event.node);
-    
-  }
 
   // end of functions implementing routing of directory tree to the main window
 
@@ -338,13 +336,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
   }
 
-  getUserDirectory(): void {
-    this.nodeService.setFileAndFolderData();
-  }
+  onTableNodeSelect(event: any): void {
 
-  open(): void {
-    console.log("double click");
-    console.log(this.currentDirectory);
+    const file = this.nodeService.getFileDTOByID(event.node.key);
+    console.log(file);
+
+    this.fileService.retrieveDocument(file.MarkdownID, file.Path).then((data) => {
+      this.editService.setContent(data);
+      this.editService.setName(file.Name);
+      this.editService.setMarkdownID(file.MarkdownID);
+      this.editService.setParentFolderID(file.ParentFolderID);
+      this.editService.setPath(file.Path);
+      this.navigateToPage('edit');
+    });
   }
 
   protected readonly focus = focus;
