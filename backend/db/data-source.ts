@@ -14,7 +14,7 @@ export const dataSourceOptions: DataSourceOptions =
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     entities: ['dist/**/*.entity.js'],
-    synchronize: false, // Set this to false in production to prevent automatic schema sync
+    synchronize: true, // Set this to false in production to prevent automatic schema sync
   };
 
 export const testDBOptions: DataSourceOptions = {
