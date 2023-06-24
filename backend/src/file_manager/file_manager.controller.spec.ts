@@ -16,6 +16,7 @@ import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { Repository } from 'typeorm';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
+import { FileManagerModule } from './file_manager.module';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -59,8 +60,20 @@ describe('FileManagerController', () => {
       );
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('root/config', () => {
+    it('should be defined', () => {
+      expect(controller).toBeDefined();
+    });
+  });
+
+  describe('file_manager module', () => {
+    it('new file_managerModule object should be of type FileManagerModule', () => {
+      const file_managerModule =
+        new FileManagerModule();
+      expect(file_managerModule).toBeInstanceOf(
+        FileManagerModule,
+      );
+    });
   });
 
   describe('create_file', () => {
