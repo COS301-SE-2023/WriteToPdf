@@ -351,6 +351,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
+  getUserEmail(): string|undefined {
+    return this.userService.getEmail();
+  }
+
   protected readonly focus = focus;
 }
 
