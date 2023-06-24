@@ -13,10 +13,7 @@ import { EditService } from '../services/edit.service';
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
 })
-
-
 export class EditComponent implements AfterViewInit, OnInit {
-
   @ViewChild('quillEditor') quillEditor: any;
   documentContent: string = '';
   fileName: string = '';
@@ -27,8 +24,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     private elementRef: ElementRef,
     private router: Router,
     private documentService: DocumentService,
-    private editService: EditService,
-  ) { }
+    private editService: EditService
+  ) {}
 
   ngOnInit(): void {
     this.fileName = this.editService.getName();
@@ -110,13 +107,22 @@ export class EditComponent implements AfterViewInit, OnInit {
     const quill = this.quillEditor.getQuill();
     const contents = quill.getContents();
 
-    this.documentService.saveDocument(contents, this.editService.getMarkdownID(), this.editService.getMarkdownID());
+    this.documentService.saveDocument(
+      contents,
+      this.editService.getMarkdownID(),
+      this.editService.getPath()
+    );
   }
 
-  load() {
+  async load() {
     // Load the document quill content from localStorage when changes occur
     const quill = this.quillEditor.getQuill();
-    const contents = localStorage.getItem('document');
+
+    const contents = await this.documentService.retrieveDocument(
+      this.editService.getMarkdownID(),
+      this.editService.getPath()
+    );
+
     if (contents) {
       quill.setContents(JSON.parse(contents));
     }
@@ -147,6 +153,4 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.documentService.deleteDocument(this.editService.getMarkdownID());
     this.navigateToPage('home');
   }
-
 }
-

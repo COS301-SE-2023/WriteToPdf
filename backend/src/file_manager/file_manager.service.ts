@@ -11,12 +11,14 @@ import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { Folder } from '../folders/entities/folder.entity';
+import { S3Service } from 'src/s3/s3.service';
 
 @Injectable()
 export class FileManagerService {
   constructor(
     private markdownFilesService: MarkdownFilesService,
     private folderService: FoldersService,
+    private s3service: S3Service,
   ) {}
 
   // DB Requires the following fields to be initialised in the DTO:
@@ -55,12 +57,20 @@ export class FileManagerService {
   // MarkdownID: string; .. TO IDENTIFY THE FILE
   // Path: string; .. TO LOCATE THE FILE IN S3
   // Name: string; .. TO IDENTIFY THE FILE
-  deleteFile(markdownFileDTO: MarkdownFileDTO) {
+  async deleteFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
         'MarkdownID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
+
+    console.log(markdownFileDTO);
+
+    await this.s3service.deleteFile(
+      markdownFileDTO,
+    );
 
     return this.markdownFilesService.remove(
       markdownFileDTO,
@@ -71,15 +81,21 @@ export class FileManagerService {
   // Path: string; .. TO PLACE THE FILE IN S3
   // Name: string; .. THE NEW NAME OF THE FILE
   // Size: number; .. THE SIZE OF THE FILE IN MEGABYTES
-  createFile(markdownFileDTO: MarkdownFileDTO) {
+  async createFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
     if (markdownFileDTO.Path === undefined)
-      markdownFileDTO.Path = 'root';
+      markdownFileDTO.Path = '';
 
     if (markdownFileDTO.Name === undefined)
       markdownFileDTO.Name = 'New Document';
 
     if (markdownFileDTO.Size === undefined)
       markdownFileDTO.Size = 0;
+
+    await this.s3service.createFile(
+      markdownFileDTO,
+    );
 
     return this.markdownFilesService.create(
       markdownFileDTO,
@@ -106,12 +122,18 @@ export class FileManagerService {
   }
 
   // DB Requires the following fields to be initialised in the DTO:
-  saveFile(markdownFileDTO: MarkdownFileDTO) {
+  async saveFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
         'MarkdownID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
+
+    await this.s3service.saveFile(
+      markdownFileDTO,
+    );
 
     return this.markdownFilesService.updateLastModified(
       markdownFileDTO,
@@ -120,12 +142,18 @@ export class FileManagerService {
 
   // DB Requires the following fields to be initialised in the DTO:
   //TODO add code to retrieve from S3 for given MarkdownID
-  retrieveFile(markdownFileDTO: MarkdownFileDTO) {
+  async retrieveFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
         'MarkdownID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
+
+    await this.s3service.retrieveFile(
+      markdownFileDTO,
+    );
 
     return markdownFileDTO; // return the file
   }

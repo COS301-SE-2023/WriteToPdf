@@ -3,7 +3,6 @@ import { MarkdownFileDTO } from './dto/markdown_file.dto';
 import { MarkdownFile } from './entities/markdown_file.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SHA256 } from 'crypto-js';
 
 @Injectable()
 export class MarkdownFilesService {
@@ -15,11 +14,6 @@ export class MarkdownFilesService {
   create(
     createMarkdownFileDTO: MarkdownFileDTO,
   ): Promise<MarkdownFileDTO> {
-    const markdownID = SHA256(
-      createMarkdownFileDTO.UserID.toString() +
-        new Date().getTime().toString(),
-    ).toString();
-    createMarkdownFileDTO.MarkdownID = markdownID;
     const newMarkdownFile =
       this.markdownFileRepository.save(
         createMarkdownFileDTO,
