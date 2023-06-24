@@ -20,7 +20,7 @@ describe('AppController', () => {
     );
   });
 
-  describe('root', () => {
+  describe('root/config', () => {
     it('should return "Hello World!"', () => {
       expect(appController.getHello()).toBe(
         'Hello World!',
