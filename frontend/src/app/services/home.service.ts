@@ -6,6 +6,8 @@ import { UserService } from './user.service';
 import { HttpResponse } from '@angular/common/http';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { MarkdownFileDTO } from './dto/markdown_file.dto';
+import { FolderDTO } from './dto/folder.dto';
 
 /**
  * @Backend - the functions in this file serve as dummy data for the values of the directory contents.
@@ -142,18 +144,57 @@ export class MenuService {
 }
 @Injectable()
 export class NodeService {
+
+  constructor(private userService: UserService, private http: HttpClient) { }
+
+  private files: MarkdownFileDTO[] = [];
+  private folders: FolderDTO[] = [];
+
   /**
    * @Backend, below is a function with data that showcases the
    * format we need the TreeTable information to be delivered to us for seamless integration
    * into the PrimeNG component. Not to be confused with the format of the Tree.
    */
 
-  constructor(private userService: UserService, private http: HttpClient) { }
 
-  private files: any[]=[];
-  private folders: any[]=[];
 
-  getTreeTableNodesData() {
+  //What each folder object will look like:
+  typicalFolder = {
+    key: '0', //some unique identifier
+    data: {
+      name: 'folderName',
+      size: '100kb',
+      type: 'Folder'
+    },
+    children: [
+      { //contains other folders/files
+      }
+    ], //The above 3 attributes are required for the TreeTable to work. The below is the data related to the folder
+    FolderID: '0', //FolderID from the database
+    DateCreated: '2023-06-24', //DateCreated from the database
+    LastModified: '2023-06-24', //DateModified from the database
+    ParentFolderID: '0', //ParentID from the database
+    Path: 'C:/Users/...', //Path from the database
+  }
+
+  //What each file object will look like:
+  typicalFile = {
+    key: '0', //some unique identifier
+    data: {
+      name: 'fileName',
+      size: '100kb',
+      type: 'File'
+    }, //The above 2 attributes are required for the TreeTable to work. The below is the data related to the file
+    FileID: '0', //FileID from the database
+    DateCreated: '2023-06-24', //DateCreated from the database
+    LastModified: '2023-06-24', //DateModified from the database
+    ParentFolderID: '0', //ParentID from the database
+    Path: 'C:/Users/...', //Path from the database
+    Content: 'This is the content of the file' //Content from the database
+  }
+
+
+  getTreeTableNodesData(){
     return [
       {
         key: '0',
@@ -504,22 +545,41 @@ export class NodeService {
         ]
       }
     ];
-  
+
+    // this.retrieveAllFolders().then(nodes => {
+    //   this.setFolders(nodes);
+
+    //   let directoryObject: {
+    //     RootChildren: {
+    //       key: string | undefined,
+    //       data: { name: string | undefined, size: number | undefined, type: string | undefined },
+    //     }[]
+    //   } = { RootChildren: [] };
+
+    //   for (let file of this.files) {
+    //     directoryObject.RootChildren.push({
+    //       key: file.Name,
+    //       data: { name: file.Name, size: file.Size, type: 'file' }
+    //     });
+    //   }
+    //   return Promise.resolve(directoryObject.RootChildren);
+    // });
   }
 
-  getFiles():any[] {
+
+  getFiles(): MarkdownFileDTO[] {
     return this.files;
   }
 
-  setFiles(files:any[]) {
+  setFiles(files: MarkdownFileDTO[]) {
     this.files = files;
   }
 
-  getFolders():any[] {
+  getFolders(): FolderDTO[] {
     return this.folders;
   }
 
-  setFolders(folders:any[]) {
+  setFolders(folders: FolderDTO[]) {
     this.folders = folders;
   }
 
@@ -530,26 +590,44 @@ export class NodeService {
   setFileAndFolderData() {
     this.retrieveAllFiles().then(nodes => {
       this.setFiles(nodes);
-      console.log("Files: "+this.getFiles());
+      for(let file of this.files) {
+        console.log(file.Name);
+      }
     });
 
     this.retrieveAllFolders().then(nodes => {
       this.setFolders(nodes);
-      console.log("Folders: "+this.getFolders());
+      for(let folder of this.folders) {
+        console.log(folder.FolderName);
+      }
+
     });
   }
 
-  retrieveAllFiles(): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
+  retrieveAllFiles(): Promise<MarkdownFileDTO[]> {
+    return new Promise<MarkdownFileDTO[]>((resolve, reject) => {
       this.sendRetrieveAllFiles().subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log("File object: "+response);
 
           if (response.status === 200) {
             console.log('Retrieve successful');
             const body = response.body;
-            console.log(body);
-            resolve(body.Files);
+            console.log("" + body);
+            let files: MarkdownFileDTO[] = [];
+            for (let i = 0; i < body.Files.length; i++) {
+              const fileDTO = new MarkdownFileDTO();
+
+              fileDTO.DateCreated = body.Files[i].DateCreated;
+              fileDTO.LastModified = body.Files[i].LastModified;
+              fileDTO.MarkdownID = body.Files[i].MarkdownID;
+              fileDTO.Name = body.Files[i].Name;
+              fileDTO.ParentFolderID = body.Files[i].ParentFolderID;
+              fileDTO.Path = body.Files[i].Path;
+              fileDTO.Size = body.Files[i].Size;
+
+              files.push(fileDTO);
+            }
+            resolve(files);
           } else {
             console.log('Retrieve failed');
             reject();
@@ -562,7 +640,7 @@ export class NodeService {
       });
     });
   }
-  
+
   sendRetrieveAllFiles(): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/retrieve_all_files';
     const body = new DirectoryFilesDTO();
@@ -576,17 +654,27 @@ export class NodeService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveAllFolders(): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
+  retrieveAllFolders(): Promise<FolderDTO[]> {
+    return new Promise<FolderDTO[]>((resolve, reject) => {
       this.sendRetrieveAllFolders().subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log("Folder object: "+response);
 
           if (response.status === 200) {
-            console.log('Retrieve successful');
             const body = response.body;
             console.log(body);
-            resolve(body.Folders);
+            let folders: FolderDTO[] = [];
+            for (let i = 0; i < body.Folders.length; i++) {
+              const folderDTO = new FolderDTO();
+              folderDTO.FolderID = body.Folder[i].FolderID;
+              folderDTO.DateCreated = body.Folder[i].DateCreated;
+              folderDTO.LastModified = body.Folder[i].LastModified;
+              folderDTO.FolderName = body.Folder[i].FolderName;
+              folderDTO.Path = body.Folder[i].Path;
+              folderDTO.ParentFolderID = body.Folder[i].ParentFolderID;
+              folders.push(folderDTO);
+            }
+
+            resolve(folders);
           } else {
             console.log('Retrieve unsuccessful');
             reject();

@@ -9,7 +9,7 @@ import { EditService } from './edit.service';
 @Injectable({
   providedIn: 'root',
 })
-export class DocumentService {
+export class FileService {
   constructor(
     private http: HttpClient,
     private userService: UserService,

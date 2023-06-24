@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { MenuItem} from "primeng/api";
 import {FileUploadPopupComponent} from "../file-upload-popup/file-upload-popup.component";
 import {DialogService} from "primeng/dynamicdialog";
-import { DocumentService } from '../services/document.service';
+import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
 
 @Component({
@@ -30,7 +30,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private elementRef: ElementRef,
     private router: Router,
     private dialogService: DialogService,
-    private documentService: DocumentService,
+    private fileService: FileService,
     private editService: EditService
   ) {}
 
@@ -154,7 +154,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     const quill = this.quillEditor.getQuill();
     const contents = quill.getContents();
 
-    this.documentService.saveDocument(
+    this.fileService.saveDocument(
       contents,
       this.editService.getMarkdownID(),
       this.editService.getPath()
@@ -165,7 +165,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Load the document quill content from localStorage when changes occur
     const quill = this.quillEditor.getQuill();
 
-    const contents = await this.documentService.retrieveDocument(
+    const contents = await this.fileService.retrieveDocument(
       this.editService.getMarkdownID(),
       this.editService.getPath()
     );
@@ -210,12 +210,12 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   rename() {
     console.log('rename');
-    this.documentService.renameDocument(this.fileName);
+    this.fileService.renameDocument(this.fileName);
   }
 
   delete() {
     console.log('delete');
-    this.documentService.deleteDocument(this.editService.getMarkdownID());
+    this.fileService.deleteDocument(this.editService.getMarkdownID());
     this.navigateToPage('home');
   }
 }

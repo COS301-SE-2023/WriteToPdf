@@ -12,7 +12,7 @@ import { TreeTable } from "primeng/treetable";
 import { MenuItem, MessageService, TreeNode } from 'primeng/api';
 import { MenuService, NodeService } from "../services/home.service";
 import { DialogService } from "primeng/dynamicdialog";
-import { DocumentService } from "../services/document.service";
+import { FileService } from "../services/file.service";
 import { UserService } from '../services/user.service';
 import { FileUploadPopupComponent } from "../file-upload-popup/file-upload-popup.component";
 import { ViewChild } from '@angular/core';
@@ -62,7 +62,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private menuService: MenuService,
     private elementRef: ElementRef,
     private messageService: MessageService,
-    private dialogService: DialogService, private documentService: DocumentService,
+    private dialogService: DialogService, private fileService: FileService,
     private userService: UserService) {
   }
 
@@ -194,7 +194,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         {
           icon: 'pi pi-pencil',
           command: async () => {
-            if (await this.documentService.createDocument())
+            if (await this.fileService.createDocument())
               this.navigateToPage("edit");
           }
         },
