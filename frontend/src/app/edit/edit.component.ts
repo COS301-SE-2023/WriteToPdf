@@ -29,8 +29,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   constructor(
     private elementRef: ElementRef,
     private router: Router,
-    private dialogService: DialogService
-  ) { }
+    private dialogService: DialogService,
     private documentService: DocumentService,
     private editService: EditService
   ) {}
@@ -208,7 +207,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
 
   }
-}
 
   rename() {
     console.log('rename');

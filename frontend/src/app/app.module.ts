@@ -34,7 +34,6 @@ import { FileUploadPopupComponent } from './file-upload-popup/file-upload-popup.
 import { ToolbarModule} from "primeng/toolbar";
 import { ToggleButtonModule} from "primeng/togglebutton";
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [

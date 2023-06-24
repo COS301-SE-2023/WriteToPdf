@@ -28,9 +28,9 @@ export class FileUploadPopupComponent {
         mammoth.convertToHtml({arrayBuffer: arrayBuffer})
           .then(function (result: any) {
             var html = result.value;
-            const { convertHtmlToDelta } = require('node-quill-converter');
-            let delta = convertHtmlToDelta(html);// The generated HTML
-            var messages = result.messages; // Any messages, such as warnings during conversion
+            // const { convertHtmlToDelta } = require('node-quill-converter');
+            // let delta = convertHtmlToDelta(html);// The generated HTML
+            // var messages = result.messages; // Any messages, such as warnings during conversion
           })
           .catch(function (error: any) {
             console.error(error);

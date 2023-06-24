@@ -115,7 +115,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
           return true;
         }
       }
-
+    }
+    return false;
+  }
   updateBreadcrumb(selectedNode: TreeNode | undefined) {
     // Clear the existing breadcrumb items
     this.activeDirectoryItems = [];
