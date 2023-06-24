@@ -136,9 +136,6 @@ export class S3Service {
     ).toString();
     markdownFileDTO.MarkdownID = markdownID;
 
-    console.log('HERE');
-    console.log(markdownFileDTO);
-
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `./storage/${markdownFileDTO.UserID}`;
@@ -189,6 +186,7 @@ export class S3Service {
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    console.log(markdownFileDTO);
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}.txt`;
@@ -205,7 +203,9 @@ export class S3Service {
     }
 
     const fileData = new Uint8Array(
-      Buffer.from(markdownFileDTO.Content),
+      Buffer.from(
+        JSON.stringify(markdownFileDTO.Content),
+      ),
     );
 
     try {
