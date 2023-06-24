@@ -20,7 +20,29 @@ describe('AssetsController', () => {
     );
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('root/config', () => {
+    it('should be defined', () => {
+      expect(controller).toBeDefined();
+    });
+  });
+
+  describe('create', () => {
+    // TO-DO: implement unit tests
+  });
+
+  describe('findAll', () => {
+    // TO-DO: implement unit tests
+  });
+
+  describe('findOne', () => {
+    // TO-DO: implement unit tests
+  });
+
+  describe('update', () => {
+    // TO-DO: implement unit tests
+  });
+
+  describe('remove', () => {
+    // TO-DO: implement unit tests
   });
 });

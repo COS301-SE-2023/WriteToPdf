@@ -20,4 +20,7 @@ export class User {
 
   @Column()
   Password: string;
+
+  @Column({ length: 255 })
+  Salt: string;
 }

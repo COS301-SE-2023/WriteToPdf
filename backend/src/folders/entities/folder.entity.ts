@@ -8,7 +8,7 @@ import {
 @Entity('FOLDERS')
 export class Folder {
   @PrimaryGeneratedColumn()
-  FolderID: number;
+  FolderID: string;
 
   @Column({
     type: 'timestamp',
@@ -16,12 +16,21 @@ export class Folder {
   })
   DateCreated: Date;
 
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  LastModified: Date;
+
   @Column()
   FolderName: string;
 
   @Column()
   Path: string;
 
+  @Column()
+  UserID: number;
+
   @JoinColumn()
-  ParentFolderID: number;
+  ParentFolderID: string;
 }

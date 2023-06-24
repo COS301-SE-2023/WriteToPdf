@@ -1,14 +1,16 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
-  JoinColumn,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity('MARKDOWN_FILES')
 export class MarkdownFile {
-  @PrimaryGeneratedColumn()
-  MarkdownID: number;
+  @PrimaryColumn()
+  MarkdownID: string; // hash string
+
+  @Column()
+  UserID: number;
 
   @Column()
   Name: string;
@@ -19,11 +21,12 @@ export class MarkdownFile {
   })
   DateCreated: Date;
 
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+  @Column('timestamp', {
+    precision: 3,
+    default: () => 'CURRENT_TIMESTAMP(3)',
+    onUpdate: 'CURRENT_TIMESTAMP(3)',
   })
-  LastModified: string;
+  LastModified: Date;
 
   @Column()
   Path: string;
@@ -31,6 +34,6 @@ export class MarkdownFile {
   @Column()
   Size: number;
 
-  @JoinColumn()
-  ParentFolderID: number;
+  @Column()
+  ParentFolderID: string; // hash string
 }

@@ -12,10 +12,8 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDTO } from './dto/create-user.dto';
-import { UpdateUserDTO } from './dto/update-user.dto';
+import { UserDTO } from './dto/user.dto';
 import { Public } from '../auth/auth.controller';
-import { LoginUserDTO } from './dto/login-user.dto';
 import { plainToClass } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { Request } from 'express';
@@ -27,7 +25,7 @@ export class UsersController {
   ) {}
 
   @Post()
-  create(@Body() createUserDTO: CreateUserDTO) {
+  create(@Body() createUserDTO: UserDTO) {
     return this.usersService.create(
       createUserDTO,
     );
@@ -37,7 +35,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   login(
-    @Body() loginUserDTO: LoginUserDTO,
+    @Body() loginUserDTO: UserDTO,
     @Req() request: Request,
   ) {
     if (request.method !== 'POST') {
@@ -47,7 +45,7 @@ export class UsersController {
       );
     }
     const receivedDTO = plainToClass(
-      LoginUserDTO,
+      UserDTO,
       loginUserDTO,
     );
     const errors = validateSync(receivedDTO);
@@ -63,9 +61,9 @@ export class UsersController {
 
   @Public()
   @HttpCode(HttpStatus.OK)
-  @Post('signup')
-  signup(
-    @Body() createUserDTO: CreateUserDTO,
+  @Post('get_salt')
+  getSalt(
+    @Body() userDTO: UserDTO,
     @Req() request: Request,
   ) {
     if (request.method !== 'POST') {
@@ -75,7 +73,35 @@ export class UsersController {
       );
     }
     const receivedDTO = plainToClass(
-      CreateUserDTO,
+      UserDTO,
+      userDTO,
+    );
+    const errors = validateSync(receivedDTO);
+
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.usersService.getSalt(userDTO);
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('signup')
+  signup(
+    @Body() createUserDTO: UserDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+    const receivedDTO = plainToClass(
+      UserDTO,
       createUserDTO,
     );
     const errors = validateSync(receivedDTO);
@@ -96,24 +122,24 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Get(':UserID')
+  findOne(@Param('UserID') UserID: number) {
+    return this.usersService.findOne(UserID);
   }
 
-  @Patch(':id')
+  @Patch(':UserID')
   update(
-    @Param('id') id: string,
-    @Body() updateUserDTO: UpdateUserDTO,
+    @Param('UserID') UserID: number,
+    @Body() updateUserDTO: UserDTO,
   ) {
     return this.usersService.update(
-      +id,
+      UserID,
       updateUserDTO,
     );
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @Delete(':UserID')
+  remove(@Param('UserID') UserID: number) {
+    return this.usersService.remove(UserID);
   }
 }
