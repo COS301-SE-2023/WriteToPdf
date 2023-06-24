@@ -4,7 +4,9 @@
 
 # Secrets
 .env
-.env.test
+.env.*
+env
+env.*
 
 # Logs
 logs
@@ -14,9 +16,6 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-
-# Secrets
-.env
 
 # OS
 .DS_Store
