@@ -8,6 +8,7 @@ import { Asset } from './entities/asset.entity';
 import { AssetDTO } from './dto/asset.dto';
 import { CreateAssetDTO } from './dto/create-asset.dto';
 import { UpdateAssetDTO } from './dto/update-asset.dto';
+import { AssetsModule } from './assets.module';
 
 describe('AssetsController', () => {
   let controller: AssetsController;
@@ -50,6 +51,15 @@ describe('AssetsController', () => {
       const updateAssetDTO = new UpdateAssetDTO();
       expect(updateAssetDTO).toBeInstanceOf(
         UpdateAssetDTO,
+      );
+    });
+  });
+
+  describe('assets module', () => {
+    it('new assetsModule object should be of type AssetsModule', () => {
+      const assetsModule = new AssetsModule();
+      expect(assetsModule).toBeInstanceOf(
+        AssetsModule,
       );
     });
   });
