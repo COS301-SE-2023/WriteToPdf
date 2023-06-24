@@ -12,9 +12,8 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { LoginUserDTO } from './dto/login-user.dto';
 import { AuthService } from '../auth/auth.service';
-import { CreateUserDTO } from './dto/create-user.dto';
+import { UserDTO } from './dto/user.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -39,6 +38,7 @@ describe('UsersController', () => {
         ],
       }).compile();
 
+    // controller is defined by module configured to use testDB
     controller = module.get<UsersController>(
       UsersController,
     );
@@ -46,27 +46,48 @@ describe('UsersController', () => {
     module.close();
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('root/config', () => {
+    it('user controller should be defined', () => {
+      expect(controller).toBeDefined();
+    });
   });
 
-  it('should return an array of users', async () => {
-    const result = [
-      {
-        UserID: 1,
-        FirstName: 'Test',
-        LastName: 'Test',
-        Email: 'test',
-        Password: 'test',
-      },
-    ];
-    jest
-      .spyOn(controller, 'findAll')
-      .mockImplementation(async () => result);
+  describe('findOne', () => {
+    // console.log('UsersController.findOne');
+  });
 
-    expect(await controller.findAll()).toBe(
-      result,
-    );
+  describe('findAll', () => {
+    it('should return an array of all users', async () => {
+      const result = [
+        {
+          UserID: 1,
+          FirstName: 'John',
+          LastName: 'Doe',
+          Email: 'johndoe@example.com',
+          Password: 'mypassword',
+          Salt: 'mysalt',
+        },
+      ];
+      jest
+        .spyOn(controller, 'findAll')
+        .mockImplementation(async () => result);
+
+      expect(await controller.findAll()).toBe(
+        result,
+      );
+    });
+  });
+
+  describe('update', () => {
+    // it('should return updated user')
+    // it('should throw exception if user not found')
+    // console.log('UsersController.update');
+  });
+
+  describe('remove', () => {
+    // it('should return removed user')
+    // it('should throw exception if user not found')
+    // console.log('UsersController.remove');
   });
 
   describe('login', () => {
@@ -78,8 +99,8 @@ describe('UsersController', () => {
       expect(isPublic).toBe(true);
     });
 
-    it('should return a user', async () => {
-      const loginUserDTO = new LoginUserDTO();
+    it('should return a user on successful login', async () => {
+      const loginUserDTO = new UserDTO();
       loginUserDTO.Email = 'test';
       loginUserDTO.Password = 'test';
 
@@ -107,7 +128,7 @@ describe('UsersController', () => {
 
     it('should throw exception if request method is not POST', async () => {
       const request = { method: 'GET' };
-      const loginUserDTO = new LoginUserDTO();
+      const loginUserDTO = new UserDTO();
       loginUserDTO.Email = 'test';
       loginUserDTO.Password = 'test';
 
@@ -140,8 +161,8 @@ describe('UsersController', () => {
       expect(isPublic).toBe(true);
     });
 
-    it('should return a user', async () => {
-      const createUserDTO = new CreateUserDTO();
+    it('should return the newly registered user', async () => {
+      const createUserDTO = new UserDTO();
       createUserDTO.FirstName = 'Test';
       createUserDTO.LastName = 'Test';
       createUserDTO.Email = 'test';
@@ -169,7 +190,7 @@ describe('UsersController', () => {
 
     it('should throw exception if request method is not POST', async () => {
       const request = { method: 'GET' };
-      const createUserDTO = new CreateUserDTO();
+      const createUserDTO = new UserDTO();
       createUserDTO.FirstName = 'Test';
       createUserDTO.LastName = 'Test';
       createUserDTO.Email = 'test';

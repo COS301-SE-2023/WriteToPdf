@@ -9,18 +9,18 @@ import { Router } from '@angular/router';
 import { MenuItem} from "primeng/api";
 import {FileUploadPopupComponent} from "../file-upload-popup/file-upload-popup.component";
 import {DialogService} from "primeng/dynamicdialog";
+import { DocumentService } from '../services/document.service';
+import { EditService } from '../services/edit.service';
 
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
 })
-
-
 export class EditComponent implements AfterViewInit, OnInit {
-
   @ViewChild('quillEditor') quillEditor: any;
   documentContent: string = '';
+  fileName: string = '';
   text: any;
   bold: boolean = false;
   sidebarVisible: boolean = true;
@@ -31,6 +31,9 @@ export class EditComponent implements AfterViewInit, OnInit {
     private router: Router,
     private dialogService: DialogService
   ) { }
+    private documentService: DocumentService,
+    private editService: EditService
+  ) {}
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
@@ -72,6 +75,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         icon: 'pi pi-external-link',
       }
     ];
+    this.fileName = this.editService.getName();
   }
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
@@ -146,31 +150,34 @@ export class EditComponent implements AfterViewInit, OnInit {
   //   }
   // }
 
-  save()
-  {
+  save() {
     // Save the document quill content to localStorage when changes occur
-    const quill= this.quillEditor.getQuill();
-    const contents=quill.getContents();
+    const quill = this.quillEditor.getQuill();
+    const contents = quill.getContents();
 
-    localStorage.setItem('document', JSON.stringify(contents));
-
-    console.log(contents);
+    this.documentService.saveDocument(
+      contents,
+      this.editService.getMarkdownID(),
+      this.editService.getPath()
+    );
   }
 
-  load()
-  {
+  async load() {
     // Load the document quill content from localStorage when changes occur
-    const quill= this.quillEditor.getQuill();
-    const contents=localStorage.getItem('document');
-    if(contents)
-    {
+    const quill = this.quillEditor.getQuill();
+
+    const contents = await this.documentService.retrieveDocument(
+      this.editService.getMarkdownID(),
+      this.editService.getPath()
+    );
+
+    if (contents) {
       quill.setContents(JSON.parse(contents));
     }
     console.log(contents);
   }
 
-  undo()
-  {
+  undo() {
     const quill = this.quillEditor.getQuill();
     const history = quill.history;
 
@@ -179,9 +186,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
   }
 
-  redo()
-  {
-    const quill= this.quillEditor.getQuill();
+  redo() {
+    const quill = this.quillEditor.getQuill();
     quill.history.redo();
   }
 
@@ -204,3 +210,14 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 }
 
+  rename() {
+    console.log('rename');
+    this.documentService.renameDocument(this.fileName);
+  }
+
+  delete() {
+    console.log('delete');
+    this.documentService.deleteDocument(this.editService.getMarkdownID());
+    this.navigateToPage('home');
+  }
+}

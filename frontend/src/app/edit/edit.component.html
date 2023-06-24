@@ -8,18 +8,18 @@
         </div>
         <div class="docTitleWrapper">
           <label for="editHeading" class="displayNone">a</label>
-          <input type="text" editable="true" id="editHeading" class="documentTitle" value="New Document" maxlength="50">
+          <input type="text" editable="true" id="editHeading" class="documentTitle" value="New Document" maxlength="50" (blur)="rename()" [(ngModel)]="fileName">
         </div>
       </div>
-      <div class="toolsWrapper">
-        <div class="tool" (click)="extractDeltaJson()"> <!-- Download -->
+      <div class="toolsWrapper"> 
+        <div class="tool" (click)="load()"> <!-- Download -->
           <img src="assets/Icons/editIcons/download.svg" alt="">
         </div>
         <div class="tool" (click)="save()"> <!-- Save -->
           <img src="assets/Icons/editIcons/save.png" alt="">
         </div>
-        <div class="tool" (click)="load()"> <!-- Load -->
-          LOAD
+        <div class="tool" (click)="delete()"> <!-- Load -->
+          <img src="assets/Icons/editIcons/delete.png" alt="">
         </div>
         <div class="tool"> <!-- Share -->
           <img src="assets/Icons/editIcons/share.svg" alt="">

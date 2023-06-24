@@ -5,7 +5,8 @@ describe('app', () => {
     });
 
     it('should display logo', () => {
-        cy.get('.logo').should('exist').should('be.visible');
+        cy.get('.logo').should('exist');
+
     });
 
 

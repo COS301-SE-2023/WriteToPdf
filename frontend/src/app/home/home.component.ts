@@ -8,11 +8,15 @@ import {TreeTable} from "primeng/treetable";
 // import {EditorModule} from "primeng/editor";
 // import {DropdownModule} from "primeng/dropdown";
 // import {EditComponent} from "../edit/edit.component";
+
 import {MenuItem, MessageService, TreeNode} from 'primeng/api';
 import {MenuService, NodeService} from "./home.service";
 import {DialogService} from "primeng/dynamicdialog";
+import { DocumentService } from "../services/document.service";
+import { UserService } from '../services/user.service';
 import {FileUploadPopupComponent} from "../file-upload-popup/file-upload-popup.component";
 import { ViewChild } from '@angular/core';
+
 interface Column {
   field: string;
   header: string;
@@ -22,6 +26,7 @@ interface UploadEvent {
   originalEvent: Event;
   files: File[];
 }
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -52,7 +57,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
   uploadedFiles: any[] = [];
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
-  constructor(private router: Router, private nodeService: NodeService, private menuService: MenuService, private elementRef: ElementRef, private messageService:MessageService, private dialogService: DialogService) {
+  constructor(private router: Router, 
+              private nodeService: NodeService, 
+              private menuService: MenuService, 
+              private elementRef: ElementRef, 
+              private messageService:MessageService, 
+              private dialogService: DialogService,  private documentService: DocumentService,
+              private userService: UserService) {
   }
 
   navigateToPage(pageName: string) {
@@ -90,6 +101,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
     return false;
   }
+
   updateTreeNodeLabel(nodes: TreeNode[], key: string, newValue: string): boolean {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
@@ -103,6 +115,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
           return true;
         }
       }
+
+  updateBreadcrumb(selectedNode: TreeNode | undefined) {
+    // Clear the existing breadcrumb items
+    this.activeDirectoryItems = [];
+
+    // Traverse the selected node's ancestors to generate the breadcrumb items
+    let currentNode = selectedNode;
+    while (currentNode) {
+      this.activeDirectoryItems.unshift({ label: currentNode.label });
+      currentNode = currentNode.parent;
+
     }
     return false;
   }
@@ -136,7 +159,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void{
     {
       // Below is the function that initially populates the fileTree
       const data = this.nodeService.getTreeTableNodesData();
@@ -167,8 +190,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.speedDialItems = [
         {
           icon: 'pi pi-pencil',
-          command: () => {
-           this.navigateToPage("edit");
+          command: async () => {
+            if (await this.documentService.createDocument())
+              this.navigateToPage("edit");
           }
         },
         {

@@ -20,6 +20,16 @@ export class AuthGuard implements CanActivate {
   async canActivate(
     context: ExecutionContext,
   ): Promise<boolean> {
+    const request = context
+      .switchToHttp()
+      .getRequest();
+
+    if (request.method !== 'POST') {
+      throw new UnauthorizedException(
+        'Method Not Allowed',
+      );
+    }
+
     const isPublicEndpoint =
       this.reflector.getAllAndOverride<boolean>(
         IS_PUBLIC_KEY,
@@ -33,9 +43,6 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    const request = context
-      .switchToHttp()
-      .getRequest();
     const token =
       this.extractTokenFromHeader(request);
     if (!token) {

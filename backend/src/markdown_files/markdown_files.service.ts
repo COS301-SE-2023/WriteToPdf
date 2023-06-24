@@ -1,31 +1,89 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMarkdownFileDTO } from './dto/create-markdown_file.dto';
-import { UpdateMarkdownFileDTO } from './dto/update-markdown_file.dto';
+import { MarkdownFileDTO } from './dto/markdown_file.dto';
+import { MarkdownFile } from './entities/markdown_file.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class MarkdownFilesService {
+  constructor(
+    @InjectRepository(MarkdownFile)
+    private markdownFileRepository: Repository<MarkdownFile>,
+  ) {}
+
   create(
-    createMarkdownFileDTO: CreateMarkdownFileDTO,
+    createMarkdownFileDTO: MarkdownFileDTO,
+  ): Promise<MarkdownFileDTO> {
+    const newMarkdownFile =
+      this.markdownFileRepository.save(
+        createMarkdownFileDTO,
+      );
+    return newMarkdownFile;
+  }
+
+  async updateName(
+    updateMarkdownFileDTO: MarkdownFileDTO,
+  ): Promise<any> {
+    const markdownFile =
+      await this.markdownFileRepository.findOne({
+        where: {
+          MarkdownID:
+            updateMarkdownFileDTO.MarkdownID,
+        },
+      });
+    markdownFile.Name =
+      updateMarkdownFileDTO.Name;
+
+    return this.markdownFileRepository.save(
+      markdownFile,
+    );
+  }
+
+  async updatePath(
+    updateMarkdownFileDTO: MarkdownFileDTO,
+  ): Promise<any> {
+    const markdownFile =
+      await this.markdownFileRepository.findOne({
+        where: {
+          MarkdownID:
+            updateMarkdownFileDTO.MarkdownID,
+        },
+      });
+    markdownFile.Path =
+      updateMarkdownFileDTO.Path;
+
+    return this.markdownFileRepository.save(
+      markdownFile,
+    );
+  }
+
+  remove(
+    removeMarkdownFileDTO: MarkdownFileDTO,
+  ): Promise<any> {
+    return this.markdownFileRepository.delete({
+      MarkdownID:
+        removeMarkdownFileDTO.MarkdownID,
+    });
+  }
+
+  findAllByUserID(userID: number) {
+    return this.markdownFileRepository.find({
+      where: { UserID: userID },
+    });
+  }
+
+  async updateLastModified(
+    markdownDTO: MarkdownFileDTO,
   ) {
-    return 'This action adds a new markdownFile';
-  }
-
-  findAll() {
-    return `This action returns all markdownFiles`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} markdownFile`;
-  }
-
-  update(
-    id: number,
-    updateMarkdownFileDTO: UpdateMarkdownFileDTO,
-  ) {
-    return `This action updates a #${id} markdownFile`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} markdownFile`;
+    const markdownToUpdate =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownDTO.MarkdownID,
+        },
+      );
+    markdownToUpdate.LastModified = new Date();
+    return this.markdownFileRepository.save(
+      markdownToUpdate,
+    );
   }
 }
