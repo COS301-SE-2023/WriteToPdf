@@ -265,21 +265,4 @@ export class S3Service {
 
     return markdownFileDTO;
   }
-
-  // renameFolder(folderDTO: FolderDTO) {
-  //   return 'File renamed successfully';
-  // }
-
-  // deleteFolder(folderDTO: FolderDTO) {
-  //   return 'File deleted successfully';
-  // }
-
-  // createFolder(folderDTO: FolderDTO) {
-  //   folderDTO.FolderID = '1';
-  //   return folderDTO;
-  // }
-
-  // moveFolder(folderDTO: FolderDTO) {
-  //   return 'File moved successfully';
-  // }
 }
