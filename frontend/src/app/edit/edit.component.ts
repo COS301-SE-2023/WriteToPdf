@@ -114,10 +114,15 @@ export class EditComponent implements AfterViewInit, OnInit {
     );
   }
 
-  load() {
+  async load() {
     // Load the document quill content from localStorage when changes occur
     const quill = this.quillEditor.getQuill();
-    const contents = localStorage.getItem('document');
+
+    const contents = await this.documentService.retrieveDocument(
+      this.editService.getMarkdownID(),
+      this.editService.getPath()
+    );
+
     if (contents) {
       quill.setContents(JSON.parse(contents));
     }
