@@ -96,6 +96,6 @@ jobs:
         working-directory: frontend
         run: sleep 5s
 
-      - name: Run frontend tests
+      - name: Run e2e tests
         working-directory: frontend
         run: npm run test
