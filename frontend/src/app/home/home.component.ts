@@ -10,7 +10,7 @@ import {TreeTable} from "primeng/treetable";
 // import {EditComponent} from "../edit/edit.component";
 
 import {MenuItem, MessageService, TreeNode} from 'primeng/api';
-import {MenuService, NodeService} from "./home.service";
+import {MenuService, NodeService} from "../services/home.service";
 import {DialogService} from "primeng/dynamicdialog";
 import { DocumentService } from "../services/document.service";
 import { UserService } from '../services/user.service';

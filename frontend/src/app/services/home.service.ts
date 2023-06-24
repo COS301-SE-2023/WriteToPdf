@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {TreeNode} from "primeng/api";
+import { Injectable } from '@angular/core';
+import { TreeNode } from "primeng/api";
 
 /**
  * @Backend - the functions in this file serve as dummy data for the values of the directory contents.

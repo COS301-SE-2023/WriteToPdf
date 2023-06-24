@@ -15,7 +15,7 @@ import { TreeSelectModule } from 'primeng/treeselect';
 import {TreeModule} from "primeng/tree";
 import {FormsModule} from "@angular/forms";
 import {DropdownModule} from "primeng/dropdown";
-import {MenuService, NodeService} from "./home/home.service";
+import {MenuService, NodeService} from "./services/home.service";
 import {BreadcrumbModule} from 'primeng/breadcrumb';
 import {TreeTableModule} from 'primeng/treetable';
 import { SidebarModule } from 'primeng/sidebar';
