@@ -8,6 +8,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
 import { FolderDTO } from './dto/folder.dto';
+import { FileService } from './file.service';
+import { FolderService } from './folder.service';
 
 /**
  * @Backend - the functions in this file serve as dummy data for the values of the directory contents.
@@ -145,7 +147,7 @@ export class MenuService {
 @Injectable()
 export class NodeService {
 
-  constructor(private userService: UserService, private http: HttpClient) { }
+  constructor(private userService: UserService, private http: HttpClient, private fileService: FileService, private folderService: FolderService) { }
 
   private files: MarkdownFileDTO[] = [];
   private folders: FolderDTO[] = [];
@@ -546,7 +548,7 @@ export class NodeService {
       }
     ];
 
-   return this.retrieveAllFiles().then(nodes => {
+   return this.fileService.retrieveAllFiles().then(nodes => {
       this.setFiles(nodes);
 
       let directoryObject: {
@@ -589,103 +591,6 @@ export class NodeService {
 
   async getTreeTableNodes() {
     return Promise.resolve(await this.getTreeTableNodesData());
-  }
-
-  retrieveAllFiles(): Promise<MarkdownFileDTO[]> {
-    return new Promise<MarkdownFileDTO[]>((resolve, reject) => {
-      this.sendRetrieveAllFiles().subscribe({
-        next: (response: HttpResponse<any>) => {
-
-          if (response.status === 200) {
-            console.log('Retrieve successful');
-            const body = response.body;
-            console.log("" + body);
-            let files: MarkdownFileDTO[] = [];
-            for (let i = 0; i < body.Files.length; i++) {
-              const fileDTO = new MarkdownFileDTO();
-
-              fileDTO.DateCreated = body.Files[i].DateCreated;
-              fileDTO.LastModified = body.Files[i].LastModified;
-              fileDTO.MarkdownID = body.Files[i].MarkdownID;
-              fileDTO.Name = body.Files[i].Name;
-              fileDTO.ParentFolderID = body.Files[i].ParentFolderID;
-              fileDTO.Path = body.Files[i].Path;
-              fileDTO.Size = body.Files[i].Size;
-
-              files.push(fileDTO);
-            }
-            resolve(files);
-          } else {
-            console.log('Retrieve failed');
-            reject();
-          }
-        },
-        error: (error) => {
-          console.log('Retrieve failed');
-          reject();
-        },
-      });
-    });
-  }
-
-  sendRetrieveAllFiles(): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/retrieve_all_files';
-    const body = new DirectoryFilesDTO();
-
-    body.UserID = this.userService.getUserID();
-
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      'Bearer ' + this.userService.getAuthToken()
-    );
-    return this.http.post(url, body, { headers, observe: 'response' });
-  }
-
-  retrieveAllFolders(): Promise<FolderDTO[]> {
-    return new Promise<FolderDTO[]>((resolve, reject) => {
-      this.sendRetrieveAllFolders().subscribe({
-        next: (response: HttpResponse<any>) => {
-
-          if (response.status === 200) {
-            const body = response.body;
-            console.log(body);
-            let folders: FolderDTO[] = [];
-            for (let i = 0; i < body.Folders.length; i++) {
-              const folderDTO = new FolderDTO();
-              folderDTO.FolderID = body.Folder[i].FolderID;
-              folderDTO.DateCreated = body.Folder[i].DateCreated;
-              folderDTO.LastModified = body.Folder[i].LastModified;
-              folderDTO.FolderName = body.Folder[i].FolderName;
-              folderDTO.Path = body.Folder[i].Path;
-              folderDTO.ParentFolderID = body.Folder[i].ParentFolderID;
-              folders.push(folderDTO);
-            }
-
-            resolve(folders);
-          } else {
-            console.log('Retrieve unsuccessful');
-            reject();
-          }
-        },
-        error: (error) => {
-          console.log(error);
-          reject();
-        }
-      });
-    });
-  }
-
-  sendRetrieveAllFolders(): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/retrieve_all_folders';
-    const body = new DirectoryFoldersDTO();
-
-    body.UserID = this.userService.getUserID();
-
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      'Bearer ' + this.userService.getAuthToken()
-    );
-    return this.http.post(url, body, { headers, observe: 'response' });
   }
 
   getFileDTOByID(MarkdownID: string): MarkdownFileDTO {
