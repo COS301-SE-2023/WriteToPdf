@@ -103,5 +103,26 @@ describe('FileManagerService', () => {
         );
       }
     });
+
+    it('should throw an error if FolderName is undefined', async () => {
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderID = '123';
+
+      try {
+        await fileManagerService.renameFolder(
+          folderDTO,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'FolderName cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
   });
 });
