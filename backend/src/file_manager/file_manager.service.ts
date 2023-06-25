@@ -66,8 +66,6 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    console.log(markdownFileDTO);
-
     await this.s3service.deleteFile(
       markdownFileDTO,
     );
@@ -141,7 +139,7 @@ export class FileManagerService {
   }
 
   // DB Requires the following fields to be initialised in the DTO:
-  //TODO add code to retrieve from S3 for given MarkdownID
+  // TODO add code to retrieve from S3 for given MarkdownID
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
