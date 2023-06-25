@@ -244,6 +244,31 @@ describe('FileManagerController', () => {
         );
       }
     });
+
+    it('should throw an error if MarkdownID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Path = 'example/path';
+      try {
+        await controller.deleteFile(
+          markdownFileDTO,
+          request as any,
+        );
+        // expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'MarkdownID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
   });
 
   describe('move_file', () => {
