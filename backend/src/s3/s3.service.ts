@@ -148,6 +148,13 @@ export class S3Service {
       await mkdir(filePath, {
         recursive: true,
       });
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: filePath,
+          Body: new Uint8Array(Buffer.from('')),
+        }),
+      );
     } catch (err) {
       console.log(
         'Directory Creation Error:' + err,
@@ -255,6 +262,15 @@ export class S3Service {
           encoding: 'utf-8',
         },
       );
+      const testContent =
+        await this.s3Client.send(
+          new GetObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: filePath,
+          }),
+        );
+      console.log('HERE');
+      console.log(testContent);
     } catch (err) {
       console.log('Read File Error:' + err);
       return undefined;
