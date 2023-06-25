@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserService } from './user.service';
 import { EditService } from './edit.service';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
+import { ImportDTO } from './dto/import.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -284,6 +285,42 @@ export class FileService {
 
     body.UserID = this.userService.getUserID();
 
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  importDocument(name:string, path:string, parentFolderID:string, content:string): Promise<boolean>{
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendImportData(name, path, parentFolderID, content).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          console.log(response.status);
+
+          if (response.status === 200) {
+            console.log('Import successful');
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+      });
+    });
+  }
+
+  sendImportData(name: string, path: string, parentFolderID: string, content: string): Observable<HttpResponse<any>> {
+    const url = 'http://localhost:3000/file_manager/import';
+    const body = new ImportDTO();
+
+    body.UserID = this.userService.getUserID();
+    body.Path = path;
+    body.Name = name;
+    body.ParentFolderID = parentFolderID;
+    body.Content = content;
+
+    console.log("Body Import: " + JSON.stringify(body));
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()

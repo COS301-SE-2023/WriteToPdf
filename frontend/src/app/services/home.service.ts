@@ -601,4 +601,20 @@ export class NodeService {
     }
     return new MarkdownFileDTO();
   }
+
+  addFile(file: MarkdownFileDTO) {
+    this.files.push(file);
+  }
+
+  addFolder(folder: FolderDTO) {
+    this.folders.push(folder);
+  }
+
+  removeFile(file: MarkdownFileDTO) {
+    this.files.splice(this.files.indexOf(file), 1);
+  }
+
+  removeFolder(folder: FolderDTO) {
+    this.folders.splice(this.folders.indexOf(folder), 1);
+  }
 };

@@ -266,6 +266,8 @@ export class FileManagerService {
       convertedMardkownFileDTO,
     );
 
+    createdFile.Content = deltaContent;
+
     const savedFile = await this.saveFile(
       createdFile,
     );

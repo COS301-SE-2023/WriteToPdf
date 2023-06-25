@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {MessageService} from "primeng/api";
+import { FileService } from '../services/file.service';
 
 // import * as mammoth from "mammoth"
 interface UploadEvent {
@@ -15,29 +16,23 @@ interface UploadEvent {
 export class FileUploadPopupComponent {
   uploadedFiles: any[] = [];
 
-  constructor(private messageService: MessageService) {
+  constructor(private messageService: MessageService, private fileService: FileService) {
   }
 
   onUpload(event: any) {
-    for (let file of event.files) {
-      this.uploadedFiles.push(file);
-      let reader = new FileReader();
-      reader.onload = () => {
-        let arrayBuffer = reader.result as ArrayBuffer;
-        var mammoth = require("mammoth/mammoth.browser");
-        mammoth.convertToHtml({arrayBuffer: arrayBuffer})
-          .then(function (result: any) {
-            var html = result.value;
-            // const { convertHtmlToDelta } = require('node-quill-converter');
-            // let delta = convertHtmlToDelta(html);// The generated HTML
-            // var messages = result.messages; // Any messages, such as warnings during conversion
-          })
-          .catch(function (error: any) {
-            console.error(error);
-          });
-      };
-      reader.readAsArrayBuffer(file);
-    }
+    const file = event.files[0];
+    const reader = new FileReader();
+    this.uploadedFiles.push(file);
+
+    reader.onload = (e: any) => {
+      const fileContent = e.target.result;
+      console.log(fileContent);
+      
+      this.fileService.importDocument(file.name, '', '', fileContent);
+    };
+
+    reader.readAsText(file);
+    
 
     this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
   }
