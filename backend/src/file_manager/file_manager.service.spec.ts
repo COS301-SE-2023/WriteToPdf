@@ -109,6 +109,12 @@ describe('FileManagerService', () => {
   describe('rename_folder', () => {
     it('should throw an error if FolderID is undefined', async () => {
       const folderDTO = new FolderDTO();
+      folderDTO.FolderName = 'test';
+      folderDTO.DateCreated = new Date();
+      folderDTO.LastModified = new Date();
+      folderDTO.ParentFolderID = '123';
+      folderDTO.UserID = 123;
+      folderDTO.Path = 'test/example';
 
       try {
         await fileManagerService.renameFolder(
