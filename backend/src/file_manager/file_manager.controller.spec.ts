@@ -66,7 +66,7 @@ describe('FileManagerController', () => {
     });
   });
 
-  describe('file_manager module', () => {
+  describe('new file_manager module should be correcly instantiated', () => {
     it('new file_managerModule object should be of type FileManagerModule', () => {
       const file_managerModule =
         new FileManagerModule();
