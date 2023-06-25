@@ -134,7 +134,6 @@ describe('FileManagerController', () => {
       markdownFileDTO.UserID = 123;
       markdownFileDTO.Path = 'example/path';
       markdownFileDTO.Name = 'example.md';
-      // left MarkdownID as default undefined
       expect(() =>
         controller.renameFile(
           markdownFileDTO,
@@ -143,6 +142,46 @@ describe('FileManagerController', () => {
       ).toThrowError(
         new HttpException(
           'MarkdownID cannot be undefined',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an error if path is undefined', () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Name = 'example.md';
+      markdownFileDTO.MarkdownID = 'abc123';
+      expect(() =>
+        controller.renameFile(
+          markdownFileDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Path cannot be undefined',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an error if name is undefined', () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Path = 'example/path';
+      markdownFileDTO.MarkdownID = 'abc123';
+      expect(() =>
+        controller.renameFile(
+          markdownFileDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Name cannot be undefined',
           HttpStatus.BAD_REQUEST,
         ),
       );
