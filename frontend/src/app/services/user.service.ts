@@ -17,6 +17,7 @@ export class UserService {
   private userID: number | undefined = undefined;
   private expiresAt:string | Date | number | undefined = undefined;
   private email: string | undefined = undefined;
+  private firstName: string | undefined = undefined;
 
   constructor(private http: HttpClient) { }
 
@@ -50,6 +51,7 @@ export class UserService {
             this.userID = response.body.UserID;
             this.expiresAt = response.body.ExpiresAt;
             this.email = email;
+            this.firstName = response.body.FirstName;
             this.startExpirationCheck();
             resolve(true);
           } else {
@@ -105,6 +107,8 @@ export class UserService {
     this.isAuthenticated = false;
     this.authToken = undefined;
     this.userID = undefined;
+    this.email = undefined;
+    this.firstName = undefined;
   }
 
   isAuthenticatedUser(): boolean {
@@ -124,6 +128,10 @@ export class UserService {
 
   getEmail(): string | undefined {
     return this.email;
+  }
+
+  getFirstName(): string | undefined {
+    return this.firstName;
   }
 
 
