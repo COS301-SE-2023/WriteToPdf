@@ -26,7 +26,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   sidebarVisible: boolean = true;
   exportDialogVisible: boolean = false;
   public speedDialItems!: MenuItem[];
-  
+
 
   constructor(
     private elementRef: ElementRef,
@@ -219,9 +219,16 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.fileService.renameDocument(this.editService.getMarkdownID(), this.fileName, this.editService.getPath());
   }
 
-  delete() {
+  async delete() {
     console.log('delete');
-    this.fileService.deleteDocument(this.editService.getMarkdownID());
+    await this.fileService.deleteDocument(this.editService.getMarkdownID());
+    
+    this.editService.setMarkdownID('');
+    this.editService.setPath('');
+    this.editService.setName('');
+    this.editService.setContent('');
+    this.editService.setParentFolderID('');
+
     this.navigateToPage('home');
   }
 

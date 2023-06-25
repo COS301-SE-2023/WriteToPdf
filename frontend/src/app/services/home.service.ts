@@ -196,7 +196,8 @@ export class NodeService {
   }
 
 
-  async getTreeTableNodesData(): Promise<any> {
+  getTreeTableNodesData(): any {
+    
     [
       {
         key: '0',
@@ -548,30 +549,58 @@ export class NodeService {
       }
     ];
 
-   return this.fileService.retrieveAllFiles().then(nodes => {
-      this.setFiles(nodes);
 
-      let directoryObject: {
-        RootChildren: {
-          key: string | undefined,
-          data: { name: string | undefined, size: number | undefined, type: string | undefined },
-        }[]
-      } = { RootChildren: [] };
-      for (let file of this.files) {
-        directoryObject.RootChildren.push({
-          key: file.MarkdownID,
-          data: { name: file.Name, size: file.Size, type: 'file' }
-        });
-      }
-      console.log(directoryObject.RootChildren);
-      return Promise.resolve(
-        
+  //  return this.fileService.retrieveAllFiles().then(nodes => {
+  //     this.setFiles(nodes);
 
-            directoryObject.RootChildren
-        );
-    });
+  //     let directoryObject: {
+  //       RootChildren: {
+  //         key: string | undefined,
+  //         data: { name: string | undefined, size: number | undefined, type: string | undefined },
+  //       }[]
+  //     } = { RootChildren: [] };
+  //     for (let file of this.files) {
+  //       directoryObject.RootChildren.push({
+  //         key: file.MarkdownID,
+  //         data: { name: file.Name, size: file.Size, type: 'file' }
+  //       });
+  //     }
+  //     console.log(directoryObject.RootChildren);
+  //     return Promise.resolve(directoryObject.RootChildren);
+  //   });
+
+    let directoryObject: {
+      RootChildren: {
+        key: string | undefined,
+        data: { name: string | undefined, size: number | undefined, type: string | undefined },
+        children?: {}[]
+      }[]
+    } = { RootChildren: [] };
+
+    for (let folder of this.folders) {
+      directoryObject.RootChildren.push({
+        key: folder.FolderID,
+        data: { name: folder.FolderName, size: 0, type: 'folder' },
+        children: [{ key: '0', data: { name: 'DUMMY DATA', size: 0, type: 'file' }}]
+      });
+    }
+
+    for (let file of this.files) {
+      directoryObject.RootChildren.push({
+        key: file.MarkdownID,
+        data: { name: file.Name, size: file.Size, type: 'file' }
+      });
+    }
+
+
+    return directoryObject.RootChildren;
   }
 
+  async getFilesAndFolders() {
+    this.setFolders(await this.folderService.retrieveAllFolders());
+    this.setFiles(await this.fileService.retrieveAllFiles());
+    
+  }
 
   getFiles(): MarkdownFileDTO[] {
     return this.files;

@@ -18,6 +18,7 @@ import { FileUploadPopupComponent } from "../file-upload-popup/file-upload-popup
 import { ViewChild } from '@angular/core';
 import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
+import { get } from 'cypress/types/lodash';
 
 interface Column {
   field: string;
@@ -168,27 +169,27 @@ export class HomeComponent implements OnInit, AfterViewInit {
   async ngOnInit() {
     {
       // Below is the function that initially populates the fileTree
-
-      this.nodeService.getTreeTableNodesData().then((data) => {
-        console.log("The Data: ", data);
+      this.nodeService.getFilesAndFolders().then(() => {
+        const data = this.nodeService.getTreeTableNodesData();
         this.filesDirectoryTree = this.generateTreeNodes(data);
+
+        console.log(JSON.stringify(data));
+
+        // Below is the function that populates the treeTable
+        // Note, both filtered and non-filtered needs to be made and kept up to date,
+        // as the non-filtered serves as the filter for the filters for the logic in the filter function
+        // below
+        this.nodeService.getTreeTableNodes().then((data) => {
+          this.filesDirectoryTreeTable = data;
+        }
+        );
+        this.nodeService.getTreeTableNodes().then((data) => (this.filteredFilesDirectoryTreeTable = data));
+        this.treeTableColumns = [
+          { field: 'name', header: 'Name' },
+          { field: 'size', header: 'Size' },
+          { field: 'type', header: 'Type' }
+        ];
       });
-
-
-      // Below is the function that populates the treeTable
-      // Note, both filtered and non-filtered needs to be made and kept up to date,
-      // as the non-filtered serves as the filter for the filters for the logic in the filter function
-      // below
-      this.nodeService.getTreeTableNodes().then((data) => {
-        this.filesDirectoryTreeTable = data;
-      }
-      );
-      this.nodeService.getTreeTableNodes().then((data) => (this.filteredFilesDirectoryTreeTable = data));
-      this.treeTableColumns = [
-        { field: 'name', header: 'Name' },
-        { field: 'size', header: 'Size' },
-        { field: 'type', header: 'Type' }
-      ];
       //Below is the code that populates the directoryPath
       // this.activeDirectoryItems = [{ label: 'Computer' }, { label: 'Notebook' }, { label: 'Accessories' }, { label: 'Backpacks' }, { label: 'Item' }];
       this.directoryHome = { icon: 'pi pi-home', routerLink: '/' };
@@ -339,25 +340,28 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   onTableNodeSelect(event: any): void {
-    console.log(event);
-    const file = this.nodeService.getFileDTOByID(event.node.key);
-    console.log(file);
+    if (!this.editToggle) {
+      console.log(event);
+      const file = this.nodeService.getFileDTOByID(event.node.key);
+      console.log(file);
 
-    this.fileService.retrieveDocument(file.MarkdownID, file.Path).then((data) => {
-      this.editService.setContent(data);
-      this.editService.setName(file.Name);
-      this.editService.setMarkdownID(file.MarkdownID);
-      this.editService.setParentFolderID(file.ParentFolderID);
-      this.editService.setPath(file.Path);
-      this.navigateToPage('edit');
-    });
+      this.fileService.retrieveDocument(file.MarkdownID, file.Path).then((data) => {
+        this.editService.setContent(data);
+        this.editService.setName(file.Name);
+        this.editService.setMarkdownID(file.MarkdownID);
+        this.editService.setParentFolderID(file.ParentFolderID);
+        this.editService.setPath(file.Path);
+        this.navigateToPage('edit');
+      });
+    }
   }
 
-  getUserFirstName(): string|undefined {
+  getUserFirstName(): string | undefined {
     return this.userService.getFirstName();
   }
 
-  newFolder(){
+  newFolder() {
+    console.log('new folder');
     this.folderService.createFolder('', 'New Folder', '');
   }
   protected readonly focus = focus;

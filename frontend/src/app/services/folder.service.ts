@@ -96,12 +96,12 @@ export class FolderService {
             let folders: FolderDTO[] = [];
             for (let i = 0; i < body.Folders.length; i++) {
               const folderDTO = new FolderDTO();
-              folderDTO.FolderID = body.Folder[i].FolderID;
-              folderDTO.DateCreated = body.Folder[i].DateCreated;
-              folderDTO.LastModified = body.Folder[i].LastModified;
-              folderDTO.FolderName = body.Folder[i].FolderName;
-              folderDTO.Path = body.Folder[i].Path;
-              folderDTO.ParentFolderID = body.Folder[i].ParentFolderID;
+              folderDTO.FolderID = body.Folders[i].FolderID;
+              folderDTO.DateCreated = body.Folders[i].DateCreated;
+              folderDTO.LastModified = body.Folders[i].LastModified;
+              folderDTO.FolderName = body.Folders[i].FolderName;
+              folderDTO.Path = body.Folders[i].Path;
+              folderDTO.ParentFolderID = body.Folders[i].ParentFolderID;
               folders.push(folderDTO);
             }
 
