@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { ImportDTO } from '../file_manager/dto/import.dto';
 import { ExportDTO } from '../file_manager/dto/export.dto';
@@ -19,13 +23,21 @@ export class ConversionService {
   ): MarkdownFileDTO {
     if (importDTO.Type === 'txt') {
       return this.convertFromText(importDTO);
-    }
+    } else
+      throw new HttpException(
+        `Conversion from ${importDTO.Type} is not supported`,
+        HttpStatus.BAD_REQUEST,
+      );
   }
 
   convertTo(exportDTO: ExportDTO) {
     if (exportDTO.Type === 'txt') {
       return this.convertToTxt(exportDTO);
-    }
+    } else
+      throw new HttpException(
+        `Conversion to ${exportDTO.Type} is not supported`,
+        HttpStatus.BAD_REQUEST,
+      );
   }
 
   convertFromText(textDTO: ImportDTO) {
