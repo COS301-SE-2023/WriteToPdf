@@ -439,5 +439,28 @@ describe('FileManagerController', () => {
         );
       }
     });
+
+    it('should throw an error UserID is undefined', async () => {
+      const request = { method: 'POST' };
+      const directoryFilesDTO =
+        new DirectoryFilesDTO();
+      try {
+        await controller.retrieveAllFiles(
+          directoryFilesDTO,
+          request as any,
+        );
+        // expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'UserID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
   });
 });
