@@ -31,7 +31,7 @@ export class MarkdownFilesService {
             updateMarkdownFileDTO.MarkdownID,
         },
       });
-    markdownFile = updateMarkdownFileDTO;
+    markdownFile = updateMarkdownFileDTO; //TODO: Make sure these are actually needed
     markdownFile.Name =
       updateMarkdownFileDTO.Name;
 
@@ -50,7 +50,7 @@ export class MarkdownFilesService {
             updateMarkdownFileDTO.MarkdownID,
         },
       });
-    markdownFile = updateMarkdownFileDTO;
+    markdownFile = updateMarkdownFileDTO; //TODO: Make sure these are actually needed
     markdownFile.Path =
       updateMarkdownFileDTO.Path;
 
