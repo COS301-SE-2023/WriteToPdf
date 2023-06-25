@@ -233,4 +233,11 @@ export class EditComponent implements AfterViewInit, OnInit {
   showDialog() {
     this.exportDialogVisible = true;
   }
+
+  exportFile() {
+    const quill = this.quillEditor.getQuill();
+    const contents = quill.getContents();
+
+    this.fileService.exportDocument();
+  }
 }

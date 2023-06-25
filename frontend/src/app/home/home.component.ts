@@ -57,6 +57,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public editToggle: boolean = false;
   public valueBeforeEdit: string = "";
   public colInspect: any;
+  public moveDialogVisible: boolean = false;
+  public entityToMove: any;
+  public destinationDirectory: any;
   uploadedFiles: any[] = [];
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
@@ -154,8 +157,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
    * home.service.ts
    */
   generateTreeNodes(data: any[]): TreeNode[] {
-    console.log("Generating tree nodes");
-    console.log(data);
     return data.map(item => {
       const node: TreeNode = {
         key: item.key,
@@ -172,6 +173,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // Below is the function that initially populates the fileTree
       this.nodeService.getFilesAndFolders().then(() => {
         const data = this.nodeService.getTreeTableNodesData();
+        console.log("DATA: " + JSON.stringify(data));
         this.filesDirectoryTree = this.generateTreeNodes(data);
 
 
@@ -340,9 +342,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   onOpenFileSelect(event: any): void {
-    console.log(event);
+    
     const file = this.nodeService.getFileDTOByID(event.key);
-    console.log(file);
+    console.log("FILE: " + JSON.stringify(file));
     this.fileService.retrieveDocument(file.MarkdownID, file.Path).then((data) => {
       this.editService.setContent(data);
       this.editService.setName(file.Name);
@@ -353,29 +355,28 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onMoveFileSelect(event: any): void {
+  onMoveFileSelect(event: any, newPath: string, newParentFolderID: string): void {
     console.log(event);
     const file = this.nodeService.getFileDTOByID(event.key);
+    this.entityToMove = event;
+    this.moveDialogVisible = true;
     console.log(file);
-    this.fileService.moveDocument(file.MarkdownID, file.Path, file.ParentFolderID).then((data) => {
-      
-    });
+
   }
 
-  onMoveFolderSelect(event: any): void {
+  onMoveFolderSelect(event: any, newPath: string, newParentFolderID: string): void {
     console.log(event);
     const folder = this.nodeService.getFolderDTOByID(event.key);
+    this.entityToMove = event;
+    this.moveDialogVisible = true;
     console.log(folder);
-    this.folderService.moveFolder(folder.FolderID, folder.Path, folder.ParentFolderID).then((data) => {
 
-    });
   }
 
   delete(event: any) {
     console.log('delete');
     console.log(event);
-    if(event.data.type == 'folder')
-    {
+    if (event.data.type == 'folder') {
       this.folderService.deleteFolder(event.key);
       this.deleteEntryByKey(this.filesDirectoryTree, event.key);
       this.deleteEntryByKey(this.filesDirectoryTreeTable, event.key);
@@ -384,8 +385,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.nodeService.removeFolder(event.key);
       this.currentDirectory = null;
     }
-    else
-    {
+    else {
       this.fileService.deleteDocument(event.key);
       this.deleteEntryByKey(this.filesDirectoryTree, event.key);
       this.deleteEntryByKey(this.filesDirectoryTreeTable, event.key);
@@ -448,7 +448,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             label: 'Move',
             icon: 'pi pi-fw pi-arrow-right',
             command: () => {
-              if (this.currentDirectory != null) this.onMoveFileSelect(this.currentDirectory);
+              if (this.currentDirectory != null) this.onMoveFileSelect(this.currentDirectory, '', '');
               else {
                 this.messageService.add({ severity: 'warn', summary: 'Please Select a Folder or File to Move', detail: 'Not mucho intelligento' })
               }
@@ -565,6 +565,38 @@ export class HomeComponent implements OnInit, AfterViewInit {
   newFolder() {
     console.log('new folder');
     this.folderService.createFolder('', 'New Folder', '');
+  }
+
+  getEntityToMoveName() {
+    if (this.entityToMove != null) {
+      return '"' + this.entityToMove.data.name + '"';
+    }
+    return "";
+  }
+
+  getCurrentDirectoryName() {
+    if (this.currentDirectory != null) {
+      return '"' + this.currentDirectory.data.name + '"';
+    }
+    return "Pick A Directory";
+  }
+
+  moveEntity() {
+    const destinationFolder = this.nodeService.getFolderDTOByID(this.currentDirectory.key);
+    let path: string | undefined = destinationFolder.Path + `/${destinationFolder.FolderName}`;
+    if (destinationFolder.Path === '') {
+      path = destinationFolder.FolderName;
+    }
+
+    if (this.entityToMove.data.type === 'folder') {
+      this.folderService.moveFolder(this.entityToMove.key, path, destinationFolder.FolderID).then((data) => {
+        this.moveDialogVisible = false;
+      });
+    } else {
+      this.fileService.moveDocument(this.entityToMove.key, path, destinationFolder.FolderID).then((data) => {
+        this.moveDialogVisible = false;
+      });
+    }
   }
   protected readonly focus = focus;
 }

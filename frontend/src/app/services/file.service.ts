@@ -7,6 +7,7 @@ import { UserService } from './user.service';
 import { EditService } from './edit.service';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ImportDTO } from './dto/import.dto';
+import { resolve } from 'path';
 
 @Injectable({
   providedIn: 'root',
@@ -127,7 +128,7 @@ export class FileService {
     body.UserID = this.userService.getUserID();
     body.Path = '';
     body.Name = 'New Document';
-    body.ParentFolderID = '1 ';
+    body.ParentFolderID = '';
 
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -334,6 +335,29 @@ export class FileService {
     body.Type = type;
 
     console.log("Body Import: " + JSON.stringify(body));
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  exportDocument(): Promise<string>{
+    return Promise.resolve("");
+  }
+
+  sendExportData(markdownID: string | undefined, path: string | undefined): Observable<HttpResponse<any>> {
+    const url = 'http://localhost:3000/file_manager/export';
+    const body = new ImportDTO();
+
+    // body.UserID = this.userService.getUserID();
+    // body.Path = path;
+    // body.Name = name;
+    // body.ParentFolderID = parentFolderID;
+    // body.Content = content;
+    // body.Type = type;
+
+    // console.log("Body Import: " + JSON.stringify(body));
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()

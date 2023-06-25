@@ -71,101 +71,112 @@ export class NodeService {
   getTreeTableNodesData(): any {
 
     let directoryObject: {
-        key: string | undefined,
-        data: { name: string | undefined, size: number | undefined, type: string | undefined },
-        children?: [{}] }[] = [];
+      key: string | undefined,
+      data: { name: string | undefined, size: number | undefined, type: string | undefined },
+      children?: [{}]
+    }[] = [];
 
-        for(const file of this.files){
-          directoryObject.push({
-            key: file.MarkdownID,
-            data: { name: file.Name, size: file.Size, type: 'file' }
-          });
-        }
+    // for(const file of this.files){
+    //   directoryObject.push({
+    //     key: file.MarkdownID,
+    //     data: { name: file.Name, size: file.Size, type: 'file' }
+    //   });
+    // }
 
-        for(const folder of this.folders){
-          directoryObject.push({
-            key: folder.FolderID,
-            data: { name: folder.FolderName, size: 0, type: 'folder' }
-          });
-        }
-        return directoryObject;
-    /*
-      const rootFiles = this.getRootFiles();
-      const rootFolders = this.getRootFolders();
+    // for(const folder of this.folders){
+    //   directoryObject.push({
+    //     key: folder.FolderID,
+    //     data: { name: folder.FolderName, size: 0, type: 'folder' }
+    //   });
+    // }
+    // return directoryObject;
 
-      for (let file of rootFiles) {
-        directoryObject.push({
-          key: file.FileID,
-          data: { name: file.FileName, size: file.FileSize, type: 'file' }
-        });
-      }
+    const rootFiles = this.getRootFiles();
+    const rootFolders = this.getRootFolders();
 
-      for (let folder of rootFolders) {
-        directoryObject.push(this.getTreeTableNodesDataHelper(folder, 1));
-      }
-
-      return directoryObject;
-*/
-  }
-
-  private getTreeTableNodesDataHelper(folder:any, depth:number): any {
-    let files = this.findAllChildrenFiles(folder.FolderID);
-    let folders = this.findAllChildrenFolders(folder.FolderID);
-
-    let folderObject = {
-      key: folder.FolderID,
-      data: { name: folder.FolderName, size: 0, type: 'folder' },
-      children: [{}]
-    }
-
-    for (let file of files) {
-      folderObject.children.push({
-        key: file.FileID,
-        data: { name: file.FileName, size: file.FileSize, type: 'file' }
+    for (let file of rootFiles) {
+      directoryObject.push({
+        key: file.MarkdownID,
+        data: { name: file.Name, size: file.Size, type: 'file' }
       });
     }
 
-    for( let folder of folders){
-      folderObject.children.push(this.getTreeTableNodesDataHelper(folder, depth+1));
+    for (let folder of rootFolders) {
+      directoryObject.push(this.getTreeTableNodesDataHelper(folder, 1));
     }
 
-    return folderObject;
+    console.log("directoryObject: ", directoryObject);
+    return directoryObject;
   }
 
-  private findAllChildrenFiles(parentID:string|undefined){
+  private getTreeTableNodesDataHelper(folder: any, depth: number): any {
+    let files = this.findAllChildrenFiles(folder.FolderID);
+    let folders = this.findAllChildrenFolders(folder.FolderID);
+    if (folders.length + files.length === 0) {
+      return {
+        key: folder.FolderID,
+        data: { name: folder.FolderName, size: 0, type: 'folder' }
+      }
+    } else {
+      let folderObject = {
+        key: folder.FolderID,
+        data: { name: folder.FolderName, size: 0, type: 'folder' },
+        children: [{}]
+      }
+
+      let x=0;
+      folderObject.children.pop();
+      for (let file of files) {
+        console.log(x+" file: ", file);
+        folderObject.children.push({
+          key: file.MarkdownID,
+          data: { name: file.Name, size: file.Size, type: 'file' }
+        });
+        console.log("folderObject: ", folderObject);
+      }
+
+      for (let folder of folders) {
+        folderObject.children.push(this.getTreeTableNodesDataHelper(folder, depth + 1));
+      }
+
+      return folderObject;
+    }
+  }
+
+  private findAllChildrenFiles(parentID: string | undefined) {
     let children: any[] = [];
     for (let file of this.files) {
-      if (file.Path === '') {
+      if (file.ParentFolderID === parentID) {
         children.push(file);
       }
     }
     return children;
   }
 
-  private findAllChildrenFolders(parentID:string|undefined){
+  private findAllChildrenFolders(parentID: string | undefined) {
     let children: any[] = [];
     for (let folder of this.folders) {
-      if (folder.Path === '') {
+      if (folder.ParentFolderID === parentID) {
         children.push(folder);
       }
     }
     return children;
   }
 
-  private getRootFiles(){
+  private getRootFiles() {
     let rootFiles: any[] = [];
     for (let file of this.files) {
-      if (file.ParentFolderID === undefined) {
+      if (file.Path === '') {
         rootFiles.push(file);
       }
     }
     return rootFiles;
   }
 
-  private getRootFolders(){
+  private getRootFolders() {
     let rootFolders: any[] = [];
     for (let folder of this.folders) {
-      if (folder.ParentFolderID === undefined) {
+      if (folder.Path === '') {
         rootFolders.push(folder);
       }
     }

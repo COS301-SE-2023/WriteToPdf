@@ -11,7 +11,13 @@
         <p-menubar  [autoZIndex] = false [model]="menuBarItems"></p-menubar>
       </div>
     </div>
-
+        <p-dialog header="Export File" [(visible)]="moveDialogVisible" [style]="{ width: '50vw' }">
+          <div class="flex py-2 justify-content-center moveDialogueContainer">
+            <p>Move {{getEntityToMoveName()}} to: {{getCurrentDirectoryName()}}</p>
+            <p-button label="Move" (click)="moveEntity()"></p-button>
+            <!-- <input type="text" pInputText [(ngModel)]="folderTo" /> -->
+          </div>
+        </p-dialog>
 
     <div class = "speedDialEditMenu">
       <p-speedDial class="speedDial" [model]="speedDialItems" direction="down"></p-speedDial>
