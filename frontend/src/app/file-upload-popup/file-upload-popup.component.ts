@@ -27,9 +27,10 @@ export class FileUploadPopupComponent {
     reader.onload = (e: any) => {
       const fileContent = e.target.result;
       console.log(fileContent);
-      const type = file.name.split('.').pop();
+      const name = file.name.split('.')[0];
+      const type = file.name.split('.')[1];
       console.log(type);
-      this.fileService.importDocument(file.name, '', '', fileContent, type);
+      this.fileService.importDocument(name, '', '', fileContent, type);
     };
 
     reader.readAsText(file);
