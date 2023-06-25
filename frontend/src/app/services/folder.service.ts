@@ -132,7 +132,7 @@ export class FolderService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  createFolder(path: string, folderName: string, parentFolderID: string): Promise<boolean> {
+  createFolder(path: string | undefined, folderName: string, parentFolderID: string | undefined): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendCreateData(path, folderName, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -150,7 +150,7 @@ export class FolderService {
     });
   }
 
-  sendCreateData(path:string, folderName:string, parentFolderID:string): Observable<HttpResponse<any>> {
+  sendCreateData(path: string | undefined, folderName: string, parentFolderID: string | undefined): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/create_folder';
     const body = new FolderDTO();
 

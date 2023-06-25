@@ -250,7 +250,8 @@ export class NodeService {
     let i = 0;
     if (type === 'folder') {
       while (this.checkIfFolderExists(newName, path)) {
-
+        newName = name + '(' + i + ')';
+        i++;
       }
     }
     else{

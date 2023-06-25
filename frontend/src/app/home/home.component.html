@@ -18,24 +18,33 @@
         <!-- <input type="text" pInputText [(ngModel)]="folderTo" /> -->
       </div>
     </p-dialog>
-    
+
     <div class="speedDialEditMenu">
       <p-speedDial class="speedDial" [model]="speedDialItems" direction="down"></p-speedDial>
     </div>
-    <p-dialog header="Create Document" [(visible)]="createNewDocumentDialogueVisible" [style]="{ width: '50vw' }">
+    <p-dialog header="Create Document" [modal]="true" [(visible)]="createNewDocumentDialogueVisible" [style]="{ width: '50vw' }">
       <div class="flex py-2 justify-content-center"></div>
       <p>Document Name: </p>
-      <input type="text" pInputText [(ngModel)]="documentName" label="Document Name: " />
-      <br/>
-      <br/>
+      <input type="text" pInputText [(ngModel)]="entityName" label="Document Name: " />
+      <br />
+      <br />
       <p-button label="Create" (click)="createNewDocument()"></p-button>
+    </p-dialog>
+
+    <p-dialog header="Create Folder" [modal]="true" [(visible)]="createNewFolderDialogueVisible" [style]="{ width: '50vw' }">
+      <div class="flex py-2 justify-content-center"></div>
+      <p>Folder Name: </p>
+      <input type="text" pInputText [(ngModel)]="entityName" label="Folder Name: " />
+      <br />
+      <br />
+      <p-button label="Create" (click)="newFolder()"></p-button>
     </p-dialog>
   </div>
 
   <div id="scrollingDiv" class="leftSideBarWrapper">
     <div class="leftSideBarHeading">{{getUserFirstName()}}'s Projects</div>
     <div class="leftSideBarTools">
-      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png" (click)="newFolder()">
+      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png" (click)="createNewFolderDialogueVisible=true">
       <img class="icon newDoc" src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png"
         (click)="navigateToPage('edit')">
       <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png">

@@ -61,7 +61,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public entityToMove: any;
   public destinationDirectory: any;
   public createNewDocumentDialogueVisible: boolean = false;
-  public documentName: string = "";
+  public createNewFolderDialogueVisible: boolean = false;
+  public entityName: string = "";
   uploadedFiles: any[] = [];
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
@@ -563,9 +564,39 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return this.userService.getFirstName();
   }
 
-  newFolder() {
-    console.log('new folder');
-    this.folderService.createFolder('', 'New Folder', '');
+  async newFolder() {
+    let path: string | undefined = '';
+    let parentFolderID: string | undefined = '';
+    if (this.entityName == '') {
+      this.entityName = 'New Folder';
+    }
+
+    if (this.currentDirectory != null) {
+      if (this.currentDirectory.data.type === 'folder') {
+        const folder = this.nodeService.getFolderDTOByID(this.currentDirectory.key);
+        path = folder.Path;
+        if (folder.Path !== '')
+          path += `/${this.currentDirectory.data.name}`;
+        else
+          path += `${this.currentDirectory.data.name}`;
+      } else {
+        const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
+        path = file.Path;
+      }
+
+      parentFolderID = this.currentDirectory.key;
+      if (this.currentDirectory.data.type !== 'folder') {
+        const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
+        parentFolderID = file.ParentFolderID;
+      }
+    }
+
+    this.entityName = this.nodeService.getUniqueName(this.entityName, path, 'file');
+
+    if(await this.folderService.createFolder(path, this.entityName, parentFolderID)){
+      this.entityName = '';
+      this.createNewFolderDialogueVisible = false;
+    }
   }
 
   getEntityToMoveName() {
@@ -604,8 +635,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     let path:string|undefined = '';
     let parentFolderID:string|undefined = '';
-    if (this.documentName == '') {
-      this.documentName = 'New Document';
+    if (this.entityName == '') {
+      this.entityName = 'New Document';
     }
 
     if (this.currentDirectory != null) {
@@ -628,10 +659,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     }
     
-    this.documentName = this.nodeService.getUniqueName(this.documentName, path, 'file');
+    this.entityName = this.nodeService.getUniqueName(this.entityName, path, 'file');
 
-    if (await this.fileService.createDocument(this.documentName, path, parentFolderID)) {
-      this.documentName = '';
+    if (await this.fileService.createDocument(this.entityName, path, parentFolderID)) {
+      this.entityName = '';
+      this.createNewDocumentDialogueVisible = false;
       this.navigateToPage("edit");
     }
   }
