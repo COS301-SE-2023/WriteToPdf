@@ -154,6 +154,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
    * home.service.ts
    */
   generateTreeNodes(data: any[]): TreeNode[] {
+    console.log("Generating tree nodes");
+    console.log(data);
     return data.map(item => {
       const node: TreeNode = {
         key: item.key,
@@ -172,26 +174,25 @@ export class HomeComponent implements OnInit, AfterViewInit {
         const data = this.nodeService.getTreeTableNodesData();
         this.filesDirectoryTree = this.generateTreeNodes(data);
 
-        console.log(JSON.stringify(data));
 
         // Below is the function that populates the treeTable
         // Note, both filtered and non-filtered needs to be made and kept up to date,
         // as the non-filtered serves as the filter for the filters for the logic in the filter function
         // below
         this.nodeService.getTreeTableNodes().then((data) => {
-            this.filesDirectoryTreeTable = data;
-          }
+          this.filesDirectoryTreeTable = data;
+        }
         );
         this.nodeService.getTreeTableNodes().then((data) => (this.filteredFilesDirectoryTreeTable = data));
         this.treeTableColumns = [
-          {field: 'name', header: 'Name'},
-          {field: 'size', header: 'Size'},
-          {field: 'type', header: 'Type'}
+          { field: 'name', header: 'Name' },
+          { field: 'size', header: 'Size' },
+          { field: 'type', header: 'Type' }
         ];
       });
       //Below is the code that populates the directoryPath
       // this.activeDirectoryItems = [{ label: 'Computer' }, { label: 'Notebook' }, { label: 'Accessories' }, { label: 'Backpacks' }, { label: 'Item' }];
-      this.directoryHome = {icon: 'pi pi-home', routerLink: '/'};
+      this.directoryHome = { icon: 'pi pi-home', routerLink: '/' };
       //Below is the code that populates the menu items, can be done intelligently with regards to current selection
       //in main window.
       document.getElementsByClassName("menubar");
@@ -352,15 +353,47 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
+  onMoveFileSelect(event: any): void {
+    console.log(event);
+    const file = this.nodeService.getFileDTOByID(event.key);
+    console.log(file);
+    this.fileService.moveDocument(file.MarkdownID, file.Path, file.ParentFolderID).then((data) => {
+      
+    });
+  }
+
+  onMoveFolderSelect(event: any): void {
+    console.log(event);
+    const folder = this.nodeService.getFolderDTOByID(event.key);
+    console.log(folder);
+    this.folderService.moveFolder(folder.FolderID, folder.Path, folder.ParentFolderID).then((data) => {
+
+    });
+  }
+
   delete(event: any) {
     console.log('delete');
-    this.fileService.deleteDocument(event.key);
-    this.navigateToPage('home');
-    this.deleteEntryByKey(this.filesDirectoryTree, event.key);
-    this.deleteEntryByKey(this.filesDirectoryTreeTable, event.key);
-    this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.key);
-    this.filterTable("", 3);
-    this.currentDirectory = null;
+    console.log(event);
+    if(event.data.type == 'folder')
+    {
+      this.folderService.deleteFolder(event.key);
+      this.deleteEntryByKey(this.filesDirectoryTree, event.key);
+      this.deleteEntryByKey(this.filesDirectoryTreeTable, event.key);
+      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.key);
+      this.filterTable("", 3);
+      this.nodeService.removeFolder(event.key);
+      this.currentDirectory = null;
+    }
+    else
+    {
+      this.fileService.deleteDocument(event.key);
+      this.deleteEntryByKey(this.filesDirectoryTree, event.key);
+      this.deleteEntryByKey(this.filesDirectoryTreeTable, event.key);
+      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.key);
+      this.filterTable("", 3);
+      this.nodeService.removeFile(event.key);
+      this.currentDirectory = null;
+    }
   }
 
   deleteEntryByKey(data: TreeNode[], keyToDelete: string): void {
@@ -401,21 +434,31 @@ export class HomeComponent implements OnInit, AfterViewInit {
               }
             ]
           },
-    {
-      label: 'Open',
-      icon: 'pi pi-fw pi-folder',
-      command: () => {
-        if (this.currentDirectory!= null) this.onOpenFileSelect(this.currentDirectory);
-        else {
-          this.messageService.add({ severity: 'warn', summary: 'Please Select a Folder or File to Open', detail: 'Not mucho intelligento' })
-        }
-      }
-    },
+          {
+            label: 'Open',
+            icon: 'pi pi-fw pi-folder',
+            command: () => {
+              if (this.currentDirectory != null) this.onOpenFileSelect(this.currentDirectory);
+              else {
+                this.messageService.add({ severity: 'warn', summary: 'Please Select a Folder or File to Open', detail: 'Not mucho intelligento' })
+              }
+            }
+          },
+          {
+            label: 'Move',
+            icon: 'pi pi-fw pi-arrow-right',
+            command: () => {
+              if (this.currentDirectory != null) this.onMoveFileSelect(this.currentDirectory);
+              else {
+                this.messageService.add({ severity: 'warn', summary: 'Please Select a Folder or File to Move', detail: 'Not mucho intelligento' })
+              }
+            }
+          },
           {
             label: 'Delete',
             icon: 'pi pi-fw pi-trash',
-            command:() => {
-              if (this.currentDirectory!= null) this.delete(this.currentDirectory);
+            command: () => {
+              if (this.currentDirectory != null) this.delete(this.currentDirectory);
               else {
                 this.messageService.add({ severity: 'warn', summary: 'Please select a folder or File to Delete', detail: 'You twat' })
               }
@@ -427,7 +470,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           {
             label: 'Export',
             icon: 'pi pi-fw pi-external-link',
-            command:() => {
+            command: () => {
               //TODO implement downloading a file from the database
             }
           }

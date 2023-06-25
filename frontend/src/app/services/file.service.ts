@@ -203,7 +203,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  moveDocument(markdownID: string, path: string, parentFolderID: string) {
+  moveDocument(markdownID: string | undefined, path: string | undefined, parentFolderID: string | undefined) {
     // Will need to rerun directory structure function with new moved file.
     return new Promise<boolean>((resolve, reject) => {
       this.sendMoveData(markdownID, path, parentFolderID).subscribe({
@@ -223,9 +223,9 @@ export class FileService {
   }
 
   sendMoveData(
-    markdownID: string,
-    path: string,
-    parentFolderID: string
+    markdownID: string | undefined,
+    path: string | undefined,
+    parentFolderID: string | undefined
   ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/move_file';
     const body = new MarkdownFileDTO();

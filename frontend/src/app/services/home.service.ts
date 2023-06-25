@@ -69,51 +69,110 @@ export class NodeService {
 
 
   getTreeTableNodesData(): any {
-  //  return this.fileService.retrieveAllFiles().then(nodes => {
-  //     this.setFiles(nodes);
-
-  //     let directoryObject: {
-  //       RootChildren: {
-  //         key: string | undefined,
-  //         data: { name: string | undefined, size: number | undefined, type: string | undefined },
-  //       }[]
-  //     } = { RootChildren: [] };
-  //     for (let file of this.files) {
-  //       directoryObject.RootChildren.push({
-  //         key: file.MarkdownID,
-  //         data: { name: file.Name, size: file.Size, type: 'file' }
-  //       });
-  //     }
-  //     console.log(directoryObject.RootChildren);
-  //     return Promise.resolve(directoryObject.RootChildren);
-  //   });
 
     let directoryObject: {
-      RootChildren: {
         key: string | undefined,
         data: { name: string | undefined, size: number | undefined, type: string | undefined },
-        children?: {}[]
-      }[]
-    } = { RootChildren: [] };
+        children?: [{}] }[] = [];
 
-    for (let folder of this.folders) {
-      directoryObject.RootChildren.push({
-        key: folder.FolderID,
-        data: { name: folder.FolderName, size: 0, type: 'folder' },
-        children: [{ key: '0', data: { name: 'DUMMY DATA', size: 0, type: 'file' }}]
-      });
-    }
+        for(const file of this.files){
+          directoryObject.push({
+            key: file.MarkdownID,
+            data: { name: file.Name, size: file.Size, type: 'file' }
+          });
+        }
 
-    for (let file of this.files) {
-      directoryObject.RootChildren.push({
-        key: file.MarkdownID,
-        data: { name: file.Name, size: file.Size, type: 'file' }
-      });
-    }
+        for(const folder of this.folders){
+          directoryObject.push({
+            key: folder.FolderID,
+            data: { name: folder.FolderName, size: 0, type: 'folder' }
+          });
+        }
+        return directoryObject;
+    /*
+      const rootFiles = this.getRootFiles();
+      const rootFolders = this.getRootFolders();
 
+      for (let file of rootFiles) {
+        directoryObject.push({
+          key: file.FileID,
+          data: { name: file.FileName, size: file.FileSize, type: 'file' }
+        });
+      }
 
-    return directoryObject.RootChildren;
+      for (let folder of rootFolders) {
+        directoryObject.push(this.getTreeTableNodesDataHelper(folder, 1));
+      }
+
+      return directoryObject;
+*/
   }
+
+  private getTreeTableNodesDataHelper(folder:any, depth:number): any {
+    let files = this.findAllChildrenFiles(folder.FolderID);
+    let folders = this.findAllChildrenFolders(folder.FolderID);
+
+    let folderObject = {
+      key: folder.FolderID,
+      data: { name: folder.FolderName, size: 0, type: 'folder' },
+      children: [{}]
+    }
+
+    for (let file of files) {
+      folderObject.children.push({
+        key: file.FileID,
+        data: { name: file.FileName, size: file.FileSize, type: 'file' }
+      });
+    }
+
+    for( let folder of folders){
+      folderObject.children.push(this.getTreeTableNodesDataHelper(folder, depth+1));
+    }
+
+    return folderObject;
+  }
+
+  private findAllChildrenFiles(parentID:string|undefined){
+    let children: any[] = [];
+    for (let file of this.files) {
+      if (file.Path === '') {
+        children.push(file);
+      }
+    }
+    return children;
+  }
+
+  private findAllChildrenFolders(parentID:string|undefined){
+    let children: any[] = [];
+    for (let folder of this.folders) {
+      if (folder.Path === '') {
+        children.push(folder);
+      }
+    }
+    return children;
+  }
+
+  private getRootFiles(){
+    let rootFiles: any[] = [];
+    for (let file of this.files) {
+      if (file.ParentFolderID === undefined) {
+        rootFiles.push(file);
+      }
+    }
+    return rootFiles;
+  }
+
+  private getRootFolders(){
+    let rootFolders: any[] = [];
+    for (let folder of this.folders) {
+      if (folder.ParentFolderID === undefined) {
+        rootFolders.push(folder);
+      }
+    }
+    return rootFolders;
+  }
+
+
 
   async getFilesAndFolders() {
     this.setFolders(await this.folderService.retrieveAllFolders());
@@ -148,6 +207,15 @@ export class NodeService {
       }
     }
     return new MarkdownFileDTO();
+  }
+
+  getFolderDTOByID(FolderID: string): FolderDTO {
+    for (let folder of this.folders) {
+      if (folder.FolderID === FolderID) {
+        return folder;
+      }
+    }
+    return new FolderDTO();
   }
 
   addFile(file: MarkdownFileDTO) {

@@ -14,7 +14,7 @@ export class FolderService {
 
   constructor(private userService:UserService, private http: HttpClient) { }
 
-  moveFolder(folderID: string, path: string, parentFolderID: string): Promise<boolean> {
+  moveFolder(folderID: string | undefined, path: string | undefined, parentFolderID: string | undefined): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendMoveData(folderID, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -33,9 +33,9 @@ export class FolderService {
   }
 
   sendMoveData(
-    folderID: string,
-    path: string,
-    parentFolderID: string
+    folderID: string | undefined,
+    path: string | undefined,
+    parentFolderID: string | undefined
   ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/move_folder';
     const body = new FolderDTO();
