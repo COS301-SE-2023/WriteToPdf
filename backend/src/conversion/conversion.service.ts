@@ -5,13 +5,21 @@ import { convertTextToDelta } from 'node-quill-converter';
 
 @Injectable()
 export class ConversionService {
-  convertFrom(importDTO: ImportDTO) {
+  constructor() {
+    /* empty */
+  }
+
+  convertFrom(
+    importDTO: ImportDTO,
+  ): MarkdownFileDTO {
     if (importDTO.Type === 'txt') {
       return this.convertFromText(importDTO);
     }
   }
 
-  convertFromText(textDTO: ImportDTO) {
+  convertFromText(
+    textDTO: ImportDTO,
+  ): MarkdownFileDTO {
     const delta = convertTextToDelta(
       textDTO.Content,
     );
@@ -23,6 +31,7 @@ export class ConversionService {
     markdownFileDTO.Path = textDTO.Path;
     markdownFileDTO.ParentFolderID =
       textDTO.ParentFolderID;
+    markdownFileDTO.UserID = textDTO.UserID;
     return markdownFileDTO;
   }
 }

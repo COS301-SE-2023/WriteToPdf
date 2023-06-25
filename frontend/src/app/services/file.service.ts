@@ -319,7 +319,7 @@ export class FileService {
     body.Name = name;
     body.ParentFolderID = parentFolderID;
     body.Content = content;
-    body.Type = 'md';
+    body.Type = type;
 
     console.log("Body Import: " + JSON.stringify(body));
     const headers = new HttpHeaders().set(
