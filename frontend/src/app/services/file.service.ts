@@ -292,18 +292,30 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  importDocument(name:string, path:string, parentFolderID:string, content:string, type:string): Promise<boolean>{
-    return new Promise<boolean>((resolve, reject) => {
+  importDocument(name:string, path:string, parentFolderID:string, content:string, type:string): Promise<MarkdownFileDTO>{
+    return new Promise<MarkdownFileDTO>((resolve, reject) => {
       this.sendImportData(name, path, parentFolderID, content, type).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
           console.log(response.status);
+          const outputFile= new MarkdownFileDTO();
+
 
           if (response.status === 200) {
             console.log('Import successful');
-            resolve(true);
+
+            outputFile.Name = response.body.Name;
+            outputFile.Path = response.body.Path;
+            outputFile.ParentFolderID = response.body.ParentFolderID;
+            outputFile.Content = response.body.Content;
+            outputFile.MarkdownID = response.body.MarkdownID;
+            outputFile.Size = response.body.Size;
+            outputFile.DateCreated = response.body.DateCreated;
+            outputFile.LastModified = response.body.LastModified;
+
+            resolve(outputFile);
           } else {
-            resolve(false);
+            resolve(outputFile);
           }
         },
       });
