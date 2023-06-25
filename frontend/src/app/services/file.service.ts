@@ -15,7 +15,7 @@ export class FileService {
     private http: HttpClient,
     private userService: UserService,
     private editService: EditService
-  ) {}
+  ) { }
 
   saveDocument(
     content: string | undefined,
@@ -59,7 +59,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveDocument(markdownID: string|undefined, path: string|undefined): Promise<any> {
+  retrieveDocument(markdownID: string | undefined, path: string | undefined): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveData(markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -78,8 +78,8 @@ export class FileService {
   }
 
   sendRetrieveData(
-    markdownID: string|undefined,
-    path: string|undefined
+    markdownID: string | undefined,
+    path: string | undefined
   ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/retrieve_file';
     const body = new MarkdownFileDTO();
@@ -168,9 +168,9 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  renameDocument(fileName: string|undefined): Promise<boolean> {
+  renameDocument(markdownFileID:string|undefined, fileName: string | undefined, path:string|undefined): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.sendRenameData(fileName).subscribe({
+      this.sendRenameData(markdownFileID, fileName, path).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
           console.log(response.status);
@@ -186,13 +186,13 @@ export class FileService {
     });
   }
 
-  sendRenameData(name: string|undefined): Observable<HttpResponse<any>> {
+  sendRenameData(markdownFileID: string | undefined, name: string | undefined, path: string | undefined): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/rename_file';
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
-    body.Path = this.editService.getPath();
-    body.MarkdownID = this.editService.getMarkdownID();
+    body.MarkdownID = markdownFileID;
+    body.Path = path;
     body.Name = name;
 
     const headers = new HttpHeaders().set(
@@ -202,10 +202,10 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  moveDocument(path: string, markdownID: string, ParentFolderID: string) {
+  moveDocument(markdownID: string, path: string, parentFolderID: string) {
     // Will need to rerun directory structure function with new moved file.
     return new Promise<boolean>((resolve, reject) => {
-      this.sendMoveData(path, markdownID, ParentFolderID).subscribe({
+      this.sendMoveData(markdownID, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
           console.log(response.status);
@@ -222,9 +222,9 @@ export class FileService {
   }
 
   sendMoveData(
-    path: string,
     markdownID: string,
-    ParentFolderID: string
+    path: string,
+    parentFolderID: string
   ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/move_file';
     const body = new MarkdownFileDTO();
@@ -232,6 +232,7 @@ export class FileService {
     body.UserID = this.userService.getUserID();
     body.Path = path;
     body.MarkdownID = markdownID;
+    body.ParentFolderID = parentFolderID;
 
     const headers = new HttpHeaders().set(
       'Authorization',

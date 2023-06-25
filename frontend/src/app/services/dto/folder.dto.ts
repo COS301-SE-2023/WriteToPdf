@@ -5,7 +5,7 @@ export class FolderDTO {
     FolderName: string | undefined;
     Path: string | undefined;
     ParentFolderID: string | undefined;
-    UserID: string | undefined;
+    UserID: number | undefined;
 
     constructor() {
         this.FolderID = undefined;

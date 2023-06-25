@@ -6,9 +6,9 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem} from "primeng/api";
-import {FileUploadPopupComponent} from "../file-upload-popup/file-upload-popup.component";
-import {DialogService} from "primeng/dynamicdialog";
+import { MenuItem } from "primeng/api";
+import { FileUploadPopupComponent } from "../file-upload-popup/file-upload-popup.component";
+import { DialogService } from "primeng/dynamicdialog";
 import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
 
@@ -20,7 +20,7 @@ import { EditService } from '../services/edit.service';
 export class EditComponent implements AfterViewInit, OnInit {
   @ViewChild('quillEditor') quillEditor: any;
   documentContent: string | undefined = '';
-  fileName: string|undefined = '';
+  fileName: string | undefined = '';
   text: any;
   bold: boolean = false;
   sidebarVisible: boolean = true;
@@ -32,7 +32,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private dialogService: DialogService,
     private fileService: FileService,
     private editService: EditService
-  ) {}
+  ) { }
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
@@ -45,7 +45,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    
+
     this.hideSideBar();
     this.speedDialItems = [
       {
@@ -80,7 +80,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
-    
+
     setTimeout(() => {//Why wait 0ms? I don't know but it works
       const contents = this.editService.getContent();
       this.documentContent = contents;
@@ -88,7 +88,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         quill.setContents(JSON.parse(contents));
       }
     }, 0);
-    
+
     quill.focus();
 
 
@@ -195,17 +195,16 @@ export class EditComponent implements AfterViewInit, OnInit {
     quill.history.redo();
   }
 
-  hideSideBar(){
+  hideSideBar() {
     // get asset sidebar and set display none
     const sidebar = document.getElementsByClassName('assetSidebar')[0];
 
-    if(sidebar)
-    {
-      if(this.sidebarVisible){
+    if (sidebar) {
+      if (this.sidebarVisible) {
         sidebar.setAttribute('style', 'display:none');
         this.sidebarVisible = false;
       }
-      else{
+      else {
         sidebar.setAttribute('style', 'display:block');
         this.sidebarVisible = true;
       }
@@ -215,7 +214,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   rename() {
     console.log('rename');
-    this.fileService.renameDocument(this.fileName);
+    this.fileService.renameDocument(this.editService.getMarkdownID(), this.fileName, this.editService.getPath());
   }
 
   delete() {
