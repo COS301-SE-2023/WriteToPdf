@@ -147,7 +147,7 @@ describe('FileManagerController', () => {
       );
     });
 
-    it('should throw an error if path is undefined', () => {
+    it('should throw an error if Path is undefined', () => {
       const request = { method: 'POST' };
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -167,7 +167,7 @@ describe('FileManagerController', () => {
       );
     });
 
-    it('should throw an error if name is undefined', () => {
+    it('should throw an error if Name is undefined', () => {
       const request = { method: 'POST' };
       const markdownFileDTO =
         new MarkdownFileDTO();
