@@ -126,6 +126,27 @@ describe('FileManagerController', () => {
         );
       }
     });
+
+    it('should throw an error if MarkdownID is undefined', () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Path = 'example/path';
+      markdownFileDTO.Name = 'example.md';
+      // left MarkdownID as default undefined
+      expect(() =>
+        controller.renameFile(
+          markdownFileDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'MarkdownID cannot be undefined',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
   });
 
   describe('delete_file', () => {
