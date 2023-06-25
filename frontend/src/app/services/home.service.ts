@@ -253,6 +253,7 @@ export class NodeService {
         newName = name + '(' + i + ')';
         i++;
       }
+
     }
     else{
       while (this.checkIfFileExists(newName, path)) {
@@ -260,9 +261,8 @@ export class NodeService {
         i++;
       }
 
-      return newName;
     }
-    return "New Document";
+    return newName;
   }
 
   private checkIfFolderExists(name: string, path: string | undefined): boolean {

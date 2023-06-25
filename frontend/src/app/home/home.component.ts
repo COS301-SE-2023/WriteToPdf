@@ -18,7 +18,6 @@ import { FileUploadPopupComponent } from "../file-upload-popup/file-upload-popup
 import { ViewChild } from '@angular/core';
 import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
-import { get } from 'cypress/types/lodash';
 
 interface Column {
   field: string;
@@ -591,12 +590,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     }
 
-    this.entityName = this.nodeService.getUniqueName(this.entityName, path, 'file');
+    this.entityName = this.nodeService.getUniqueName(this.entityName, path, 'folder');
 
-    if(await this.folderService.createFolder(path, this.entityName, parentFolderID)){
-      this.entityName = '';
+    this.folderService.createFolder(path, this.entityName, parentFolderID).then((data) => {
+
+      this.nodeService.addFolder(data);
+      this.refreshTree();
       this.createNewFolderDialogueVisible = false;
-    }
+      this.entityName = '';
+    });
   }
 
   getEntityToMoveName() {
@@ -622,10 +624,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     if (this.entityToMove.data.type === 'folder') {
       this.folderService.moveFolder(this.entityToMove.key, path, destinationFolder.FolderID).then((data) => {
+        this.nodeService.removeFolder(this.entityToMove.key);
+        data.FolderName=this.entityToMove.data.name;
+        
+        this.nodeService.addFolder(data);
+        this.refreshTree();
         this.moveDialogVisible = false;
       });
     } else {
       this.fileService.moveDocument(this.entityToMove.key, path, destinationFolder.FolderID).then((data) => {
+        this.nodeService.removeFile(this.entityToMove.key);
+        data.Name=this.entityToMove.data.name;
+        data.Size=this.entityToMove.data.size;
+        this.nodeService.addFile(data);
+        this.refreshTree();
         this.moveDialogVisible = false;
       });
     }
@@ -670,6 +682,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   outputCurrDir() {
     console.log(this.currentDirectory);
+  }
+
+  refreshTree() {
+    const directory = this.nodeService.getTreeTableNodesData();
+    this.filesDirectoryTree = this.generateTreeNodes(directory);
+    this.nodeService.getTreeTableNodes().then((data) => {
+      this.filesDirectoryTreeTable = data;
+    }
+    );
+    this.nodeService.getTreeTableNodes().then((data) => (this.filteredFilesDirectoryTreeTable = data));
+    this.treeTableColumns = [
+      { field: 'name', header: 'Name' },
+      { field: 'size', header: 'Size' },
+      { field: 'type', header: 'Type' }
+    ];
   }
   protected readonly focus = focus;
 }

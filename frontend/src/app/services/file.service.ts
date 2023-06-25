@@ -204,9 +204,9 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  moveDocument(markdownID: string | undefined, path: string | undefined, parentFolderID: string | undefined) {
+  moveDocument(markdownID: string | undefined, path: string | undefined, parentFolderID: string | undefined): Promise<MarkdownFileDTO> {
     // Will need to rerun directory structure function with new moved file.
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<MarkdownFileDTO>((resolve, reject) => {
       this.sendMoveData(markdownID, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
@@ -214,9 +214,16 @@ export class FileService {
 
           if (response.status === 200) {
             console.log('Move successful');
-            resolve(true);
+            const markdownFile = new MarkdownFileDTO();
+            markdownFile.MarkdownID = response.body.MarkdownID;
+            markdownFile.Name = response.body.Name;
+            markdownFile.Path = response.body.Path;
+            markdownFile.ParentFolderID = response.body.ParentFolderID;
+
+            resolve(markdownFile);
           } else {
-            resolve(false);
+            console.log('Move unsuccessful');
+            reject();
           }
         },
       });
