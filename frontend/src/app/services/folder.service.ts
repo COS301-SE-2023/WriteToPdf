@@ -151,7 +151,7 @@ export class FolderService {
   }
 
   sendCreateData(path:string, folderName:string, parentFolderID:string): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/create_file';
+    const url = 'http://localhost:3000/file_manager/create_folder';
     const body = new FolderDTO();
 
     body.UserID = this.userService.getUserID();

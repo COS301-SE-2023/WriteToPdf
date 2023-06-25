@@ -292,9 +292,9 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  importDocument(name:string, path:string, parentFolderID:string, content:string): Promise<boolean>{
+  importDocument(name:string, path:string, parentFolderID:string, content:string, type:string): Promise<boolean>{
     return new Promise<boolean>((resolve, reject) => {
-      this.sendImportData(name, path, parentFolderID, content).subscribe({
+      this.sendImportData(name, path, parentFolderID, content, type).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
           console.log(response.status);
@@ -310,7 +310,7 @@ export class FileService {
     });
   }
 
-  sendImportData(name: string, path: string, parentFolderID: string, content: string): Observable<HttpResponse<any>> {
+  sendImportData(name: string, path: string, parentFolderID: string, content: string, type:string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/import';
     const body = new ImportDTO();
 
@@ -319,6 +319,7 @@ export class FileService {
     body.Name = name;
     body.ParentFolderID = parentFolderID;
     body.Content = content;
+    body.Type = 'md';
 
     console.log("Body Import: " + JSON.stringify(body));
     const headers = new HttpHeaders().set(
