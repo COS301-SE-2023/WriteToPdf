@@ -337,7 +337,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   onTableNodeSelect(event: any): void {
-
+    console.log(event);
     const file = this.nodeService.getFileDTOByID(event.node.key);
     console.log(file);
 
@@ -351,8 +351,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getUserEmail(): string|undefined {
-    return this.userService.getEmail();
+  getUserFirstName(): string|undefined {
+    return this.userService.getFirstName();
   }
 
   protected readonly focus = focus;
