@@ -2,7 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataSourceOptions } from '../db/data-source';
+import {
+  dataSourceOptions,
+  testDBOptions,
+} from '../db/data-source';
 import { MarkdownFilesModule } from './markdown_files/markdown_files.module';
 import { AssetsModule } from './assets/assets.module';
 import { FoldersModule } from './folders/folders.module';
@@ -30,6 +33,7 @@ import { ConversionService } from './conversion/conversion.service';
     EditModule,
     UsersModule,
     TypeOrmModule.forRoot(dataSourceOptions),
+    TypeOrmModule.forRoot(testDBOptions),
     TypeOrmModule.forFeature([MarkdownFile]),
     TypeOrmModule.forFeature([Folder]),
     MarkdownFilesModule,

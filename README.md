@@ -9,7 +9,8 @@
 <!--![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/COS301-SE-2023/WriteToPdf) -->
 [![codecov](https://codecov.io/gh/COS301-SE-2023/WriteToPdf/branch/main/graph/badge.svg?token=2CELOVRCM3)](https://codecov.io/gh/COS301-SE-2023/WriteToPdf)
 ![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf)
-[![MainTests](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test.yml)
+[![Build](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/build.yml)
+[![Tests](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test.yml/badge.svg?branch=test)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test.yml)
 [![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2023/WriteToPdf?color=blue)](https://github.com/COS301-SE-2023/WriteToPdf/issues?q=is%3Aissue+is%3Aclosed)
 [![Commits](https://img.shields.io/github/commit-activity/w/COS301-SE-2023/WriteToPdf)](https://github.com/COS301-SE-2023/WriteToPdf/issues)
 [![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml)
@@ -26,11 +27,24 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 
 ## Demos
 - [Demo 1](https://drive.google.com/drive/folders/1D8awdHGBDuI7PGQYF_jtX9iGq_9PWY3x?usp=sharing)
-
+- [Demo 2](https://drive.google.com/drive/folders/1QVIrOEi5PJAhG8DMwNrwjIcF7Gocu8LK?usp=sharing)
 
 ## Documentation
-<a href="https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing">Software Requirement Specification</a><br/>
-[Member contributions](https://docs.google.com/document/d/14n7aEG_Lwh3dXSq6ltJ8XE_rzAREMGsH-3B-crGn2fM/edit?usp=sharing)
+### Software requirements specification
+- [SRS v1](https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing)
+- [SRS v2](https://docs.google.com/document/d/196IHwe8rBytZlJOIvh8gGMJUIhs1joQ91NA5TIrqbV4/edit?usp=sharing)
+
+### Architecture
+- [Architecture v1](https://docs.google.com/document/d/1skoEPk1VvtO8P9fyWIVFyUuf0ssU1aI8G-wrYYNbeyg/edit?usp=sharing)
+
+### User Manual
+- [User manual v1](https://docs.google.com/document/d/1zUkgP6SMe9ti3cEWSjjO4yTOUCb1NZnV1_J4SeadA7A/edit?usp=sharing)
+
+### Coding standards
+- [Coding standards](https://github.com/COS301-SE-2023/WriteToPdf/wiki/Coding-Standards)
+
+### Member contributions
+- [Member contributions](https://docs.google.com/document/d/14n7aEG_Lwh3dXSq6ltJ8XE_rzAREMGsH-3B-crGn2fM/edit?usp=sharing)
 
 ## Tech Stack
 
@@ -57,13 +71,6 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 
 ## Organisation & Management
 We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issues</a> and <a href="https://github.com/COS301-SE-2023/WriteToPdf/projects?query=is%3Aopen">Github Projects</a> to organise our team, with different members being assigned to specific tasks to ensure effective use of each member’s time. 
-
-## Branching strategy
-The main branch is the live/deployed branch.
-Test branch is used to run all tests.
-A feature branch will be created for each feature being worked on.
-
-Merge feature branches into test, then merge test into main.
 
 
 ## Repository Structure

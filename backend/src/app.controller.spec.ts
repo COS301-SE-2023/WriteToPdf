@@ -4,6 +4,7 @@ import {
 } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AppModule } from './app.module';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -20,11 +21,16 @@ describe('AppController', () => {
     );
   });
 
-  describe('root', () => {
+  describe('root/config', () => {
     it('should return "Hello World!"', () => {
       expect(appController.getHello()).toBe(
         'Hello World!',
       );
+    });
+
+    it('new app module should be correctly instantiated', async () => {
+      const appModule = new AppModule();
+      expect(appModule).toBeDefined();
     });
   });
 });
