@@ -47,6 +47,7 @@ describe('FileManagerService', () => {
               createFile: jest.fn(),
               renameFile: jest.fn(),
               renameFolder: jest.fn(),
+              createFolder: jest.fn(),
             },
           },
           {
@@ -80,6 +81,28 @@ describe('FileManagerService', () => {
   describe('root/config', () => {
     it('file manager service should be defined', () => {
       expect(fileManagerService).toBeDefined();
+    });
+  });
+
+  describe('create_folder', () => {
+    it('should throw an error if FolderName is undefined', async () => {
+      const folderDTO = new FolderDTO();
+
+      try {
+        await fileManagerService.createFolder(
+          folderDTO,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'FolderName cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
     });
   });
 
