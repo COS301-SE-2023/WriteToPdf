@@ -75,12 +75,13 @@ export class MarkdownFilesService {
   async updateLastModified(
     markdownDTO: MarkdownFileDTO,
   ) {
-    const markdownToUpdate =
+    let markdownToUpdate =
       await this.markdownFileRepository.findOneBy(
         {
           MarkdownID: markdownDTO.MarkdownID,
         },
       );
+    markdownToUpdate = markdownDTO;
     markdownToUpdate.LastModified = new Date();
     return this.markdownFileRepository.save(
       markdownToUpdate,

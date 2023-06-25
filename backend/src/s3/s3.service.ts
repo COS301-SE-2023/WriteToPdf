@@ -175,6 +175,8 @@ export class S3Service {
     //   fileStats.mtime;
     markdownFileDTO.Size = fileStats.size;
 
+    console.log(markdownFileDTO);
+
     return markdownFileDTO;
   }
 
