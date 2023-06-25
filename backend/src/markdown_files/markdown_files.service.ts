@@ -24,13 +24,14 @@ export class MarkdownFilesService {
   async updateName(
     updateMarkdownFileDTO: MarkdownFileDTO,
   ): Promise<any> {
-    const markdownFile =
+    let markdownFile =
       await this.markdownFileRepository.findOne({
         where: {
           MarkdownID:
             updateMarkdownFileDTO.MarkdownID,
         },
       });
+    markdownFile = updateMarkdownFileDTO;
     markdownFile.Name =
       updateMarkdownFileDTO.Name;
 
@@ -42,13 +43,14 @@ export class MarkdownFilesService {
   async updatePath(
     updateMarkdownFileDTO: MarkdownFileDTO,
   ): Promise<any> {
-    const markdownFile =
+    let markdownFile =
       await this.markdownFileRepository.findOne({
         where: {
           MarkdownID:
             updateMarkdownFileDTO.MarkdownID,
         },
       });
+    markdownFile = updateMarkdownFileDTO;
     markdownFile.Path =
       updateMarkdownFileDTO.Path;
 
