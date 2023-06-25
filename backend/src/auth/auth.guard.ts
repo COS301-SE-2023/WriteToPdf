@@ -24,11 +24,11 @@ export class AuthGuard implements CanActivate {
       .switchToHttp()
       .getRequest();
 
-    if (request.method !== 'POST') {
-      throw new UnauthorizedException(
-        'Method Not Allowed',
-      );
-    }
+    // if (request.method !== 'POST') {
+    //   throw new UnauthorizedException(
+    //     'Method Not Allowed',
+    //   );
+    // }
 
     const isPublicEndpoint =
       this.reflector.getAllAndOverride<boolean>(

@@ -41,6 +41,7 @@ export class S3Controller {
   }
 
   @Get('download')
+  @UseInterceptors(FileInterceptor('file'))
   async download(@Body() fileDTO: FileDTO) {
     return await this.s3Service.download(fileDTO);
   }
