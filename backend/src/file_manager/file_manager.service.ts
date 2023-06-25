@@ -14,6 +14,7 @@ import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
 import { ImportDTO } from './dto/import.dto';
 import { ConversionService } from '../conversion/conversion.service';
+import { ExportDTO } from './dto/export.dto';
 
 @Injectable()
 export class FileManagerService {
@@ -287,6 +288,19 @@ export class FileManagerService {
     returnedDTO.Content = deltaContent;
 
     return returnedDTO;
+  }
+
+  async exportFile(exportDTO: ExportDTO) {
+    if (exportDTO.MarkdownID === undefined)
+      throw new HttpException(
+        'MarkdownID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const convertedDTO =
+      this.conversionService.convertTo(exportDTO);
+
+    return convertedDTO;
   }
 
   /**

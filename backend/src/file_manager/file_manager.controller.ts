@@ -16,6 +16,7 @@ import { FolderDTO } from '../folders/dto/folder.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ImportDTO } from './dto/import.dto';
+import { ExportDTO } from './dto/export.dto';
 
 @Controller('file_manager')
 export class FileManagerController {
@@ -360,7 +361,7 @@ export class FileManagerController {
   @HttpCode(HttpStatus.OK)
   import(
     @Body()
-    importDto: ImportDTO,
+    importDTO: ImportDTO,
     @Req() request: Request,
   ) {
     if (request.method !== 'POST') {
@@ -371,7 +372,7 @@ export class FileManagerController {
     }
     const receivedDTO = plainToClass(
       ImportDTO,
-      importDto,
+      importDTO,
     );
     const errors = validateSync(receivedDTO);
 
@@ -382,14 +383,51 @@ export class FileManagerController {
       );
     }
 
-    if (importDto.UserID === undefined)
+    if (importDTO.UserID === undefined)
       throw new HttpException(
         'UserID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
 
     return this.file_manager_service.importFile(
-      importDto,
+      importDTO,
+    );
+  }
+
+  @Post('export')
+  @HttpCode(HttpStatus.OK)
+  export(
+    @Body()
+    exportDTO: ExportDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+    const receivedDTO = plainToClass(
+      ExportDTO,
+      exportDTO,
+    );
+    const errors = validateSync(receivedDTO);
+
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (exportDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.file_manager_service.exportFile(
+      exportDTO,
     );
   }
 
