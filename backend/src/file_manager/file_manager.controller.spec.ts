@@ -17,6 +17,7 @@ import { Repository } from 'typeorm';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
 import { FileManagerModule } from './file_manager.module';
+import { DirectoryFilesDTO } from './dto/directory_files.dto';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -410,6 +411,31 @@ describe('FileManagerController', () => {
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+  });
+
+  describe('retrieve_all_files', () => {
+    it('should throw exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const directoryFilesDTO =
+        new DirectoryFilesDTO();
+      try {
+        await controller.retrieveAllFiles(
+          directoryFilesDTO,
+          request as any,
+        );
+        // expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
         );
       }
     });
