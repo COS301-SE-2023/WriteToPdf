@@ -124,10 +124,10 @@ export class NodeService {
         children: [{}]
       }
 
-      let x=0;
+      let x = 0;
       folderObject.children.pop();
       for (let file of files) {
-        console.log(x+" file: ", file);
+        console.log(x + " file: ", file);
         folderObject.children.push({
           key: file.MarkdownID,
           data: { name: file.Name, size: file.Size, type: 'file' }
@@ -244,4 +244,42 @@ export class NodeService {
   removeFolder(folder: FolderDTO) {
     this.folders.splice(this.folders.indexOf(folder), 1);
   }
-};
+
+  getUniqueName(name: string, path: string | undefined, type: string): string {
+    let newName = name;
+    let i = 0;
+    if (type === 'folder') {
+      while (this.checkIfFolderExists(newName, path)) {
+
+      }
+    }
+    else{
+      while (this.checkIfFileExists(newName, path)) {
+        newName = name + '(' + i + ')';
+        i++;
+      }
+
+      return newName;
+    }
+    return "New Document";
+  }
+
+  private checkIfFolderExists(name: string, path: string | undefined): boolean {
+    for (let folder of this.folders) {
+      if (folder.FolderName === name && folder.Path === path) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private checkIfFileExists(name: string, path: string | undefined): boolean {
+    for (let file of this.files) {
+      if (file.Name === name && file.Path === path) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+}

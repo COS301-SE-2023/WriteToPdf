@@ -608,7 +608,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.documentName = 'New Document';
     }
 
-    if (this.currentDirectory !== null) {
+    if (this.currentDirectory != null) {
       if (this.currentDirectory.data.type === 'folder') {
         const folder = this.nodeService.getFolderDTOByID(this.currentDirectory.key);
         path= folder.Path;
@@ -628,6 +628,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     }
     
+    this.documentName = this.nodeService.getUniqueName(this.documentName, path, 'file');
+
     if (await this.fileService.createDocument(this.documentName, path, parentFolderID)) {
       this.documentName = '';
       this.navigateToPage("edit");
