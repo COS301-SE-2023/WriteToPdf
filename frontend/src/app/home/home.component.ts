@@ -17,6 +17,7 @@ import { UserService } from '../services/user.service';
 import { FileUploadPopupComponent } from "../file-upload-popup/file-upload-popup.component";
 import { ViewChild } from '@angular/core';
 import { EditService } from '../services/edit.service';
+import { FolderService } from '../services/folder.service';
 
 interface Column {
   field: string;
@@ -65,7 +66,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private messageService: MessageService,
     private dialogService: DialogService, private fileService: FileService,
     private userService: UserService,
-    private editService: EditService) {
+    private editService: EditService,
+    private folderService: FolderService) {
   }
 
   navigateToPage(pageName: string) {
@@ -355,6 +357,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return this.userService.getFirstName();
   }
 
+  newFolder(){
+    this.folderService.createFolder('', 'New Folder', '');
+  }
   protected readonly focus = focus;
 }
 

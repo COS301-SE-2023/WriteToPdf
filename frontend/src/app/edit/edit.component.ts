@@ -25,7 +25,8 @@ export class EditComponent implements AfterViewInit, OnInit {
   bold: boolean = false;
   sidebarVisible: boolean = true;
   exportDialogVisible: boolean = false;
-  public speedDialItems!: MenuItem[]
+  public speedDialItems!: MenuItem[];
+  
 
   constructor(
     private elementRef: ElementRef,
