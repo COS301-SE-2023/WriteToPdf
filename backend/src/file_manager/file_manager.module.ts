@@ -6,6 +6,7 @@ import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
+import { ConversionService } from '../conversion/conversion.service';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { S3Service } from '../s3/s3.service';
     MarkdownFilesService,
     FileManagerService,
     S3Service,
+    ConversionService,
   ],
 })
 export class FileManagerModule {}

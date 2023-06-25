@@ -14,6 +14,8 @@ import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { testingModule } from '../test-utils/testingModule';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
+import { ImportDTO } from './dto/import.dto';
+import { ConversionService } from '../conversion/conversion.service';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import {
   HttpException,
@@ -25,6 +27,7 @@ describe('FileManagerService', () => {
   let markdownFilesService: MarkdownFilesService;
   let foldersService: FoldersService;
   let s3Service: S3Service;
+  let conversionService: ConversionService;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -41,6 +44,7 @@ describe('FileManagerService', () => {
           MarkdownFilesService,
           FoldersService,
           S3Service,
+          ConversionService,
           {
             provide: 'FileManagerService',
             useValue: {
@@ -74,6 +78,11 @@ describe('FileManagerService', () => {
     foldersService = module.get<FoldersService>(
       FoldersService,
     );
+    s3Service = module.get<S3Service>(S3Service);
+    conversionService =
+      module.get<ConversionService>(
+        ConversionService,
+      );
 
     module.close();
   });

@@ -1,5 +1,5 @@
 <div class="container" data-testid="home-page">
-
+<p-toast></p-toast>
   <div class="header">
 
     <div class="logoWrapper" (click)="navigateToPage('home')">
@@ -16,15 +16,14 @@
     <div class = "speedDialEditMenu">
       <p-speedDial class="speedDial" [model]="speedDialItems" direction="down"></p-speedDial>
     </div>
-
   </div>
 
   <div id ="scrollingDiv" class="leftSideBarWrapper">
-    <div class="leftSideBarHeading">Conrad's Projects</div>
+    <div class="leftSideBarHeading">{{getUserFirstName()}}'s Projects</div>
     <div class="leftSideBarTools">
-      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png" >
+      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png" (click)="newFolder()">
       <img class="icon newDoc" src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png" (click)="navigateToPage('edit')">
-      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" >
+      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png">
     </div>
     <div class="directoryTree">
       <p-tree [value]="filesDirectoryTree" class="w-full md:w-30rem" selectionMode="single" (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile"></p-tree>
@@ -51,7 +50,7 @@
     </div>
     <div class="directoryContents">
 <!--      The Current directory variable below in the main view is used to allow for intelligent file placement-->
-      <p-treeTable #myTreeTable [value]="filteredFilesDirectoryTreeTable" selectionMode="single" dataKey="name" [(selection)]="currentDirectory" [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
+      <p-treeTable #myTreeTable [value]="filteredFilesDirectoryTreeTable" selectionMode="single" dataKey="name" [(selection)]="currentDirectory"  [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
         <ng-template pTemplate="header" let-columns>
           <tr>
             <th *ngFor="let col of columns">

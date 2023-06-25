@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { expect } from '@jest/globals';
 import { HomeComponent } from './home.component';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
-import { MenuService, NodeService } from './home.service';
+import { NodeService } from '../services/home.service';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { TreeSelectModule } from 'primeng/treeselect';
@@ -20,7 +20,7 @@ describe('HomeComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [HomeComponent],
-      providers: [MenuService, NodeService, HttpClient, HttpHandler],
+      providers: [NodeService, HttpClient, HttpHandler],
       imports: [SpeedDialModule, TreeSelectModule, TreeModule, BreadcrumbModule, TreeTableModule, MenubarModule] // Add the provider here
     }).compileComponents();
   });

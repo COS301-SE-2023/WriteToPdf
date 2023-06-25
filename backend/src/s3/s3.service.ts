@@ -62,12 +62,16 @@ export class S3Service {
       '/' +
       fileDTO.FileName;
 
-    return await this.s3Client.send(
+    console.log(filePath + '\n');
+
+    const response = await this.s3Client.send(
       new GetObjectCommand({
         Bucket: this.awsS3BucketName,
         Key: filePath,
       }),
     );
+
+    return await response.Body.transformToString();
   }
 
   async delete(fileDTO: FileDTO) {
@@ -95,21 +99,27 @@ export class S3Service {
   ) {
     let filePath = '';
     if (markdownFileDTO.Path === '')
-      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}.txt`;
+      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     else
-      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
+      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
 
-    console.log(filePath);
+    console.log(`./storage/${filePath}`);
 
     try {
-      await access(filePath);
+      await access(`./storage/${filePath}`);
     } catch (err) {
       console.log('Access Error --> ' + err);
       return undefined;
     }
 
     try {
-      await unlink(filePath);
+      await unlink(`./storage/${filePath}`);
+      /*const response = */ await this.s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: filePath,
+        }),
+      );
     } catch (err) {
       console.log('Delete Error --> ' + err);
       return undefined;
@@ -138,14 +148,12 @@ export class S3Service {
 
     let filePath = '';
     if (markdownFileDTO.Path === '')
-      filePath = `./storage/${markdownFileDTO.UserID}`;
+      filePath = `${markdownFileDTO.UserID}`;
     else
-      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
-
-    console.log(filePath);
+      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
 
     try {
-      await mkdir(filePath, {
+      await mkdir(`./storage/${filePath}`, {
         recursive: true,
       });
     } catch (err) {
@@ -157,16 +165,25 @@ export class S3Service {
 
     try {
       await writeFile(
-        `${filePath}/${markdownFileDTO.MarkdownID}.txt`,
+        `./storage/${filePath}/${markdownFileDTO.MarkdownID}`,
         '',
         'utf-8',
+      );
+      /*const response = */ await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/${markdownFileDTO.MarkdownID}`,
+          Body: new Uint8Array(Buffer.from('')),
+        }),
       );
     } catch (err) {
       console.log('Write File Error:' + err);
       return undefined;
     }
 
-    const fileStats = await stat(filePath);
+    const fileStats = await stat(
+      `./storage/${filePath}`,
+    );
     console.log(fileStats);
     markdownFileDTO.Content = '';
     // markdownFileDTO.DateCreated =
@@ -174,6 +191,8 @@ export class S3Service {
     // markdownFileDTO.LastModified =
     //   fileStats.mtime;
     markdownFileDTO.Size = fileStats.size;
+
+    console.log(markdownFileDTO);
 
     return markdownFileDTO;
   }
@@ -189,14 +208,14 @@ export class S3Service {
     console.log(markdownFileDTO);
     let filePath = '';
     if (markdownFileDTO.Path === '')
-      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}.txt`;
+      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     else
-      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
+      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
 
-    console.log(filePath);
+    console.log(`./storage/${filePath}`);
 
     try {
-      await access(filePath);
+      await access(`./storage/${filePath}`);
     } catch (err) {
       console.log('Access Error --> ' + err);
       return undefined;
@@ -210,16 +229,25 @@ export class S3Service {
 
     try {
       await writeFile(
-        `${filePath}`,
+        `./storage/${filePath}`,
         fileData,
         'utf-8',
+      );
+      /*const response = */ await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: filePath,
+          Body: fileData,
+        }),
       );
     } catch (err) {
       console.log('Write File Error:' + err);
       return undefined;
     }
 
-    const fileStats = await stat(filePath);
+    const fileStats = await stat(
+      `./storage/${filePath}`,
+    );
     console.log(fileStats);
     // markdownFileDTO.LastModified =
     //   fileStats.mtime;
@@ -236,13 +264,14 @@ export class S3Service {
     markdownFileDTO: MarkdownFileDTO,
   ) {
     let filePath = '';
+    let respData = '';
     if (markdownFileDTO.Path === '')
-      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}.txt`;
+      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     else
-      filePath = `./storage/${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}.txt`;
+      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
 
     try {
-      await access(filePath);
+      await access(`./storage/${filePath}`);
     } catch (err) {
       console.log('Access Error --> ' + err);
       return undefined;
@@ -250,17 +279,30 @@ export class S3Service {
 
     try {
       markdownFileDTO.Content = await readFile(
-        `${filePath}`,
+        `./storage/${filePath}`,
         {
           encoding: 'utf-8',
         },
       );
+      const response = await this.s3Client.send(
+        new GetObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: filePath,
+        }),
+      );
+      respData =
+        await response.Body.transformToString();
     } catch (err) {
       console.log('Read File Error:' + err);
       return undefined;
     }
 
-    const fileStats = await stat(filePath);
+    console.log('S3');
+    console.log(respData);
+
+    const fileStats = await stat(
+      `./storage/${filePath}`,
+    );
     console.log(fileStats);
     // markdownFileDTO.DateCreated =
     //   fileStats.birthtime;

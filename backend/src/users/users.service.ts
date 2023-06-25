@@ -175,6 +175,7 @@ export class UsersService {
     const response = {
       UserID: user.UserID,
       Email: user.Email,
+      FirstName: user.FirstName,
       Token: token.access_token,
       ExpiresAt: token.expires_at,
     };

@@ -1,5 +1,10 @@
 import {Component} from '@angular/core';
 import {MessageService} from "primeng/api";
+import { FileService } from '../services/file.service';
+import { NodeService } from '../services/home.service';
+import { EditService } from '../services/edit.service';
+import { Router } from '@angular/router';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 // import * as mammoth from "mammoth"
 interface UploadEvent {
@@ -15,30 +20,39 @@ interface UploadEvent {
 export class FileUploadPopupComponent {
   uploadedFiles: any[] = [];
 
-  constructor(private messageService: MessageService) {
+  constructor(private dialogRef: DynamicDialogRef, private messageService: MessageService, private fileService: FileService, private nodeService: NodeService, private editService: EditService, private router: Router) {
   }
 
   onUpload(event: any) {
-    for (let file of event.files) {
-      this.uploadedFiles.push(file);
-      let reader = new FileReader();
-      reader.onload = () => {
-        let arrayBuffer = reader.result as ArrayBuffer;
-        var mammoth = require("mammoth/mammoth.browser");
-        mammoth.convertToHtml({arrayBuffer: arrayBuffer})
-          .then(function (result: any) {
-            var html = result.value;
-            // const { convertHtmlToDelta } = require('node-quill-converter');
-            // let delta = convertHtmlToDelta(html);// The generated HTML
-            // var messages = result.messages; // Any messages, such as warnings during conversion
-          })
-          .catch(function (error: any) {
-            console.error(error);
-          });
-      };
-      reader.readAsArrayBuffer(file);
-    }
+    const file = event.files[0];
+    const reader = new FileReader();
+    this.uploadedFiles.push(file);
+    reader.onload = (e: any) => {
+      const fileContent = e.target.result;
+      console.log(fileContent);
+      const name = file.name.split('.')[0];
+      const type = file.name.split('.')[1];
+      console.log(type);
+      this.fileService.importDocument(name, '', '', fileContent, type).then((response) => {
+        if (response.MarkdownID != undefined)
+          this.nodeService.addFile(response);
 
+        this.editService.setMarkdownID(response.MarkdownID);
+        this.editService.setPath(response.Path);
+        this.editService.setName(response.Name);
+        this.editService.setParentFolderID(response.ParentFolderID);
+
+        this.navigateToPage("edit");
+
+      });
+    };
+    reader.readAsText(file);
     this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
+  }
+  closeDialog():void{
+    this.dialogRef.close();
+  }
+  navigateToPage(pageName: string): void {
+    this.router.navigate([`${pageName}`]);
   }
 }

@@ -16,6 +16,7 @@ import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { Repository } from 'typeorm';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
+import { ConversionService } from '../conversion/conversion.service';
 import { FileManagerModule } from './file_manager.module';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 
@@ -33,6 +34,7 @@ describe('FileManagerController', () => {
           MarkdownFilesService,
           FoldersService,
           S3Service,
+          ConversionService,
           {
             provide: 'FileManagerService',
             useValue: {

@@ -36,4 +36,7 @@ export class Asset {
 
   @Column()
   ParentFolderID: string;
+
+  @Column()
+  UserID: number;
 }

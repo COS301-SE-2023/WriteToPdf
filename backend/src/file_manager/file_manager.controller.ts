@@ -15,6 +15,8 @@ import { validateSync } from 'class-validator';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
+import { ImportDTO } from './dto/import.dto';
+import { ExportDTO } from './dto/export.dto';
 
 @Controller('file_manager')
 export class FileManagerController {
@@ -352,6 +354,80 @@ export class FileManagerController {
 
     return this.file_manager_service.saveFile(
       markdownFileDTO,
+    );
+  }
+
+  @Post('import')
+  @HttpCode(HttpStatus.OK)
+  import(
+    @Body()
+    importDTO: ImportDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+    const receivedDTO = plainToClass(
+      ImportDTO,
+      importDTO,
+    );
+    const errors = validateSync(receivedDTO);
+
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (importDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.file_manager_service.importFile(
+      importDTO,
+    );
+  }
+
+  @Post('export')
+  @HttpCode(HttpStatus.OK)
+  export(
+    @Body()
+    exportDTO: ExportDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+    const receivedDTO = plainToClass(
+      ExportDTO,
+      exportDTO,
+    );
+    const errors = validateSync(receivedDTO);
+
+    if (errors.length > 0) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (exportDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.file_manager_service.exportFile(
+      exportDTO,
     );
   }
 

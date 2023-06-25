@@ -5,51 +5,51 @@ import { Injectable } from '@angular/core';
 })
 export class EditService {
 
-  private content: string = '';
-  private markdownID: string = '';
-  private name: string = '';
-  private path: string = '';
-  private parentFolderID: string = '';
+  private content: string | undefined = '';
+  private markdownID: string | undefined = '';
+  private name: string | undefined = '';
+  private path: string | undefined = '';
+  private parentFolderID: string | undefined = '';
 
   constructor() { }
 
-  setContent(content: string) {
+  setContent(content: string | undefined) {
     this.content = content;
   }
 
-  getContent(): string {
+  getContent(): string | undefined {
     return this.content;
   }
 
-  setMarkdownID(markdownID: string) {
+  setMarkdownID(markdownID: string | undefined) {
     this.markdownID = markdownID;
   }
 
-  getMarkdownID(): string {
+  getMarkdownID(): string | undefined {
     return this.markdownID;
   }
 
-  setName(name: string) {
+  setName(name: string | undefined) {
     this.name = name;
   }
 
-  getName(): string {
+  getName(): string | undefined {
     return this.name;
   }
 
-  setPath(path: string) {
+  setPath(path: string | undefined) {
     this.path = path;
   }
 
-  getPath(): string {
+  getPath(): string | undefined {
     return this.path;
   }
 
-  setParentFolderID(parentFolderID: string) {
+  setParentFolderID(parentFolderID: string | undefined) {
     this.parentFolderID = parentFolderID;
   }
 
-  getParentFolderID(): string {
+  getParentFolderID(): string | undefined {
     return this.parentFolderID;
   }
 

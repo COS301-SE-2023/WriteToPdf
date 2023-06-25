@@ -11,8 +11,6 @@ import { AssetsModule } from './assets/assets.module';
 import { FoldersModule } from './folders/folders.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
-import { HomeController } from './home/home.controller';
-import { HomeModule } from './home/home.module';
 import { EditController } from './edit/edit.controller';
 import { EditModule } from './edit/edit.module';
 import { UsersModule } from './users/users.module';
@@ -27,11 +25,11 @@ import { FoldersService } from './folders/folders.service';
 import { MarkdownFile } from './markdown_files/entities/markdown_file.entity';
 import { Folder } from './folders/entities/folder.entity';
 import { S3Service } from './s3/s3.service';
+import { ConversionService } from './conversion/conversion.service';
 
 @Module({
   imports: [
     AuthModule,
-    HomeModule,
     EditModule,
     UsersModule,
     TypeOrmModule.forRoot(dataSourceOptions),
@@ -47,7 +45,6 @@ import { S3Service } from './s3/s3.service';
   controllers: [
     AppController,
     AuthController,
-    HomeController,
     EditController,
     S3Controller,
     FileManagerController,
@@ -58,6 +55,7 @@ import { S3Service } from './s3/s3.service';
     MarkdownFilesService,
     FoldersService,
     S3Service,
+    ConversionService,
   ],
 })
 export class AppModule {}

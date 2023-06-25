@@ -12,6 +12,9 @@ import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
+import { ImportDTO } from './dto/import.dto';
+import { ConversionService } from '../conversion/conversion.service';
+import { ExportDTO } from './dto/export.dto';
 
 @Injectable()
 export class FileManagerService {
@@ -19,6 +22,7 @@ export class FileManagerService {
     private markdownFilesService: MarkdownFilesService,
     private folderService: FoldersService,
     private s3service: S3Service,
+    private conversionService: ConversionService,
   ) {}
 
   // DB Requires the following fields to be initialised in the DTO:
@@ -228,6 +232,73 @@ export class FileManagerService {
     return this.folderService.updatePath(
       folderDTO,
     );
+  }
+
+  async importFile(importDTO: ImportDTO) {
+    if (importDTO.Path === undefined)
+      throw new HttpException(
+        'Path cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (importDTO.Name === undefined)
+      throw new HttpException(
+        'Name cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (importDTO.Content === undefined)
+      throw new HttpException(
+        'Content cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const convertedMardkownFileDTO =
+      this.conversionService.convertFrom(
+        importDTO,
+      );
+
+    const deltaContent =
+      convertedMardkownFileDTO.Content;
+
+    const createdFile = await this.createFile(
+      convertedMardkownFileDTO,
+    );
+
+    createdFile.Content = deltaContent;
+
+    const savedFile = await this.saveFile(
+      createdFile,
+    );
+
+    const returnedDTO = new MarkdownFileDTO();
+    returnedDTO.MarkdownID = savedFile.MarkdownID;
+    returnedDTO.UserID = savedFile.UserID;
+    returnedDTO.DateCreated =
+      savedFile.DateCreated;
+    returnedDTO.LastModified =
+      savedFile.LastModified;
+    returnedDTO.Name = savedFile.Name;
+    returnedDTO.Path = savedFile.Path;
+    returnedDTO.Size = savedFile.Size;
+    returnedDTO.ParentFolderID =
+      savedFile.ParentFolderID;
+    returnedDTO.Content = deltaContent;
+
+    return returnedDTO;
+  }
+
+  async exportFile(exportDTO: ExportDTO) {
+    if (exportDTO.MarkdownID === undefined)
+      throw new HttpException(
+        'MarkdownID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const convertedDTO =
+      this.conversionService.convertTo(exportDTO);
+
+    return convertedDTO;
   }
 
   /**

@@ -6,10 +6,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem} from "primeng/api";
-import {FileUploadPopupComponent} from "../file-upload-popup/file-upload-popup.component";
-import {DialogService} from "primeng/dynamicdialog";
-import { DocumentService } from '../services/document.service';
+import { MenuItem } from "primeng/api";
+import { FileUploadPopupComponent } from "../file-upload-popup/file-upload-popup.component";
+import { DialogService } from "primeng/dynamicdialog";
+import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
 
 @Component({
@@ -19,20 +19,22 @@ import { EditService } from '../services/edit.service';
 })
 export class EditComponent implements AfterViewInit, OnInit {
   @ViewChild('quillEditor') quillEditor: any;
-  documentContent: string = '';
-  fileName: string = '';
+  documentContent: string | undefined = '';
+  fileName: string | undefined = '';
   text: any;
   bold: boolean = false;
   sidebarVisible: boolean = true;
-  public speedDialItems!: MenuItem[]
+  exportDialogVisible: boolean = false;
+  public speedDialItems!: MenuItem[];
+
 
   constructor(
     private elementRef: ElementRef,
     private router: Router,
     private dialogService: DialogService,
-    private documentService: DocumentService,
+    private fileService: FileService,
     private editService: EditService
-  ) {}
+  ) { }
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
@@ -43,7 +45,9 @@ export class EditComponent implements AfterViewInit, OnInit {
       dismissableMask: true,
     });
   }
+
   ngOnInit(): void {
+
     this.hideSideBar();
     this.speedDialItems = [
       {
@@ -78,6 +82,15 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
+
+    setTimeout(() => {//Why wait 0ms? I don't know but it works
+      const contents = this.editService.getContent();
+      this.documentContent = contents;
+      if (contents) {
+        quill.setContents(JSON.parse(contents));
+      }
+    }, 0);
+
     quill.focus();
 
 
@@ -96,12 +109,6 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#E3E3E3';
-  }
-
-  onContentChange(event: any) {
-    // Save the document content to localStorage when changes occur
-    const content = this.text;
-    localStorage.setItem('document', content);
   }
 
   navigateToPage(pageName: string) {
@@ -154,7 +161,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     const quill = this.quillEditor.getQuill();
     const contents = quill.getContents();
 
-    this.documentService.saveDocument(
+    this.fileService.saveDocument(
       contents,
       this.editService.getMarkdownID(),
       this.editService.getPath()
@@ -165,11 +172,10 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Load the document quill content from localStorage when changes occur
     const quill = this.quillEditor.getQuill();
 
-    const contents = await this.documentService.retrieveDocument(
+    const contents = await this.fileService.retrieveDocument(
       this.editService.getMarkdownID(),
       this.editService.getPath()
     );
-
     if (contents) {
       quill.setContents(JSON.parse(contents));
     }
@@ -190,17 +196,15 @@ export class EditComponent implements AfterViewInit, OnInit {
     quill.history.redo();
   }
 
-  hideSideBar(){
+  hideSideBar() {
     // get asset sidebar and set display none
     const sidebar = document.getElementsByClassName('assetSidebar')[0];
-
-    if(sidebar)
-    {
-      if(this.sidebarVisible){
+    if (sidebar) {
+      if (this.sidebarVisible) {
         sidebar.setAttribute('style', 'display:none');
         this.sidebarVisible = false;
       }
-      else{
+      else {
         sidebar.setAttribute('style', 'display:block');
         this.sidebarVisible = true;
       }
@@ -210,12 +214,23 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   rename() {
     console.log('rename');
-    this.documentService.renameDocument(this.fileName);
+    this.fileService.renameDocument(this.editService.getMarkdownID(), this.fileName, this.editService.getPath());
   }
 
-  delete() {
+  async delete() {
     console.log('delete');
-    this.documentService.deleteDocument(this.editService.getMarkdownID());
+    await this.fileService.deleteDocument(this.editService.getMarkdownID());
+    
+    this.editService.setMarkdownID('');
+    this.editService.setPath('');
+    this.editService.setName('');
+    this.editService.setContent('');
+    this.editService.setParentFolderID('');
+
     this.navigateToPage('home');
+  }
+
+  showDialog() {
+    this.exportDialogVisible = true;
   }
 }
