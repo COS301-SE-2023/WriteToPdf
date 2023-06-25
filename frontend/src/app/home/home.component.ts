@@ -10,7 +10,7 @@ import { TreeTable } from "primeng/treetable";
 // import {EditComponent} from "../edit/edit.component";
 
 import { MenuItem, MessageService, TreeNode } from 'primeng/api';
-import { MenuService, NodeService } from "../services/home.service";
+import { NodeService } from "../services/home.service";
 import { DialogService } from "primeng/dynamicdialog";
 import { FileService } from "../services/file.service";
 import { UserService } from '../services/user.service';
@@ -62,7 +62,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   constructor(private router: Router,
     private nodeService: NodeService,
-    private menuService: MenuService,
     private elementRef: ElementRef,
     private messageService: MessageService,
     private dialogService: DialogService, private fileService: FileService,
@@ -180,23 +179,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
         // as the non-filtered serves as the filter for the filters for the logic in the filter function
         // below
         this.nodeService.getTreeTableNodes().then((data) => {
-          this.filesDirectoryTreeTable = data;
-        }
+            this.filesDirectoryTreeTable = data;
+          }
         );
         this.nodeService.getTreeTableNodes().then((data) => (this.filteredFilesDirectoryTreeTable = data));
         this.treeTableColumns = [
-          { field: 'name', header: 'Name' },
-          { field: 'size', header: 'Size' },
-          { field: 'type', header: 'Type' }
+          {field: 'name', header: 'Name'},
+          {field: 'size', header: 'Size'},
+          {field: 'type', header: 'Type'}
         ];
       });
       //Below is the code that populates the directoryPath
       // this.activeDirectoryItems = [{ label: 'Computer' }, { label: 'Notebook' }, { label: 'Accessories' }, { label: 'Backpacks' }, { label: 'Item' }];
-      this.directoryHome = { icon: 'pi pi-home', routerLink: '/' };
+      this.directoryHome = {icon: 'pi pi-home', routerLink: '/'};
       //Below is the code that populates the menu items, can be done intelligently with regards to current selection
       //in main window.
-      this.menuBarItems = this.menuService.getMenuItemsData();
       document.getElementsByClassName("menubar");
+      this.menuBarItems = this.getMenuItemsData();
       //Below is the code that populates the directories accordingly via the helper function, load directory
       //Below is the code for the speed dial menu
       //Can be done intelligently with that which is in focus in the main window
@@ -230,10 +229,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
           icon: 'pi pi-external-link',
         }
       ];
+      // Below are the functions that implement intelligent routing of the directory tree on the left side of the home page
+      // it routes the relevant directory to the main window
     }
   }
-  // Below are the functions that implement intelligent routing of the directory tree on the left side of the home page
-  // it routes the relevant directory to the main window
 
   onNodeSelect(event: any): void {
     this.filterTable(event, 2);
@@ -339,22 +338,182 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
   }
 
-  onTableNodeSelect(event: any): void {
-    if (!this.editToggle) {
-      console.log(event);
-      const file = this.nodeService.getFileDTOByID(event.node.key);
-      console.log(file);
+  onOpenFileSelect(event: any): void {
+    console.log(event);
+    const file = this.nodeService.getFileDTOByID(event.key);
+    console.log(file);
+    this.fileService.retrieveDocument(file.MarkdownID, file.Path).then((data) => {
+      this.editService.setContent(data);
+      this.editService.setName(file.Name);
+      this.editService.setMarkdownID(file.MarkdownID);
+      this.editService.setParentFolderID(file.ParentFolderID);
+      this.editService.setPath(file.Path);
+      this.navigateToPage('edit');
+    });
+  }
 
-      this.fileService.retrieveDocument(file.MarkdownID, file.Path).then((data) => {
-        this.editService.setContent(data);
-        this.editService.setName(file.Name);
-        this.editService.setMarkdownID(file.MarkdownID);
-        this.editService.setParentFolderID(file.ParentFolderID);
-        this.editService.setPath(file.Path);
-        this.navigateToPage('edit');
-      });
+  delete(event: any) {
+    console.log('delete');
+    this.fileService.deleteDocument(event.key);
+    this.navigateToPage('home');
+    this.deleteEntryByKey(this.filesDirectoryTree, event.key);
+    this.deleteEntryByKey(this.filesDirectoryTreeTable, event.key);
+    this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.key);
+    this.filterTable("", 3);
+    this.currentDirectory = null;
+  }
+
+  deleteEntryByKey(data: TreeNode[], keyToDelete: string): void {
+    for (let i = 0; i < data.length; i++) {
+      const currentNode = data[i];
+      if (currentNode.key === keyToDelete) {
+        data.splice(i, 1); // Remove the node at index i
+        return; // Exit the function after deleting the entry
+      }
+      if (currentNode.children) {
+        this.deleteEntryByKey(currentNode.children, keyToDelete);// Recursively check children nodes
+      }
     }
   }
+  getMenuItemsData() {
+    return [
+      {
+        label: 'File',
+        icon: 'pi pi-fw pi-file',
+        items: [
+          {
+            label: 'New',
+            icon: 'pi pi-fw pi-plus',
+            items: [
+              {
+                label: 'Folder',
+                icon: 'pi pi-fw pi-folder',
+                command: () => {
+                  //TODO Show dialog for creating a new folder
+                }
+              },
+              {
+                label: 'Document',
+                icon: 'pi pi-fw pi-file',
+                command: () => {
+                  //TODO Show dialog for creating a new document
+                }
+              }
+            ]
+          },
+    {
+      label: 'Open',
+      icon: 'pi pi-fw pi-folder',
+      command: () => {
+        if (this.currentDirectory!= null) this.onOpenFileSelect(this.currentDirectory);
+        else {
+          this.messageService.add({ severity: 'warn', summary: 'Please Select a Folder or File to Open', detail: 'Not mucho intelligento' })
+        }
+      }
+    },
+          {
+            label: 'Delete',
+            icon: 'pi pi-fw pi-trash',
+            command:() => {
+              if (this.currentDirectory!= null) this.delete(this.currentDirectory);
+              else {
+                this.messageService.add({ severity: 'warn', summary: 'Please select a folder or File to Delete', detail: 'You twat' })
+              }
+            }
+          },
+          {
+            separator: true
+          },
+          {
+            label: 'Export',
+            icon: 'pi pi-fw pi-external-link',
+            command:() => {
+              //TODO implement downloading a file from the database
+            }
+          }
+        ]
+      },
+      {
+        label: 'Import',
+        icon: 'pi pi-fw pi-pencil',
+        items: [
+          {
+            label: 'Upload File',
+            icon: 'pi pi-fw pi-upload'
+          }
+        ]
+      },
+      {
+        label: 'Users',
+        icon: 'pi pi-fw pi-user',
+        items: [
+          {
+            label: 'New',
+            icon: 'pi pi-fw pi-user-plus'
+          },
+          {
+            label: 'Delete',
+            icon: 'pi pi-fw pi-user-minus'
+          },
+          {
+            label: 'Search',
+            icon: 'pi pi-fw pi-users',
+            items: [
+              {
+                label: 'Filter',
+                icon: 'pi pi-fw pi-filter',
+                items: [
+                  {
+                    label: 'Print',
+                    icon: 'pi pi-fw pi-print'
+                  }
+                ]
+              },
+              {
+                icon: 'pi pi-fw pi-bars',
+                label: 'List'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        label: 'Events',
+        icon: 'pi pi-fw pi-calendar',
+        items: [
+          {
+            label: 'Edit',
+            icon: 'pi pi-fw pi-pencil',
+            items: [
+              {
+                label: 'Save',
+                icon: 'pi pi-fw pi-calendar-plus'
+              },
+              {
+                label: 'Delete',
+                icon: 'pi pi-fw pi-calendar-minus'
+              }
+            ]
+          },
+          {
+            label: 'Archive',
+            icon: 'pi pi-fw pi-calendar-times',
+            items: [
+              {
+                label: 'Remove',
+                icon: 'pi pi-fw pi-calendar-minus'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        label: 'Quit',
+        icon: 'pi pi-fw pi-power-off'
+      }
+    ];
+  }
+
 
   getUserFirstName(): string | undefined {
     return this.userService.getFirstName();

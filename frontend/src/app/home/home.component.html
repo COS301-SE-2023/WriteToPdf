@@ -1,5 +1,5 @@
 <div class="container" data-testid="home-page">
-
+<p-toast></p-toast>
   <div class="header">
 
     <div class="logoWrapper" (click)="navigateToPage('home')">
@@ -16,7 +16,6 @@
     <div class = "speedDialEditMenu">
       <p-speedDial class="speedDial" [model]="speedDialItems" direction="down"></p-speedDial>
     </div>
-
   </div>
 
   <div id ="scrollingDiv" class="leftSideBarWrapper">
@@ -51,7 +50,7 @@
     </div>
     <div class="directoryContents">
 <!--      The Current directory variable below in the main view is used to allow for intelligent file placement-->
-      <p-treeTable #myTreeTable [value]="filteredFilesDirectoryTreeTable" selectionMode="single" dataKey="name" [(selection)]="currentDirectory" (onNodeSelect)="onTableNodeSelect($event)" [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
+      <p-treeTable #myTreeTable [value]="filteredFilesDirectoryTreeTable" selectionMode="single" dataKey="name" [(selection)]="currentDirectory"  [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{'min-width':'50rem'}">
         <ng-template pTemplate="header" let-columns>
           <tr>
             <th *ngFor="let col of columns">

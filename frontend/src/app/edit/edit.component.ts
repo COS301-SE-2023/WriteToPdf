@@ -176,7 +176,6 @@ export class EditComponent implements AfterViewInit, OnInit {
       this.editService.getMarkdownID(),
       this.editService.getPath()
     );
-
     if (contents) {
       quill.setContents(JSON.parse(contents));
     }
@@ -200,7 +199,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   hideSideBar() {
     // get asset sidebar and set display none
     const sidebar = document.getElementsByClassName('assetSidebar')[0];
-
     if (sidebar) {
       if (this.sidebarVisible) {
         sidebar.setAttribute('style', 'display:none');
