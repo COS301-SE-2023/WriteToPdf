@@ -61,7 +61,7 @@ describe('FileManagerController', () => {
   });
 
   describe('root/config', () => {
-    it('should be defined', () => {
+    it('controller should be defined', () => {
       expect(controller).toBeDefined();
     });
   });
@@ -232,7 +232,6 @@ describe('FileManagerController', () => {
       expect(result.Name).toBe(
         markdownFileDTO.Name,
       );
-      console.log(result);
     });
   });
 
@@ -384,6 +383,33 @@ describe('FileManagerController', () => {
         );
         expect(error.status).toBe(
           HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+  });
+
+  describe('save_file', () => {
+    it('should throw an error if MarkdownID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Path = 'example/path';
+      try {
+        await controller.save(
+          markdownFileDTO,
+          request as any,
+        );
+        // expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'MarkdownID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
         );
       }
     });
