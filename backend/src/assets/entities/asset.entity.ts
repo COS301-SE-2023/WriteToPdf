@@ -1,13 +1,12 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
-  JoinColumn,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity('ASSETS')
 export class Asset {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   AssetID: string;
 
   @Column()
@@ -35,6 +34,6 @@ export class Asset {
   })
   Size: number;
 
-  @JoinColumn()
+  @Column()
   ParentFolderID: string;
 }

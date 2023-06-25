@@ -1,13 +1,12 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
-  JoinColumn,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity('FOLDERS')
 export class Folder {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   FolderID: string;
 
   @Column({
@@ -31,6 +30,6 @@ export class Folder {
   @Column()
   UserID: number;
 
-  @JoinColumn()
+  @Column()
   ParentFolderID: string;
 }
