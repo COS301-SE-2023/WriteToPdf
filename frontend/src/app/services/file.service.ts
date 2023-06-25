@@ -5,6 +5,7 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserService } from './user.service';
 import { EditService } from './edit.service';
+import { DirectoryFilesDTO } from './dto/directory_files.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -231,6 +232,56 @@ export class FileService {
     body.UserID = this.userService.getUserID();
     body.Path = path;
     body.MarkdownID = markdownID;
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  retrieveAllFiles(): Promise<MarkdownFileDTO[]> {
+    return new Promise<MarkdownFileDTO[]>((resolve, reject) => {
+      this.sendRetrieveAllFiles().subscribe({
+        next: (response: HttpResponse<any>) => {
+
+          if (response.status === 200) {
+            console.log('Retrieve successful');
+            const body = response.body;
+            console.log("" + body);
+            let files: MarkdownFileDTO[] = [];
+            for (let i = 0; i < body.Files.length; i++) {
+              const fileDTO = new MarkdownFileDTO();
+
+              fileDTO.DateCreated = body.Files[i].DateCreated;
+              fileDTO.LastModified = body.Files[i].LastModified;
+              fileDTO.MarkdownID = body.Files[i].MarkdownID;
+              fileDTO.Name = body.Files[i].Name;
+              fileDTO.ParentFolderID = body.Files[i].ParentFolderID;
+              fileDTO.Path = body.Files[i].Path;
+              fileDTO.Size = body.Files[i].Size;
+
+              files.push(fileDTO);
+            }
+            resolve(files);
+          } else {
+            console.log('Retrieve failed');
+            reject();
+          }
+        },
+        error: (error) => {
+          console.log('Retrieve failed');
+          reject();
+        },
+      });
+    });
+  }
+
+  sendRetrieveAllFiles(): Observable<HttpResponse<any>> {
+    const url = 'http://localhost:3000/file_manager/retrieve_all_files';
+    const body = new DirectoryFilesDTO();
+
+    body.UserID = this.userService.getUserID();
 
     const headers = new HttpHeaders().set(
       'Authorization',
