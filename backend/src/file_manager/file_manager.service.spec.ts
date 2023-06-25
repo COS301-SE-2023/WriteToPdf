@@ -14,21 +14,41 @@ import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { testingModule } from '../test-utils/testingModule';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
+import { FolderDTO } from '../folders/dto/folder.dto';
+import {
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 
 describe('FileManagerService', () => {
   let fileManagerService: FileManagerService;
   let markdownFilesService: MarkdownFilesService;
   let foldersService: FoldersService;
+  let s3Service: S3Service;
 
   beforeEach(async () => {
     const module: TestingModule =
       await Test.createTestingModule({
-        imports: [...testingModule()],
+        imports: [
+          ...testingModule(),
+          TypeOrmModule.forFeature([
+            MarkdownFile,
+            Folder,
+          ]),
+        ],
         providers: [
           FileManagerService,
           MarkdownFilesService,
           FoldersService,
           S3Service,
+          {
+            provide: 'FileManagerService',
+            useValue: {
+              createFile: jest.fn(),
+              renameFile: jest.fn(),
+              renameFolder: jest.fn(),
+            },
+          },
           {
             provide:
               getRepositoryToken(MarkdownFile),
@@ -43,8 +63,9 @@ describe('FileManagerService', () => {
 
     fileManagerService =
       module.get<FileManagerService>(
-        FileManagerService,
+        'FileManagerService',
       );
+    s3Service = module.get<S3Service>(S3Service);
     markdownFilesService =
       module.get<MarkdownFilesService>(
         MarkdownFilesService,
@@ -59,6 +80,28 @@ describe('FileManagerService', () => {
   describe('root/config', () => {
     it('file manager service should be defined', () => {
       expect(fileManagerService).toBeDefined();
+    });
+  });
+
+  describe('rename_folder', () => {
+    it('should throw an error if FolderID is undefined', async () => {
+      const folderDTO = new FolderDTO();
+
+      try {
+        await fileManagerService.renameFolder(
+          folderDTO,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
     });
   });
 });
