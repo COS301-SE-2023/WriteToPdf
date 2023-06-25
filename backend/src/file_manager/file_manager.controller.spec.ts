@@ -186,6 +186,38 @@ describe('FileManagerController', () => {
         ),
       );
     });
+
+    it('should return DTO of updated file', async () => {
+      const request = { method: 'POST' };
+
+      // Create DTO with new name
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID =
+        'fm.controller.spec renameFile';
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Path = 'example/path';
+      markdownFileDTO.Name = 'writetopdf.md';
+
+      jest
+        .spyOn(controller, 'renameFile')
+        .mockImplementation(
+          async () => markdownFileDTO,
+        );
+
+      const result = await controller.renameFile(
+        markdownFileDTO,
+        request as any,
+      );
+
+      expect(result).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(result.Name).toBe(
+        markdownFileDTO.Name,
+      );
+      console.log(result);
+    });
   });
 
   describe('delete_file', () => {
