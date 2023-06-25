@@ -97,9 +97,9 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  createDocument(): Promise<boolean> {
+  createDocument(name: string, path: string | undefined, parentFolderID:string|undefined): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.sendCreateData().subscribe({
+      this.sendCreateData(name, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
           console.log(response.status);
@@ -121,14 +121,14 @@ export class FileService {
     });
   }
 
-  sendCreateData(): Observable<HttpResponse<any>> {
+  sendCreateData(name: string, path: string | undefined, parentFolderID:string|undefined): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/create_file';
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
-    body.Path = '';
-    body.Name = 'New Document';
-    body.ParentFolderID = '';
+    body.Path = path;
+    body.Name = name;
+    body.ParentFolderID = parentFolderID;
 
     const headers = new HttpHeaders().set(
       'Authorization',

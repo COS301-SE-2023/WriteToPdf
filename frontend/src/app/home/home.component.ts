@@ -60,6 +60,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public moveDialogVisible: boolean = false;
   public entityToMove: any;
   public destinationDirectory: any;
+  public createNewDocumentDialogueVisible: boolean = false;
+  public documentName: string = "";
   uploadedFiles: any[] = [];
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
@@ -206,8 +208,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         {
           icon: 'pi pi-pencil',
           command: async () => {
-            if (await this.fileService.createDocument())
-              this.navigateToPage("edit");
+            this.createNewDocumentDialogueVisible = true;
           }
         },
         {
@@ -342,7 +343,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   onOpenFileSelect(event: any): void {
-    
+
     const file = this.nodeService.getFileDTOByID(event.key);
     console.log("FILE: " + JSON.stringify(file));
     this.fileService.retrieveDocument(file.MarkdownID, file.Path).then((data) => {
@@ -597,6 +598,44 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.moveDialogVisible = false;
       });
     }
+  }
+
+  async createNewDocument() {
+
+    let path:string|undefined = '';
+    let parentFolderID:string|undefined = '';
+    if (this.documentName == '') {
+      this.documentName = 'New Document';
+    }
+
+    if (this.currentDirectory !== null) {
+      if (this.currentDirectory.data.type === 'folder') {
+        const folder = this.nodeService.getFolderDTOByID(this.currentDirectory.key);
+        path= folder.Path;
+        if (folder.Path !== '')
+          path += `/${this.currentDirectory.data.name}`;
+        else
+          path += `${this.currentDirectory.data.name}`;
+      }else{
+        const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
+        path = file.Path;
+      }
+
+      parentFolderID = this.currentDirectory.key;
+      if (this.currentDirectory.data.type !== 'folder') {
+        const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
+        parentFolderID = file.ParentFolderID;
+      }
+    }
+    
+    if (await this.fileService.createDocument(this.documentName, path, parentFolderID)) {
+      this.documentName = '';
+      this.navigateToPage("edit");
+    }
+  }
+
+  outputCurrDir() {
+    console.log(this.currentDirectory);
   }
   protected readonly focus = focus;
 }
