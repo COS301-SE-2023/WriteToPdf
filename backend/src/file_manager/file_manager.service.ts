@@ -12,6 +12,8 @@ import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
+import { ImportDTO } from './dto/import.dto';
+import { ConversionService } from '../conversion/conversion.service';
 
 @Injectable()
 export class FileManagerService {
@@ -19,6 +21,7 @@ export class FileManagerService {
     private markdownFilesService: MarkdownFilesService,
     private folderService: FoldersService,
     private s3service: S3Service,
+    private conversionService: ConversionService,
   ) {}
 
   // DB Requires the following fields to be initialised in the DTO:
@@ -229,6 +232,35 @@ export class FileManagerService {
 
     return this.folderService.updatePath(
       folderDTO,
+    );
+  }
+
+  importFile(importDTO: ImportDTO) {
+    if (importDTO.Path === undefined)
+      throw new HttpException(
+        'Path cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (importDTO.Name === undefined)
+      throw new HttpException(
+        'Name cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (importDTO.Content === undefined)
+      throw new HttpException(
+        'Content cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const convertedMardkownFileDTO =
+      this.conversionService.convertFrom(
+        importDTO,
+      );
+
+    return this.createFile(
+      convertedMardkownFileDTO,
     );
   }
 

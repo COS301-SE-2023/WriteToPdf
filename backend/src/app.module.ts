@@ -22,6 +22,7 @@ import { FoldersService } from './folders/folders.service';
 import { MarkdownFile } from './markdown_files/entities/markdown_file.entity';
 import { Folder } from './folders/entities/folder.entity';
 import { S3Service } from './s3/s3.service';
+import { ConversionService } from './conversion/conversion.service';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { S3Service } from './s3/s3.service';
     MarkdownFilesService,
     FoldersService,
     S3Service,
+    ConversionService,
   ],
 })
 export class AppModule {}
