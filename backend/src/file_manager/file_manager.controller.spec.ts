@@ -22,6 +22,7 @@ import { DirectoryFilesDTO } from './dto/directory_files.dto';
 describe('FileManagerController', () => {
   let controller: FileManagerController;
   let fileManagerService: FileManagerService;
+  let s3Service: S3Service;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -59,6 +60,7 @@ describe('FileManagerController', () => {
       module.get<FileManagerService>(
         'FileManagerService',
       );
+    s3Service = module.get<S3Service>(S3Service);
   });
 
   describe('root/config', () => {
@@ -384,6 +386,58 @@ describe('FileManagerController', () => {
         );
         expect(error.status).toBe(
           HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('s3service should successfully retrieve the file', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.MarkdownID = 'abc123';
+      markdownFileDTO.Path = 'example/path';
+      markdownFileDTO.Name = 'writetopdf.md';
+
+      jest
+        .spyOn(s3Service, 'retrieveFile')
+        .mockImplementation(
+          async () => markdownFileDTO,
+        );
+
+      const result =
+        await controller.retrieveFile(
+          markdownFileDTO,
+          request as any,
+        );
+
+      expect(result).toEqual(markdownFileDTO);
+      expect(
+        s3Service.retrieveFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+
+    it('should throw BadRequest exception if MarkdownID is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 0;
+      const request = { method: 'POST' };
+
+      try {
+        await controller.retrieveFile(
+          markdownFileDTO,
+          request as any,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'MarkdownID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
         );
       }
     });
