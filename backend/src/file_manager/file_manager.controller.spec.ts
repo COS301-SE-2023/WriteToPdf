@@ -100,6 +100,22 @@ describe('FileManagerController', () => {
         );
       }
     });
+
+    // it('should set Path if Path is undefined', async () => {
+    //   const request = { method: 'POST' };
+    //   const markdownFileDTO =
+    //     new MarkdownFileDTO();
+    //   jest
+    //     .spyOn(controller, 'createFile')
+    //     .mockImplementation(
+    //       async () => markdownFileDTO,
+    //     );
+    //   await controller.createFile(
+    //     markdownFileDTO,
+    //     request as any,
+    //   );
+    //   expect(markdownFileDTO.Path).toBe('');
+    // });
   });
 
   describe('rename_file', () => {
@@ -292,6 +308,56 @@ describe('FileManagerController', () => {
         );
         expect(error.status).toBe(
           HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an error if MarkdownID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Path = 'example/path';
+      try {
+        await controller.moveFile(
+          markdownFileDTO,
+          request as any,
+        );
+        // expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'MarkdownID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an error if Path is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.MarkdownID = 'abc123';
+      try {
+        await controller.moveFile(
+          markdownFileDTO,
+          request as any,
+        );
+        // expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Path cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
         );
       }
     });
