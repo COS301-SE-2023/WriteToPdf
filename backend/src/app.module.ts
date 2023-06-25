@@ -8,8 +8,6 @@ import { AssetsModule } from './assets/assets.module';
 import { FoldersModule } from './folders/folders.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
-import { HomeController } from './home/home.controller';
-import { HomeModule } from './home/home.module';
 import { EditController } from './edit/edit.controller';
 import { EditModule } from './edit/edit.module';
 import { UsersModule } from './users/users.module';
@@ -28,7 +26,6 @@ import { S3Service } from './s3/s3.service';
 @Module({
   imports: [
     AuthModule,
-    HomeModule,
     EditModule,
     UsersModule,
     TypeOrmModule.forRoot(dataSourceOptions),
@@ -43,7 +40,6 @@ import { S3Service } from './s3/s3.service';
   controllers: [
     AppController,
     AuthController,
-    HomeController,
     EditController,
     S3Controller,
     FileManagerController,
