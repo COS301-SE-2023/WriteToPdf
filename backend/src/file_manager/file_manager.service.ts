@@ -235,7 +235,7 @@ export class FileManagerService {
     );
   }
 
-  importFile(importDTO: ImportDTO) {
+  async importFile(importDTO: ImportDTO) {
     if (importDTO.Path === undefined)
       throw new HttpException(
         'Path cannot be undefined',
@@ -259,9 +259,32 @@ export class FileManagerService {
         importDTO,
       );
 
-    return this.createFile(
+    const deltaContent =
+      convertedMardkownFileDTO.Content;
+
+    const createdFile = await this.createFile(
       convertedMardkownFileDTO,
     );
+
+    const savedFile = await this.saveFile(
+      createdFile,
+    );
+
+    const returnedDTO = new MarkdownFileDTO();
+    returnedDTO.MarkdownID = savedFile.MarkdownID;
+    returnedDTO.UserID = savedFile.UserID;
+    returnedDTO.DateCreated =
+      savedFile.DateCreated;
+    returnedDTO.LastModified =
+      savedFile.LastModified;
+    returnedDTO.Name = savedFile.Name;
+    returnedDTO.Path = savedFile.Path;
+    returnedDTO.Size = savedFile.Size;
+    returnedDTO.ParentFolderID =
+      savedFile.ParentFolderID;
+    returnedDTO.Content = deltaContent;
+
+    return returnedDTO;
   }
 
   /**
