@@ -123,6 +123,7 @@ export class FileService {
             this.editService.setPath(response.body.Path);
             this.editService.setName(response.body.Name);
             this.editService.setParentFolderID(response.body.ParentFolderID);
+            this.editService.setContent("");
 
             resolve(true);
           } else {
