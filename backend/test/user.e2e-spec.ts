@@ -75,4 +75,23 @@ describe('UserController (integration)', () => {
       'Incorrect password',
     );
   });
+
+  it('/users/login/ (POST) - incorrect email', async () => {
+    const requestUser = new UserDTO();
+    requestUser.Email = 'incorrectEmail'; // incorrect credential
+    requestUser.Password =
+      process.env.TEST_PASSWORD; // correct credential
+
+    const response = await request(
+      app.getHttpServer(),
+    )
+      .post('/users/login/')
+      .send(requestUser);
+    expect(response.status).toBe(
+      HttpStatus.UNAUTHORIZED,
+    );
+    expect(response.body.error).toBe(
+      'User not found',
+    );
+  });
 });
