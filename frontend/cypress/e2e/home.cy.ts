@@ -1,5 +1,5 @@
 describe('app', () => {
-    before(() => {
+    beforeEach(() => {
         cy.login('test','123456');
         //After login the page loaded should be the home page.
     });
