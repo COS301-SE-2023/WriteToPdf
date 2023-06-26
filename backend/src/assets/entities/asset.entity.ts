@@ -1,14 +1,13 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
-  JoinColumn,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity('ASSETS')
 export class Asset {
-  @PrimaryGeneratedColumn()
-  AssetID: number;
+  @PrimaryColumn()
+  AssetID: string;
 
   @Column()
   Format: string;
@@ -26,7 +25,7 @@ export class Asset {
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  Date_Created: Date;
+  DateCreated: Date;
 
   @Column({
     type: 'float',
@@ -35,6 +34,9 @@ export class Asset {
   })
   Size: number;
 
-  @JoinColumn()
-  ParentFolderID: number;
+  @Column()
+  ParentFolderID: string;
+
+  @Column()
+  UserID: number;
 }

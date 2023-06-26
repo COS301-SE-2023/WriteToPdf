@@ -2,27 +2,42 @@
 
 .container {
   width: 100%;
-  overflow-x: auto;
-  white-space: nowrap;
+  // overflow-x: auto;
+  // white-space: nowrap;
 }
+
 //Code Section Header Styling
 .header {
+  margin-top:-10px;
+  margin-left:-8px;
   position: fixed;
-  display: grid;
+  display: flex;
   grid-auto-flow: column;
-  overflow-x: auto;
-  background-image: linear-gradient(to right, #ffffff, #e7e7e7);
-  border-bottom: 1px solid #ccc;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  //overflow-x: auto;
+  background-image: linear-gradient(to left, #ffffff, #e7e7e7);
+  //border-bottom: 1px solid #ccc;
+  //box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border-image:linear-gradient(to left, #ffffff, $dark-grey) ;
+  border-image-width: 0 0 1px;
+  border-image-slice:1;
   width: 100%;
   height: 112px;
   //justify-content: space-between;
-  z-index:10;
+  z-index: 10;
+  margin:0;
+}
+.speedDialEditMenu{
+
+  margin-right:100px;
+  margin-top:24px;
+
 }
 
 .logoWrapper {
+  margin-left: 17px;
   display: flex;
   align-items: center;
+  padding-left: 6px;
 }
 
 .logo {
@@ -30,62 +45,71 @@
   height: 77px;
 }
 
-.headerNavigation{ //TODO rename this to something more relevant
-  display:flex;
-  margin:auto;
+.headerNavigation {
+  //TODO rename this to something more relevant
+  display: flex;
+  margin: auto;
+  margin-left: 153px;
 }
 
-.menuBar {
-  //margin: auto;
-  //margin-left:245px;
-  position:relative;
-}
 /**
 @Julian, please help me to get this menubar floating in line with the left sidebar's edge, it does not want
 to co-operate.
  */
 .menuBar {
-  margin-right: 655px;
+
+  // margin-left: 550px;
+  position:relative;
+  .p-menuitem-link{
+    z-index:9999999999;
+  }
+
 }
 
-.navigationIcon {
-  width: 57px;
-  height: 50px;
-}
 
-.headerToolbarRight {
-  display: flex;
-}
-
-.headerToolbarRight .icon {
-  width: 50px;
-  padding: 8px;
-  padding-top: 30px;
-  height: 50px;
-}
 //END Code section header styling
 //Left Sidebar styling
 
+#scrollingDiv {
+  overflow: auto;
+  //height: 300px; /* Set an appropriate height */
+}
+
+#fadingDiv {
+  position: relative;
+  //background-color: #FF0000; /* Set the original color */
+  //height: 300px; /* Set an appropriate height */
+}
+
+
 .leftSideBarWrapper {
   //Positioning
+  z-index:0;
   position: fixed;
   width: 245px;
-  height: 100%;
+  height: 110%;
   left: 0px;
-  top: 120px;
+
+  top: 112px;
   // Colour
-  background: linear-gradient(360deg, rgba(255, 255, 255, 0) -3.74%, #D2D2D2 -3.74%, rgba(217, 217, 217, 0) 97.6%);
+  overflow:auto;
+  background-color: white;
+  opacity: 100%;
   /* Main Colours/Dark Gray */
-  border-width: 0px 1px 1px 1px;
+  border-width: 0px 1px 1px 0px;
   border-style: solid;
   border-color: #6F6F6F;
-  //TODO implement infinite length in ts
+}
+
+.directoryTree{
+  overflow: auto;
 }
 
 .leftSideBarHeading {
   padding-top: 15px;
   padding-left: 50px;
 }
+
 .leftSideBarTools .icon {
   width: 30px;
   height: 30px;
@@ -99,16 +123,17 @@ to co-operate.
 
 
 
+
 .mainWindowHome {
-  padding-right: 351px;
-  padding-left: 250px;
-  padding-top: 120px;
+  margin-left: 250px;
+  margin-right: 150px;
+  margin-top: 120px;
   width: auto;
-  display:inline-block;
+  display: inline-block;
   z-index: 0;
 }
 
-.mainWindowHome .directoryContents{
+.mainWindowHome .directoryContents {
   padding-top: 20px;
 }
 
@@ -118,8 +143,14 @@ to co-operate.
   padding: 4px;
   width: auto;
 }
-
-
+// Below is the styling for the toolbar above the files in the main window
+.toolbarItem{
+  padding-left:10px;
+  padding-right:10px;
+ }
+.p-toolbar{
+  background-color: white;
+}
 // Below is the styling for the searchBar
 .searchBar {
   margin-top: 15px;
@@ -133,23 +164,30 @@ to co-operate.
   border-radius: 96px;
 }
 
-.searchBar input[type="text"], textarea {
-  background-color : #F7F7F7;
+
+.searchBar input[type="text"],
+textarea {
+  background-color: #F7F7F7;
   border: none;
-  width: inherit;
+  width: 90%;
 }
-.searchBar input[type=text]:focus{
+
+.searchBar input[type=text]:focus {
   outline: none;
 }
 
-.searchBar img{
+.searchBar img {
   height: 15px;
 }
 
-.searchBar input{
-  padding:5px;
+.searchBar input {
+  padding: 5px;
 }
 
 .searchBar:focus-within{
-  border: 1.5px solid black;
+  border: 1.3px solid black;
+}
+
+.moveDialogueContainer{
+  display: flex;
 }

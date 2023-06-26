@@ -14,6 +14,11 @@ env:
   DB_USERNAME: ${{ secrets.DB_USERNAME }}
   DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
   DB_NAME: ${{ secrets.DB_NAME }}
+  PEPPER: ${{ secrets.PEPPER }}
+  TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+  TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+  TEST_SALT: ${{ secrets.TEST_SALT }}
+  DB_TEST_PASSWORD: ${{ secrets.DB_TEST_PASSWORD }}
 
 jobs:
   upload_test_coverage:

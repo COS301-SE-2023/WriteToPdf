@@ -3,7 +3,7 @@ describe('app', () => {
         cy.login('test', '123456');
         //After login the page loaded should be the home page.
         //Then click to create new page
-        cy.get('.headerToolbarRight').find('.icon').eq(0).click();
+        cy.get('.newDoc').click();
     });
 
     it('should navigate to the home page when clicking on the home link', () => {

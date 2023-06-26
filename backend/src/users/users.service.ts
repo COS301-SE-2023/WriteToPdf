@@ -3,14 +3,13 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { CreateUserDTO } from './dto/create-user.dto';
-import { UpdateUserDTO } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { LoginUserDTO } from './dto/login-user.dto';
 import { AuthService } from '../auth/auth.service';
-import { find } from 'rxjs';
+import { UserDTO } from './dto/user.dto';
+import { SHA256 } from 'crypto-js';
+import 'dotenv/config';
 
 @Injectable()
 export class UsersService {
@@ -20,24 +19,36 @@ export class UsersService {
     private authService: AuthService,
   ) {}
 
-  create(createUserDTO: CreateUserDTO) {
+  create(createUserDTO: UserDTO): Promise<User> {
+    const pepper = process.env.PEPPER;
+    if (!pepper) {
+      throw new Error(
+        'Pepper value is not defined in the environment variables.',
+      );
+    }
+    createUserDTO.Password = SHA256(
+      createUserDTO.Password + pepper,
+      10,
+    ).toString();
     const newUser = this.usersRepository.create(
       createUserDTO,
     );
     return this.usersRepository.save(newUser);
   }
 
-  findAll() {
+  findAll(): Promise<User[]> {
     return this.usersRepository.find(); // SELECT * FROM users;
   }
 
-  findOne(UserID: number) {
+  findOne(UserID: number): Promise<User> {
     return this.usersRepository.findOneBy({
       UserID: UserID,
     }); // SELECT * FROM users WHERE UserID = {UserID};
   }
 
-  async findOneByEmail(Email: string) {
+  async findOneByEmail(
+    Email: string,
+  ): Promise<User> {
     const result =
       await this.usersRepository.query(
         'SELECT * FROM USERS WHERE Email = ?',
@@ -49,7 +60,7 @@ export class UsersService {
   throwHttpException(
     httpStatus: HttpStatus,
     message: string,
-  ) {
+  ): void {
     throw new HttpException(
       {
         status: httpStatus,
@@ -59,33 +70,33 @@ export class UsersService {
     );
   }
 
-  isValidFirstName(firstName: string) {
+  isValidFirstName(firstName: string): boolean {
     return (
       firstName.length > 0 &&
       firstName.length < 50 &&
-      firstName.match(/^[a-zA-Z]+$/)
+      // firstName.match(/^[a-zA-Z]+$/)
+      /^[a-zA-Z]+$/.test(firstName)
     );
   }
 
-  isValidLastName(lastName: string) {
+  isValidLastName(lastName: string): boolean {
     return (
       lastName.length > 0 &&
       lastName.length < 50 &&
-      lastName.match(/^[a-zA-Z]+$/)
+      // lastName.match(/^[a-zA-Z]+$/)
+      /^[a-zA-Z]+$/.test(lastName)
     );
   }
 
-  isValidEmail(email: string) {
-    if (
-      !email.match(
-        /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/,
-      )
-    )
-      return false;
-    return true;
+  isValidEmail(email: string): boolean {
+    return /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/.test(
+      email,
+    );
   }
 
-  async signup(createUserDTO: CreateUserDTO) {
+  async signup(
+    createUserDTO: UserDTO,
+  ): Promise<any> {
     if (
       !this.isValidFirstName(
         createUserDTO.FirstName,
@@ -132,12 +143,17 @@ export class UsersService {
     };
   }
 
-  async login(loginUserDTO: LoginUserDTO) {
+  async login(
+    loginUserDTO: UserDTO,
+  ): Promise<any> {
     const user = await this.findOneByEmail(
       loginUserDTO.Email,
     );
     if (
-      user?.Password !== loginUserDTO.Password
+      user?.Password !==
+      this.getPepperedPassword(
+        loginUserDTO.Password,
+      )
     ) {
       throw new HttpException(
         {
@@ -155,18 +171,38 @@ export class UsersService {
         loginUserDTO.Email,
         loginUserDTO.Password,
       );
+    //TODO create new DTO for this response
     const response = {
       UserID: user.UserID,
       Email: user.Email,
+      FirstName: user.FirstName,
       Token: token.access_token,
+      ExpiresAt: token.expires_at,
     };
     return response;
   }
 
+  private getPepperedPassword(
+    password: string,
+  ): string {
+    const pepper = process.env.PEPPER;
+
+    if (!pepper) {
+      throw new Error(
+        'Pepper value is not defined in the environment variables.',
+      );
+    }
+
+    return SHA256(
+      password + pepper,
+      10,
+    ).toString();
+  }
+
   async update(
     UserID: number,
-    updateUserDTO: UpdateUserDTO,
-  ) {
+    updateUserDTO: UserDTO,
+  ): Promise<User> {
     const user = await this.findOne(UserID);
     return this.usersRepository.save({
       ...user,
@@ -174,8 +210,25 @@ export class UsersService {
     }); // returns updated user
   }
 
-  async remove(UserID: number) {
+  async remove(UserID: number): Promise<User> {
     const user = await this.findOne(UserID);
     return this.usersRepository.remove(user); // returns deleted user
+  }
+
+  async getSalt(userDTO: UserDTO) {
+    const user = await this.findOneByEmail(
+      userDTO.Email,
+    );
+    const returnedUser = new UserDTO();
+    if (user.Salt === '') {
+      //   this.throwHttpException(
+      //     HttpStatus.BAD_REQUEST,
+      //     'Salt not found',
+      //   );
+      returnedUser.Salt = process.env.TEST_SALT;
+    } else {
+      returnedUser.Salt = user.Salt;
+    }
+    return returnedUser; // returns user with salt
   }
 }

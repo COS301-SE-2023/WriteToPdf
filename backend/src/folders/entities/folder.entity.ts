@@ -1,14 +1,13 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
-  JoinColumn,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity('FOLDERS')
 export class Folder {
-  @PrimaryGeneratedColumn()
-  FolderID: number;
+  @PrimaryColumn()
+  FolderID: string;
 
   @Column({
     type: 'timestamp',
@@ -16,12 +15,21 @@ export class Folder {
   })
   DateCreated: Date;
 
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  LastModified: Date;
+
   @Column()
   FolderName: string;
 
   @Column()
   Path: string;
 
-  @JoinColumn()
-  ParentFolderID: number;
+  @Column()
+  UserID: number;
+
+  @Column()
+  ParentFolderID: string;
 }

@@ -11,11 +11,7 @@ import {
 import { createMock } from '@golevelup/ts-jest';
 import { sign } from 'jsonwebtoken';
 import { jwtConstants } from './constants';
-import { SetMetadata } from '@nestjs/common';
-import {
-  IS_PUBLIC_KEY,
-  Public,
-} from './auth.controller';
+import { IS_PUBLIC_KEY } from './auth.controller';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
@@ -37,6 +33,12 @@ describe('AuthGuard', () => {
   it('should throw exception if token is missing', async () => {
     const context =
       createMock<ExecutionContext>();
+    const request = createMock<Request>({
+      method: 'POST',
+    });
+    context
+      .switchToHttp()
+      .getRequest.mockReturnValue(request);
     try {
       await guard.canActivate(context as any);
       expect(true).toBe(false);
@@ -51,13 +53,15 @@ describe('AuthGuard', () => {
   it('should throw exception if token is invalid', async () => {
     const context =
       createMock<ExecutionContext>();
+    const request = createMock<Request>({
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer test',
+      } as any,
+    });
     context
       .switchToHttp()
-      .getRequest.mockReturnValue({
-        headers: {
-          authorization: 'Bearer test',
-        },
-      });
+      .getRequest.mockReturnValue(request);
     try {
       await guard.canActivate(context as any);
       expect(true).toBe(false);
@@ -81,14 +85,16 @@ describe('AuthGuard', () => {
   it('should return true if token is valid', async () => {
     const context =
       createMock<ExecutionContext>();
+    const request = createMock<Request>({
+      method: 'POST',
+      headers: {
+        authorization:
+          'Bearer ' + generateValidToken(),
+      } as any,
+    });
     context
       .switchToHttp()
-      .getRequest.mockReturnValue({
-        headers: {
-          authorization:
-            'Bearer ' + generateValidToken(),
-        },
-      });
+      .getRequest.mockReturnValue(request);
     const result = await guard.canActivate(
       context as any,
     );
@@ -98,6 +104,12 @@ describe('AuthGuard', () => {
   it('should return true for public endpoints', async () => {
     const context =
       createMock<ExecutionContext>();
+    const request = createMock<Request>({
+      method: 'POST',
+    });
+    context
+      .switchToHttp()
+      .getRequest.mockReturnValue(request);
     const handlerWithDecorator = () => {
       /* */
     };
