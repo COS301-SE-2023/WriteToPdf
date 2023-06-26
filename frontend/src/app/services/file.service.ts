@@ -400,7 +400,9 @@ export class FileService {
           const fileContent = response.body.Content;
           const fileName = response.body.Name;
           const fileType = response.body.Type;
-          const downloadURL = URL.createObjectURL(new Blob([fileContent], { type: 'text/plain' }));
+          const downloadURL = URL.createObjectURL(
+            new Blob([fileContent], { type: 'text/plain' })
+          );
           const downloadLink = document.createElement('a');
           downloadLink.href = downloadURL;
           downloadLink.download = fileName + '.' + fileType;
