@@ -181,7 +181,7 @@ export class FolderService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  renameFolder(folderID: string, path: string, folderName: string): Promise<boolean> {
+  renameFolder(folderID: string|undefined, path: string|undefined, folderName: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameData(folderID, path, folderName).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -199,7 +199,7 @@ export class FolderService {
     });
   }
 
-  sendRenameData(folderID: string, path: string, folderName: string): Observable<HttpResponse<any>> {
+  sendRenameData(folderID: string|undefined, path: string|undefined, folderName: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/rename_folder';
     const body = new FolderDTO();
 

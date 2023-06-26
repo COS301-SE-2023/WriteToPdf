@@ -86,6 +86,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   // The functions below serve to allow for editing and all other processes involved with editing
   // file names.
   onRowLabelEdit(event: any, rowNode: any): void {
+
     if (event !== this.valueBeforeEdit) {
       this.updateTreeNodeLabel(this.filesDirectoryTree, rowNode.node.key, event);
       this.updateTreeTableData(this.filteredFilesDirectoryTreeTable, rowNode.node.key, event);
@@ -144,12 +145,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   sendEditedRowLabel(event: any, key: string, type: string): void {
-    console.log(event);
-    console.log(key);
-    console.log(type);
-    //TODO Implement this function
-    // sends the relevant information to the backend, that updates the file/folder's name
-    // the name being the event. Yes, event will have to be validated to be sure it is a string
+    console.log(event, key, type);
+    if (type === "folder") {
+      const folder = this.nodeService.getFolderDTOByID(key);
+      this.folderService.renameFolder(folder.FolderID, folder.Path, event).then((data) => {
+
+      });
+    }
+    else {
+      const file = this.nodeService.getFileDTOByID(key);
+      this.fileService.renameDocument(file.MarkdownID, event, file.Path).then((data) => {
+
+      });
+    }
 
   }
 
