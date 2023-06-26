@@ -5,7 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserDTO } from './dto/user.dto';
 import { RefreshTokenDTO } from './dto/refresh_token.dto';
 import { SHA256 } from 'crypto-js';
-
+import { MessageService } from 'primeng/api';
 import { PrimeIcons } from 'primeng/api';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class UserService {
   private email: string | undefined = undefined;
   private firstName: string | undefined = undefined;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private messageService: MessageService) { }
 
   async login(email: string, password: string): Promise<boolean> {
     // if (email === 'test' || password === '123456') {
@@ -60,6 +60,7 @@ export class UserService {
         },
         error: (error) => {
           console.error(error); // Handle error if any
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: `${error.error.error}` });
           resolve(false);
         },
       });

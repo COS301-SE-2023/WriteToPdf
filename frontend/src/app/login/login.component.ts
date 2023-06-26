@@ -2,7 +2,7 @@ import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute } from '@angular/router';
-
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +14,7 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
 
-  constructor(private router: Router, private elementRef: ElementRef, private userService: UserService, private route: ActivatedRoute) { }
+  constructor(private router: Router, private elementRef: ElementRef, private userService: UserService, private route: ActivatedRoute, private messageService: MessageService) { }
 
   ngOnInit(): void {
     const data = history.state;
@@ -36,8 +36,6 @@ export class LoginComponent {
   async login(): Promise<void> {
     if (await this.userService.login(this.email, this.password)) {
       this.navigateToPage('home');
-    } else {
-      alert('Invalid credentials');
     }
   }
 
