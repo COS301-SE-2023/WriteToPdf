@@ -94,6 +94,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     }
   }
+
   updateTreeTableData(nodes: TreeNode[], key: string, newValue: string): boolean {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
@@ -127,6 +128,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
     return false;
   }
+
   updateBreadcrumb(selectedNode: TreeNode | undefined) {
     // Clear the existing breadcrumb items
     this.activeDirectoryItems = [];
@@ -409,6 +411,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     }
   }
+
   getMenuItemsData() {
     return [
       {
@@ -483,7 +486,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
         items: [
           {
             label: 'Upload File',
-            icon: 'pi pi-fw pi-upload'
+            icon: 'pi pi-fw pi-upload',
+            command: ()=>{
+              this.showFileUploadPopup();
+            }
           }
         ]
       },
