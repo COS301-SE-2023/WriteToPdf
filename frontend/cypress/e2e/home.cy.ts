@@ -1,12 +1,11 @@
 describe('app', () => {
-    beforeEach(() => {
+    before(() => {
         cy.login('test','123456');
         //After login the page loaded should be the home page.
     });
 
     it('should display logo', () => {
         cy.get('.logo').should('exist');
-
     });
 
 
@@ -35,6 +34,4 @@ describe('app', () => {
         cy.get('.newDoc').click();
         cy.url().should('include', '/edit');
     });
-
-
 });

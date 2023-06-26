@@ -1,5 +1,5 @@
 describe('app', () => {
-    beforeEach(() => {
+    before(() => {
         cy.visit('http://localhost:4200');
         cy.get('.noAccountText').click();
     });

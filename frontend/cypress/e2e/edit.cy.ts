@@ -1,5 +1,5 @@
 describe('app', () => {
-    beforeEach(() => {
+    before(() => {
         cy.login('test', '123456');
         //After login the page loaded should be the home page.
         //Then click to create new page
