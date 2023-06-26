@@ -24,13 +24,7 @@ export class UserService {
   constructor(private http: HttpClient, private messageService: MessageService, private router: Router) { }
 
   async login(email: string, password: string): Promise<boolean> {
-    // if (email === 'test' || password === '123456') {
-    //   return new Promise<boolean>((resolve, reject) => {
-    //     resolve(false);
-    //   });
-    // }
-
-    // let salt=await this.retrieveSalt(email);
+    
     let salt: string | null;
     await this.retrieveSalt(email)
       .then((result) => {
