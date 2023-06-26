@@ -29,26 +29,80 @@ describe('UserController (integration)', () => {
     await app.close();
   });
 
-  it('/users/login/ (GET)', async () => {
-    // jest.setTimeout(10000);
-    return await request(app.getHttpServer())
-      .get('/users/login/')
-      .expect(HttpStatus.UNAUTHORIZED);
+  describe('users endpoint', () => {
+    it('/users/login/ (GET)', async () => {
+      // jest.setTimeout(10000);
+      return await request(app.getHttpServer())
+        .get('/users/login/')
+        .expect(HttpStatus.UNAUTHORIZED);
+    });
+
+    it('/users/login/ (POST)', async () => {
+      const requestUser = new UserDTO();
+      requestUser.Email = process.env.TEST_EMAIL;
+      requestUser.Password =
+        process.env.TEST_PASSWORD;
+
+      const response = await request(
+        app.getHttpServer(),
+      )
+        .post('/users/login/')
+        .send(requestUser);
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body).toHaveProperty(
+        'Token',
+      );
+      expect(response.body).toHaveProperty(
+        'Email',
+      );
+    });
   });
 
-  it('users/login/ (POST)', async () => {
+  it('/users/login/ (POST) - incorrect password', async () => {
     const requestUser = new UserDTO();
-    requestUser.Email = process.env.TEST_EMAIL;
-    requestUser.Password =
-      process.env.TEST_PASSWORD;
+    requestUser.Email = process.env.TEST_EMAIL; // correct credential
+    requestUser.Password = 'incorrectPassword'; // incorrect credential
 
     const response = await request(
       app.getHttpServer(),
     )
       .post('/users/login/')
       .send(requestUser);
+    expect(response.status).toBe(
+      HttpStatus.UNAUTHORIZED,
+    );
+    expect(response.body.error).toBe(
+      'Incorrect password',
+    );
+  });
+
+  it('/users/login/ (POST) - incorrect email', async () => {
+    const requestUser = new UserDTO();
+    requestUser.Email = 'incorrectEmail'; // incorrect credential
+    requestUser.Password =
+      process.env.TEST_PASSWORD; // correct credential
+
+    const response = await request(
+      app.getHttpServer(),
+    )
+      .post('/users/login/')
+      .send(requestUser);
+    expect(response.status).toBe(
+      HttpStatus.UNAUTHORIZED,
+    );
+    expect(response.body.error).toBe(
+      'User not found',
+    );
+  });
+
+  it('/users/get_salt/ (POST)', async () => {
+    const userDTO = new UserDTO();
+    userDTO.Email = process.env.TEST_EMAIL;
+    const response = await request(
+      app.getHttpServer(),
+    )
+      .post('/users/get_salt/')
+      .send(userDTO);
     expect(response.status).toBe(HttpStatus.OK);
-    expect(response.body).toHaveProperty('Token');
-    expect(response.body).toHaveProperty('Email');
   });
 });

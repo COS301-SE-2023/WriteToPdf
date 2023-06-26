@@ -5,8 +5,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserDTO } from './dto/user.dto';
 import { RefreshTokenDTO } from './dto/refresh_token.dto';
 import { SHA256 } from 'crypto-js';
-
+import { MessageService } from 'primeng/api';
 import { PrimeIcons } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -15,21 +16,16 @@ export class UserService {
   private isAuthenticated: boolean = false;
   private authToken: string | undefined = undefined;
   private userID: number | undefined = undefined;
-  private expiresAt:string | Date | number | undefined = undefined;
+  private expiresAt: string | Date | number | undefined = undefined;
   private email: string | undefined = undefined;
   private firstName: string | undefined = undefined;
+  private doExpirationCheck: boolean = false;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private messageService: MessageService, private router: Router) { }
 
   async login(email: string, password: string): Promise<boolean> {
-    // if (email === 'test' || password === '123456') {
-    //   return new Promise<boolean>((resolve, reject) => {
-    //     resolve(false);
-    //   });
-    // }
-
-    // let salt=await this.retrieveSalt(email);
-    let salt: string|null;
+    
+    let salt: string | null;
     await this.retrieveSalt(email)
       .then((result) => {
         salt = result;
@@ -44,22 +40,24 @@ export class UserService {
         next: (response: HttpResponse<any>) => {
 
           if (response.status === 200) {
-            console.log('Login successful');
-            console.log(response.body);
+
             this.isAuthenticated = true;
             this.authToken = response.body.Token;
             this.userID = response.body.UserID;
             this.expiresAt = response.body.ExpiresAt;
             this.email = email;
             this.firstName = response.body.FirstName;
+            this.doExpirationCheck = true;
             this.startExpirationCheck();
             resolve(true);
           } else {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: `Login failed` });
             resolve(false);
           }
         },
         error: (error) => {
           console.error(error); // Handle error if any
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: `${error.error.error}` });
           resolve(false);
         },
       });
@@ -88,9 +86,9 @@ export class UserService {
           console.log(response.status);
 
           if (response.status === 200) {
-            console.log("Signup successful");
             resolve(true);
           } else {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: `Signup failed` });
             resolve(false);
           }
         },
@@ -109,6 +107,9 @@ export class UserService {
     this.userID = undefined;
     this.email = undefined;
     this.firstName = undefined;
+    this.expiresAt = undefined;
+    this.doExpirationCheck = false;
+    this.navigateToPage('/login');
   }
 
   isAuthenticatedUser(): boolean {
@@ -135,18 +136,13 @@ export class UserService {
   }
 
 
-  sendLoginData(email: string, password: string, salt:string|null): Observable<HttpResponse<any>> {
+  sendLoginData(email: string, password: string, salt: string | null): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/users/login';
     const body = new UserDTO();
     body.Email = email;
 
     const hash = SHA256(password + salt).toString();
     body.Password = hash;
-
-    console.log(email);
-    console.log(password);
-    console.log("salt: "+salt);
-    console.log("hash: "+hash);
 
     return this.http.post(url, body, { observe: 'response' });
   }
@@ -198,51 +194,53 @@ export class UserService {
   }
 
   private startExpirationCheck() {
-  const checkInterval = 30000; // Set the interval duration in milliseconds
+    const checkInterval = 30000;
 
-  // Run the expiration check initially
-  this.checkExpiration();
-
-  // Set up a recurring timer to run the expiration check
-  setTimeout(() => {
     this.checkExpiration();
-  }, checkInterval);
-}
+
+
+    setTimeout(() => {
+      this.checkExpiration();
+    }, checkInterval);
+
+  }
 
   private checkExpiration() {
-    if (!this.expiresAt) {
-      // Handle the case when expiresAt is undefined or falsy
-      console.log('expiresAt is undefined or falsy.');
-      return;
-    }
+    if (this.doExpirationCheck) {
+      if (!this.expiresAt) {
+        // Handle the case when expiresAt is undefined or falsy
+        console.log('expiresAt is undefined or falsy.');
+        return;
+      }
 
-    const expiresAtDate = new Date(this.expiresAt); // Assuming expiresAt is a string
-    const currentDate = new Date();
-    const notificationTime = new Date(expiresAtDate.getTime() - 60000); // Subtract 1 minute (60000 milliseconds) from the expiration time
+      const expiresAtDate = new Date(this.expiresAt); // Assuming expiresAt is a string
+      const currentDate = new Date();
+      const notificationTime = new Date(expiresAtDate.getTime() - 60000); // Subtract 1 minute (60000 milliseconds) from the expiration time
 
-    if (currentDate >= notificationTime && currentDate < expiresAtDate) {
-      // Send the expiration notification
-      console.log('Sending expiration notification...');
-    }
+      if (currentDate >= notificationTime && currentDate < expiresAtDate) {
+        // Send the expiration notification
+        console.log('Sending expiration notification...');
+      }
 
-    if (expiresAtDate.getTime() < currentDate.getTime()) {
-      this.sendRefreshTokenRequest().subscribe({
-        next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
+      if (expiresAtDate.getTime() < currentDate.getTime()) {
+        this.sendRefreshTokenRequest().subscribe({
+          next: (response: HttpResponse<any>) => {
+            console.log(response);
+            console.log(response.status);
 
-          if (response.status === 200) {
-            console.log("Refresh token successful");
-            this.authToken = response.body.Token;
-            this.expiresAt = response.body.ExpiresAt;
-          } else {
-            console.log("Refresh token failed");
+            if (response.status === 200) {
+              // console.log("Refresh token successful");
+              this.authToken = response.body.Token;
+              this.expiresAt = response.body.ExpiresAt;
+            } else {
+              // console.log("Refresh token failed");
+            }
+          },
+          error: (error) => {
+            console.error(error); // Handle error if any
           }
-        },
-        error: (error) => {
-          console.error(error); // Handle error if any
-        }
-      });
+        });
+      }
     }
   }
 
@@ -258,5 +256,8 @@ export class UserService {
 
   }
 
+  navigateToPage(page: string): void {
+    this.router.navigate([page]);
+  }
 
 }
