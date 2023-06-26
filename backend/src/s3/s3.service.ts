@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FileDTO } from './dto/file.dto';
+// import { FileDTO } from './dto/file.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import 'dotenv/config';
 import {
@@ -8,14 +8,14 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-import {
-  writeFile,
-  mkdir,
-  access,
-  unlink,
-  readFile,
-  stat,
-} from 'fs/promises';
+// import {
+//   writeFile,
+//   mkdir,
+//   access,
+//   unlink,
+//   readFile,
+//   stat,
+// } from 'fs/promises';
 import { SHA256 } from 'crypto-js';
 
 @Injectable()
@@ -37,58 +37,58 @@ export class S3Service {
     region: this.awsS3BucketRegion,
   });
 
-  async upload(fileDTO: FileDTO, file: Buffer) {
-    const filePath =
-      fileDTO.UserID +
-      '/' +
-      fileDTO.ParentDirectory +
-      '/' +
-      fileDTO.FileName;
+  // async upload(fileDTO: FileDTO, file: Buffer) {
+  //   const filePath =
+  //     fileDTO.UserID +
+  //     '/' +
+  //     fileDTO.ParentDirectory +
+  //     '/' +
+  //     fileDTO.FileName;
 
-    return await this.s3Client.send(
-      new PutObjectCommand({
-        Bucket: this.awsS3BucketName,
-        Key: filePath,
-        Body: file,
-      }),
-    );
-  }
+  //   return await this.s3Client.send(
+  //     new PutObjectCommand({
+  //       Bucket: this.awsS3BucketName,
+  //       Key: filePath,
+  //       Body: file,
+  //     }),
+  //   );
+  // }
 
-  async download(fileDTO: FileDTO) {
-    const filePath =
-      fileDTO.UserID +
-      '/' +
-      fileDTO.ParentDirectory +
-      '/' +
-      fileDTO.FileName;
+  // async download(fileDTO: FileDTO) {
+  //   const filePath =
+  //     fileDTO.UserID +
+  //     '/' +
+  //     fileDTO.ParentDirectory +
+  //     '/' +
+  //     fileDTO.FileName;
 
-    console.log(filePath + '\n');
+  //   console.log(filePath + '\n');
 
-    const response = await this.s3Client.send(
-      new GetObjectCommand({
-        Bucket: this.awsS3BucketName,
-        Key: filePath,
-      }),
-    );
+  //   const response = await this.s3Client.send(
+  //     new GetObjectCommand({
+  //       Bucket: this.awsS3BucketName,
+  //       Key: filePath,
+  //     }),
+  //   );
 
-    return await response.Body.transformToString();
-  }
+  //   return await response.Body.transformToString();
+  // }
 
-  async delete(fileDTO: FileDTO) {
-    const filePath =
-      fileDTO.UserID +
-      '/' +
-      fileDTO.ParentDirectory +
-      '/' +
-      fileDTO.FileName;
+  // async delete(fileDTO: FileDTO) {
+  //   const filePath =
+  //     fileDTO.UserID +
+  //     '/' +
+  //     fileDTO.ParentDirectory +
+  //     '/' +
+  //     fileDTO.FileName;
 
-    return await this.s3Client.send(
-      new DeleteObjectCommand({
-        Bucket: this.awsS3BucketName,
-        Key: filePath,
-      }),
-    );
-  }
+  //   return await this.s3Client.send(
+  //     new DeleteObjectCommand({
+  //       Bucket: this.awsS3BucketName,
+  //       Key: filePath,
+  //     }),
+  //   );
+  // }
 
   // Requires the following fields to be initialised in the DTO:
   // MarkdownID: string; .. TO IDENTIFY THE FILE
@@ -103,17 +103,17 @@ export class S3Service {
     else
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
 
-    console.log(`./storage/${filePath}`);
+    // console.log(`./storage/${filePath}`);
+
+    // try {
+    //   await access(`./storage/${filePath}`);
+    // } catch (err) {
+    //   console.log('Access Error --> ' + err);
+    //   return undefined;
+    // }
 
     try {
-      await access(`./storage/${filePath}`);
-    } catch (err) {
-      console.log('Access Error --> ' + err);
-      return undefined;
-    }
-
-    try {
-      await unlink(`./storage/${filePath}`);
+      // await unlink(`./storage/${filePath}`);
       /*const response = */ await this.s3Client.send(
         new DeleteObjectCommand({
           Bucket: this.awsS3BucketName,
@@ -152,23 +152,23 @@ export class S3Service {
     else
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
 
-    try {
-      await mkdir(`./storage/${filePath}`, {
-        recursive: true,
-      });
-    } catch (err) {
-      console.log(
-        'Directory Creation Error:' + err,
-      );
-      return undefined;
-    }
+    // try {
+    //   await mkdir(`./storage/${filePath}`, {
+    //     recursive: true,
+    //   });
+    // } catch (err) {
+    //   console.log(
+    //     'Directory Creation Error:' + err,
+    //   );
+    //   return undefined;
+    // }
 
     try {
-      await writeFile(
-        `./storage/${filePath}/${markdownFileDTO.MarkdownID}`,
-        '',
-        'utf-8',
-      );
+      // await writeFile(
+      //   `./storage/${filePath}/${markdownFileDTO.MarkdownID}`,
+      //   '',
+      //   'utf-8',
+      // );
       /*const response = */ await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
@@ -181,16 +181,16 @@ export class S3Service {
       return undefined;
     }
 
-    const fileStats = await stat(
-      `./storage/${filePath}`,
-    );
-    console.log(fileStats);
+    // const fileStats = await stat(
+    //   `./storage/${filePath}`,
+    // );
+    // console.log(fileStats);
     markdownFileDTO.Content = '';
     // markdownFileDTO.DateCreated =
     //   fileStats.birthtime;
     // markdownFileDTO.LastModified =
     //   fileStats.mtime;
-    markdownFileDTO.Size = fileStats.size;
+    markdownFileDTO.Size = 0;
 
     console.log(markdownFileDTO);
 
@@ -212,14 +212,14 @@ export class S3Service {
     else
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
 
-    console.log(`./storage/${filePath}`);
+    // console.log(`./storage/${filePath}`);
 
-    try {
-      await access(`./storage/${filePath}`);
-    } catch (err) {
-      console.log('Access Error --> ' + err);
-      return undefined;
-    }
+    // try {
+    //   await access(`./storage/${filePath}`);
+    // } catch (err) {
+    //   console.log('Access Error --> ' + err);
+    //   return undefined;
+    // }
 
     const fileData = new Uint8Array(
       Buffer.from(
@@ -228,11 +228,11 @@ export class S3Service {
     );
 
     try {
-      await writeFile(
-        `./storage/${filePath}`,
-        fileData,
-        'utf-8',
-      );
+      // await writeFile(
+      //   `./storage/${filePath}`,
+      //   fileData,
+      //   'utf-8',
+      // );
       /*const response = */ await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
@@ -245,13 +245,13 @@ export class S3Service {
       return undefined;
     }
 
-    const fileStats = await stat(
-      `./storage/${filePath}`,
-    );
-    console.log(fileStats);
+    // const fileStats = await stat(
+    //   `./storage/${filePath}`,
+    // );
+    // console.log(fileStats);
     // markdownFileDTO.LastModified =
     //   fileStats.mtime;
-    markdownFileDTO.Size = fileStats.size;
+    markdownFileDTO.Size = 0; // TODO: Change to s3 return object
 
     return markdownFileDTO;
   }
@@ -264,51 +264,47 @@ export class S3Service {
     markdownFileDTO: MarkdownFileDTO,
   ) {
     let filePath = '';
-    let respData = '';
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     else
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
 
-    try {
-      await access(`./storage/${filePath}`);
-    } catch (err) {
-      console.log('Access Error --> ' + err);
-      return undefined;
-    }
+    // try {
+    //   await access(`./storage/${filePath}`);
+    // } catch (err) {
+    //   console.log('Access Error --> ' + err);
+    //   return undefined;
+    // }
 
     try {
-      markdownFileDTO.Content = await readFile(
-        `./storage/${filePath}`,
-        {
-          encoding: 'utf-8',
-        },
-      );
+      // markdownFileDTO.Content = await readFile(
+      //   `./storage/${filePath}`,
+      //   {
+      //     encoding: 'utf-8',
+      //   },
+      // );
       const response = await this.s3Client.send(
         new GetObjectCommand({
           Bucket: this.awsS3BucketName,
           Key: filePath,
         }),
       );
-      respData =
+      markdownFileDTO.Content =
         await response.Body.transformToString();
     } catch (err) {
       console.log('Read File Error:' + err);
       return undefined;
     }
 
-    console.log('S3');
-    console.log(respData);
-
-    const fileStats = await stat(
-      `./storage/${filePath}`,
-    );
-    console.log(fileStats);
+    // const fileStats = await stat(
+    //   `./storage/${filePath}`,
+    // );
+    // console.log(fileStats);
     // markdownFileDTO.DateCreated =
     //   fileStats.birthtime;
     // markdownFileDTO.LastModified =
     //   fileStats.mtime;
-    markdownFileDTO.Size = fileStats.size;
+    markdownFileDTO.Size = 0; // TODO: Change to s3 resp data
 
     return markdownFileDTO;
   }
