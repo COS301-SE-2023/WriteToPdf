@@ -101,7 +101,8 @@ export class S3Service {
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     else
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
+      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
+    console.log(markdownFileDTO);
 
     // console.log(`./storage/${filePath}`);
 
@@ -125,6 +126,7 @@ export class S3Service {
       return undefined;
     }
 
+    console.log(markdownFileDTO);
     return markdownFileDTO;
   }
 
@@ -149,8 +151,8 @@ export class S3Service {
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}`;
-    else
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
+    else filePath = `${markdownFileDTO.UserID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
+    console.log(markdownFileDTO);
 
     // try {
     //   await mkdir(`./storage/${filePath}`, {
@@ -193,7 +195,6 @@ export class S3Service {
     markdownFileDTO.Size = 0;
 
     console.log(markdownFileDTO);
-
     return markdownFileDTO;
   }
 
@@ -210,7 +211,8 @@ export class S3Service {
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     else
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
+      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
+    console.log(markdownFileDTO);
 
     // console.log(`./storage/${filePath}`);
 
@@ -253,6 +255,7 @@ export class S3Service {
     //   fileStats.mtime;
     markdownFileDTO.Size = 0; // TODO: Change to s3 return object
 
+    console.log(markdownFileDTO);
     return markdownFileDTO;
   }
 
@@ -267,7 +270,8 @@ export class S3Service {
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     else
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
+      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
+    console.log(markdownFileDTO);
 
     // try {
     //   await access(`./storage/${filePath}`);
@@ -289,8 +293,13 @@ export class S3Service {
           Key: filePath,
         }),
       );
+
+      console.log(response);
+
       markdownFileDTO.Content =
         await response.Body.transformToString();
+      markdownFileDTO.Size =
+        response.ContentLength;
     } catch (err) {
       console.log('Read File Error:' + err);
       return undefined;
@@ -304,8 +313,8 @@ export class S3Service {
     //   fileStats.birthtime;
     // markdownFileDTO.LastModified =
     //   fileStats.mtime;
-    markdownFileDTO.Size = 0; // TODO: Change to s3 resp data
 
+    console.log(markdownFileDTO);
     return markdownFileDTO;
   }
 }
