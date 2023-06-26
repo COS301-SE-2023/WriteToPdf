@@ -40,8 +40,7 @@ export class UserService {
         next: (response: HttpResponse<any>) => {
 
           if (response.status === 200) {
-            console.log('Login successful');
-            console.log(response.body);
+
             this.isAuthenticated = true;
             this.authToken = response.body.Token;
             this.userID = response.body.UserID;
@@ -52,6 +51,7 @@ export class UserService {
             this.startExpirationCheck();
             resolve(true);
           } else {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: `Login failed` });
             resolve(false);
           }
         },
@@ -86,9 +86,9 @@ export class UserService {
           console.log(response.status);
 
           if (response.status === 200) {
-            console.log("Signup successful");
             resolve(true);
           } else {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: `Signup failed` });
             resolve(false);
           }
         },
@@ -229,11 +229,11 @@ export class UserService {
             console.log(response.status);
 
             if (response.status === 200) {
-              console.log("Refresh token successful");
+              // console.log("Refresh token successful");
               this.authToken = response.body.Token;
               this.expiresAt = response.body.ExpiresAt;
             } else {
-              console.log("Refresh token failed");
+              // console.log("Refresh token failed");
             }
           },
           error: (error) => {

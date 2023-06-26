@@ -6,13 +6,14 @@ import { UserService } from './user.service';
 import { HttpResponse } from '@angular/common/http';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FolderService {
 
-  constructor(private userService:UserService, private http: HttpClient) { }
+  constructor(private userService:UserService, private http: HttpClient, private messageService:MessageService) { }
 
   moveFolder(folderID: string | undefined, path: string | undefined, parentFolderID: string | undefined): Promise<FolderDTO> {
     return new Promise<FolderDTO>((resolve, reject) => {
@@ -22,7 +23,7 @@ export class FolderService {
           console.log(response.status);
 
           if (response.status === 200) {
-            console.log('Move successful');
+            this.messageService.add({ severity: 'success', summary:'Folder moved successfully'});
             const folder= new FolderDTO();
             folder.FolderID = response.body.FolderID;
             folder.DateCreated = response.body.DateCreated;
@@ -69,7 +70,7 @@ export class FolderService {
           console.log(response.status);
 
           if (response.status === 200) {
-            console.log('Delete successful');
+            this.messageService.add({ severity: 'success', summary: 'Folder deleted successfully'});
             resolve(true);
           } else {
             resolve(false);
@@ -101,7 +102,6 @@ export class FolderService {
 
           if (response.status === 200) {
             const body = response.body;
-            console.log(body);
             let folders: FolderDTO[] = [];
             for (let i = 0; i < body.Folders.length; i++) {
               const folderDTO = new FolderDTO();
@@ -116,7 +116,7 @@ export class FolderService {
 
             resolve(folders);
           } else {
-            console.log('Retrieve unsuccessful');
+            this.messageService.add({ severity: 'error', summary: 'Error retrieving folders'});
             reject();
           }
         },
@@ -149,7 +149,7 @@ export class FolderService {
           console.log(response.status);
 
           if (response.status === 200) {
-            console.log('Create successful');
+            this.messageService.add({ severity: 'success', summary: 'Folder created successfully'});
             const folder=new FolderDTO();
             folder.FolderName=folderName;
             folder.Path=path;
@@ -189,7 +189,7 @@ export class FolderService {
           console.log(response.status);
 
           if (response.status === 200) {
-            console.log('Rename successful');
+            this.messageService.add({ severity: 'success', summary: 'Folder renamed successfully'});
             resolve(true);
           } else {
             resolve(false);
