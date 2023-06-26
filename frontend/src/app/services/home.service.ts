@@ -105,7 +105,6 @@ export class NodeService {
       directoryObject.push(this.getTreeTableNodesDataHelper(folder, 1));
     }
 
-    console.log("directoryObject: ", directoryObject);
     return directoryObject;
   }
 
@@ -127,12 +126,10 @@ export class NodeService {
       let x = 0;
       folderObject.children.pop();
       for (let file of files) {
-        console.log(x + " file: ", file);
         folderObject.children.push({
           key: file.MarkdownID,
           data: { name: file.Name, size: file.Size, type: 'file' }
         });
-        console.log("folderObject: ", folderObject);
       }
 
       for (let folder of folders) {
