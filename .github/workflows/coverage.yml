@@ -20,6 +20,7 @@ env:
   TEST_SALT: ${{ secrets.TEST_SALT }}
   DB_TEST_PASSWORD: ${{ secrets.DB_TEST_PASSWORD }}
   AUTH_BEARER: ${{ secrets.AUTH_BEARER }}
+  TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
 
 jobs:
   upload_test_coverage:
