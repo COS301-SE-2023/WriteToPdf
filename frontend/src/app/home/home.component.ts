@@ -441,7 +441,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             command: () => {
               if (this.currentDirectory != null) this.onOpenFileSelect(this.currentDirectory);
               else {
-                this.messageService.add({ severity: 'warn', summary: 'Please Select a Folder or File to Open', detail: 'Not mucho intelligento' })
+                this.messageService.add({ severity: 'warn', summary: 'Please Select a Folder or File to Open', detail: '' })
               }
             }
           },
@@ -451,7 +451,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             command: () => {
               if (this.currentDirectory != null) this.onMoveFileSelect(this.currentDirectory, '', '');
               else {
-                this.messageService.add({ severity: 'warn', summary: 'Please Select a Folder or File to Move', detail: 'Not mucho intelligento' })
+                this.messageService.add({ severity: 'warn', summary: 'Please Select a Folder or File to Move', detail: '' })
               }
             }
           },
@@ -461,7 +461,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             command: () => {
               if (this.currentDirectory != null) this.delete(this.currentDirectory);
               else {
-                this.messageService.add({ severity: 'warn', summary: 'Please select a folder or File to Delete', detail: 'You twat' })
+                this.messageService.add({ severity: 'warn', summary: 'Please select a folder or File to Delete', detail: '' })
               }
             }
           },
