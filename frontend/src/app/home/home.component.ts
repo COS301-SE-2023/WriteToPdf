@@ -553,7 +553,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       },
       {
         label: 'Quit',
-        icon: 'pi pi-fw pi-power-off'
+        icon: 'pi pi-fw pi-power-off',
+        command: () => {
+          this.userService.logout();
+        }
       }
     ];
   }
