@@ -255,16 +255,16 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    const convertedMardkownFileDTO =
+    const convertedMarkdownFileDTO =
       this.conversionService.convertFrom(
         importDTO,
       );
 
     const deltaContent =
-      convertedMardkownFileDTO.Content;
+      convertedMarkdownFileDTO.Content;
 
     const createdFile = await this.createFile(
-      convertedMardkownFileDTO,
+      convertedMarkdownFileDTO,
     );
 
     createdFile.Content = deltaContent;
