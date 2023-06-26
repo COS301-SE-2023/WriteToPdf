@@ -94,4 +94,15 @@ describe('UserController (integration)', () => {
       'User not found',
     );
   });
+
+  it('/users/get_salt/ (POST)', async () => {
+    const userDTO = new UserDTO();
+    userDTO.Email = process.env.TEST_EMAIL;
+    const response = await request(
+      app.getHttpServer(),
+    )
+      .post('/users/get_salt/')
+      .send(userDTO);
+    expect(response.status).toBe(HttpStatus.OK);
+  });
 });
