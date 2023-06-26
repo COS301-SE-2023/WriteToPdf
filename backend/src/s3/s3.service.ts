@@ -253,7 +253,8 @@ export class S3Service {
     // console.log(fileStats);
     // markdownFileDTO.LastModified =
     //   fileStats.mtime;
-    markdownFileDTO.Size = 0; // TODO: Change to s3 return object
+    markdownFileDTO.Size =
+      fileData.buffer.byteLength; // TODO: Change to s3 return object
 
     console.log(markdownFileDTO);
     return markdownFileDTO;
