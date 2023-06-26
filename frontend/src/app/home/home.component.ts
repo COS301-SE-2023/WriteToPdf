@@ -426,14 +426,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 label: 'Folder',
                 icon: 'pi pi-fw pi-folder',
                 command: () => {
-                  //TODO Show dialog for creating a new folder
+                  this.createNewFolderDialogueVisible = true;
                 }
               },
               {
                 label: 'Document',
                 icon: 'pi pi-fw pi-file',
                 command: () => {
-                  //TODO Show dialog for creating a new document
+                  this.createNewDocumentDialogueVisible = true;
                 }
               }
             ]
@@ -471,13 +471,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
           {
             separator: true
           },
-          {
-            label: 'Export',
-            icon: 'pi pi-fw pi-external-link',
-            command: () => {
-              //TODO implement downloading a file from the database
-            }
-          }
+          // {
+          //   label: 'Export',
+          //   icon: 'pi pi-fw pi-external-link',
+          //   command: () => {
+          //     //TODO implement downloading a file from the database
+          //   }
+          // }
         ]
       },
       {
@@ -487,7 +487,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           {
             label: 'Upload File',
             icon: 'pi pi-fw pi-upload',
-            command: ()=>{
+            command: () => {
               this.showFileUploadPopup();
             }
           }
@@ -570,8 +570,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.entityToMove.data.type === 'folder') {
       this.folderService.moveFolder(this.entityToMove.key, path, destinationFolder.FolderID).then((data) => {
         this.nodeService.removeFolder(this.entityToMove.key);
-        data.FolderName=this.entityToMove.data.name;
-        
+        data.FolderName = this.entityToMove.data.name;
+
         this.nodeService.addFolder(data);
         this.refreshTree();
         this.moveDialogVisible = false;
@@ -579,8 +579,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     } else {
       this.fileService.moveDocument(this.entityToMove.key, path, destinationFolder.FolderID).then((data) => {
         this.nodeService.removeFile(this.entityToMove.key);
-        data.Name=this.entityToMove.data.name;
-        data.Size=this.entityToMove.data.size;
+        data.Name = this.entityToMove.data.name;
+        data.Size = this.entityToMove.data.size;
         this.nodeService.addFile(data);
         this.refreshTree();
         this.moveDialogVisible = false;
@@ -590,8 +590,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   async createNewDocument() {
 
-    let path:string|undefined = '';
-    let parentFolderID:string|undefined = '';
+    let path: string | undefined = '';
+    let parentFolderID: string | undefined = '';
     if (this.entityName == '') {
       this.entityName = 'New Document';
     }
@@ -599,12 +599,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.currentDirectory != null) {
       if (this.currentDirectory.data.type === 'folder') {
         const folder = this.nodeService.getFolderDTOByID(this.currentDirectory.key);
-        path= folder.Path;
+        path = folder.Path;
         if (folder.Path !== '')
           path += `/${this.currentDirectory.data.name}`;
         else
           path += `${this.currentDirectory.data.name}`;
-      }else{
+      } else {
         const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
         path = file.Path;
       }
@@ -615,7 +615,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         parentFolderID = file.ParentFolderID;
       }
     }
-    
+
     this.entityName = this.nodeService.getUniqueName(this.entityName, path, 'file');
 
     if (await this.fileService.createDocument(this.entityName, path, parentFolderID)) {
