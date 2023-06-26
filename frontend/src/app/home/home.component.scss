@@ -84,7 +84,7 @@ to co-operate.
 
 .leftSideBarWrapper {
   //Positioning
-  z-index:10000;
+  z-index:0;
   position: fixed;
   width: 245px;
   height: 110%;
@@ -125,9 +125,9 @@ to co-operate.
 
 
 .mainWindowHome {
-  padding-right: 150px;
-  padding-left: 250px;
-  padding-top: 120px;
+  margin-left: 250px;
+  margin-right: 150px;
+  margin-top: 120px;
   width: auto;
   display: inline-block;
   z-index: 0;
@@ -188,3 +188,6 @@ textarea {
   border: 1.3px solid black;
 }
 
+.moveDialogueContainer{
+  display: flex;
+}

@@ -6,9 +6,9 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem } from "primeng/api";
-import { FileUploadPopupComponent } from "../file-upload-popup/file-upload-popup.component";
-import { DialogService } from "primeng/dynamicdialog";
+import { MenuItem } from 'primeng/api';
+import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
+import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
 
@@ -27,14 +27,13 @@ export class EditComponent implements AfterViewInit, OnInit {
   exportDialogVisible: boolean = false;
   public speedDialItems!: MenuItem[];
 
-
   constructor(
     private elementRef: ElementRef,
     private router: Router,
     private dialogService: DialogService,
     private fileService: FileService,
     private editService: EditService
-  ) { }
+  ) {}
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
@@ -47,43 +46,43 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-
     this.hideSideBar();
     this.speedDialItems = [
       {
         icon: 'pi pi-pencil',
         command: () => {
-          this.navigateToPage("edit");
-        }
+          this.navigateToPage('edit');
+        },
       },
       {
         icon: 'pi pi-refresh',
         command: () => {
           // this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
-        }
+        },
       },
       {
         icon: 'pi pi-trash',
         command: () => {
           // this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
-        }
+        },
       },
       {
         icon: 'pi pi-upload',
         command: () => {
           this.showFileUploadPopup();
-        }
+        },
       },
       {
         icon: 'pi pi-external-link',
-      }
+      },
     ];
     this.fileName = this.editService.getName();
   }
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
 
-    setTimeout(() => {//Why wait 0ms? I don't know but it works
+    setTimeout(() => {
+      //Why wait 0ms? I don't know but it works
       const contents = this.editService.getContent();
       this.documentContent = contents;
       if (contents) {
@@ -92,7 +91,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     }, 0);
 
     quill.focus();
-
 
     // quill.on('selection-change', (range: any, oldRange: any, source: any) => {
     //   if (range) {
@@ -203,24 +201,26 @@ export class EditComponent implements AfterViewInit, OnInit {
       if (this.sidebarVisible) {
         sidebar.setAttribute('style', 'display:none');
         this.sidebarVisible = false;
-      }
-      else {
+      } else {
         sidebar.setAttribute('style', 'display:block');
         this.sidebarVisible = true;
       }
     }
-
   }
 
   rename() {
     console.log('rename');
-    this.fileService.renameDocument(this.editService.getMarkdownID(), this.fileName, this.editService.getPath());
+    this.fileService.renameDocument(
+      this.editService.getMarkdownID(),
+      this.fileName,
+      this.editService.getPath()
+    );
   }
 
   async delete() {
     console.log('delete');
     await this.fileService.deleteDocument(this.editService.getMarkdownID());
-    
+
     this.editService.setMarkdownID('');
     this.editService.setPath('');
     this.editService.setName('');
@@ -232,5 +232,17 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   showDialog() {
     this.exportDialogVisible = true;
+  }
+
+  exportFile() {
+    const quill = this.quillEditor.getQuill();
+    const contents = quill.getContents();
+
+    const markdownID = this.editService.getMarkdownID();
+    const name = this.editService.getName();
+
+    if (markdownID && name) {
+      this.fileService.exportDocument(markdownID, name, contents, 'txt');
+    }
   }
 }

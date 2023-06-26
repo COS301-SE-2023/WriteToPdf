@@ -10,7 +10,6 @@ import {
   convertTextToDelta,
   convertDeltaToHtml,
 } from 'node-quill-converter';
-import { convert } from 'html-to-text';
 
 @Injectable()
 export class ConversionService {
@@ -58,12 +57,24 @@ export class ConversionService {
 
   convertToTxt(markdownDTO: ExportDTO) {
     const html = convertDeltaToHtml(
-      JSON.parse(markdownDTO.Content),
+      markdownDTO.Content,
     );
 
-    const text = convert(html, {
-      wordwrap: false,
-    });
+    const text = html.replace(
+      /<\/?[^>]*>/g,
+      (match) => {
+        if (
+          match.startsWith('</p>') ||
+          match.startsWith('</li>')
+        ) {
+          return '\n';
+        } else if (match.startsWith('<li>')) {
+          return '- ';
+        } else {
+          return '';
+        }
+      },
+    );
 
     const textDTO = new ExportDTO();
     textDTO.Content = text;

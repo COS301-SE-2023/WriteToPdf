@@ -7,6 +7,8 @@ import { UserService } from './user.service';
 import { EditService } from './edit.service';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ImportDTO } from './dto/import.dto';
+import { resolve } from 'path';
+import { ExportDTO } from './dto/export.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +18,7 @@ export class FileService {
     private http: HttpClient,
     private userService: UserService,
     private editService: EditService
-  ) { }
+  ) {}
 
   saveDocument(
     content: string | undefined,
@@ -60,7 +62,10 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveDocument(markdownID: string | undefined, path: string | undefined): Promise<any> {
+  retrieveDocument(
+    markdownID: string | undefined,
+    path: string | undefined
+  ): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveData(markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -96,9 +101,13 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  createDocument(): Promise<boolean> {
+  createDocument(
+    name: string,
+    path: string | undefined,
+    parentFolderID: string | undefined
+  ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.sendCreateData().subscribe({
+      this.sendCreateData(name, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
           console.log(response.status);
@@ -120,14 +129,18 @@ export class FileService {
     });
   }
 
-  sendCreateData(): Observable<HttpResponse<any>> {
+  sendCreateData(
+    name: string,
+    path: string | undefined,
+    parentFolderID: string | undefined
+  ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/create_file';
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
-    body.Path = '';
-    body.Name = 'New Document';
-    body.ParentFolderID = '1 ';
+    body.Path = path;
+    body.Name = name;
+    body.ParentFolderID = parentFolderID;
 
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -154,7 +167,9 @@ export class FileService {
     });
   }
 
-  sendDeleteData(markdownID: string | undefined): Observable<HttpResponse<any>> {
+  sendDeleteData(
+    markdownID: string | undefined
+  ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/delete_file';
     const body = new MarkdownFileDTO();
 
@@ -169,7 +184,11 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  renameDocument(markdownFileID:string|undefined, fileName: string | undefined, path:string|undefined): Promise<boolean> {
+  renameDocument(
+    markdownFileID: string | undefined,
+    fileName: string | undefined,
+    path: string | undefined
+  ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameData(markdownFileID, fileName, path).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -187,7 +206,11 @@ export class FileService {
     });
   }
 
-  sendRenameData(markdownFileID: string | undefined, name: string | undefined, path: string | undefined): Observable<HttpResponse<any>> {
+  sendRenameData(
+    markdownFileID: string | undefined,
+    name: string | undefined,
+    path: string | undefined
+  ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/rename_file';
     const body = new MarkdownFileDTO();
 
@@ -203,9 +226,13 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  moveDocument(markdownID: string | undefined, path: string | undefined, parentFolderID: string | undefined) {
+  moveDocument(
+    markdownID: string | undefined,
+    path: string | undefined,
+    parentFolderID: string | undefined
+  ): Promise<MarkdownFileDTO> {
     // Will need to rerun directory structure function with new moved file.
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<MarkdownFileDTO>((resolve, reject) => {
       this.sendMoveData(markdownID, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
@@ -213,9 +240,16 @@ export class FileService {
 
           if (response.status === 200) {
             console.log('Move successful');
-            resolve(true);
+            const markdownFile = new MarkdownFileDTO();
+            markdownFile.MarkdownID = response.body.MarkdownID;
+            markdownFile.Name = response.body.Name;
+            markdownFile.Path = response.body.Path;
+            markdownFile.ParentFolderID = response.body.ParentFolderID;
+
+            resolve(markdownFile);
           } else {
-            resolve(false);
+            console.log('Move unsuccessful');
+            reject();
           }
         },
       });
@@ -246,11 +280,10 @@ export class FileService {
     return new Promise<MarkdownFileDTO[]>((resolve, reject) => {
       this.sendRetrieveAllFiles().subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 200) {
             console.log('Retrieve successful');
             const body = response.body;
-            console.log("" + body);
+            console.log('' + body);
             let files: MarkdownFileDTO[] = [];
             for (let i = 0; i < body.Files.length; i++) {
               const fileDTO = new MarkdownFileDTO();
@@ -292,14 +325,19 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  importDocument(name:string, path:string, parentFolderID:string, content:string, type:string): Promise<MarkdownFileDTO>{
+  importDocument(
+    name: string,
+    path: string,
+    parentFolderID: string,
+    content: string,
+    type: string
+  ): Promise<MarkdownFileDTO> {
     return new Promise<MarkdownFileDTO>((resolve, reject) => {
       this.sendImportData(name, path, parentFolderID, content, type).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
           console.log(response.status);
-          const outputFile= new MarkdownFileDTO();
-
+          const outputFile = new MarkdownFileDTO();
 
           if (response.status === 200) {
             console.log('Import successful');
@@ -322,7 +360,13 @@ export class FileService {
     });
   }
 
-  sendImportData(name: string, path: string, parentFolderID: string, content: string, type:string): Observable<HttpResponse<any>> {
+  sendImportData(
+    name: string,
+    path: string,
+    parentFolderID: string,
+    content: string,
+    type: string
+  ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/import';
     const body = new ImportDTO();
 
@@ -333,7 +377,58 @@ export class FileService {
     body.Content = content;
     body.Type = type;
 
-    console.log("Body Import: " + JSON.stringify(body));
+    console.log('Body Import: ' + JSON.stringify(body));
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  exportDocument(
+    markdownID: string,
+    name: string,
+    content: string,
+    type: string
+  ): void {
+    this.sendExportData(markdownID, name, content, type).subscribe({
+      next: (response: HttpResponse<any>) => {
+        console.log(response);
+        console.log(response.status);
+        if (response.status === 200) {
+          console.log('Export successful');
+          const fileContent = response.body.Content;
+          const fileName = response.body.Name;
+          const fileType = response.body.Type;
+          const downloadURL = URL.createObjectURL(new Blob([fileContent], { type: 'text/plain' }));
+          const downloadLink = document.createElement('a');
+          downloadLink.href = downloadURL;
+          downloadLink.download = fileName + '.' + fileType;
+          downloadLink.click();
+          URL.revokeObjectURL(downloadURL);
+          // document.body.removeChild(downloadLink);
+        } else {
+          console.log('Export unsuccessful');
+        }
+      },
+    });
+  }
+
+  sendExportData(
+    markdownID: string | undefined,
+    name: string | undefined,
+    content: string | undefined,
+    type: string | undefined
+  ): Observable<HttpResponse<any>> {
+    const url = 'http://localhost:3000/file_manager/export';
+    const body = new ExportDTO();
+
+    body.MarkdownID = markdownID;
+    body.Name = name;
+    body.Content = content;
+    body.UserID = this.userService.getUserID();
+    body.Type = type;
+
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()

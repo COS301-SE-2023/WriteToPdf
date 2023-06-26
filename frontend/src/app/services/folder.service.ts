@@ -14,8 +14,8 @@ export class FolderService {
 
   constructor(private userService:UserService, private http: HttpClient) { }
 
-  moveFolder(folderID: string | undefined, path: string | undefined, parentFolderID: string | undefined): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+  moveFolder(folderID: string | undefined, path: string | undefined, parentFolderID: string | undefined): Promise<FolderDTO> {
+    return new Promise<FolderDTO>((resolve, reject) => {
       this.sendMoveData(folderID, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
@@ -23,9 +23,18 @@ export class FolderService {
 
           if (response.status === 200) {
             console.log('Move successful');
-            resolve(true);
+            const folder= new FolderDTO();
+            folder.FolderID = response.body.FolderID;
+            folder.DateCreated = response.body.DateCreated;
+            folder.LastModified = response.body.LastModified;
+            folder.ParentFolderID = response.body.ParentFolderID;
+            folder.Path = response.body.Path;
+            folder.ParentFolderID = response.body.ParentFolderID;
+
+            resolve(folder);
           } else {
-            resolve(false);
+            console.log('Move failed');
+            reject();
           }
         },
       });
@@ -132,8 +141,8 @@ export class FolderService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  createFolder(path: string, folderName: string, parentFolderID: string): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+  createFolder(path: string | undefined, folderName: string, parentFolderID: string | undefined): Promise<FolderDTO> {
+    return new Promise<FolderDTO>((resolve, reject) => {
       this.sendCreateData(path, folderName, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
@@ -141,16 +150,22 @@ export class FolderService {
 
           if (response.status === 200) {
             console.log('Create successful');
-            resolve(true);
+            const folder=new FolderDTO();
+            folder.FolderName=folderName;
+            folder.Path=path;
+            folder.ParentFolderID=parentFolderID;
+            folder.FolderID=response.body.FolderID;
+            resolve(folder);
           } else {
-            resolve(false);
+            console.log('Retrieve unsuccessful');
+            reject();
           }
         },
       });
     });
   }
 
-  sendCreateData(path:string, folderName:string, parentFolderID:string): Observable<HttpResponse<any>> {
+  sendCreateData(path: string | undefined, folderName: string, parentFolderID: string | undefined): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/file_manager/create_folder';
     const body = new FolderDTO();
 
