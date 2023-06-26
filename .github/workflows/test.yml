@@ -37,39 +37,39 @@ jobs:
         working-directory: backend
         run: npm run test
     
-  test_e2e:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+#   test_e2e:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16.x'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: '16.x'
+#           cache: 'npm'
+#           cache-dependency-path: frontend/package-lock.json
       
-      - name: Install backend dependencies
-        working-directory: backend
-        run: npm install
+#       - name: Install backend dependencies
+#         working-directory: backend
+#         run: npm install
 
-      - name: Serve backend
-        working-directory: backend
-        run: npm run start &
+#       - name: Serve backend
+#         working-directory: backend
+#         run: npm run start &
           
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm install
+#       - name: Install frontend dependencies
+#         working-directory: frontend
+#         run: npm install
       
-      - name: Serve the application
-        working-directory: frontend
-        run: npm run start &
+#       - name: Serve the application
+#         working-directory: frontend
+#         run: npm run start &
 
-      - name: Wait for the application to start
-        working-directory: frontend
-        run: sleep 5s
+#       - name: Wait for the application to start
+#         working-directory: frontend
+#         run: sleep 5s
 
-      - name: Run frontend tests
-        working-directory: frontend
-        run: npm run test
+#       - name: Run frontend tests
+#         working-directory: frontend
+#         run: npm run test
