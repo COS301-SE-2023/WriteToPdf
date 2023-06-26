@@ -23,7 +23,7 @@ export class LoginComponent {
       this.password = (data['Password']);
     }
   }
-  
+
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
@@ -34,14 +34,21 @@ export class LoginComponent {
   }
 
   async login(): Promise<void> {
-    if (await this.userService.login(this.email, this.password)) {
-      this.navigateToPage('home');
+    if (this.email === '') {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: `Email field empty` });
+    }
+    else if (this.password === '') {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: `Password field empty` });
+    } else {
+      if (await this.userService.login(this.email, this.password)) {
+        this.navigateToPage('home');
+      }
     }
   }
 
   async autoLogin(): Promise<void> {
-    this.email="test";
-    this.password="123456";
+    this.email = "test";
+    this.password = "123456";
   }
 
 }

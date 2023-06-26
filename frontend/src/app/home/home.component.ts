@@ -94,6 +94,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     }
   }
+
   updateTreeTableData(nodes: TreeNode[], key: string, newValue: string): boolean {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
@@ -127,6 +128,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
     return false;
   }
+
   updateBreadcrumb(selectedNode: TreeNode | undefined) {
     // Clear the existing breadcrumb items
     this.activeDirectoryItems = [];
@@ -409,6 +411,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     }
   }
+
   getMenuItemsData() {
     return [
       {
@@ -423,14 +426,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 label: 'Folder',
                 icon: 'pi pi-fw pi-folder',
                 command: () => {
-                  //TODO Show dialog for creating a new folder
+                  this.createNewFolderDialogueVisible = true;
                 }
               },
               {
                 label: 'Document',
                 icon: 'pi pi-fw pi-file',
                 command: () => {
-                  //TODO Show dialog for creating a new document
+                  this.createNewDocumentDialogueVisible = true;
                 }
               }
             ]
@@ -468,13 +471,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
           {
             separator: true
           },
-          {
-            label: 'Export',
-            icon: 'pi pi-fw pi-external-link',
-            command: () => {
-              //TODO implement downloading a file from the database
-            }
-          }
+          // {
+          //   label: 'Export',
+          //   icon: 'pi pi-fw pi-external-link',
+          //   command: () => {
+          //     //TODO implement downloading a file from the database
+          //   }
+          // }
         ]
       },
       {
@@ -483,77 +486,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
         items: [
           {
             label: 'Upload File',
-            icon: 'pi pi-fw pi-upload'
-          }
-        ]
-      },
-      {
-        label: 'Users',
-        icon: 'pi pi-fw pi-user',
-        items: [
-          {
-            label: 'New',
-            icon: 'pi pi-fw pi-user-plus'
-          },
-          {
-            label: 'Delete',
-            icon: 'pi pi-fw pi-user-minus'
-          },
-          {
-            label: 'Search',
-            icon: 'pi pi-fw pi-users',
-            items: [
-              {
-                label: 'Filter',
-                icon: 'pi pi-fw pi-filter',
-                items: [
-                  {
-                    label: 'Print',
-                    icon: 'pi pi-fw pi-print'
-                  }
-                ]
-              },
-              {
-                icon: 'pi pi-fw pi-bars',
-                label: 'List'
-              }
-            ]
-          }
-        ]
-      },
-      {
-        label: 'Events',
-        icon: 'pi pi-fw pi-calendar',
-        items: [
-          {
-            label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
-            items: [
-              {
-                label: 'Save',
-                icon: 'pi pi-fw pi-calendar-plus'
-              },
-              {
-                label: 'Delete',
-                icon: 'pi pi-fw pi-calendar-minus'
-              }
-            ]
-          },
-          {
-            label: 'Archive',
-            icon: 'pi pi-fw pi-calendar-times',
-            items: [
-              {
-                label: 'Remove',
-                icon: 'pi pi-fw pi-calendar-minus'
-              }
-            ]
+            icon: 'pi pi-fw pi-upload',
+            command: () => {
+              this.showFileUploadPopup();
+            }
           }
         ]
       },
       {
         label: 'Quit',
-        icon: 'pi pi-fw pi-power-off'
+        icon: 'pi pi-fw pi-power-off',
+        command: () => {
+          this.userService.logout();
+        }
       }
     ];
   }
@@ -625,8 +570,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.entityToMove.data.type === 'folder') {
       this.folderService.moveFolder(this.entityToMove.key, path, destinationFolder.FolderID).then((data) => {
         this.nodeService.removeFolder(this.entityToMove.key);
-        data.FolderName=this.entityToMove.data.name;
-        
+        data.FolderName = this.entityToMove.data.name;
+
         this.nodeService.addFolder(data);
         this.refreshTree();
         this.moveDialogVisible = false;
@@ -634,8 +579,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     } else {
       this.fileService.moveDocument(this.entityToMove.key, path, destinationFolder.FolderID).then((data) => {
         this.nodeService.removeFile(this.entityToMove.key);
-        data.Name=this.entityToMove.data.name;
-        data.Size=this.entityToMove.data.size;
+        data.Name = this.entityToMove.data.name;
+        data.Size = this.entityToMove.data.size;
         this.nodeService.addFile(data);
         this.refreshTree();
         this.moveDialogVisible = false;
@@ -645,8 +590,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   async createNewDocument() {
 
-    let path:string|undefined = '';
-    let parentFolderID:string|undefined = '';
+    let path: string | undefined = '';
+    let parentFolderID: string | undefined = '';
     if (this.entityName == '') {
       this.entityName = 'New Document';
     }
@@ -654,12 +599,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.currentDirectory != null) {
       if (this.currentDirectory.data.type === 'folder') {
         const folder = this.nodeService.getFolderDTOByID(this.currentDirectory.key);
-        path= folder.Path;
+        path = folder.Path;
         if (folder.Path !== '')
           path += `/${this.currentDirectory.data.name}`;
         else
           path += `${this.currentDirectory.data.name}`;
-      }else{
+      } else {
         const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
         path = file.Path;
       }
@@ -670,7 +615,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         parentFolderID = file.ParentFolderID;
       }
     }
-    
+
     this.entityName = this.nodeService.getUniqueName(this.entityName, path, 'file');
 
     if (await this.fileService.createDocument(this.entityName, path, parentFolderID)) {
