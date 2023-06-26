@@ -234,12 +234,22 @@ export class NodeService {
     this.folders.push(folder);
   }
 
-  removeFile(file: MarkdownFileDTO) {
-    this.files.splice(this.files.indexOf(file), 1);
+  removeFile(markdownID: string) {
+    // this.files.splice(this.files.indexOf(file), 1);
+    for(let i = 0; i < this.files.length; i++){
+      if (this.files[i].MarkdownID === markdownID){
+        this.files.splice(i, 1);
+      }
+    }
   }
 
-  removeFolder(folder: FolderDTO) {
-    this.folders.splice(this.folders.indexOf(folder), 1);
+  removeFolder(folderID: string) {
+    // this.folders.splice(this.folders.indexOf(folder), 1);
+    for (let i = 0; i < this.folders.length; i++) {
+      if (this.folders[i].FolderID === folderID) {
+        this.folders.splice(i, 1);
+      }
+    }
   }
 
   getUniqueName(name: string, path: string | undefined, type: string): string {

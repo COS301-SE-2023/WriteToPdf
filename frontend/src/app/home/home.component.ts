@@ -642,6 +642,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       { field: 'size', header: 'Size' },
       { field: 'type', header: 'Type' }
     ];
+    this.filterTable("", 3);
   }
   protected readonly focus = focus;
 }
