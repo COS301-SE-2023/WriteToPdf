@@ -3,6 +3,7 @@ import {
   TestingModule,
 } from '@nestjs/testing';
 import { ConversionService } from './conversion.service';
+import { ConversionModule } from './conversion.module';
 
 describe('ConversionService', () => {
   let service: ConversionService;
@@ -18,7 +19,16 @@ describe('ConversionService', () => {
     );
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('root/config', () => {
+    it('should be defined', () => {
+      expect(service).toBeDefined();
+    });
+    it('module should be defined when instantiated', () => {
+      const conversionModule =
+        new ConversionModule();
+      expect(conversionModule).toBeInstanceOf(
+        ConversionModule,
+      );
+    });
   });
 });
