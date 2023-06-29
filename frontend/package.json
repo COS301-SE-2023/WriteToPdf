@@ -8,7 +8,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "cypress run",
-    "test:unit": "jest"
+    "test:unit": "jest",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.html\""
   },
   "private": true,
   "dependencies": {
