@@ -51,6 +51,28 @@ describe('UsersService', () => {
     });
   });
 
+  describe('create', () => {
+    it('should return dto of newly created user', async () => {
+      const createUserDTO = new UserDTO();
+      createUserDTO.FirstName = 'unitTestUser';
+      createUserDTO.LastName = 'unitTestUser';
+      createUserDTO.Email = 'unitTestUser';
+      createUserDTO.Password = 'unitTestUser';
+
+      jest
+        .spyOn(service, 'create')
+        .mockImplementation(
+          async () => createUserDTO,
+        );
+
+      const response = await service.create(
+        createUserDTO,
+      );
+
+      expect(response).toBeInstanceOf(UserDTO);
+    });
+  });
+
   describe('signup', () => {
     it('should throw an exception if first name is invalid', async () => {
       const userFirstNameHasNumber =
