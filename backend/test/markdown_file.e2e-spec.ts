@@ -10,9 +10,11 @@ import { AppModule } from '../src/app.module';
 import * as request from 'supertest';
 import { MarkdownFileDTO } from '../src/markdown_files/dto/markdown_file.dto';
 import 'dotenv/config';
+import { UserDTO } from '../src/users/dto/user.dto';
 
 describe('Markdown File Controller (integration)', () => {
   let app: INestApplication;
+  let AUTH_BEARER: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule =
@@ -22,6 +24,18 @@ describe('Markdown File Controller (integration)', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    const requestUser = new UserDTO();
+    requestUser.Email = process.env.TEST_EMAIL;
+    requestUser.Password =
+      process.env.TEST_PASSWORD;
+
+    const response = await request(
+      app.getHttpServer(),
+    )
+      .post('/users/login/')
+      .send(requestUser);
+    AUTH_BEARER = response.body.Token;
   });
 
   afterAll(async () => {
@@ -50,7 +64,7 @@ describe('Markdown File Controller (integration)', () => {
         .send(createMarkdownFileDTO)
         .set(
           'Authorization',
-          `Bearer ${process.env.AUTH_BEARER}`,
+          `Bearer ${AUTH_BEARER}`,
         );
 
       expect(response.status).toBe(
@@ -89,7 +103,7 @@ describe('Markdown File Controller (integration)', () => {
         })
         .set(
           'Authorization',
-          `Bearer ${process.env.AUTH_BEARER}`,
+          `Bearer ${AUTH_BEARER}`,
         );
 
       expect(response.status).toBe(HttpStatus.OK);
