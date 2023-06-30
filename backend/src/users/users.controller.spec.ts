@@ -152,6 +152,29 @@ describe('UsersController', () => {
     });
   });
 
+  describe('create', () => {
+    it('should return newly created user', async () => {
+      const createUserDTO = new UserDTO();
+      createUserDTO.FirstName = 'unitTestUser';
+      createUserDTO.LastName = 'unitTestUser';
+      createUserDTO.Email = 'unitTestUser';
+      createUserDTO.Password = 'unitTestUser';
+
+      jest
+        .spyOn(controller, 'create')
+        .mockImplementation(
+          async () => createUserDTO,
+        );
+
+      const response = await controller.create(
+        createUserDTO,
+      );
+
+      expect(response).toBeInstanceOf(UserDTO);
+      console.log(response);
+    });
+  });
+
   describe('signup', () => {
     it('should be decorated with @Public', () => {
       const isPublic = Reflect.getMetadata(
