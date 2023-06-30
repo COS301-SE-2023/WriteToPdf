@@ -68,8 +68,6 @@ jobs:
       - name: Run integration tests
         working-directory: backend
         run: npm run test:e2e
-        env:
-          AUTH_BEARER: ${{ secrets.AUTH_BEARER }}
     
 #   test_e2e:
 #     runs-on: ubuntu-latest
