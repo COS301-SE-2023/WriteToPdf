@@ -17,11 +17,15 @@ import { S3Service } from '../s3/s3.service';
 import { ImportDTO } from './dto/import.dto';
 import { ConversionService } from '../conversion/conversion.service';
 import { FolderDTO } from '../folders/dto/folder.dto';
+import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { create } from 'domain';
+import exp from 'constants';
+import { DirectoryFilesDTO } from './dto/directory_files.dto';
 
 describe('FileManagerService', () => {
   let service: FileManagerService;
@@ -537,6 +541,714 @@ describe('FileManagerService', () => {
       expect(
         foldersService.remove,
       ).toHaveBeenCalledWith(folderDTO);
+    });
+  });
+
+  describe('createFile', () => {
+    it('should throw an error if UserID is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+
+      try {
+        await service.createFile(markdownFileDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'UserID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should create a new file with default values if Path, Name, and Size are undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 0;
+
+      const returnFile = new MarkdownFileDTO();
+      returnFile.Path = '';
+      returnFile.Name = 'New Document';
+      returnFile.Size = 0;
+
+      const createFileSpy = jest.spyOn(
+        s3Service,
+        'createFile',
+      );
+      createFileSpy.mockResolvedValue(
+        new MarkdownFileDTO(),
+      );
+      const createSpy = jest.spyOn(
+        markdownFilesService,
+        'create',
+      );
+      createSpy.mockResolvedValue(
+        markdownFileDTO,
+      );
+
+      const response = await service.createFile(
+        markdownFileDTO,
+      );
+
+      expect(createFileSpy).toHaveBeenCalledWith(
+        markdownFileDTO,
+      );
+      expect(createSpy).toHaveBeenCalledWith(
+        markdownFileDTO,
+      );
+      expect(response).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(response.Path).toBe('');
+      expect(response.Name).toBe('New Document');
+      expect(response.Size).toBe(0);
+    });
+
+    it('should create a new file with provided values', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.Name = 'test-file.md';
+      markdownFileDTO.Size = 100;
+
+      const createFileSpy = jest.spyOn(
+        s3Service,
+        'createFile',
+      );
+      createFileSpy.mockResolvedValue(
+        markdownFileDTO,
+      );
+      createFileSpy;
+      const createSpy = jest.spyOn(
+        markdownFilesService,
+        'create',
+      );
+      createSpy.mockResolvedValue(
+        markdownFileDTO,
+      );
+
+      const response = await service.createFile(
+        markdownFileDTO,
+      );
+
+      expect(createFileSpy).toHaveBeenCalledWith(
+        markdownFileDTO,
+      );
+      expect(createSpy).toHaveBeenCalledWith(
+        markdownFileDTO,
+      );
+      expect(response).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(response.Path).toBe('test/path');
+      expect(response.Name).toBe('test-file.md');
+      expect(response.Size).toBe(100);
+    });
+  });
+
+  describe('retrieveFile', () => {
+    it('should throw an error if MarkdownID is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+
+      try {
+        await service.retrieveFile(
+          markdownFileDTO,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'MarkdownID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should call retrieveFile method', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+
+      jest
+        .spyOn(s3Service, 'retrieveFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      const response = await service.retrieveFile(
+        markdownFileDTO,
+      );
+      expect(response).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(
+        s3Service.retrieveFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+  });
+
+  describe('convertFilesToDTOs', () => {
+    it('should convert files to DTOs', () => {
+      const file1: MarkdownFile = {
+        MarkdownID: '1',
+        UserID: 0,
+        Path: 'test/path',
+        Name: 'file1.md',
+        LastModified: new Date(),
+        DateCreated: new Date(),
+        ParentFolderID: '1',
+        Size: 100,
+      };
+      const file2: MarkdownFile = {
+        MarkdownID: '2',
+        UserID: 0,
+        Path: 'test/path',
+        Name: 'file2.md',
+        LastModified: new Date(),
+        DateCreated: new Date(),
+        ParentFolderID: '1',
+        Size: 100,
+      };
+      const files = [file1, file2];
+
+      const response =
+        service.convertFilesToDTOs(files);
+
+      expect(response).toBeInstanceOf(Array);
+      expect(response).toHaveLength(2);
+
+      expect(response[0].Path).toBe(file1.Path);
+      expect(response[0].Name).toBe(file1.Name);
+      expect(response[0].Size).toBe(file1.Size);
+      expect(response[0].Content).toBe('');
+      expect(response[0].LastModified).toBe(
+        file1.LastModified,
+      );
+      expect(response[0].DateCreated).toBe(
+        file1.DateCreated,
+      );
+      expect(response[0].ParentFolderID).toBe(
+        file1.ParentFolderID,
+      );
+      expect(response[0].MarkdownID).toBe(
+        file1.MarkdownID,
+      );
+
+      expect(response[1].Path).toBe(file2.Path);
+      expect(response[1].Name).toBe(file2.Name);
+      expect(response[1].Size).toBe(file2.Size);
+      expect(response[1].Content).toBe('');
+      expect(response[1].LastModified).toBe(
+        file2.LastModified,
+      );
+      expect(response[1].DateCreated).toBe(
+        file2.DateCreated,
+      );
+      expect(response[1].ParentFolderID).toBe(
+        file2.ParentFolderID,
+      );
+      expect(response[1].MarkdownID).toBe(
+        file2.MarkdownID,
+      );
+    });
+  });
+
+  describe('retrieveAllFiles', () => {
+    it('should throw an error if UserID is undefined', async () => {
+      const directoryFilesDTO =
+        new DirectoryFilesDTO();
+
+      try {
+        await service.retrieveAllFiles(
+          directoryFilesDTO,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'UserID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should call findAllByUserID method', async () => {
+      const directoryFilesDTO =
+        new DirectoryFilesDTO();
+      directoryFilesDTO.UserID = 0;
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'findAllByUserID',
+        )
+        .mockResolvedValue([]);
+
+      const response =
+        await service.retrieveAllFiles(
+          directoryFilesDTO,
+        );
+      expect(response).toBeInstanceOf(
+        DirectoryFilesDTO,
+      );
+      expect(
+        markdownFilesService.findAllByUserID,
+      ).toHaveBeenCalledWith(
+        directoryFilesDTO.UserID,
+      );
+    });
+
+    it('should call convertFilesToDTOs method', async () => {
+      const directoryFilesDTO =
+        new DirectoryFilesDTO();
+      directoryFilesDTO.UserID = 0;
+
+      const files: MarkdownFile[] = [
+        {
+          MarkdownID: '1',
+          UserID: 0,
+          Path: 'test/path',
+          Name: 'file1.md',
+          LastModified: new Date(),
+          DateCreated: new Date(),
+          ParentFolderID: '1',
+          Size: 100,
+        },
+        {
+          MarkdownID: '2',
+          UserID: 0,
+          Path: 'test/path',
+          Name: 'file2.md',
+          LastModified: new Date(),
+          DateCreated: new Date(),
+          ParentFolderID: '1',
+          Size: 100,
+        },
+      ];
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'findAllByUserID',
+        )
+        .mockResolvedValue(files);
+
+      const convertSpy = jest.spyOn(
+        service,
+        'convertFilesToDTOs',
+      );
+      convertSpy.mockReturnValue([
+        new MarkdownFileDTO(),
+        new MarkdownFileDTO(),
+      ]);
+
+      const response =
+        await service.retrieveAllFiles(
+          directoryFilesDTO,
+        );
+      expect(response).toBeInstanceOf(
+        DirectoryFilesDTO,
+      );
+      expect(
+        markdownFilesService.findAllByUserID,
+      ).toHaveBeenCalledWith(
+        directoryFilesDTO.UserID,
+      );
+      expect(convertSpy).toHaveBeenCalledWith(
+        files,
+      );
+    });
+  });
+
+  describe('renameFile', () => {
+    it('should throw an error if MarkdownID is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.Name = 'test';
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      try {
+        await service.renameFile(markdownFileDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'MarkdownID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an error if Name is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      try {
+        await service.renameFile(markdownFileDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Name cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an error if Path is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Name = 'test';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      try {
+        await service.renameFile(markdownFileDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Path cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an error if UserID is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Name = 'test';
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.ParentFolderID = '1';
+
+      try {
+        await service.renameFile(markdownFileDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'UserID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should call updateName method', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Name = 'test';
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      jest
+        .spyOn(markdownFilesService, 'updateName')
+        .mockResolvedValue(new MarkdownFile());
+
+      const response = await service.renameFile(
+        markdownFileDTO,
+      );
+      expect(response).toBeInstanceOf(
+        MarkdownFile,
+      );
+      expect(
+        markdownFilesService.updateName,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+  });
+
+  describe('moveFile', () => {
+    it('should throw an error if MarkdownID is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      try {
+        await service.moveFile(markdownFileDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'MarkdownID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an error if Path is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      try {
+        await service.moveFile(markdownFileDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Path cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an error if UserID is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.ParentFolderID = '1';
+
+      try {
+        await service.moveFile(markdownFileDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'UserID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should call updatePath method', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      jest
+        .spyOn(markdownFilesService, 'updatePath')
+        .mockResolvedValue(new MarkdownFile());
+
+      const response = await service.moveFile(
+        markdownFileDTO,
+      );
+      expect(response).toBeInstanceOf(
+        MarkdownFile,
+      );
+      expect(
+        markdownFilesService.updatePath,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+  });
+
+  describe('saveFile', () => {
+    it('should throw an error if MarkdownID is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      try {
+        await service.saveFile(markdownFileDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'MarkdownID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should call saveFile method', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      jest
+        .spyOn(s3Service, 'saveFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'updateLastModified',
+        )
+        .mockResolvedValue(new MarkdownFile());
+
+      const response = await service.saveFile(
+        markdownFileDTO,
+      );
+      expect(response).toBeInstanceOf(
+        MarkdownFile,
+      );
+      expect(
+        s3Service.saveFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+
+    it('should call updateLastModified method', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      jest
+        .spyOn(s3Service, 'saveFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'updateLastModified',
+        )
+        .mockResolvedValue(new MarkdownFile());
+
+      const response = await service.saveFile(
+        markdownFileDTO,
+      );
+      expect(response).toBeInstanceOf(
+        MarkdownFile,
+      );
+      expect(
+        markdownFilesService.updateLastModified,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+  });
+
+  describe('deleteFile', () => {
+    it('should throw an error if MarkdownID is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      try {
+        await service.deleteFile(markdownFileDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'MarkdownID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should call deleteFile method', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      jest
+        .spyOn(s3Service, 'deleteFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(markdownFilesService, 'remove')
+        .mockResolvedValue(new MarkdownFile());
+
+      const response = await service.deleteFile(
+        markdownFileDTO,
+      );
+      expect(response).toBeInstanceOf(
+        MarkdownFile,
+      );
+      expect(
+        s3Service.deleteFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+
+    it('should call remove method', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.ParentFolderID = '1';
+
+      jest
+        .spyOn(s3Service, 'deleteFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(markdownFilesService, 'remove')
+        .mockResolvedValue(new MarkdownFile());
+
+      const response = await service.deleteFile(
+        markdownFileDTO,
+      );
+      expect(response).toBeInstanceOf(
+        MarkdownFile,
+      );
+      expect(
+        markdownFilesService.remove,
+      ).toHaveBeenCalledWith(markdownFileDTO);
     });
   });
 });

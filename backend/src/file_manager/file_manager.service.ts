@@ -34,6 +34,12 @@ export class FileManagerService {
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    if (markdownFileDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     if (markdownFileDTO.Path === undefined)
       markdownFileDTO.Path = '';
 
@@ -73,7 +79,9 @@ export class FileManagerService {
    * @param files An array of MarkdownFile entities
    * @returns An array of MarkdownFileDTOs
    */
-  convertFilesToDTOs(files: MarkdownFile[]) {
+  convertFilesToDTOs(
+    files: MarkdownFile[],
+  ): MarkdownFileDTO[] {
     const markdownFilesDTOArr: MarkdownFileDTO[] =
       [];
     files.forEach((file) => {
@@ -96,6 +104,12 @@ export class FileManagerService {
   async retrieveAllFiles(
     directoryFilesDTO: DirectoryFilesDTO,
   ) {
+    if (directoryFilesDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     const allFiles =
       await this.markdownFilesService.findAllByUserID(
         directoryFilesDTO.UserID,
@@ -117,6 +131,12 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
+    if (markdownFileDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     if (markdownFileDTO.Path === undefined)
       throw new HttpException(
         'Path cannot be undefined',
@@ -128,9 +148,6 @@ export class FileManagerService {
         'Name cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
-
-    // if (markdownFileDTO.Size === undefined)
-    //will eventually come from s3 bucket
 
     return this.markdownFilesService.updateName(
       markdownFileDTO,
@@ -150,6 +167,12 @@ export class FileManagerService {
     if (markdownFileDTO.Path === undefined)
       throw new HttpException(
         'Path cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (markdownFileDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
 
