@@ -67,11 +67,8 @@ describe('Markdown File Controller (integration)', () => {
           `Bearer ${AUTH_BEARER}`,
         );
 
-      // expect(response.status).toBe(
-      //   HttpStatus.CREATED,
-      // );
-      expect(response.body).toEqual(
-        createMarkdownFileDTO.MarkdownID,
+      expect(response.status).toBe(
+        HttpStatus.CREATED,
       );
       expect(response.body.UserID).toEqual(
         createMarkdownFileDTO.UserID,
@@ -81,13 +78,15 @@ describe('Markdown File Controller (integration)', () => {
 
   describe('Delete markdown file (DELETE)', () => {
     it('should delete a markdown file', async () => {
-      const BEARER = process.env.AUTH_BEARER;
       const response = await request(
         app.getHttpServer(),
       )
         .delete('/markdown-files/:MarkdownID')
         .send({ MarkdownID: 'abc123efg' })
-        .set('Authorization', `Bearer ${BEARER}`);
+        .set(
+          'Authorization',
+          `Bearer ${AUTH_BEARER}`,
+        );
 
       expect(response.status).toBe(HttpStatus.OK);
       expect(response.body.affected).toEqual(1);
