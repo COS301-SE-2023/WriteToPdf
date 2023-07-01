@@ -410,6 +410,23 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
+    if (exportDTO.Content === undefined) {
+      // Idea for future: if content is undefined, retrieve it from the storage
+      // const markdownFile =
+      //   await this.markdownFilesService.findOneByMarkdownID(
+      //     exportDTO.MarkdownID,
+      //   );
+
+      // if (markdownFile === undefined) {
+      throw new HttpException(
+        'Content cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+      // }
+
+      // exportDTO.Content = markdownFile.Content;
+    }
+
     const convertedDTO =
       this.conversionService.convertTo(exportDTO);
 
