@@ -23,9 +23,8 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { create } from 'domain';
-import exp from 'constants';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
+import { ExportDTO } from './dto/export.dto';
 
 describe('FileManagerService', () => {
   let service: FileManagerService;
@@ -69,6 +68,13 @@ describe('FileManagerService', () => {
               updateName: jest.fn(),
               updatePath: jest.fn(),
               remove: jest.fn(),
+            },
+          },
+          {
+            provide: 'ConversionService',
+            useValue: {
+              convertFrom: jest.fn(),
+              convertTo: jest.fn(),
             },
           },
           {
@@ -1249,6 +1255,243 @@ describe('FileManagerService', () => {
       expect(
         markdownFilesService.remove,
       ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+  });
+
+  describe('importFile', () => {
+    it('should throw an error if Path is undefined', async () => {
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 0;
+      importDTO.ParentFolderID = '1';
+      importDTO.Name = 'test';
+      importDTO.Content = 'test';
+
+      try {
+        await service.importFile(importDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Path cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an error if Name is undefined', async () => {
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 0;
+      importDTO.ParentFolderID = '1';
+      importDTO.Path = 'test/path';
+      importDTO.Content = 'test';
+
+      try {
+        await service.importFile(importDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Name cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an error if Content is undefined', async () => {
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 0;
+      importDTO.ParentFolderID = '1';
+      importDTO.Path = 'test/path';
+      importDTO.Name = 'test';
+
+      try {
+        await service.importFile(importDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Content cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should call convertFrom method', async () => {
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 0;
+      importDTO.ParentFolderID = '1';
+      importDTO.Path = 'test/path';
+      importDTO.Name = 'test';
+      importDTO.Content = 'test';
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertFrom',
+        ) as any
+      ).mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(service, 'createFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(service, 'saveFile')
+        .mockResolvedValue(new MarkdownFile());
+
+      const response = await service.importFile(
+        importDTO,
+      );
+      expect(response).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(
+        conversionService.convertFrom,
+      ).toHaveBeenCalledWith(importDTO);
+    });
+
+    it('should call createFile method', async () => {
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 0;
+      importDTO.ParentFolderID = '1';
+      importDTO.Path = 'test/path';
+      importDTO.Name = 'test';
+      importDTO.Content = 'test';
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertFrom',
+        ) as any
+      ).mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(service, 'createFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(service, 'saveFile')
+        .mockResolvedValue(new MarkdownFile());
+
+      const response = await service.importFile(
+        importDTO,
+      );
+      expect(response).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(
+        service.createFile,
+      ).toHaveBeenCalled();
+    });
+
+    it('should call saveFile method', async () => {
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 0;
+      importDTO.ParentFolderID = '1';
+      importDTO.Path = 'test/path';
+      importDTO.Name = 'test';
+      importDTO.Content = 'test';
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertFrom',
+        ) as any
+      ).mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(service, 'createFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(service, 'saveFile')
+        .mockResolvedValue(new MarkdownFile());
+
+      const response = await service.importFile(
+        importDTO,
+      );
+      expect(response).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(service.saveFile).toHaveBeenCalled();
+    });
+  });
+
+  describe('exportFile', () => {
+    it('should throw an error if MarkdownID is undefined', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 0;
+      exportDTO.Content = 'test';
+
+      try {
+        await service.exportFile(exportDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'MarkdownID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an error if Content is undefined', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 0;
+      exportDTO.MarkdownID = '1';
+
+      try {
+        await service.exportFile(exportDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Content cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should call convertTo method', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 0;
+      exportDTO.MarkdownID = '1';
+      exportDTO.Content = 'test';
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertTo',
+        ) as any
+      ).mockResolvedValue(new ExportDTO());
+
+      const response = await service.exportFile(
+        exportDTO,
+      );
+      expect(response).toBeInstanceOf(ExportDTO);
+      expect(
+        conversionService.convertTo,
+      ).toHaveBeenCalledWith(exportDTO);
     });
   });
 });
