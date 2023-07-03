@@ -221,11 +221,11 @@ export class UsersService {
     );
     const returnedUser = new UserDTO();
     if (user.Salt === '') {
-      //   this.throwHttpException(
-      //     HttpStatus.BAD_REQUEST,
-      //     'Salt not found',
-      //   );
-      returnedUser.Salt = process.env.TEST_SALT;
+      this.throwHttpException(
+        HttpStatus.BAD_REQUEST,
+        'Salt not found',
+      );
+      // returnedUser.Salt = process.env.TEST_SALT;
     } else {
       returnedUser.Salt = user.Salt;
     }
