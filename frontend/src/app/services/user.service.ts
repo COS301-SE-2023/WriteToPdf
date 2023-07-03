@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserDTO } from './dto/user.dto';
 import { RefreshTokenDTO } from './dto/refresh_token.dto';
 import { SHA256 } from 'crypto-js';
+import { hashSync, genSaltSync } from 'bcrypt-ts';
 import { MessageService } from 'primeng/api';
 import { PrimeIcons } from 'primeng/api';
 import { Router } from '@angular/router';
@@ -148,15 +149,7 @@ export class UserService {
   }
 
   private generateRandomSalt() {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=';
-    const saltLength = 255;
-    let salt = '';
-
-    for (let i = 0; i < saltLength; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      salt += characters.charAt(randomIndex);
-          }
-
+    const salt = genSaltSync(10);
     return salt;
   }
 
@@ -257,7 +250,8 @@ export class UserService {
   }
 
   private hashPassword(password: string, salt: string): string {
-    const hashed = SHA256(password+salt).toString();
+    const hashed = hashSync(password,salt);
+
     return hashed;
   }
 
