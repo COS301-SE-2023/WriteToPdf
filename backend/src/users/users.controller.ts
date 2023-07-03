@@ -24,13 +24,6 @@ export class UsersController {
     private readonly usersService: UsersService,
   ) {}
 
-  @Post()
-  create(@Body() createUserDTO: UserDTO) {
-    return this.usersService.create(
-      createUserDTO,
-    );
-  }
-
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -115,31 +108,5 @@ export class UsersController {
     return this.usersService.signup(
       createUserDTO,
     );
-  }
-
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Get(':UserID')
-  findOne(@Param('UserID') UserID: number) {
-    return this.usersService.findOne(UserID);
-  }
-
-  @Patch(':UserID')
-  update(
-    @Param('UserID') UserID: number,
-    @Body() updateUserDTO: UserDTO,
-  ) {
-    return this.usersService.update(
-      UserID,
-      updateUserDTO,
-    );
-  }
-
-  @Delete(':UserID')
-  remove(@Param('UserID') UserID: number) {
-    return this.usersService.remove(UserID);
   }
 }

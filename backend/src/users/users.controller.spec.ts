@@ -46,50 +46,6 @@ describe('UsersController', () => {
     module.close();
   });
 
-  describe('root/config', () => {
-    it('user controller should be defined', () => {
-      expect(controller).toBeDefined();
-    });
-  });
-
-  describe('findOne', () => {
-    // console.log('UsersController.findOne');
-  });
-
-  describe('findAll', () => {
-    it('should return an array of all users', async () => {
-      const result = [
-        {
-          UserID: 1,
-          FirstName: 'John',
-          LastName: 'Doe',
-          Email: 'johndoe@example.com',
-          Password: 'mypassword',
-          Salt: 'mysalt',
-        },
-      ];
-      jest
-        .spyOn(controller, 'findAll')
-        .mockImplementation(async () => result);
-
-      expect(await controller.findAll()).toBe(
-        result,
-      );
-    });
-  });
-
-  describe('update', () => {
-    // it('should return updated user')
-    // it('should throw exception if user not found')
-    // console.log('UsersController.update');
-  });
-
-  describe('remove', () => {
-    // it('should return removed user')
-    // it('should throw exception if user not found')
-    // console.log('UsersController.remove');
-  });
-
   describe('login', () => {
     it('should be decorated with @Public', () => {
       const isPublic = Reflect.getMetadata(
@@ -149,29 +105,6 @@ describe('UsersController', () => {
           HttpStatus.METHOD_NOT_ALLOWED,
         );
       }
-    });
-  });
-
-  describe('create', () => {
-    it('should return newly created user', async () => {
-      const createUserDTO = new UserDTO();
-      createUserDTO.FirstName = 'unitTestUser';
-      createUserDTO.LastName = 'unitTestUser';
-      createUserDTO.Email = 'unitTestUser';
-      createUserDTO.Password = 'unitTestUser';
-
-      jest
-        .spyOn(controller, 'create')
-        .mockImplementation(
-          async () => createUserDTO,
-        );
-
-      const response = await controller.create(
-        createUserDTO,
-      );
-
-      expect(response).toBeInstanceOf(UserDTO);
-      console.log(response);
     });
   });
 
