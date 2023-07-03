@@ -10,8 +10,6 @@ import {
 } from '@nestjs/common';
 import { FileManagerService } from './file_manager.service';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
-import { plainToClass } from 'class-transformer';
-import { validateSync } from 'class-validator';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
@@ -37,18 +35,12 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      MarkdownFileDTO,
-      markdownFileDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (!markdownFileDTO.UserID)
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (markdownFileDTO.UserID === undefined)
       throw new HttpException(
@@ -74,18 +66,15 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      MarkdownFileDTO,
-      markdownFileDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (
+      !markdownFileDTO.UserID ||
+      !markdownFileDTO.MarkdownID
+    )
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (markdownFileDTO.UserID === undefined)
       throw new HttpException(
@@ -111,18 +100,16 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      MarkdownFileDTO,
-      markdownFileDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (
+      !markdownFileDTO.UserID ||
+      !markdownFileDTO.MarkdownID ||
+      !markdownFileDTO.Name
+    )
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (markdownFileDTO.UserID === undefined)
       throw new HttpException(
@@ -148,18 +135,17 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      MarkdownFileDTO,
-      markdownFileDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (
+      !markdownFileDTO.UserID ||
+      !markdownFileDTO.MarkdownID ||
+      !markdownFileDTO.ParentFolderID ||
+      !markdownFileDTO.Path
+    )
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (markdownFileDTO.UserID === undefined)
       throw new HttpException(
@@ -185,18 +171,15 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      FolderDTO,
-      folderDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (
+      !folderDTO.UserID ||
+      !folderDTO.FolderName
+    )
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (folderDTO.UserID === undefined)
       throw new HttpException(
@@ -222,18 +205,12 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      FolderDTO,
-      folderDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (!folderDTO.UserID || !folderDTO.FolderID)
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (folderDTO.UserID === undefined)
       throw new HttpException(
@@ -259,18 +236,16 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      FolderDTO,
-      folderDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (
+      !folderDTO.UserID ||
+      !folderDTO.FolderID ||
+      !folderDTO.FolderName
+    )
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (folderDTO.UserID === undefined)
       throw new HttpException(
@@ -296,18 +271,17 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      FolderDTO,
-      folderDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (
+      !folderDTO.UserID ||
+      !folderDTO.FolderID ||
+      !folderDTO.ParentFolderID ||
+      !folderDTO.Path
+    )
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (folderDTO.UserID === undefined)
       throw new HttpException(
@@ -333,18 +307,16 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      MarkdownFileDTO,
-      markdownFileDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (
+      !markdownFileDTO.UserID ||
+      !markdownFileDTO.MarkdownID ||
+      !markdownFileDTO.Content
+    )
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (markdownFileDTO.UserID === undefined)
       throw new HttpException(
@@ -370,18 +342,18 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      ImportDTO,
-      importDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (
+      !importDTO.UserID ||
+      !importDTO.Type ||
+      !importDTO.Content ||
+      !importDTO.ParentFolderID ||
+      !importDTO.Path
+    )
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (importDTO.UserID === undefined)
       throw new HttpException(
@@ -407,18 +379,16 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      ExportDTO,
-      exportDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (
+      !exportDTO.UserID ||
+      !exportDTO.Type ||
+      !exportDTO.MarkdownID
+    )
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (exportDTO.UserID === undefined)
       throw new HttpException(
@@ -444,18 +414,15 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      MarkdownFileDTO,
-      markdownFileDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (
+      !markdownFileDTO.UserID ||
+      !markdownFileDTO.MarkdownID
+    )
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (markdownFileDTO.UserID === undefined)
       throw new HttpException(
@@ -481,18 +448,12 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      DirectoryFilesDTO,
-      directoryFilesDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (!directoryFilesDTO.UserID)
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (directoryFilesDTO.UserID === undefined)
       throw new HttpException(
@@ -518,18 +479,12 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      DirectoryFoldersDTO,
-      directoryFoldersDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (!directoryFoldersDTO.UserID)
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
-    }
 
     if (directoryFoldersDTO.UserID === undefined)
       throw new HttpException(
