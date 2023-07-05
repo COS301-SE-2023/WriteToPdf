@@ -25,59 +25,7 @@ export class FileManagerService {
     private conversionService: ConversionService,
   ) {}
 
-  // DB Requires the following fields to be initialised in the DTO:
-  // MarkdownID: string; .. TO IDENTIFY THE FILE
-  // Path: string; .. TO LOCATE THE FILE in S3
-  // Name: string; .. NEW NAME
-  // Size: number; .. NEW SIZE
-  renameFile(markdownFileDTO: MarkdownFileDTO) {
-    if (markdownFileDTO.MarkdownID === undefined)
-      throw new HttpException(
-        'MarkdownID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (markdownFileDTO.Path === undefined)
-      throw new HttpException(
-        'Path cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (markdownFileDTO.Name === undefined)
-      throw new HttpException(
-        'Name cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    // if (markdownFileDTO.Size === undefined)
-    //will eventually come from s3 bucket
-
-    return this.markdownFilesService.updateName(
-      markdownFileDTO,
-    );
-  }
-
-  // DB Requires the following fields to be initialised in the DTO:
-  // MarkdownID: string; .. TO IDENTIFY THE FILE
-  // Path: string; .. TO LOCATE THE FILE IN S3
-  // Name: string; .. TO IDENTIFY THE FILE
-  async deleteFile(
-    markdownFileDTO: MarkdownFileDTO,
-  ) {
-    if (markdownFileDTO.MarkdownID === undefined)
-      throw new HttpException(
-        'MarkdownID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    await this.s3service.deleteFile(
-      markdownFileDTO,
-    );
-
-    return this.markdownFilesService.remove(
-      markdownFileDTO,
-    );
-  }
+  // File operations: ###########################################################
 
   // DB Requires the following fields to be initialised in the DTO:
   // Path: string; .. TO PLACE THE FILE IN S3
@@ -86,6 +34,12 @@ export class FileManagerService {
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    if (markdownFileDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     if (markdownFileDTO.Path === undefined)
       markdownFileDTO.Path = '';
 
@@ -105,7 +59,105 @@ export class FileManagerService {
   }
 
   // DB Requires the following fields to be initialised in the DTO:
-  moveFile(markdownFileDTO: MarkdownFileDTO) {
+  async retrieveFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    if (markdownFileDTO.MarkdownID === undefined)
+      throw new HttpException(
+        'MarkdownID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    await this.s3service.retrieveFile(
+      markdownFileDTO,
+    );
+
+    return markdownFileDTO; // return the file
+  }
+
+  /**
+   * @param files An array of MarkdownFile entities
+   * @returns An array of MarkdownFileDTOs
+   */
+  convertFilesToDTOs(
+    files: MarkdownFile[],
+  ): MarkdownFileDTO[] {
+    const markdownFilesDTOArr: MarkdownFileDTO[] =
+      [];
+    files.forEach((file) => {
+      const markdownFileDTO: MarkdownFileDTO = {
+        MarkdownID: file.MarkdownID,
+        UserID: file.UserID,
+        DateCreated: file.DateCreated,
+        LastModified: file.LastModified,
+        Name: file.Name,
+        Path: file.Path,
+        Size: file.Size,
+        ParentFolderID: file.ParentFolderID,
+        Content: '',
+      };
+      markdownFilesDTOArr.push(markdownFileDTO);
+    });
+    return markdownFilesDTOArr;
+  }
+
+  async retrieveAllFiles(
+    directoryFilesDTO: DirectoryFilesDTO,
+  ) {
+    if (directoryFilesDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const allFiles =
+      await this.markdownFilesService.findAllByUserID(
+        directoryFilesDTO.UserID,
+      );
+    directoryFilesDTO.Files =
+      this.convertFilesToDTOs(allFiles);
+    return directoryFilesDTO;
+  }
+
+  // DB Requires the following fields to be initialised in the DTO:
+  // MarkdownID: string; .. TO IDENTIFY THE FILE
+  // Path: string; .. TO LOCATE THE FILE in S3
+  // Name: string; .. NEW NAME
+  // Size: number; .. NEW SIZE
+  renameFile(markdownFileDTO: MarkdownFileDTO) {
+    if (markdownFileDTO.MarkdownID === undefined)
+      throw new HttpException(
+        'MarkdownID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (markdownFileDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (markdownFileDTO.Path === undefined)
+      throw new HttpException(
+        'Path cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (markdownFileDTO.Name === undefined)
+      throw new HttpException(
+        'Name cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.markdownFilesService.updateName(
+      markdownFileDTO,
+    );
+  }
+
+  // DB Requires the following fields to be initialised in the DTO:
+  async moveFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
         'MarkdownID cannot be undefined',
@@ -118,7 +170,13 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    return this.markdownFilesService.updatePath(
+    if (markdownFileDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return await this.markdownFilesService.updatePath(
       markdownFileDTO,
     );
   }
@@ -141,10 +199,11 @@ export class FileManagerService {
       markdownFileDTO,
     );
   }
-
   // DB Requires the following fields to be initialised in the DTO:
-  // TODO add code to retrieve from S3 for given MarkdownID
-  async retrieveFile(
+  // MarkdownID: string; .. TO IDENTIFY THE FILE
+  // Path: string; .. TO LOCATE THE FILE IN S3
+  // Name: string; .. TO IDENTIFY THE FILE
+  async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
     if (markdownFileDTO.MarkdownID === undefined)
@@ -153,11 +212,88 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    await this.s3service.retrieveFile(
+    await this.s3service.deleteFile(
       markdownFileDTO,
     );
 
-    return markdownFileDTO; // return the file
+    return this.markdownFilesService.remove(
+      markdownFileDTO,
+    );
+  }
+
+  // Folder operations: #########################################################
+
+  createFolder(folderDTO: FolderDTO) {
+    if (folderDTO.FolderName === undefined)
+      throw new HttpException(
+        'FolderName cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (folderDTO.UserID === undefined)
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (folderDTO.ParentFolderID === undefined)
+      throw new HttpException(
+        'ParentFolderID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (folderDTO.Path === undefined)
+      throw new HttpException(
+        'Path cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (folderDTO.FolderName === '') {
+      throw new HttpException(
+        'FolderName cannot be empty',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return this.folderService.create(folderDTO);
+  }
+
+  convertFoldersToDTOs(folders: Folder[]) {
+    const folderDTOArr: FolderDTO[] = [];
+    folders.forEach((folder) => {
+      const folderDTO: FolderDTO = {
+        FolderID: folder.FolderID,
+        UserID: folder.UserID,
+        DateCreated: folder.DateCreated,
+        LastModified: folder.LastModified,
+        FolderName: folder.FolderName,
+        Path: folder.Path,
+        ParentFolderID: folder.ParentFolderID,
+      };
+      folderDTOArr.push(folderDTO);
+    });
+    return folderDTOArr;
+  }
+
+  async retrieveAllFolders(
+    directoryFoldersDTO: DirectoryFoldersDTO,
+  ) {
+    if (
+      directoryFoldersDTO.UserID === undefined
+    ) {
+      throw new HttpException(
+        'UserID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const allFolders =
+      await this.folderService.findAllByUserID(
+        directoryFoldersDTO.UserID,
+      );
+    directoryFoldersDTO.Folders =
+      this.convertFoldersToDTOs(allFolders);
+    return directoryFoldersDTO;
   }
 
   renameFolder(folderDTO: FolderDTO) {
@@ -176,38 +312,6 @@ export class FileManagerService {
     return this.folderService.updateName(
       folderDTO,
     );
-  }
-
-  deleteFolder(folderDTO: FolderDTO) {
-    if (folderDTO.FolderID === undefined)
-      throw new HttpException(
-        'FolderID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.folderService.remove(folderDTO);
-  }
-
-  createFolder(folderDTO: FolderDTO) {
-    if (folderDTO.FolderName === undefined)
-      throw new HttpException(
-        'FolderName cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (folderDTO.ParentFolderID === undefined)
-      throw new HttpException(
-        'ParentFolderID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (folderDTO.Path === undefined)
-      throw new HttpException(
-        'Path cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.folderService.create(folderDTO);
   }
 
   moveFolder(folderDTO: FolderDTO) {
@@ -234,6 +338,17 @@ export class FileManagerService {
     );
   }
 
+  deleteFolder(folderDTO: FolderDTO) {
+    if (folderDTO.FolderID === undefined)
+      throw new HttpException(
+        'FolderID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.folderService.remove(folderDTO);
+  }
+
+  // Import & Export operations: #########################################################
   async importFile(importDTO: ImportDTO) {
     if (importDTO.Path === undefined)
       throw new HttpException(
@@ -253,16 +368,16 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    const convertedMardkownFileDTO =
+    const convertedMarkdownFileDTO =
       this.conversionService.convertFrom(
         importDTO,
       );
 
     const deltaContent =
-      convertedMardkownFileDTO.Content;
+      convertedMarkdownFileDTO.Content;
 
     const createdFile = await this.createFile(
-      convertedMardkownFileDTO,
+      convertedMarkdownFileDTO,
     );
 
     createdFile.Content = deltaContent;
@@ -295,74 +410,26 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
+    if (exportDTO.Content === undefined) {
+      // Idea for future: if content is undefined, retrieve it from the storage
+      // const markdownFile =
+      //   await this.markdownFilesService.findOneByMarkdownID(
+      //     exportDTO.MarkdownID,
+      //   );
+
+      // if (markdownFile === undefined) {
+      throw new HttpException(
+        'Content cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+      // }
+
+      // exportDTO.Content = markdownFile.Content;
+    }
+
     const convertedDTO =
       this.conversionService.convertTo(exportDTO);
 
     return convertedDTO;
-  }
-
-  /**
-   * @param files An array of MarkdownFile entities
-   * @returns An array of MarkdownFileDTOs
-   */
-  convertFilesToDTOs(files: MarkdownFile[]) {
-    const markdownFilesDTOArr: MarkdownFileDTO[] =
-      [];
-    files.forEach((file) => {
-      const markdownFileDTO: MarkdownFileDTO = {
-        MarkdownID: file.MarkdownID,
-        UserID: file.UserID,
-        DateCreated: file.DateCreated,
-        LastModified: file.LastModified,
-        Name: file.Name,
-        Path: file.Path,
-        Size: file.Size,
-        ParentFolderID: file.ParentFolderID,
-        Content: '',
-      };
-      markdownFilesDTOArr.push(markdownFileDTO);
-    });
-    return markdownFilesDTOArr;
-  }
-
-  async retrieveAllFiles(
-    directoryFilesDTO: DirectoryFilesDTO,
-  ) {
-    const allFiles =
-      await this.markdownFilesService.findAllByUserID(
-        directoryFilesDTO.UserID,
-      );
-    directoryFilesDTO.Files =
-      this.convertFilesToDTOs(allFiles);
-    return directoryFilesDTO;
-  }
-
-  convertFoldersToDTOs(folders: Folder[]) {
-    const folderDTOArr: FolderDTO[] = [];
-    folders.forEach((folder) => {
-      const folderDTO: FolderDTO = {
-        FolderID: folder.FolderID,
-        UserID: folder.UserID,
-        DateCreated: folder.DateCreated,
-        LastModified: folder.LastModified,
-        FolderName: folder.FolderName,
-        Path: folder.Path,
-        ParentFolderID: folder.ParentFolderID,
-      };
-      folderDTOArr.push(folderDTO);
-    });
-    return folderDTOArr;
-  }
-
-  async retrieveAllFolders(
-    directoryFoldersDTO: DirectoryFoldersDTO,
-  ) {
-    const allFolders =
-      await this.folderService.findAllByUserID(
-        directoryFoldersDTO.UserID,
-      );
-    directoryFoldersDTO.Folders =
-      this.convertFoldersToDTOs(allFolders);
-    return directoryFoldersDTO;
   }
 }

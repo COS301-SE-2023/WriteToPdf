@@ -24,13 +24,6 @@ export class UsersController {
     private readonly usersService: UsersService,
   ) {}
 
-  @Post()
-  create(@Body() createUserDTO: UserDTO) {
-    return this.usersService.create(
-      createUserDTO,
-    );
-  }
-
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -44,18 +37,17 @@ export class UsersController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      UserDTO,
-      loginUserDTO,
-    );
-    const errors = validateSync(receivedDTO);
-
-    if (errors.length > 0) {
+    // Check whether request body contains at least email and password
+    if (
+      !loginUserDTO.Email ||
+      !loginUserDTO.Password
+    ) {
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
     }
+
     return this.usersService.login(loginUserDTO);
   }
 
@@ -72,18 +64,14 @@ export class UsersController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      UserDTO,
-      userDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (!userDTO.Email) {
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
     }
+
     return this.usersService.getSalt(userDTO);
   }
 
@@ -100,46 +88,21 @@ export class UsersController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      UserDTO,
-      createUserDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (
+      !createUserDTO.Email ||
+      !createUserDTO.Password ||
+      !createUserDTO.FirstName ||
+      !createUserDTO.LastName
+    ) {
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
     }
+
     return this.usersService.signup(
       createUserDTO,
     );
-  }
-
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Get(':UserID')
-  findOne(@Param('UserID') UserID: number) {
-    return this.usersService.findOne(UserID);
-  }
-
-  @Patch(':UserID')
-  update(
-    @Param('UserID') UserID: number,
-    @Body() updateUserDTO: UserDTO,
-  ) {
-    return this.usersService.update(
-      UserID,
-      updateUserDTO,
-    );
-  }
-
-  @Delete(':UserID')
-  remove(@Param('UserID') UserID: number) {
-    return this.usersService.remove(UserID);
   }
 }

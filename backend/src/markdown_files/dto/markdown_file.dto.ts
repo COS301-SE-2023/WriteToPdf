@@ -18,5 +18,6 @@ export class MarkdownFileDTO {
     this.LastModified = undefined;
     this.Size = undefined;
     this.ParentFolderID = undefined;
+    this.UserID = undefined;
   }
 }

@@ -9,6 +9,8 @@ import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ImportDTO } from './dto/import.dto';
 import { resolve } from 'path';
 import { ExportDTO } from './dto/export.dto';
+import { MessageService } from 'primeng/api';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +19,9 @@ export class FileService {
   constructor(
     private http: HttpClient,
     private userService: UserService,
-    private editService: EditService
-  ) {}
+    private editService: EditService,
+    private messageService: MessageService
+  ) { }
 
   saveDocument(
     content: string | undefined,
@@ -28,11 +31,12 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSaveData(content, markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
+          console.log("SAVE");
           console.log(response);
           console.log(response.status);
 
           if (response.status === 200) {
-            console.log('Save successful');
+            this.messageService.add({ severity: 'success', summary: 'File saved successfully' });
             resolve(true);
           } else {
             resolve(false);
@@ -52,6 +56,7 @@ export class FileService {
 
     body.UserID = this.userService.getUserID();
     body.Content = content;
+    const encrypted = this.encryptDocument(JSON.stringify(content));
     body.MarkdownID = markdownID;
     body.Path = path;
 
@@ -73,9 +78,10 @@ export class FileService {
           console.log(response.status);
 
           if (response.status === 200) {
-            console.log('Retrieve successful');
+
             resolve(response.body.Content);
           } else {
+            this.messageService.add({ severity: 'error', summary: 'File could not be retrieved' });
             resolve(false);
           }
         },
@@ -113,12 +119,13 @@ export class FileService {
           console.log(response.status);
 
           if (response.status === 200) {
-            console.log('Create successful');
+            this.messageService.add({ severity: 'success', summary: 'File created successfully' });
 
             this.editService.setMarkdownID(response.body.MarkdownID);
             this.editService.setPath(response.body.Path);
             this.editService.setName(response.body.Name);
             this.editService.setParentFolderID(response.body.ParentFolderID);
+            this.editService.setContent("");
 
             resolve(true);
           } else {
@@ -157,7 +164,7 @@ export class FileService {
           console.log(response.status);
 
           if (response.status === 200) {
-            console.log('Delete successful');
+            this.messageService.add({ severity: 'success', summary: 'File deleted successfully' });
             resolve(true);
           } else {
             resolve(false);
@@ -196,7 +203,7 @@ export class FileService {
           console.log(response.status);
 
           if (response.status === 200) {
-            console.log('Rename successful');
+            this.messageService.add({ severity: 'success', summary: 'File renamed successfully' });
             resolve(true);
           } else {
             resolve(false);
@@ -239,7 +246,7 @@ export class FileService {
           console.log(response.status);
 
           if (response.status === 200) {
-            console.log('Move successful');
+            this.messageService.add({ severity: 'success', summary: 'File moved successfully' });
             const markdownFile = new MarkdownFileDTO();
             markdownFile.MarkdownID = response.body.MarkdownID;
             markdownFile.Name = response.body.Name;
@@ -248,7 +255,7 @@ export class FileService {
 
             resolve(markdownFile);
           } else {
-            console.log('Move unsuccessful');
+            this.messageService.add({ severity: 'error', summary: 'File move failed' });
             reject();
           }
         },
@@ -281,7 +288,6 @@ export class FileService {
       this.sendRetrieveAllFiles().subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
-            console.log('Retrieve successful');
             const body = response.body;
             console.log('' + body);
             let files: MarkdownFileDTO[] = [];
@@ -300,12 +306,12 @@ export class FileService {
             }
             resolve(files);
           } else {
-            console.log('Retrieve failed');
+            this.messageService.add({ severity: 'error', summary: 'File retrieval failed' });
             reject();
           }
         },
         error: (error) => {
-          console.log('Retrieve failed');
+          this.messageService.add({ severity: 'error', summary: 'File retrieval failed' });
           reject();
         },
       });
@@ -340,7 +346,7 @@ export class FileService {
           const outputFile = new MarkdownFileDTO();
 
           if (response.status === 200) {
-            console.log('Import successful');
+            this.messageService.add({ severity: 'success', summary: 'File imported successfully' });
 
             outputFile.Name = response.body.Name;
             outputFile.Path = response.body.Path;
@@ -396,11 +402,13 @@ export class FileService {
         console.log(response);
         console.log(response.status);
         if (response.status === 200) {
-          console.log('Export successful');
+          this.messageService.add({ severity: 'success', summary: 'Export successful' });
           const fileContent = response.body.Content;
           const fileName = response.body.Name;
           const fileType = response.body.Type;
-          const downloadURL = URL.createObjectURL(new Blob([fileContent], { type: 'text/plain' }));
+          const downloadURL = URL.createObjectURL(
+            new Blob([fileContent], { type: 'text/plain' })
+          );
           const downloadLink = document.createElement('a');
           downloadLink.href = downloadURL;
           downloadLink.download = fileName + '.' + fileType;
@@ -408,7 +416,7 @@ export class FileService {
           URL.revokeObjectURL(downloadURL);
           // document.body.removeChild(downloadLink);
         } else {
-          console.log('Export unsuccessful');
+          this.messageService.add({ severity: 'error', summary: 'Export failed' });
         }
       },
     });
@@ -434,5 +442,29 @@ export class FileService {
       'Bearer ' + this.userService.getAuthToken()
     );
     return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  encryptDocument(content: string|undefined): string {
+
+    const key = this.userService.getAuthToken();
+    if (key&&content) {
+      const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
+      return encryptedMessage;
+    } else {
+      return '';
+    }
+
+  }
+
+  decryptDocument(content: string|undefined): string {
+      
+      const key = this.userService.getAuthToken();
+      if (key&&content) {
+        const decryptedMessage = CryptoJS.AES.decrypt(content, key).toString(CryptoJS.enc.Utf8);
+        return decryptedMessage;
+      } else {
+        return '';
+      }
+  
   }
 }

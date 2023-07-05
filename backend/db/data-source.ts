@@ -4,6 +4,10 @@ import {
 } from 'typeorm';
 
 import 'dotenv/config';
+import { MarkdownFile } from '../src/markdown_files/entities/markdown_file.entity';
+import { User } from '../src/users/entities/user.entity';
+import { Folder } from '../src/folders/entities/folder.entity';
+import { Asset } from '../src/assets/entities/asset.entity';
 
 export const dataSourceOptions: DataSourceOptions =
   {
@@ -13,7 +17,14 @@ export const dataSourceOptions: DataSourceOptions =
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: ['dist/**/*.entity.js'],
+    // entities: ['dist/**/*.entity.js'],
+    entities: [
+      'dist/**/*.entity.{js,ts}',
+      MarkdownFile,
+      User,
+      Folder,
+      Asset,
+    ],
     synchronize: true, // Set this to false in production to prevent automatic schema sync
   };
 
