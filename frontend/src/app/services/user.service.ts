@@ -22,6 +22,7 @@ export class UserService {
   private email: string | undefined = undefined;
   private firstName: string | undefined = undefined;
   private doExpirationCheck: boolean = false;
+  private timer: any;
 
   constructor(private http: HttpClient, private messageService: MessageService, private router: Router) { }
 
@@ -112,6 +113,9 @@ export class UserService {
     this.expiresAt = undefined;
     this.doExpirationCheck = false;
     this.navigateToPage('/login');
+    if(this.timer) {
+      clearInterval(this.timer);
+    }
   }
 
   isAuthenticatedUser(): boolean {
@@ -193,11 +197,9 @@ export class UserService {
   private startExpirationCheck() {
     const checkInterval = 30000;
 
-    this.checkExpiration();
-
-
-    setTimeout(() => {
+    this.timer=setInterval(() => {
       this.checkExpiration();
+
     }, checkInterval);
 
   }
@@ -217,9 +219,6 @@ export class UserService {
       if (currentDate >= notificationTime && currentDate < expiresAtDate) {
         // Send the expiration notification
         console.log('Sending expiration notification...');
-      }
-
-      if (expiresAtDate.getTime() < currentDate.getTime()) {
         this.sendRefreshTokenRequest().subscribe({
           next: (response: HttpResponse<any>) => {
             console.log(response);
@@ -242,7 +241,7 @@ export class UserService {
   }
 
   sendRefreshTokenRequest(): Observable<HttpResponse<any>> {
-        const environmentURL = environment.apiURL;
+    const environmentURL = environment.apiURL;
     const url = `${environmentURL}auth/refresh_token`;
     const body = new RefreshTokenDTO();
     body.UserID = this.userID;
