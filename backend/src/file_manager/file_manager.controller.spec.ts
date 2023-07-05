@@ -162,7 +162,7 @@ describe('FileManagerController', () => {
         ),
       ).toThrowError(
         new HttpException(
-          'MarkdownID cannot be undefined',
+          'Invalid request data',
           HttpStatus.BAD_REQUEST,
         ),
       );
@@ -202,7 +202,7 @@ describe('FileManagerController', () => {
         ),
       ).toThrowError(
         new HttpException(
-          'Name cannot be undefined',
+          'Invalid request data',
           HttpStatus.BAD_REQUEST,
         ),
       );
@@ -282,7 +282,7 @@ describe('FileManagerController', () => {
           HttpException,
         );
         expect(error.message).toBe(
-          'MarkdownID cannot be undefined',
+          'Invalid request data',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
@@ -333,7 +333,7 @@ describe('FileManagerController', () => {
           HttpException,
         );
         expect(error.message).toBe(
-          'MarkdownID cannot be undefined',
+          'Invalid request data',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
@@ -358,7 +358,7 @@ describe('FileManagerController', () => {
           HttpException,
         );
         expect(error.message).toBe(
-          'Path cannot be undefined',
+          'Invalid request data',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
@@ -436,7 +436,7 @@ describe('FileManagerController', () => {
           HttpException,
         );
         expect(error.message).toBe(
-          'MarkdownID cannot be undefined',
+          'Invalid request data',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
@@ -463,7 +463,7 @@ describe('FileManagerController', () => {
           HttpException,
         );
         expect(error.message).toBe(
-          'MarkdownID cannot be undefined',
+          'Invalid request data',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
@@ -511,7 +511,7 @@ describe('FileManagerController', () => {
           HttpException,
         );
         expect(error.message).toBe(
-          'UserID cannot be undefined',
+          'Invalid request data',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
