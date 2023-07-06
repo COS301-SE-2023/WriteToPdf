@@ -1,6 +1,7 @@
 import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
+import { Inject } from '@angular/core';
 import { is } from 'cypress/types/bluebird';
 
 @Component({
@@ -17,7 +18,7 @@ export class SignupComponent {
   confirmPassword: string = '';
 
   value: string = '';
-  constructor(private router: Router, private elementRef: ElementRef, private userService: UserService) { }
+  constructor(@Inject(Router) private router: Router, private elementRef: ElementRef, private userService: UserService) { }
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);

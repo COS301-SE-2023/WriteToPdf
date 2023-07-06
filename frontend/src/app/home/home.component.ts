@@ -18,6 +18,7 @@ import { FileUploadPopupComponent } from "../file-upload-popup/file-upload-popup
 import { ViewChild } from '@angular/core';
 import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
+import { Inject } from '@angular/core';
 
 interface Column {
   field: string;
@@ -65,7 +66,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   uploadedFiles: any[] = [];
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
-  constructor(private router: Router,
+  constructor(@Inject(Router) private router: Router,
     private nodeService: NodeService,
     private elementRef: ElementRef,
     private messageService: MessageService,

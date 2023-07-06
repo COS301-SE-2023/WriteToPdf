@@ -10,6 +10,7 @@ import { MessageService } from 'primeng/api';
 import { PrimeIcons } from 'primeng/api';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { Inject } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +25,7 @@ export class UserService {
   private doExpirationCheck: boolean = false;
   private timer: any;
 
-  constructor(private http: HttpClient, private messageService: MessageService, private router: Router) { }
+  constructor(private http: HttpClient, private messageService: MessageService, @Inject(Router) private router: Router) { }
 
   async login(email: string, password: string): Promise<boolean> {
 
