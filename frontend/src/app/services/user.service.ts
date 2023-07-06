@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserDTO } from './dto/user.dto';
 import { RefreshTokenDTO } from './dto/refresh_token.dto';
 import { SHA256 } from 'crypto-js';
+import { hashSync, genSaltSync } from 'bcrypt-ts';
 import { MessageService } from 'primeng/api';
 import { PrimeIcons } from 'primeng/api';
 import { Router } from '@angular/router';
@@ -24,8 +25,8 @@ export class UserService {
   constructor(private http: HttpClient, private messageService: MessageService, private router: Router) { }
 
   async login(email: string, password: string): Promise<boolean> {
-    
-    let salt: string | null;
+
+    let salt: string;
     await this.retrieveSalt(email)
       .then((result) => {
         salt = result;
@@ -136,27 +137,19 @@ export class UserService {
   }
 
 
-  sendLoginData(email: string, password: string, salt: string | null): Observable<HttpResponse<any>> {
+  sendLoginData(email: string, password: string, salt: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/users/login';
     const body = new UserDTO();
     body.Email = email;
 
-    const hash = SHA256(password + salt).toString();
+    const hash = this.hashPassword(password, salt);
     body.Password = hash;
 
     return this.http.post(url, body, { observe: 'response' });
   }
 
   private generateRandomSalt() {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=';
-    const saltLength = 255;
-    let salt = '';
-
-    for (let i = 0; i < saltLength; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      salt += characters.charAt(randomIndex);
-    }
-
+    const salt = genSaltSync(10);
     return salt;
   }
 
@@ -169,13 +162,13 @@ export class UserService {
     body.Email = email;
     const salt = this.generateRandomSalt();
     body.Salt = salt;
-    const hash = SHA256(password + salt).toString();
-    body.Password = hash;
+    const hash = this.hashPassword(password, salt);
+      body.Password = hash;
 
     return this.http.post(url, body, { observe: 'response' });
   }
 
-  async retrieveSalt(email: string): Promise<string | null> {
+  async retrieveSalt(email: string): Promise<string> {
     const url = 'http://localhost:3000/users/get_salt';
     const body = new UserDTO();
     body.Email = email;
@@ -254,6 +247,12 @@ export class UserService {
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.authToken);
     return this.http.post(url, body, { headers, observe: 'response' });
 
+  }
+
+  private hashPassword(password: string, salt: string): string {
+    const hashed = hashSync(password,salt);
+
+    return hashed;
   }
 
   navigateToPage(page: string): void {

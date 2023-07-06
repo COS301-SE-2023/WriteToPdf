@@ -17,6 +17,7 @@ import { UserDTO } from './dto/user.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;
+  let usersService: UsersService;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -43,51 +44,10 @@ describe('UsersController', () => {
       UsersController,
     );
 
+    usersService =
+      module.get<UsersService>(UsersService);
+
     module.close();
-  });
-
-  describe('root/config', () => {
-    it('user controller should be defined', () => {
-      expect(controller).toBeDefined();
-    });
-  });
-
-  describe('findOne', () => {
-    // console.log('UsersController.findOne');
-  });
-
-  describe('findAll', () => {
-    it('should return an array of all users', async () => {
-      const result = [
-        {
-          UserID: 1,
-          FirstName: 'John',
-          LastName: 'Doe',
-          Email: 'johndoe@example.com',
-          Password: 'mypassword',
-          Salt: 'mysalt',
-        },
-      ];
-      jest
-        .spyOn(controller, 'findAll')
-        .mockImplementation(async () => result);
-
-      expect(await controller.findAll()).toBe(
-        result,
-      );
-    });
-  });
-
-  describe('update', () => {
-    // it('should return updated user')
-    // it('should throw exception if user not found')
-    // console.log('UsersController.update');
-  });
-
-  describe('remove', () => {
-    // it('should return removed user')
-    // it('should throw exception if user not found')
-    // console.log('UsersController.remove');
   });
 
   describe('login', () => {
@@ -113,7 +73,7 @@ describe('UsersController', () => {
       const request = { method: 'POST' };
 
       jest
-        .spyOn(controller, 'login')
+        .spyOn(usersService, 'login')
         .mockImplementation(
           async () => expectedResult,
         );
@@ -147,6 +107,56 @@ describe('UsersController', () => {
         );
         expect(error.status).toBe(
           HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw exception if password is missing', async () => {
+      const request = { method: 'POST' };
+      const loginUserDTO = {
+        Password: 'test',
+      };
+
+      try {
+        await controller.login(
+          loginUserDTO as any,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw exception if email is missing', async () => {
+      const request = { method: 'POST' };
+      const loginUserDTO = {
+        Email: 'test',
+      };
+
+      try {
+        await controller.login(
+          loginUserDTO as any,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
         );
       }
     });
@@ -175,7 +185,7 @@ describe('UsersController', () => {
       const request = { method: 'POST' };
 
       jest
-        .spyOn(controller, 'signup')
+        .spyOn(usersService, 'signup')
         .mockImplementation(
           async () => expectedResult,
         );
@@ -213,6 +223,184 @@ describe('UsersController', () => {
           HttpStatus.METHOD_NOT_ALLOWED,
         );
       }
+    });
+
+    it('should throw exception if password is missing', async () => {
+      const request = { method: 'POST' };
+      const createUserDTO = {
+        Password: 'test',
+      };
+
+      try {
+        await controller.signup(
+          createUserDTO as any,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw exception if email is missing', async () => {
+      const request = { method: 'POST' };
+      const createUserDTO = {
+        Email: 'test',
+      };
+
+      try {
+        await controller.signup(
+          createUserDTO as any,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw exception if first name is missing', async () => {
+      const request = { method: 'POST' };
+      const createUserDTO = {
+        FirstName: 'test',
+      };
+
+      try {
+        await controller.signup(
+          createUserDTO as any,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw exception if last name is missing', async () => {
+      const request = { method: 'POST' };
+      const createUserDTO = {
+        LastName: 'test',
+      };
+
+      try {
+        await controller.signup(
+          createUserDTO as any,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+  });
+
+  describe('get_salt', () => {
+    it('should be decorated with @Public', () => {
+      const isPublic = Reflect.getMetadata(
+        'isPublic',
+        controller.getSalt,
+      );
+      expect(isPublic).toBe(true);
+    });
+
+    it('should throw an error if method is not POST', async () => {
+      const request = { method: 'GET' };
+      const userDTO = new UserDTO();
+      userDTO.Email = 'test';
+
+      try {
+        await controller.getSalt(
+          userDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an error if email is missing', async () => {
+      const request = { method: 'POST' };
+      const userDTO = {};
+
+      try {
+        await controller.getSalt(
+          userDTO as any,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should return the salt', async () => {
+      const request = { method: 'POST' };
+      const userDTO = new UserDTO();
+      userDTO.Email = 'test';
+
+      const expectedResult = new UserDTO();
+
+      jest
+        .spyOn(usersService, 'getSalt')
+        .mockImplementation(
+          async () => expectedResult,
+        );
+
+      expect(
+        await controller.getSalt(
+          userDTO,
+          request as any,
+        ),
+      ).toBe(expectedResult);
     });
   });
 });

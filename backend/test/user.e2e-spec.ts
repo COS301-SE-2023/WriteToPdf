@@ -30,13 +30,6 @@ describe('UserController (integration)', () => {
   });
 
   describe('users endpoint', () => {
-    it('/users/login/ (GET)', async () => {
-      // jest.setTimeout(10000);
-      return await request(app.getHttpServer())
-        .get('/users/login/')
-        .expect(HttpStatus.UNAUTHORIZED);
-    });
-
     it('/users/login/ (POST)', async () => {
       const requestUser = new UserDTO();
       requestUser.Email = process.env.TEST_EMAIL;

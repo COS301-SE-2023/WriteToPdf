@@ -1,10 +1,10 @@
-name: Upload Code Coverage
+name: Test Integration
 
 on:
     push:
-        branches: [main, test, codecov]
+        branches: ["test", "integration/*", "codecov"]
     pull_request:
-        branches: [main, test, codecov]
+        branches: ["test", "integration/*", "codecov"]
 
 env:
     JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
@@ -27,7 +27,7 @@ env:
     AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
 
 jobs:
-    upload_test_coverage:
+    test_integration:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
@@ -44,14 +44,6 @@ jobs:
               working-directory: backend
               run: npm install
 
-            - name: Run backend tests
+            - name: Run integration tests
               working-directory: backend
-              run: npm run test:cov
-              env:
-                  CI: true
-
-            - name: Upload Backend Coverage Report to Codecov
-              uses: codecov/codecov-action@v3
-              with:
-                  token: ${{ secrets.CODECOV_TOKEN }}
-                  files: backend/coverage/lcov.info
+              run: npm run test:e2e

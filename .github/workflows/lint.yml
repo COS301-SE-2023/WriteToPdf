@@ -1,10 +1,8 @@
-name: Upload Code Coverage
+name: Lint Codebase
 
 on:
     push:
-        branches: [main, test, codecov]
-    pull_request:
-        branches: [main, test, codecov]
+        branches: ["dev/*", "integration/*"]
 
 env:
     JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
@@ -27,7 +25,7 @@ env:
     AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
 
 jobs:
-    upload_test_coverage:
+    lint_backend:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
@@ -44,14 +42,27 @@ jobs:
               working-directory: backend
               run: npm install
 
-            - name: Run backend tests
+            - name: Format code
               working-directory: backend
-              run: npm run test:cov
-              env:
-                  CI: true
+              run: npm run format
 
-            - name: Upload Backend Coverage Report to Codecov
-              uses: codecov/codecov-action@v3
+    lint_frontend:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v2
               with:
-                  token: ${{ secrets.CODECOV_TOKEN }}
-                  files: backend/coverage/lcov.info
+                  node-version: "16.x"
+                  cache: "npm"
+                  cache-dependency-path: frontend/package-lock.json
+
+            - name: Install dependencies
+              working-directory: frontend
+              run: npm install
+
+            - name: Format code
+              working-directory: frontend
+              run: npm run format
