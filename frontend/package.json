@@ -25,7 +25,6 @@
     "@angular/router": "^16.0.2",
     "assert": "^2.0.0",
     "assert-plus": "^1.0.0",
-    "bcrypt": "^5.1.0",
     "bcrypt-ts": "^4.0.0",
     "browserify-zlib": "^0.2.0",
     "canvas": "^2.11.2",
