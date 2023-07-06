@@ -10,6 +10,7 @@ import { ImportDTO } from './dto/import.dto';
 import { resolve } from 'path';
 import { ExportDTO } from './dto/export.dto';
 import { MessageService } from 'primeng/api';
+import * as forge from 'node-forge';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
@@ -444,27 +445,53 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  encryptDocument(content: string|undefined): string {
+  encryptDocument(content: string | undefined): string {
 
-    const key = this.userService.getAuthToken();
-    if (key&&content) {
-      const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
-      return encryptedMessage;
+    console.log(content);
+    console.log(content?.length);
+    const plaintext = content;
+    if (plaintext) {
+      const keyPair = forge.pki.rsa.generateKeyPair({ bits: 2048 });
+      const publicKey = forge.pki.publicKeyToPem(keyPair.publicKey);
+      const privateKey = forge.pki.privateKeyToPem(keyPair.privateKey);
+
+      const encrypted = forge.pki.publicKeyFromPem(publicKey).encrypt(plaintext, 'RSA-OAEP', {
+        md: forge.md.sha256.create()
+      });
+
+      // Decrypt data using the private key
+      const decrypted = keyPair.privateKey.decrypt(encrypted, 'RSA-OAEP', {
+        md: forge.md.sha256.create()
+      });
+
+      const encryptedMessage = forge.util.encode64(encrypted);
+      console.log('Original:', plaintext);
+      console.log('Encrypted:', encryptedMessage);
+      console.log('Decrypted:', decrypted);
+      return encryptedMessage
     } else {
       return '';
     }
 
+    // const key = this.userService.getAuthToken();
+    // if (key&&content) {
+    //   const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
+    //   return encryptedMessage;
+    // } else {
+    //   return '';
+    // }
+
   }
 
-  decryptDocument(content: string|undefined): string {
-      
-      const key = this.userService.getAuthToken();
-      if (key&&content) {
-        const decryptedMessage = CryptoJS.AES.decrypt(content, key).toString(CryptoJS.enc.Utf8);
-        return decryptedMessage;
-      } else {
-        return '';
-      }
-  
+  decryptDocument(content: string | undefined): string {
+
+    const key = this.userService.getAuthToken();
+    if (key && content) {
+      const decryptedMessage = CryptoJS.AES.decrypt(content, key).toString(CryptoJS.enc.Utf8);
+      return decryptedMessage;
+    } else {
+      return '';
+    }
+
   }
 }
