@@ -54,7 +54,15 @@ export class AmplifyStack extends Stack {
       buildSpec,
     });
 
+    const mainBranch = amplifyFrontend.addBranch("main", {
+      autoBuild: true,
+    });
+
     const testBranch = amplifyFrontend.addBranch("test", {
+      autoBuild: true,
+    });
+
+    const devBranch = amplifyFrontend.addBranch("dev/devOps", {
       autoBuild: true,
     });
   }
