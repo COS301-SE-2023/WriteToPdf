@@ -5,6 +5,7 @@ import { NodeService } from '../services/home.service';
 import { EditService } from '../services/edit.service';
 import { Router } from '@angular/router';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Inject } from '@angular/core';
 
 // import * as mammoth from "mammoth"
 interface UploadEvent {
@@ -26,8 +27,8 @@ export class FileUploadPopupComponent {
     private fileService: FileService,
     private nodeService: NodeService,
     private editService: EditService,
-    private router: Router
-  ) {}
+    @Inject(Router) private router: Router
+  ) { }
 
   onUpload(event: any) {
     const file = event.files[0];

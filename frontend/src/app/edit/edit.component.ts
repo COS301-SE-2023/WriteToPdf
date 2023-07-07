@@ -11,6 +11,7 @@ import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
+import { Inject } from '@angular/core';
 
 @Component({
   selector: 'app-edit',
@@ -29,7 +30,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   constructor(
     private elementRef: ElementRef,
-    private router: Router,
+    @Inject(Router) private router: Router,
     private dialogService: DialogService,
     private fileService: FileService,
     private editService: EditService

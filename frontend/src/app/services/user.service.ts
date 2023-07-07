@@ -9,6 +9,8 @@ import { hashSync, genSaltSync } from 'bcrypt-ts';
 import { MessageService } from 'primeng/api';
 import { PrimeIcons } from 'primeng/api';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
+import { Inject } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -21,8 +23,9 @@ export class UserService {
   private email: string | undefined = undefined;
   private firstName: string | undefined = undefined;
   private doExpirationCheck: boolean = false;
+  private timer: any;
 
-  constructor(private http: HttpClient, private messageService: MessageService, private router: Router) { }
+  constructor(private http: HttpClient, private messageService: MessageService, @Inject(Router) private router: Router) { }
 
   async login(email: string, password: string): Promise<boolean> {
 
@@ -111,6 +114,9 @@ export class UserService {
     this.expiresAt = undefined;
     this.doExpirationCheck = false;
     this.navigateToPage('/login');
+    if(this.timer) {
+      clearInterval(this.timer);
+    }
   }
 
   isAuthenticatedUser(): boolean {
@@ -138,7 +144,8 @@ export class UserService {
 
 
   sendLoginData(email: string, password: string, salt: string): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/users/login';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}users/login`;
     const body = new UserDTO();
     body.Email = email;
 
@@ -155,7 +162,8 @@ export class UserService {
 
 
   sendSignupData(email: string, fName: string, lName: string, password: string): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/users/signup';
+        const environmentURL = environment.apiURL;
+    const url = `${environmentURL}users/signup`;
     const body = new UserDTO();
     body.FirstName = fName;
     body.LastName = lName;
@@ -169,7 +177,8 @@ export class UserService {
   }
 
   async retrieveSalt(email: string): Promise<string> {
-    const url = 'http://localhost:3000/users/get_salt';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}users/get_salt`;
     const body = new UserDTO();
     body.Email = email;
 
@@ -189,11 +198,9 @@ export class UserService {
   private startExpirationCheck() {
     const checkInterval = 30000;
 
-    this.checkExpiration();
-
-
-    setTimeout(() => {
+    this.timer=setInterval(() => {
       this.checkExpiration();
+
     }, checkInterval);
 
   }
@@ -213,9 +220,6 @@ export class UserService {
       if (currentDate >= notificationTime && currentDate < expiresAtDate) {
         // Send the expiration notification
         console.log('Sending expiration notification...');
-      }
-
-      if (expiresAtDate.getTime() < currentDate.getTime()) {
         this.sendRefreshTokenRequest().subscribe({
           next: (response: HttpResponse<any>) => {
             console.log(response);
@@ -238,7 +242,8 @@ export class UserService {
   }
 
   sendRefreshTokenRequest(): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/auth/refresh_token';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}auth/refresh_token`;
     const body = new RefreshTokenDTO();
     body.UserID = this.userID;
     body.Token = this.authToken;

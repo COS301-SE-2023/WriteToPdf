@@ -7,6 +7,7 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MessageService } from 'primeng/api';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +48,8 @@ export class FolderService {
     path: string | undefined,
     parentFolderID: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/move_folder';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/move_folder`;
     const body = new FolderDTO();
 
     body.UserID = this.userService.getUserID();
@@ -81,7 +83,8 @@ export class FolderService {
   }
 
   sendDeleteData(folderID: string | undefined): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/delete_folder';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/delete_folder`;
     const body = new FolderDTO();
 
     body.UserID = this.userService.getUserID();
@@ -129,7 +132,8 @@ export class FolderService {
   }
 
   sendRetrieveAllFolders(): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/retrieve_all_folders';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/retrieve_all_folders`;
     const body = new DirectoryFoldersDTO();
 
     body.UserID = this.userService.getUserID();
@@ -166,7 +170,8 @@ export class FolderService {
   }
 
   sendCreateData(path: string | undefined, folderName: string, parentFolderID: string | undefined): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/create_folder';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/create_folder`;
     const body = new FolderDTO();
 
     body.UserID = this.userService.getUserID();
@@ -200,7 +205,8 @@ export class FolderService {
   }
 
   sendRenameData(folderID: string|undefined, path: string|undefined, folderName: string): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/rename_folder';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/rename_folder`;
     const body = new FolderDTO();
 
     body.UserID = this.userService.getUserID();
