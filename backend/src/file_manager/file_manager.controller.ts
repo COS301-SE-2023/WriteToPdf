@@ -42,12 +42,6 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (markdownFileDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
     return this.file_manager_service.createFile(
       markdownFileDTO,
     );
@@ -73,12 +67,6 @@ export class FileManagerController {
     )
       throw new HttpException(
         'Invalid request data',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (markdownFileDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
 

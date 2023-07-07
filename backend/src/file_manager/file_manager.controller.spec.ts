@@ -17,7 +17,6 @@ import { Repository } from 'typeorm';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
 import { ConversionService } from '../conversion/conversion.service';
-import { FileManagerModule } from './file_manager.module';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 
 describe('FileManagerController', () => {
@@ -60,25 +59,9 @@ describe('FileManagerController', () => {
       );
     fileManagerService =
       module.get<FileManagerService>(
-        'FileManagerService',
+        FileManagerService,
       );
     s3Service = module.get<S3Service>(S3Service);
-  });
-
-  describe('root/config', () => {
-    it('controller should be defined', () => {
-      expect(controller).toBeDefined();
-    });
-  });
-
-  describe('new file_manager module should be correcly instantiated', () => {
-    it('new file_managerModule object should be of type FileManagerModule', () => {
-      const file_managerModule =
-        new FileManagerModule();
-      expect(file_managerModule).toBeInstanceOf(
-        FileManagerModule,
-      );
-    });
   });
 
   describe('create_file', () => {
@@ -106,21 +89,39 @@ describe('FileManagerController', () => {
       }
     });
 
-    // it('should set Path if Path is undefined', async () => {
-    //   const request = { method: 'POST' };
-    //   const markdownFileDTO =
-    //     new MarkdownFileDTO();
-    //   jest
-    //     .spyOn(controller, 'createFile')
-    //     .mockImplementation(
-    //       async () => markdownFileDTO,
-    //     );
-    //   await controller.createFile(
-    //     markdownFileDTO,
-    //     request as any,
-    //   );
-    //   expect(markdownFileDTO.Path).toBe('');
-    // });
+    it('should return a MarkdownFileDTO', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Path = 'example/path';
+      markdownFileDTO.Name = 'example.md';
+
+      jest
+        .spyOn(fileManagerService, 'createFile')
+        .mockResolvedValue(markdownFileDTO);
+
+      const result = await controller.createFile(
+        markdownFileDTO,
+        request as any,
+      );
+
+      expect(result).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(result.UserID).toBe(
+        markdownFileDTO.UserID,
+      );
+      expect(result.Path).toBe(
+        markdownFileDTO.Path,
+      );
+      expect(result.Name).toBe(
+        markdownFileDTO.Name,
+      );
+      expect(
+        fileManagerService.createFile,
+      ).toBeCalledWith(markdownFileDTO);
+    });
   });
 
   describe('rename_file', () => {
