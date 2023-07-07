@@ -111,12 +111,6 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (markdownFileDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
     return this.file_manager_service.renameFile(
       markdownFileDTO,
     );
@@ -144,12 +138,6 @@ export class FileManagerController {
     )
       throw new HttpException(
         'Invalid request data',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (markdownFileDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
 
@@ -181,12 +169,6 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (folderDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
     return this.file_manager_service.createFolder(
       folderDTO,
     );
@@ -209,12 +191,6 @@ export class FileManagerController {
     if (!folderDTO.UserID || !folderDTO.FolderID)
       throw new HttpException(
         'Invalid request data',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (folderDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
 
@@ -244,12 +220,6 @@ export class FileManagerController {
     )
       throw new HttpException(
         'Invalid request data',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (folderDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
 
@@ -283,12 +253,6 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (folderDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
     return this.file_manager_service.moveFolder(
       folderDTO,
     );
@@ -315,12 +279,6 @@ export class FileManagerController {
     )
       throw new HttpException(
         'Invalid request data',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (markdownFileDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
 
@@ -355,12 +313,6 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (importDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
     return this.file_manager_service.importFile(
       importDTO,
     );
@@ -387,12 +339,6 @@ export class FileManagerController {
     )
       throw new HttpException(
         'Invalid request data',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (exportDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
 
@@ -424,12 +370,6 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (markdownFileDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
     return this.file_manager_service.retrieveFile(
       markdownFileDTO,
     );
@@ -455,12 +395,6 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (directoryFilesDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
     return this.file_manager_service.retrieveAllFiles(
       directoryFilesDTO,
     );
@@ -483,12 +417,6 @@ export class FileManagerController {
     if (!directoryFoldersDTO.UserID)
       throw new HttpException(
         'Invalid request data',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (directoryFoldersDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
 
