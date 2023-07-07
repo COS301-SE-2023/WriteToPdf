@@ -96,6 +96,9 @@
             },
             "development": {
               "browserTarget": "frontend:build:development"
+            },
+            "staging": {
+              "browserTarget": "frontend:build:staging"
             }
           },
           "defaultConfiguration": "development"

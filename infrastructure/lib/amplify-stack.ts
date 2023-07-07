@@ -33,7 +33,7 @@ export class AmplifyStack extends Stack {
                 commands: ["npm ci"],
               },
               build: {
-                commands: ["npm run build"],
+                commands: ["npm run prod"],
               },
             },
             artifacts: {
