@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class UserService {
+
   private isAuthenticated: boolean = false;
   private authToken: string | undefined = undefined;
   private userID: number | undefined = undefined;
@@ -21,6 +22,7 @@ export class UserService {
   private email: string | undefined = undefined;
   private firstName: string | undefined = undefined;
   private doExpirationCheck: boolean = false;
+  private encryptionKey: string | undefined = undefined;
 
   constructor(private http: HttpClient, private messageService: MessageService, private router: Router) { }
 
@@ -49,6 +51,7 @@ export class UserService {
             this.email = email;
             this.firstName = response.body.FirstName;
             this.doExpirationCheck = true;
+            this.encryptionKey = response.body.EncryptionKey;
             this.startExpirationCheck();
             resolve(true);
           } else {
@@ -136,6 +139,9 @@ export class UserService {
     return this.firstName;
   }
 
+  getEncryptionKey(): string | undefined {
+    return this.encryptionKey;
+  }
 
   sendLoginData(email: string, password: string, salt: string): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/users/login';
@@ -163,7 +169,7 @@ export class UserService {
     const salt = this.generateRandomSalt();
     body.Salt = salt;
     const hash = this.hashPassword(password, salt);
-      body.Password = hash;
+    body.Password = hash;
 
     return this.http.post(url, body, { observe: 'response' });
   }
@@ -250,7 +256,7 @@ export class UserService {
   }
 
   private hashPassword(password: string, salt: string): string {
-    const hashed = hashSync(password,salt);
+    const hashed = hashSync(password, salt);
 
     return hashed;
   }

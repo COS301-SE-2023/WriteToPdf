@@ -171,6 +171,10 @@ export class UsersService {
         loginUserDTO.Email,
         loginUserDTO.Password,
       );
+    //Create Derived Encryption Key
+    const EncryptionKey = SHA256(
+      user.Password,
+    ).toString();
     //TODO create new DTO for this response
     const response = {
       UserID: user.UserID,
@@ -178,6 +182,7 @@ export class UsersService {
       FirstName: user.FirstName,
       Token: token.access_token,
       ExpiresAt: token.expires_at,
+      EncryptionKey: EncryptionKey,
     };
     return response;
   }

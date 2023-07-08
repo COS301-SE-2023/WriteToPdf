@@ -10,7 +10,6 @@ import { ImportDTO } from './dto/import.dto';
 import { resolve } from 'path';
 import { ExportDTO } from './dto/export.dto';
 import { MessageService } from 'primeng/api';
-import * as forge from 'node-forge';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
@@ -56,8 +55,7 @@ export class FileService {
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
-    body.Content = content;
-    const encrypted = this.encryptDocument(JSON.stringify(content));
+    body.Content = this.encryptDocument(JSON.stringify(content));
     body.MarkdownID = markdownID;
     body.Path = path;
 
@@ -80,7 +78,7 @@ export class FileService {
 
           if (response.status === 200) {
 
-            resolve(response.body.Content);
+            resolve(this.decryptDocument(response.body.Content));
           } else {
             this.messageService.add({ severity: 'error', summary: 'File could not be retrieved' });
             resolve(false);
@@ -352,7 +350,7 @@ export class FileService {
             outputFile.Name = response.body.Name;
             outputFile.Path = response.body.Path;
             outputFile.ParentFolderID = response.body.ParentFolderID;
-            outputFile.Content = response.body.Content;
+            outputFile.Content = this.decryptDocument(response.body.Content);
             outputFile.MarkdownID = response.body.MarkdownID;
             outputFile.Size = response.body.Size;
             outputFile.DateCreated = response.body.DateCreated;
@@ -381,7 +379,7 @@ export class FileService {
     body.Path = path;
     body.Name = name;
     body.ParentFolderID = parentFolderID;
-    body.Content = content;
+    body.Content = this.encryptDocument(content);
     body.Type = type;
 
     console.log('Body Import: ' + JSON.stringify(body));
@@ -434,7 +432,7 @@ export class FileService {
 
     body.MarkdownID = markdownID;
     body.Name = name;
-    body.Content = content;
+    body.Content = this.encryptDocument(content);
     body.UserID = this.userService.getUserID();
     body.Type = type;
 
@@ -447,45 +445,19 @@ export class FileService {
 
   encryptDocument(content: string | undefined): string {
 
-    console.log(content);
-    console.log(content?.length);
-    const plaintext = content;
-    if (plaintext) {
-      const keyPair = forge.pki.rsa.generateKeyPair({ bits: 2048 });
-      const publicKey = forge.pki.publicKeyToPem(keyPair.publicKey);
-      const privateKey = forge.pki.privateKeyToPem(keyPair.privateKey);
-
-      const encrypted = forge.pki.publicKeyFromPem(publicKey).encrypt(plaintext, 'RSA-OAEP', {
-        md: forge.md.sha256.create()
-      });
-
-      // Decrypt data using the private key
-      const decrypted = keyPair.privateKey.decrypt(encrypted, 'RSA-OAEP', {
-        md: forge.md.sha256.create()
-      });
-
-      const encryptedMessage = forge.util.encode64(encrypted);
-      console.log('Original:', plaintext);
-      console.log('Encrypted:', encryptedMessage);
-      console.log('Decrypted:', decrypted);
-      return encryptedMessage
+    const key = this.userService.getEncryptionKey();
+    if (key&&content) {
+      const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
+      return encryptedMessage;
     } else {
       return '';
     }
-
-    // const key = this.userService.getAuthToken();
-    // if (key&&content) {
-    //   const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
-    //   return encryptedMessage;
-    // } else {
-    //   return '';
-    // }
 
   }
 
   decryptDocument(content: string | undefined): string {
 
-    const key = this.userService.getAuthToken();
+    const key = this.userService.getEncryptionKey();
     if (key && content) {
       const decryptedMessage = CryptoJS.AES.decrypt(content, key).toString(CryptoJS.enc.Utf8);
       return decryptedMessage;
