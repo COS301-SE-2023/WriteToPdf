@@ -402,7 +402,7 @@ export class FileService {
         console.log(response.status);
         if (response.status === 200) {
           this.messageService.add({ severity: 'success', summary: 'Export successful' });
-          const fileContent = response.body.Content;
+          const fileContent = this.decryptDocument(response.body.Content);
           const fileName = response.body.Name;
           const fileType = response.body.Type;
           const downloadURL = URL.createObjectURL(
