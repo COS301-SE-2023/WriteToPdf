@@ -7,11 +7,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
 import { ConversionService } from '../conversion/conversion.service';
+import { User } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
+import { AuthService } from '../auth/auth.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([MarkdownFile]),
     TypeOrmModule.forFeature([Folder]),
+    TypeOrmModule.forFeature([User]),
   ],
   controllers: [],
   providers: [
@@ -20,6 +24,8 @@ import { ConversionService } from '../conversion/conversion.service';
     FileManagerService,
     S3Service,
     ConversionService,
+    UsersService,
+    AuthService,
   ],
 })
 export class FileManagerModule {}

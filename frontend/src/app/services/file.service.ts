@@ -21,7 +21,7 @@ export class FileService {
     private userService: UserService,
     private editService: EditService,
     private messageService: MessageService
-  ) { }
+  ) {}
 
   saveDocument(
     content: string | undefined,
@@ -31,12 +31,15 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSaveData(content, markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log("SAVE");
+          console.log('SAVE');
           console.log(response);
           console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'File saved successfully' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File saved successfully',
+            });
             resolve(true);
           } else {
             resolve(false);
@@ -77,10 +80,12 @@ export class FileService {
           console.log(response.status);
 
           if (response.status === 200) {
-
             resolve(this.decryptDocument(response.body.Content));
           } else {
-            this.messageService.add({ severity: 'error', summary: 'File could not be retrieved' });
+            this.messageService.add({
+              severity: 'error',
+              summary: 'File could not be retrieved',
+            });
             resolve(false);
           }
         },
@@ -118,13 +123,16 @@ export class FileService {
           console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'File created successfully' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File created successfully',
+            });
 
             this.editService.setMarkdownID(response.body.MarkdownID);
             this.editService.setPath(response.body.Path);
             this.editService.setName(response.body.Name);
             this.editService.setParentFolderID(response.body.ParentFolderID);
-            this.editService.setContent("");
+            this.editService.setContent('');
 
             resolve(true);
           } else {
@@ -163,7 +171,10 @@ export class FileService {
           console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'File deleted successfully' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File deleted successfully',
+            });
             resolve(true);
           } else {
             resolve(false);
@@ -202,7 +213,10 @@ export class FileService {
           console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'File renamed successfully' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File renamed successfully',
+            });
             resolve(true);
           } else {
             resolve(false);
@@ -245,7 +259,10 @@ export class FileService {
           console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'File moved successfully' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File moved successfully',
+            });
             const markdownFile = new MarkdownFileDTO();
             markdownFile.MarkdownID = response.body.MarkdownID;
             markdownFile.Name = response.body.Name;
@@ -254,7 +271,10 @@ export class FileService {
 
             resolve(markdownFile);
           } else {
-            this.messageService.add({ severity: 'error', summary: 'File move failed' });
+            this.messageService.add({
+              severity: 'error',
+              summary: 'File move failed',
+            });
             reject();
           }
         },
@@ -305,12 +325,18 @@ export class FileService {
             }
             resolve(files);
           } else {
-            this.messageService.add({ severity: 'error', summary: 'File retrieval failed' });
+            this.messageService.add({
+              severity: 'error',
+              summary: 'File retrieval failed',
+            });
             reject();
           }
         },
         error: (error) => {
-          this.messageService.add({ severity: 'error', summary: 'File retrieval failed' });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'File retrieval failed',
+          });
           reject();
         },
       });
@@ -345,7 +371,10 @@ export class FileService {
           const outputFile = new MarkdownFileDTO();
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'File imported successfully' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File imported successfully',
+            });
 
             outputFile.Name = response.body.Name;
             outputFile.Path = response.body.Path;
@@ -401,7 +430,10 @@ export class FileService {
         console.log(response);
         console.log(response.status);
         if (response.status === 200) {
-          this.messageService.add({ severity: 'success', summary: 'Export successful' });
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Export successful',
+          });
           const fileContent = this.decryptDocument(response.body.Content);
           const fileName = response.body.Name;
           const fileType = response.body.Type;
@@ -415,7 +447,10 @@ export class FileService {
           URL.revokeObjectURL(downloadURL);
           // document.body.removeChild(downloadLink);
         } else {
-          this.messageService.add({ severity: 'error', summary: 'Export failed' });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Export failed',
+          });
         }
       },
     });
@@ -436,6 +471,8 @@ export class FileService {
     body.UserID = this.userService.getUserID();
     body.Type = type;
 
+    console.log('Export body.Content: ' + body.Content);
+
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -444,26 +481,26 @@ export class FileService {
   }
 
   encryptDocument(content: string | undefined): string {
-
+    // console.log('content fileService 481: ' + content);
     const key = this.userService.getEncryptionKey();
-    if (key&&content) {
+    if (key && content) {
+      content = JSON.stringify(content);
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
       return encryptedMessage;
     } else {
       return '';
     }
-
   }
 
   decryptDocument(content: string | undefined): string {
-
     const key = this.userService.getEncryptionKey();
     if (key && content) {
-      const decryptedMessage = CryptoJS.AES.decrypt(content, key).toString(CryptoJS.enc.Utf8);
+      const decryptedMessage = CryptoJS.AES.decrypt(content, key).toString(
+        CryptoJS.enc.Utf8
+      );
       return decryptedMessage;
     } else {
       return '';
     }
-
   }
 }

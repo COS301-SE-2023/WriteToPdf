@@ -15,6 +15,9 @@ import { S3Service } from '../s3/s3.service';
 import { ImportDTO } from './dto/import.dto';
 import { ConversionService } from '../conversion/conversion.service';
 import { ExportDTO } from './dto/export.dto';
+import { UsersService } from '../users/users.service';
+import { SHA256 } from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable()
 export class FileManagerService {
@@ -23,6 +26,7 @@ export class FileManagerService {
     private folderService: FoldersService,
     private s3service: S3Service,
     private conversionService: ConversionService,
+    private userService: UsersService,
   ) {}
 
   // File operations: ###########################################################
@@ -403,6 +407,42 @@ export class FileManagerService {
     return returnedDTO;
   }
 
+  decryptContent(
+    content: string | undefined,
+    encryptionKey: string,
+  ): Promise<string> {
+    const decryptedMessage = CryptoJS.AES.decrypt(
+      content,
+      encryptionKey,
+    ).toString(CryptoJS.enc.Utf8);
+    return decryptedMessage;
+  }
+
+  encryptContent(
+    content: string,
+    encryptionKey: string,
+  ) {
+    const encryptedMessage = CryptoJS.AES.encrypt(
+      content,
+      encryptionKey,
+    ).toString();
+    return encryptedMessage;
+  }
+
+  async getEncryptionKey(
+    UserID: number,
+  ): Promise<string> {
+    const user = await this.userService.findOne(
+      UserID,
+    );
+
+    const encryptionKey = SHA256(
+      user.Password,
+    ).toString();
+
+    return encryptionKey;
+  }
+
   async exportFile(exportDTO: ExportDTO) {
     if (exportDTO.MarkdownID === undefined)
       throw new HttpException(
@@ -427,8 +467,27 @@ export class FileManagerService {
       // exportDTO.Content = markdownFile.Content;
     }
 
+    const encryptionKey =
+      await this.getEncryptionKey(
+        exportDTO.UserID,
+      );
+
+    // decrypt content
+    exportDTO.Content = await this.decryptContent(
+      exportDTO.Content,
+      encryptionKey,
+    );
+
+    // convert
     const convertedDTO =
       this.conversionService.convertTo(exportDTO);
+
+    // re-encrypt content
+    convertedDTO.Content =
+      await this.encryptContent(
+        convertedDTO.Content,
+        encryptionKey,
+      );
 
     return convertedDTO;
   }
