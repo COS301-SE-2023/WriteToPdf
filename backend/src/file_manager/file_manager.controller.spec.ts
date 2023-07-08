@@ -665,7 +665,7 @@ describe('FileManagerController', () => {
         new MarkdownFileDTO();
 
       try {
-        await controller.renameFile(
+        await controller.save(
           markdownFileDTO,
           request as any,
         );
