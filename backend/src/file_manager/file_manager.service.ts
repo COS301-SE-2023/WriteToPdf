@@ -372,11 +372,25 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
+    const encryptionKey =
+      await this.getEncryptionKey(
+        importDTO.UserID,
+      );
+
+    importDTO.Content = await this.decryptContent(
+      importDTO.Content,
+      encryptionKey,
+    );
     const convertedMarkdownFileDTO =
       this.conversionService.convertFrom(
         importDTO,
       );
 
+    convertedMarkdownFileDTO.Content =
+      await this.encryptContent(
+        convertedMarkdownFileDTO.Content,
+        encryptionKey,
+      );
     const deltaContent =
       convertedMarkdownFileDTO.Content;
 

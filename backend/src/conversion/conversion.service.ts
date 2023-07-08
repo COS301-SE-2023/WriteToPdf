@@ -41,7 +41,7 @@ export class ConversionService {
 
   convertFromText(textDTO: ImportDTO) {
     const delta = convertTextToDelta(
-      textDTO.Content,
+      JSON.stringify(textDTO.Content),
     ) as JSON;
 
     const markdownFileDTO = new MarkdownFileDTO();

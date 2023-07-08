@@ -342,13 +342,10 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-
     if (
       !importDTO.UserID ||
       !importDTO.Type ||
-      !importDTO.Content ||
-      !importDTO.ParentFolderID ||
-      !importDTO.Path
+      !importDTO.Content
     )
       throw new HttpException(
         'Invalid request data',
