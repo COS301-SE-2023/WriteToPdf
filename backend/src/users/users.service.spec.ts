@@ -13,8 +13,21 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UserDTO } from './dto/user.dto';
+import * as CryptoJS from 'crypto-js';
 
 config();
+
+jest.mock('crypto-js', () => {
+  const mockedHash = jest.fn(
+    () => 'pepperedPassword',
+  );
+
+  return {
+    SHA256: jest.fn().mockReturnValue({
+      toString: mockedHash,
+    }),
+  };
+});
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -45,31 +58,68 @@ describe('UsersService', () => {
       module.get<AuthService>(AuthService);
   });
 
-  describe('root/config', () => {
-    it('user service should be defined', () => {
-      expect(service).toBeDefined();
-    });
-  });
-
   describe('create', () => {
-    it('should return dto of newly created user', async () => {
-      const createUserDTO = new UserDTO();
-      createUserDTO.FirstName = 'unitTestUser';
-      createUserDTO.LastName = 'unitTestUser';
-      createUserDTO.Email = 'unitTestUser';
-      createUserDTO.Password = 'unitTestUser';
+    it('should throw an exception if pepper is not defined', async () => {
+      const userDTO = new UserDTO();
+      userDTO.FirstName = 'Test';
+      userDTO.LastName = 'Test';
+      userDTO.Email = 'test';
+      userDTO.Password = 'test';
+
+      const originalPepper = process.env.PEPPER;
+      delete process.env.PEPPER;
+
+      try {
+        await service.create(userDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toEqual(
+          'Pepper value is not defined in the environment variables.',
+        );
+      } finally {
+        process.env.PEPPER = originalPepper;
+      }
+    });
+
+    it('should pepper the password and save the user', async () => {
+      const userDTO = new UserDTO();
+      userDTO.FirstName = 'Test';
+      userDTO.LastName = 'Test';
+      userDTO.Email = 'test';
+      userDTO.Password = 'test';
+
+      const expectedUser = new UserDTO();
+      expectedUser.FirstName = 'Test';
+      expectedUser.LastName = 'Test';
+      expectedUser.Email = 'test';
+      expectedUser.Password = 'pepperedPassword';
 
       jest
-        .spyOn(service, 'create')
-        .mockImplementation(
-          async () => createUserDTO,
-        );
+        .spyOn(Repository.prototype, 'create')
+        .mockReturnValue(userDTO);
 
-      const response = await service.create(
-        createUserDTO,
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockResolvedValue(userDTO);
+
+      const result = await service.create(
+        userDTO,
       );
 
-      expect(response).toBeInstanceOf(UserDTO);
+      expect(result).toEqual(expectedUser);
+      expect(
+        CryptoJS.SHA256,
+      ).toHaveBeenCalledWith(
+        'test' + process.env.PEPPER,
+        10,
+      );
+      expect(
+        Repository.prototype.create,
+      ).toHaveBeenCalledWith(userDTO);
+      expect(
+        Repository.prototype.save,
+      ).toHaveBeenCalledWith(userDTO);
     });
   });
 
