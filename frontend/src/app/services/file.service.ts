@@ -59,9 +59,12 @@ export class FileService {
 
     body.UserID = this.userService.getUserID();
     body.Content = this.encryptDocument(JSON.stringify(content));
+    console.log('DATA: '+content);
+    console.log('ENCRYPTED: '+body.Content);
     body.MarkdownID = markdownID;
     body.Path = path;
 
+    console.log("SENT DTO: " + JSON.stringify(body));
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -78,6 +81,9 @@ export class FileService {
         next: (response: HttpResponse<any>) => {
 
           if (response.status === 200) {
+            console.log("ARRIVES FROM BACK: "+ JSON.stringify(response.body));
+            console.log('RETRIEVE: '+response.body.Content);
+            console.log('RETRIEVE decrypted: ' + this.decryptDocument(response.body.Content));
             resolve(this.decryptDocument(response.body.Content));
           } else {
             this.messageService.add({
