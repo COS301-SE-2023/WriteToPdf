@@ -199,7 +199,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // Below is the function that initially populates the fileTree
       this.nodeService.getFilesAndFolders().then(() => {
         const data = this.nodeService.getTreeTableNodesData();
-        console.log('DATA: ' + JSON.stringify(data));
         this.filesDirectoryTree = this.generateTreeNodes(data);
 
         // Below is the function that populates the treeTable

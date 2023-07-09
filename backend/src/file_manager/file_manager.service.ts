@@ -428,7 +428,9 @@ export class FileManagerService {
     const decryptedMessage = CryptoJS.AES.decrypt(
       content,
       encryptionKey,
-    ).toString(CryptoJS.enc.Utf8);
+    )
+      .toString(CryptoJS.enc.Utf8)
+      .replace(/^"(.*)"$/, '$1');
     return decryptedMessage;
   }
 

@@ -76,8 +76,6 @@ export class FileService {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveData(markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
             resolve(this.decryptDocument(response.body.Content));
@@ -497,7 +495,7 @@ export class FileService {
     if (key && content) {
       const decryptedMessage = CryptoJS.AES.decrypt(content, key).toString(
         CryptoJS.enc.Utf8
-      );
+      ).replace(/^"(.*)"$/, '$1');
       return decryptedMessage;
     } else {
       return '';
