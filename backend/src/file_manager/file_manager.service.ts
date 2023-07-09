@@ -75,10 +75,6 @@ export class FileManagerService {
     await this.s3service.retrieveFile(
       markdownFileDTO,
     );
-    console.log(
-      'FROM S3: ' +
-        JSON.stringify(markdownFileDTO),
-    );
     return markdownFileDTO; // return the file
   }
 
@@ -198,10 +194,6 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    console.log(
-      'ARRIVES FROM SAVE: ' +
-        JSON.stringify(markdownFileDTO),
-    );
     await this.s3service.saveFile(
       markdownFileDTO,
     );

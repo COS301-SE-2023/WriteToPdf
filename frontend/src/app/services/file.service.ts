@@ -31,9 +31,6 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSaveData(content, markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log('SAVE');
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
             this.messageService.add({
@@ -59,12 +56,9 @@ export class FileService {
 
     body.UserID = this.userService.getUserID();
     body.Content = this.encryptDocument(JSON.stringify(content));
-    console.log('DATA: '+content);
-    console.log('ENCRYPTED: '+body.Content);
     body.MarkdownID = markdownID;
     body.Path = path;
 
-    console.log("SENT DTO: " + JSON.stringify(body));
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -81,9 +75,6 @@ export class FileService {
         next: (response: HttpResponse<any>) => {
 
           if (response.status === 200) {
-            console.log("ARRIVES FROM BACK: "+ JSON.stringify(response.body));
-            console.log('RETRIEVE: '+response.body.Content);
-            console.log('RETRIEVE decrypted: ' + this.decryptDocument(response.body.Content));
             resolve(this.decryptDocument(response.body.Content));
           } else {
             this.messageService.add({
@@ -123,8 +114,6 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendCreateData(name, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
             this.messageService.add({
@@ -171,8 +160,6 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
             this.messageService.add({
@@ -213,8 +200,6 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameData(markdownFileID, fileName, path).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
             this.messageService.add({
@@ -259,8 +244,6 @@ export class FileService {
     return new Promise<MarkdownFileDTO>((resolve, reject) => {
       this.sendMoveData(markdownID, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
             this.messageService.add({
@@ -312,7 +295,6 @@ export class FileService {
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
             const body = response.body;
-            console.log('' + body);
             let files: MarkdownFileDTO[] = [];
             for (let i = 0; i < body.Files.length; i++) {
               const fileDTO = new MarkdownFileDTO();
@@ -370,8 +352,6 @@ export class FileService {
     return new Promise<MarkdownFileDTO>((resolve, reject) => {
       this.sendImportData(name, path, parentFolderID, content, type).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
           const outputFile = new MarkdownFileDTO();
 
           if (response.status === 200) {
@@ -415,7 +395,6 @@ export class FileService {
     body.Content = this.encryptDocument(content);
     body.Type = type;
 
-    console.log('Body Import: ' + JSON.stringify(body));
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -431,8 +410,6 @@ export class FileService {
   ): void {
     this.sendExportData(markdownID, name, content, type).subscribe({
       next: (response: HttpResponse<any>) => {
-        console.log(response);
-        console.log(response.status);
         if (response.status === 200) {
           this.messageService.add({
             severity: 'success',
@@ -475,7 +452,6 @@ export class FileService {
     body.UserID = this.userService.getUserID();
     body.Type = type;
 
-    console.log('Export body.Content: ' + body.Content);
 
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -485,10 +461,8 @@ export class FileService {
   }
 
   encryptDocument(content: string | undefined): string {
-    // console.log('content fileService 481: ' + content);
     const key = this.userService.getEncryptionKey();
     if (key && content) {
-      content = JSON.stringify(content);
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
       return encryptedMessage;
     } else {
@@ -499,6 +473,7 @@ export class FileService {
   decryptDocument(content: string | undefined): string {
     const key = this.userService.getEncryptionKey();
     if (key && content) {
+
       const decryptedMessage = CryptoJS.AES.decrypt(content, key).toString(
         CryptoJS.enc.Utf8
       ).replace(/^"(.*)"$/, '$1');
