@@ -448,7 +448,7 @@ export class FileService {
 
     body.MarkdownID = markdownID;
     body.Name = name;
-    body.Content = this.encryptDocument(content);
+    body.Content = this.encryptDocument(JSON.stringify(content));
     body.UserID = this.userService.getUserID();
     body.Type = type;
 
