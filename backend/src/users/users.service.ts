@@ -8,6 +8,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { UserDTO } from './dto/user.dto';
+import { SHA256 } from 'crypto-js';
 import * as CryptoJS from 'crypto-js';
 import 'dotenv/config';
 
@@ -171,12 +172,18 @@ export class UsersService {
         loginUserDTO.Email,
         loginUserDTO.Password,
       );
+    //Create Derived Encryption Key
+    const EncryptionKey = SHA256(
+      user.Password,
+    ).toString();
+    //TODO create new DTO for this response
     const response = {
       UserID: user.UserID,
       Email: user.Email,
       FirstName: user.FirstName,
       Token: token.access_token,
       ExpiresAt: token.expires_at,
+      EncryptionKey: EncryptionKey,
     };
     return response;
   }

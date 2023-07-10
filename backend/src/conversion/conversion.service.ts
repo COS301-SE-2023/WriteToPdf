@@ -57,7 +57,7 @@ export class ConversionService {
 
   convertToTxt(markdownDTO: ExportDTO) {
     const html = convertDeltaToHtml(
-      markdownDTO.Content,
+      JSON.parse(markdownDTO.Content),
     );
 
     const text = html.replace(

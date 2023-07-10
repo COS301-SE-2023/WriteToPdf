@@ -21,11 +21,15 @@ export class UserService {
   private email: string | undefined = undefined;
   private firstName: string | undefined = undefined;
   private doExpirationCheck: boolean = false;
+  private encryptionKey: string | undefined = undefined;
 
-  constructor(private http: HttpClient, private messageService: MessageService, private router: Router) { }
+  constructor(
+    private http: HttpClient,
+    private messageService: MessageService,
+    private router: Router
+  ) {}
 
   async login(email: string, password: string): Promise<boolean> {
-
     let salt: string;
     await this.retrieveSalt(email)
       .then((result) => {
@@ -39,9 +43,7 @@ export class UserService {
     return new Promise<boolean>(async (resolve, reject) => {
       this.sendLoginData(email, password, salt).subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 200) {
-
             this.isAuthenticated = true;
             this.authToken = response.body.Token;
             this.userID = response.body.UserID;
@@ -49,32 +51,50 @@ export class UserService {
             this.email = email;
             this.firstName = response.body.FirstName;
             this.doExpirationCheck = true;
+            this.encryptionKey = response.body.EncryptionKey;
             this.startExpirationCheck();
             resolve(true);
           } else {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: `Login failed` });
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: `Login failed`,
+            });
             resolve(false);
           }
         },
         error: (error) => {
           console.error(error); // Handle error if any
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: `${error.error.error}` });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: `${error.error.error}`,
+          });
           resolve(false);
         },
       });
     });
   }
 
-
-
-
-  async signup(firstName: string, lastName: string, email: string, password: string, confirmPassword: string): Promise<boolean> {
+  async signup(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+  ): Promise<boolean> {
     if (password !== confirmPassword) {
       return new Promise<boolean>((resolve, reject) => {
         resolve(false);
       });
     }
-    if (firstName === '' || lastName === '' || email === '' || password === '' || confirmPassword === '') {
+    if (
+      firstName === '' ||
+      lastName === '' ||
+      email === '' ||
+      password === '' ||
+      confirmPassword === ''
+    ) {
       return new Promise<boolean>((resolve, reject) => {
         resolve(false);
       });
@@ -89,14 +109,18 @@ export class UserService {
           if (response.status === 200) {
             resolve(true);
           } else {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: `Signup failed` });
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: `Signup failed`,
+            });
             resolve(false);
           }
         },
         error: (error) => {
           console.error(error); // Handle error if any
           resolve(false);
-        }
+        },
       });
     });
   }
@@ -124,7 +148,6 @@ export class UserService {
   }
 
   getUserID(): number | undefined {
-
     return this.userID;
   }
 
@@ -136,8 +159,15 @@ export class UserService {
     return this.firstName;
   }
 
+  getEncryptionKey(): string | undefined {
+    return this.encryptionKey;
+  }
 
-  sendLoginData(email: string, password: string, salt: string): Observable<HttpResponse<any>> {
+  sendLoginData(
+    email: string,
+    password: string,
+    salt: string
+  ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/users/login';
     const body = new UserDTO();
     body.Email = email;
@@ -153,8 +183,12 @@ export class UserService {
     return salt;
   }
 
-
-  sendSignupData(email: string, fName: string, lName: string, password: string): Observable<HttpResponse<any>> {
+  sendSignupData(
+    email: string,
+    fName: string,
+    lName: string,
+    password: string
+  ): Observable<HttpResponse<any>> {
     const url = 'http://localhost:3000/users/signup';
     const body = new UserDTO();
     body.FirstName = fName;
@@ -163,7 +197,7 @@ export class UserService {
     const salt = this.generateRandomSalt();
     body.Salt = salt;
     const hash = this.hashPassword(password, salt);
-      body.Password = hash;
+    body.Password = hash;
 
     return this.http.post(url, body, { observe: 'response' });
   }
@@ -181,7 +215,7 @@ export class UserService {
         error: (error) => {
           console.error(error); // Handle error if any
           reject(null);
-        }
+        },
       });
     });
   }
@@ -191,11 +225,9 @@ export class UserService {
 
     this.checkExpiration();
 
-
     setTimeout(() => {
       this.checkExpiration();
     }, checkInterval);
-
   }
 
   private checkExpiration() {
@@ -231,7 +263,7 @@ export class UserService {
           },
           error: (error) => {
             console.error(error); // Handle error if any
-          }
+          },
         });
       }
     }
@@ -243,14 +275,15 @@ export class UserService {
     body.UserID = this.userID;
     body.Token = this.authToken;
 
-
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.authToken);
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.authToken
+    );
     return this.http.post(url, body, { headers, observe: 'response' });
-
   }
 
   private hashPassword(password: string, salt: string): string {
-    const hashed = hashSync(password,salt);
+    const hashed = hashSync(password, salt);
 
     return hashed;
   }
@@ -258,5 +291,4 @@ export class UserService {
   navigateToPage(page: string): void {
     this.router.navigate([page]);
   }
-
 }

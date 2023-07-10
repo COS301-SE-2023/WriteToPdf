@@ -224,9 +224,7 @@ export class S3Service {
     }
 
     const fileData = new Uint8Array(
-      Buffer.from(
-        JSON.stringify(markdownFileDTO.Content),
-      ),
+      Buffer.from(markdownFileDTO.Content),
     );
 
     try {

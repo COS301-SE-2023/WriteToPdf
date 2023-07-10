@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EditService {
-
   private content: string | undefined = '';
   private markdownID: string | undefined = '';
   private name: string | undefined = '';
   private path: string | undefined = '';
   private parentFolderID: string | undefined = '';
 
-  constructor() { }
+  constructor() {}
 
   setContent(content: string | undefined) {
     this.content = content;

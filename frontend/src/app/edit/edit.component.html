@@ -4,72 +4,99 @@
     <div class="toolbarWrapper">
       <div class="titleWrapper">
         <div class="logoWrapper" (click)="navigateToPage('home')">
-          <img class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="">
+          <img
+            class="logo"
+            src="assets/Logos/WriteToPdf_Logo_white.png"
+            alt=""
+          />
         </div>
         <div class="docTitleWrapper">
           <label for="editHeading" class="displayNone">a</label>
-          <input type="text" editable="true" id="editHeading" class="documentTitle" value="New Document" maxlength="50" (blur)="rename()" [(ngModel)]="fileName">
+          <input
+            type="text"
+            editable="true"
+            id="editHeading"
+            class="documentTitle"
+            value="New Document"
+            maxlength="50"
+            (blur)="rename()"
+            [(ngModel)]="fileName"
+          />
         </div>
       </div>
-      <div class="toolsWrapper"> 
-        <div class="tool" (click)="showDialog()" label="Show"> <!-- Download -->
-          <img src="assets/Icons/editIcons/download.svg" alt="">
+      <div class="toolsWrapper">
+        <div class="tool" (click)="showDialog()" label="Show">
+          <!-- Download -->
+          <img src="assets/Icons/editIcons/download.svg" alt="" />
         </div>
-        <p-dialog header="Export File" [(visible)]="exportDialogVisible" [style]="{ width: '50vw' }">
+        <p-dialog
+          header="Export File"
+          [(visible)]="exportDialogVisible"
+          [style]="{ width: '50vw' }"
+        >
           <div class="flex py-2 justify-content-center"></div>
           <!-- <input type="text" pInputText [(ngModel)]="fileType" /> -->
           <p-button label="Export to txt" (click)="exportFile()"></p-button>
         </p-dialog>
 
-        <div class="tool" (click)="save()"> <!-- Save -->
-          <img src="assets/Icons/editIcons/save.png" alt="">
+        <div class="tool" (click)="save()">
+          <!-- Save -->
+          <img src="assets/Icons/editIcons/save.png" alt="" />
         </div>
-        <div class="tool" (click)="delete()"> <!-- Load -->
-          <img src="assets/Icons/editIcons/delete.png" alt="">
+        <div class="tool" (click)="delete()">
+          <!-- Load -->
+          <img src="assets/Icons/editIcons/delete.png" alt="" />
         </div>
-        <div class="tool"> <!-- Share -->
-          <img src="assets/Icons/editIcons/share.svg" alt="">
+        <div class="tool">
+          <!-- Share -->
+          <img src="assets/Icons/editIcons/share.svg" alt="" />
         </div>
-        <div class="tool" (click)="undo()"> <!-- Undo -->
-          <img src="assets/Icons/editIcons/undo.svg" alt="">
+        <div class="tool" (click)="undo()">
+          <!-- Undo -->
+          <img src="assets/Icons/editIcons/undo.svg" alt="" />
         </div>
-        <div class="tool" (click)="redo()"> <!-- Redo -->
-          <img src="assets/Icons/editIcons/redo.svg" alt="">
+        <div class="tool" (click)="redo()">
+          <!-- Redo -->
+          <img src="assets/Icons/editIcons/redo.svg" alt="" />
 
-<!--        <div class="tool" id="bold" (click)="flipBold()">-->
-<!--          <img src="assets/Icons/editIcons/bold.svg" alt="">-->
-<!--        </div>-->
-<!--        <div class="tool" id="italic">-->
-<!--          <img src="assets/Icons/editIcons/italic.svg" alt="">-->
-<!--        </div>-->
-<!--        <div class="tool" id="strikethrough">-->
-<!--          <img src="assets/Icons/editIcons/strikethrough.svg" alt="">-->
-<!--        </div>-->
-<!--        <div class="tool" id="unorderedList">-->
-<!--          <img src="assets/Icons/editIcons/unorderedList.svg" alt="">-->
-<!--        </div>-->
-<!--        <div class="tool" id="orderedList">-->
-<!--          <img src="assets/Icons/editIcons/orderedList.svg" alt="">-->
-<!--        </div>-->
-<!--        <div class="dropdownWrapper">-->
-<!--          <div class="dropdownInput">-->
-<!--            <h4 class="dropdownText">Heading 1</h4>-->
-<!--          </div>-->
-<!--          <div class="dropdownContent">-->
-<!--            <p>HI</p>-->
-<!--            <p>HI</p>-->
-<!--            <p>HI</p>-->
-<!--            <p>HI</p>-->
-<!--            <p>HI</p>-->
-<!--          </div>-->
-<!--        </div>-->
+          <!--        <div class="tool" id="bold" (click)="flipBold()">-->
+          <!--          <img src="assets/Icons/editIcons/bold.svg" alt="">-->
+          <!--        </div>-->
+          <!--        <div class="tool" id="italic">-->
+          <!--          <img src="assets/Icons/editIcons/italic.svg" alt="">-->
+          <!--        </div>-->
+          <!--        <div class="tool" id="strikethrough">-->
+          <!--          <img src="assets/Icons/editIcons/strikethrough.svg" alt="">-->
+          <!--        </div>-->
+          <!--        <div class="tool" id="unorderedList">-->
+          <!--          <img src="assets/Icons/editIcons/unorderedList.svg" alt="">-->
+          <!--        </div>-->
+          <!--        <div class="tool" id="orderedList">-->
+          <!--          <img src="assets/Icons/editIcons/orderedList.svg" alt="">-->
+          <!--        </div>-->
+          <!--        <div class="dropdownWrapper">-->
+          <!--          <div class="dropdownInput">-->
+          <!--            <h4 class="dropdownText">Heading 1</h4>-->
+          <!--          </div>-->
+          <!--          <div class="dropdownContent">-->
+          <!--            <p>HI</p>-->
+          <!--            <p>HI</p>-->
+          <!--            <p>HI</p>-->
+          <!--            <p>HI</p>-->
+          <!--            <p>HI</p>-->
+          <!--          </div>-->
+          <!--        </div>-->
+        </div>
       </div>
+      <div class="pageIconWrapper"></div>
+      <div class="miscWrapper"></div>
     </div>
-    <div class="pageIconWrapper"></div>
-    <div class="miscWrapper"></div>
-  </div>
-    <div class = "speedDialEditMenu">
-      <p-speedDial class="speedDial" [model]="speedDialItems" direction="down"></p-speedDial>
+    <div class="speedDialEditMenu">
+      <p-speedDial
+        class="speedDial"
+        [model]="speedDialItems"
+        direction="down"
+      ></p-speedDial>
     </div>
   </div>
 
@@ -77,28 +104,37 @@
     <div class="assetSidebar">
       <div class="sidebarHeaderWrapper">
         <div class="sidebarHeader">
-
-          <div class="sidebarHeaderIconWrapper backWrapper" (click)="hideSideBar()">
-            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="">
-
+          <div
+            class="sidebarHeaderIconWrapper backWrapper"
+            (click)="hideSideBar()"
+          >
+            <img
+              class="sidebarHeaderIcon"
+              src="assets/Icons/editIcons/back.svg"
+              alt=""
+            />
           </div>
 
           <div class="sidebarHeaderTextWrapper">
             <h4 class="sidebarHeaderText">Assets</h4>
-
           </div>
 
           <div class="sidebarHeaderIconWrapper">
-            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/addAsset.png" alt=""
-              (click)="navigateToPage('camera')">
-
+            <img
+              class="sidebarHeaderIcon"
+              src="assets/Icons/editIcons/addAsset.png"
+              alt=""
+              (click)="navigateToPage('camera')"
+            />
           </div>
 
           <div class="sidebarHeaderIconWrapper">
-            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/refresh.svg" alt="">
-
+            <img
+              class="sidebarHeaderIcon"
+              src="assets/Icons/editIcons/refresh.svg"
+              alt=""
+            />
           </div>
-
         </div>
         <hr />
       </div>
@@ -111,14 +147,22 @@
             <h4 class="assetNameText">Asset Name</h4>
           </div>
           <div class="copyAsset">
-            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+            <img
+              class="copyAssetIcon"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
           </div>
           <div class="menu">
-            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+            <img
+              class="menuIcon"
+              src="assets/Icons/editIcons/ellipse.svg"
+              alt=""
+            />
           </div>
         </div>
         <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
           <p class="assetDescription">Image</p>
         </div>
       </div>
@@ -129,14 +173,22 @@
             <h4 class="assetNameText">Asset Name</h4>
           </div>
           <div class="copyAsset">
-            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+            <img
+              class="copyAssetIcon"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
           </div>
           <div class="menu">
-            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+            <img
+              class="menuIcon"
+              src="assets/Icons/editIcons/ellipse.svg"
+              alt=""
+            />
           </div>
         </div>
         <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
           <p class="assetDescription">Image</p>
         </div>
       </div>
@@ -147,14 +199,22 @@
             <h4 class="assetNameText">Asset Name</h4>
           </div>
           <div class="copyAsset">
-            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+            <img
+              class="copyAssetIcon"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
           </div>
           <div class="menu">
-            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+            <img
+              class="menuIcon"
+              src="assets/Icons/editIcons/ellipse.svg"
+              alt=""
+            />
           </div>
         </div>
         <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
           <p class="assetDescription">Image</p>
         </div>
       </div>
@@ -165,14 +225,22 @@
             <h4 class="assetNameText">Asset Name</h4>
           </div>
           <div class="copyAsset">
-            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+            <img
+              class="copyAssetIcon"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
           </div>
           <div class="menu">
-            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+            <img
+              class="menuIcon"
+              src="assets/Icons/editIcons/ellipse.svg"
+              alt=""
+            />
           </div>
         </div>
         <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
           <p class="assetDescription">Image</p>
         </div>
       </div>
@@ -183,14 +251,22 @@
             <h4 class="assetNameText">Asset Name</h4>
           </div>
           <div class="copyAsset">
-            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+            <img
+              class="copyAssetIcon"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
           </div>
           <div class="menu">
-            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+            <img
+              class="menuIcon"
+              src="assets/Icons/editIcons/ellipse.svg"
+              alt=""
+            />
           </div>
         </div>
         <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
           <p class="assetDescription">Image</p>
         </div>
       </div>
@@ -201,14 +277,22 @@
             <h4 class="assetNameText">Asset Name</h4>
           </div>
           <div class="copyAsset">
-            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+            <img
+              class="copyAssetIcon"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
           </div>
           <div class="menu">
-            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+            <img
+              class="menuIcon"
+              src="assets/Icons/editIcons/ellipse.svg"
+              alt=""
+            />
           </div>
         </div>
         <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
           <p class="assetDescription">Image</p>
         </div>
       </div>
@@ -218,14 +302,22 @@
             <h4 class="assetNameText">Asset Name</h4>
           </div>
           <div class="copyAsset">
-            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+            <img
+              class="copyAssetIcon"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
           </div>
           <div class="menu">
-            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+            <img
+              class="menuIcon"
+              src="assets/Icons/editIcons/ellipse.svg"
+              alt=""
+            />
           </div>
         </div>
         <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
           <p class="assetDescription">Image</p>
         </div>
       </div>
@@ -235,23 +327,34 @@
             <h4 class="assetNameText">Asset Name</h4>
           </div>
           <div class="copyAsset">
-            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="">
+            <img
+              class="copyAssetIcon"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
           </div>
           <div class="menu">
-            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="">
+            <img
+              class="menuIcon"
+              src="assets/Icons/editIcons/ellipse.svg"
+              alt=""
+            />
           </div>
         </div>
         <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
           <p class="assetDescription">Image</p>
         </div>
       </div>
     </div>
     <div class="page">
-      <p-editor #quillEditor [(ngModel)]="text" [style]="{ height: '1138px' }" class="quill-editor">
+      <p-editor
+        #quillEditor
+        [(ngModel)]="text"
+        [style]="{ height: '1138px' }"
+        class="quill-editor"
+      >
       </p-editor>
     </div>
   </div>
-
-
 </div>

@@ -285,7 +285,6 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-
     if (
       !folderDTO.UserID ||
       !folderDTO.FolderID ||

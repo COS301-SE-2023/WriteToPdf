@@ -6,10 +6,9 @@ import { is } from 'cypress/types/bluebird';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.scss']
+  styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent {
-
   firstName: string = '';
   lastName: string = '';
   email: string = '';
@@ -17,7 +16,11 @@ export class SignupComponent {
   confirmPassword: string = '';
 
   value: string = '';
-  constructor(private router: Router, private elementRef: ElementRef, private userService: UserService) { }
+  constructor(
+    private router: Router,
+    private elementRef: ElementRef,
+    private userService: UserService
+  ) {}
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
@@ -32,12 +35,20 @@ export class SignupComponent {
     this.router.navigate([pageName], { state: data });
   }
   ngAfterViewInit() {
-    this.elementRef.nativeElement.ownerDocument
-      .body.style.backgroundColor = '#ffffff';
+    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
+      '#ffffff';
   }
 
   async signup() {
-    if (await this.userService.signup(this.firstName, this.lastName, this.email, this.password, this.confirmPassword)) {
+    if (
+      await this.userService.signup(
+        this.firstName,
+        this.lastName,
+        this.email,
+        this.password,
+        this.confirmPassword
+      )
+    ) {
       this.navigateToPageWithData('login');
     } else {
       alert('Invalid credentials');
@@ -45,7 +56,13 @@ export class SignupComponent {
   }
 
   isFormValid(): boolean {
-    return this.isValidFirstName(this.firstName) && this.isValidLastName(this.lastName) && this.isValidEmail(this.email) && this.isValidPassword(this.password) && this.isValidConfirmPassword(this.confirmPassword);
+    return (
+      this.isValidFirstName(this.firstName) &&
+      this.isValidLastName(this.lastName) &&
+      this.isValidEmail(this.email) &&
+      this.isValidPassword(this.password) &&
+      this.isValidConfirmPassword(this.confirmPassword)
+    );
   }
 
   isValidFirstName(firstName: string): boolean {
@@ -67,7 +84,7 @@ export class SignupComponent {
   isValidEmail(email: string): boolean {
     if (
       !email.match(
-        /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/,
+        /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/
       )
     )
       return false;
@@ -75,11 +92,7 @@ export class SignupComponent {
   }
 
   isValidPassword(password: string): boolean {
-    if (
-      !password.match(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/,
-      )
-    )
+    if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/))
       return false;
     return true;
   }
@@ -89,8 +102,7 @@ export class SignupComponent {
     return true;
   }
 
-  outputForm()
-  {
+  outputForm() {
     console.log(this.firstName);
     console.log(this.lastName);
     console.log(this.email);

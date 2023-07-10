@@ -6,10 +6,9 @@ import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 @Component({
   selector: 'app-camera',
   templateUrl: './camera.component.html',
-  styleUrls: ['./camera.component.scss']
+  styleUrls: ['./camera.component.scss'],
 })
 export class CameraComponent {
-
   private trigger: Subject<any> = new Subject();
   public webcamImage!: WebcamImage;
   private nextWebcam: Subject<any> = new Subject();
@@ -18,7 +17,7 @@ export class CameraComponent {
   public webcamHeight: number = 0;
   public sidebarVisible = false;
 
-  constructor(private elementRef: ElementRef) { }
+  constructor(private elementRef: ElementRef) {}
 
   ngOnInit() {
     this.trigger.next(void 0);
@@ -57,5 +56,4 @@ export class CameraComponent {
     this.webcamWidth = deviceWidth * 0.6;
     this.webcamHeight = deviceWidth * 0.6;
   }
-
 }
