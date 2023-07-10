@@ -123,6 +123,68 @@ describe('UsersService', () => {
     });
   });
 
+  describe('findAll', () => {
+    it('should return an array of users', async () => {
+      const expectedUsers = [
+        new UserDTO(),
+        new UserDTO(),
+      ];
+
+      jest
+        .spyOn(Repository.prototype, 'find')
+        .mockResolvedValue(expectedUsers);
+
+      const result = await service.findAll();
+
+      expect(result).toEqual(expectedUsers);
+      expect(
+        Repository.prototype.find,
+      ).toHaveBeenCalledWith();
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return a user', async () => {
+      const userID = 1;
+      const expectedUser = new UserDTO();
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(expectedUser);
+
+      const result = await service.findOne(
+        userID,
+      );
+      expect(result).toEqual(expectedUser);
+      expect(
+        Repository.prototype.findOneBy,
+      ).toHaveBeenCalledWith({ UserID: userID });
+    });
+  });
+
+  describe('findOneByEmail', () => {
+    it('should return a user', async () => {
+      const email = 'test';
+      const user1 = new UserDTO();
+      const user2 = new UserDTO();
+
+      jest
+        .spyOn(Repository.prototype, 'query')
+        .mockResolvedValue([user1, user2]);
+
+      const result = await service.findOneByEmail(
+        email,
+      );
+
+      expect(result).toEqual(user1);
+      expect(
+        Repository.prototype.query,
+      ).toHaveBeenCalledWith(
+        'SELECT * FROM USERS WHERE Email = ?',
+        [email],
+      );
+    });
+  });
   describe('signup', () => {
     it('should throw an exception if first name is invalid', async () => {
       const userFirstNameHasNumber =
@@ -359,6 +421,49 @@ describe('UsersService', () => {
         });
       }
     });
+
+    it('should create a user and return a success message', async () => {
+      const user = new UserDTO();
+      user.FirstName = 'Test';
+      user.LastName = 'Test';
+      user.Email = 'test';
+      user.Password = 'test';
+
+      jest
+        .spyOn(service, 'isValidFirstName')
+        .mockReturnValue(true);
+
+      jest
+        .spyOn(service, 'isValidLastName')
+        .mockReturnValue(true);
+
+      jest
+        .spyOn(service, 'isValidEmail')
+        .mockReturnValue(true);
+
+      jest
+        .spyOn(service, 'findOneByEmail')
+        .mockResolvedValue(undefined);
+
+      jest
+        .spyOn(service, 'create')
+        .mockResolvedValue(user);
+
+      const result = await service.signup(user);
+
+      expect(result).toEqual({
+        message: 'User created successfully',
+      });
+      expect(
+        service.isValidFirstName,
+      ).toBeCalled();
+      expect(
+        service.isValidLastName,
+      ).toBeCalled();
+      expect(service.isValidEmail).toBeCalled();
+      expect(service.findOneByEmail).toBeCalled();
+      expect(service.create).toBeCalledWith(user);
+    });
   });
 
   describe('login', () => {
@@ -431,6 +536,7 @@ describe('UsersService', () => {
       const expectedResponse = {
         UserID: returnedUser.UserID,
         Email: returnedUser.Email,
+        FirstName: returnedUser.FirstName,
         Token: 'token',
         ExpiresAt: 3600,
       };
@@ -443,20 +549,173 @@ describe('UsersService', () => {
       jest
         .spyOn(service, 'findOneByEmail')
         .mockResolvedValue(returnedUser);
+
+      jest
+        .spyOn(service, 'getPepperedPassword')
+        .mockReturnValue(returnedUser.Password);
+
       jest
         .spyOn(authService, 'generateToken')
         .mockReturnValue(
           Promise.resolve(authToken),
         );
 
-      //TODO fix this to work with pepper
-      // const result = await service.login(
-      //   loginDto,
-      // );
+      const result = await service.login(
+        loginDto,
+      );
 
-      // expect(result).toStrictEqual(
-      //   expectedResponse,
-      // );
+      expect(result).toStrictEqual(
+        expectedResponse,
+      );
+      expect(service.findOneByEmail).toBeCalled();
+      expect(
+        service.getPepperedPassword,
+      ).toBeCalledWith(loginDto.Password);
+      expect(
+        authService.generateToken,
+      ).toBeCalledWith(
+        returnedUser.Email,
+        returnedUser.Password,
+      );
     });
   });
+
+  describe('getPepperedPassword', () => {
+    it('should throw an error if pepper is not set', () => {
+      const originalPepper = process.env.PEPPER;
+      try {
+        process.env.PEPPER = '';
+        expect(() =>
+          service.getPepperedPassword('test'),
+        ).toThrowError(
+          'Pepper value is not defined in the environment variables.',
+        );
+      } finally {
+        process.env.PEPPER = originalPepper;
+      }
+    });
+
+    it('should return a hashed password', () => {
+      const result =
+        service.getPepperedPassword('test');
+
+      expect(result).toBe('pepperedPassword');
+      expect(
+        CryptoJS.SHA256,
+      ).toHaveBeenCalledWith(
+        'test' + process.env.PEPPER,
+        10,
+      );
+    });
+  });
+
+  describe('getSalt', () => {
+    it('should throw an error if the user is not found', async () => {
+      const userDTO = new UserDTO();
+      userDTO.Email = 'test';
+
+      jest
+        .spyOn(service, 'findOneByEmail')
+        .mockResolvedValue(undefined);
+
+      try {
+        await service.getSalt(userDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.getStatus()).toBe(
+          HttpStatus.NOT_FOUND,
+        );
+        expect(error.getResponse()).toEqual({
+          status: HttpStatus.NOT_FOUND,
+          error: 'User not found',
+        });
+      }
+    });
+
+    it('should throw an error if the salt is not found', async () => {
+      const userDTO = new UserDTO();
+      userDTO.Email = 'test';
+
+      const user = new User();
+      user.Salt = '';
+
+      jest
+        .spyOn(service, 'findOneByEmail')
+        .mockResolvedValue(user);
+
+      try {
+        await service.getSalt(userDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.getStatus()).toBe(
+          HttpStatus.NOT_FOUND,
+        );
+        expect(error.getResponse()).toEqual({
+          status: HttpStatus.NOT_FOUND,
+          error: 'Salt not found',
+        });
+      }
+    });
+
+    it('should return a userDTO with the salt', async () => {
+      const userDTO = new UserDTO();
+      userDTO.Email = 'test';
+
+      const expectedResponse = new UserDTO();
+      expectedResponse.Salt = 'salt';
+
+      const user = new User();
+      user.Salt = 'salt';
+
+      jest
+        .spyOn(service, 'findOneByEmail')
+        .mockResolvedValue(user);
+
+      const result = await service.getSalt(
+        userDTO,
+      );
+
+      expect(result).toStrictEqual(
+        expectedResponse,
+      );
+      expect(service.findOneByEmail).toBeCalled();
+    });
+  });
+
+  // describe('update', () => {
+  //   it('should throw an exception if user is not found', async () => {
+  //     const user = new UserDTO();
+  //     user.UserID = 1;
+  //     user.FirstName = 'Test';
+  //     user.LastName = 'Test';
+  //     user.Email = 'test';
+  //     user.Password = 'test';
+
+  //     jest
+  //       .spyOn(service, 'findOne')
+  //       .mockResolvedValue(undefined);
+
+  //     try {
+  //       await service.update(user);
+  //       expect(true).toBe(false);
+  //     } catch (error) {
+  //       expect(error).toBeInstanceOf(
+  //         HttpException,
+  //       );
+  //       expect(error.getStatus()).toEqual(
+  //         HttpStatus.NOT_FOUND,
+  //       );
+  //       expect(error.getResponse()).toEqual({
+  //         status: HttpStatus.NOT_FOUND,
+  //         error: 'User not found',
+  //       });
+  //     }
+  //   });
+  // });
 });
