@@ -171,7 +171,6 @@ export class UsersService {
         loginUserDTO.Email,
         loginUserDTO.Password,
       );
-    //TODO create new DTO for this response
     const response = {
       UserID: user.UserID,
       Email: user.Email,
@@ -182,9 +181,7 @@ export class UsersService {
     return response;
   }
 
-  private getPepperedPassword(
-    password: string,
-  ): string {
+  getPepperedPassword(password: string): string {
     const pepper = process.env.PEPPER;
 
     if (!pepper) {
@@ -199,30 +196,45 @@ export class UsersService {
     ).toString();
   }
 
-  async update(
-    UserID: number,
-    updateUserDTO: UserDTO,
-  ): Promise<User> {
-    const user = await this.findOne(UserID);
-    return this.usersRepository.save({
-      ...user,
-      ...updateUserDTO,
-    }); // returns updated user
-  }
+  // async update(
+  //   updateUserDTO: UserDTO,
+  // ): Promise<User> {
+  //   const user = await this.findOne(
+  //     updateUserDTO.UserID,
+  //   );
 
-  async remove(UserID: number): Promise<User> {
-    const user = await this.findOne(UserID);
-    return this.usersRepository.remove(user); // returns deleted user
-  }
+  //   if (!user) {
+  //     this.throwHttpException(
+  //       HttpStatus.NOT_FOUND,
+  //       'User not found',
+  //     );
+  // }
+
+  //   return this.usersRepository.save({
+  //     ...user,
+  //     ...updateUserDTO,
+  //   }); // returns updated user
+  // }
+
+  // async remove(UserID: number): Promise<User> {
+  //   const user = await this.findOne(UserID);
+  //   return this.usersRepository.remove(user); // returns deleted user
+  // }
 
   async getSalt(userDTO: UserDTO) {
     const user = await this.findOneByEmail(
       userDTO.Email,
     );
+    if (!user) {
+      this.throwHttpException(
+        HttpStatus.NOT_FOUND,
+        'User not found',
+      );
+    }
     const returnedUser = new UserDTO();
     if (user.Salt === '') {
       this.throwHttpException(
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.NOT_FOUND,
         'Salt not found',
       );
       // returnedUser.Salt = process.env.TEST_SALT;
