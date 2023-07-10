@@ -8,6 +8,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { UserDTO } from './dto/user.dto';
+import { SHA256 } from 'crypto-js';
 import * as CryptoJS from 'crypto-js';
 import 'dotenv/config';
 
