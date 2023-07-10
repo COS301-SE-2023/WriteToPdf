@@ -15,15 +15,17 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { Repository } from 'typeorm';
 import { Folder } from '../folders/entities/folder.entity';
-import { S3Service } from '../s3/s3.service';
 import { ConversionService } from '../conversion/conversion.service';
-import { FileManagerModule } from './file_manager.module';
+import { S3Service } from '../s3/s3.service';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
+import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
+import { FolderDTO } from '../folders/dto/folder.dto';
+import { ImportDTO } from './dto/import.dto';
+import { ExportDTO } from './dto/export.dto';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
   let fileManagerService: FileManagerService;
-  let s3Service: S3Service;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -33,8 +35,8 @@ describe('FileManagerController', () => {
           FileManagerService,
           MarkdownFilesService,
           FoldersService,
-          S3Service,
           ConversionService,
+          S3Service,
           {
             provide: 'FileManagerService',
             useValue: {
@@ -60,29 +62,13 @@ describe('FileManagerController', () => {
       );
     fileManagerService =
       module.get<FileManagerService>(
-        'FileManagerService',
+        FileManagerService,
       );
-    s3Service = module.get<S3Service>(S3Service);
   });
 
-  describe('root/config', () => {
-    it('controller should be defined', () => {
-      expect(controller).toBeDefined();
-    });
-  });
-
-  describe('new file_manager module should be correcly instantiated', () => {
-    it('new file_managerModule object should be of type FileManagerModule', () => {
-      const file_managerModule =
-        new FileManagerModule();
-      expect(file_managerModule).toBeInstanceOf(
-        FileManagerModule,
-      );
-    });
-  });
-
+  // File operations #################################################
   describe('create_file', () => {
-    it('should throw exception if request method is not POST', async () => {
+    it('should throw an exception if request method is not POST', async () => {
       const request = { method: 'GET' };
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -106,25 +92,63 @@ describe('FileManagerController', () => {
       }
     });
 
-    // it('should set Path if Path is undefined', async () => {
-    //   const request = { method: 'POST' };
-    //   const markdownFileDTO =
-    //     new MarkdownFileDTO();
-    //   jest
-    //     .spyOn(controller, 'createFile')
-    //     .mockImplementation(
-    //       async () => markdownFileDTO,
-    //     );
-    //   await controller.createFile(
-    //     markdownFileDTO,
-    //     request as any,
-    //   );
-    //   expect(markdownFileDTO.Path).toBe('');
-    // });
+    it('should throw an exception if UserID is undefined', () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.Path = 'test/test';
+      markdownFileDTO.Name = 'test';
+
+      expect(() =>
+        controller.createFile(
+          markdownFileDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should return a MarkdownFileDTO', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Path = 'test/test';
+      markdownFileDTO.Name = 'test';
+
+      jest
+        .spyOn(fileManagerService, 'createFile')
+        .mockResolvedValue(markdownFileDTO);
+
+      const result = await controller.createFile(
+        markdownFileDTO,
+        request as any,
+      );
+
+      expect(result).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(result.UserID).toBe(
+        markdownFileDTO.UserID,
+      );
+      expect(result.Path).toBe(
+        markdownFileDTO.Path,
+      );
+      expect(result.Name).toBe(
+        markdownFileDTO.Name,
+      );
+      expect(
+        fileManagerService.createFile,
+      ).toBeCalledWith(markdownFileDTO);
+    });
   });
 
   describe('rename_file', () => {
-    it('should throw exception if request method is not POST', async () => {
+    it('should throw an exception if request method is not POST', async () => {
       const request = { method: 'GET' };
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -148,13 +172,13 @@ describe('FileManagerController', () => {
       }
     });
 
-    it('should throw an error if MarkdownID is undefined', () => {
+    it('should throw an exception if MarkdownID is undefined', () => {
       const request = { method: 'POST' };
       const markdownFileDTO =
         new MarkdownFileDTO();
       markdownFileDTO.UserID = 123;
-      markdownFileDTO.Path = 'example/path';
-      markdownFileDTO.Name = 'example.md';
+      markdownFileDTO.Path = 'test/test';
+      markdownFileDTO.Name = 'test';
       expect(() =>
         controller.renameFile(
           markdownFileDTO,
@@ -162,18 +186,18 @@ describe('FileManagerController', () => {
         ),
       ).toThrowError(
         new HttpException(
-          'MarkdownID cannot be undefined',
+          'Invalid request data',
           HttpStatus.BAD_REQUEST,
         ),
       );
     });
 
-    it('should throw an error if Path is undefined', () => {
+    it('should throw an exception if Name is undefined', () => {
       const request = { method: 'POST' };
       const markdownFileDTO =
         new MarkdownFileDTO();
       markdownFileDTO.UserID = 123;
-      markdownFileDTO.Name = 'example.md';
+      markdownFileDTO.Path = 'test/test';
       markdownFileDTO.MarkdownID = 'abc123';
       expect(() =>
         controller.renameFile(
@@ -182,19 +206,20 @@ describe('FileManagerController', () => {
         ),
       ).toThrowError(
         new HttpException(
-          'Path cannot be undefined',
+          'Invalid request data',
           HttpStatus.BAD_REQUEST,
         ),
       );
     });
 
-    it('should throw an error if Name is undefined', () => {
+    it('should throw an exception if UserID is undefined', () => {
       const request = { method: 'POST' };
       const markdownFileDTO =
         new MarkdownFileDTO();
-      markdownFileDTO.UserID = 123;
-      markdownFileDTO.Path = 'example/path';
-      markdownFileDTO.MarkdownID = 'abc123';
+      markdownFileDTO.Path = 'test/test';
+      markdownFileDTO.Name = 'test';
+      markdownFileDTO.MarkdownID = '123';
+
       expect(() =>
         controller.renameFile(
           markdownFileDTO,
@@ -202,7 +227,7 @@ describe('FileManagerController', () => {
         ),
       ).toThrowError(
         new HttpException(
-          'Name cannot be undefined',
+          'Invalid request data',
           HttpStatus.BAD_REQUEST,
         ),
       );
@@ -211,20 +236,16 @@ describe('FileManagerController', () => {
     it('should return DTO of updated file', async () => {
       const request = { method: 'POST' };
 
-      // Create DTO with new name
       const markdownFileDTO =
         new MarkdownFileDTO();
-      markdownFileDTO.MarkdownID =
-        'fm.controller.spec renameFile';
+      markdownFileDTO.MarkdownID = '123';
       markdownFileDTO.UserID = 123;
-      markdownFileDTO.Path = 'example/path';
-      markdownFileDTO.Name = 'writetopdf.md';
+      markdownFileDTO.Path = 'test/test';
+      markdownFileDTO.Name = 'test';
 
       jest
-        .spyOn(controller, 'renameFile')
-        .mockImplementation(
-          async () => markdownFileDTO,
-        );
+        .spyOn(fileManagerService, 'renameFile')
+        .mockResolvedValue(markdownFileDTO);
 
       const result = await controller.renameFile(
         markdownFileDTO,
@@ -237,11 +258,14 @@ describe('FileManagerController', () => {
       expect(result.Name).toBe(
         markdownFileDTO.Name,
       );
+      expect(
+        fileManagerService.renameFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
     });
   });
 
   describe('delete_file', () => {
-    it('should throw exception if request method is not POST', async () => {
+    it('should throw an exception if request method is not POST', async () => {
       const request = { method: 'GET' };
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -265,34 +289,86 @@ describe('FileManagerController', () => {
       }
     });
 
-    it('should throw an error if MarkdownID is undefined', async () => {
+    it('should throw an exception if MarkdownID is undefined', async () => {
       const request = { method: 'POST' };
       const markdownFileDTO =
         new MarkdownFileDTO();
       markdownFileDTO.UserID = 123;
-      markdownFileDTO.Path = 'example/path';
+      markdownFileDTO.Path = 'test/test';
       try {
         await controller.deleteFile(
           markdownFileDTO,
           request as any,
         );
-        // expect(true).toBe(false);
+        expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
           HttpException,
         );
         expect(error.message).toBe(
-          'MarkdownID cannot be undefined',
+          'Invalid request data',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
         );
       }
+    });
+
+    it('should throw an exception if UserID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '123';
+      markdownFileDTO.Path = 'test/test';
+      try {
+        await controller.deleteFile(
+          markdownFileDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should return MarkdownFileDTO', async () => {
+      const request = { method: 'POST' };
+
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '123';
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Path = 'test/test';
+      markdownFileDTO.Name = 'test';
+
+      jest
+        .spyOn(fileManagerService, 'deleteFile')
+        .mockResolvedValue(markdownFileDTO);
+
+      const result = await controller.deleteFile(
+        markdownFileDTO,
+        request as any,
+      );
+
+      expect(result).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(
+        fileManagerService.deleteFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
     });
   });
 
   describe('move_file', () => {
-    it('should throw exception if request method is not POST', async () => {
+    it('should throw an exception if request method is not POST', async () => {
       const request = { method: 'GET' };
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -316,24 +392,26 @@ describe('FileManagerController', () => {
       }
     });
 
-    it('should throw an error if MarkdownID is undefined', async () => {
+    it('should throw an exception if MarkdownID is undefined', async () => {
       const request = { method: 'POST' };
       const markdownFileDTO =
         new MarkdownFileDTO();
       markdownFileDTO.UserID = 123;
-      markdownFileDTO.Path = 'example/path';
+      markdownFileDTO.Path = 'test/test';
+      markdownFileDTO.ParentFolderID = '123';
+
       try {
         await controller.moveFile(
           markdownFileDTO,
           request as any,
         );
-        // expect(true).toBe(false);
+        expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
           HttpException,
         );
         expect(error.message).toBe(
-          'MarkdownID cannot be undefined',
+          'Invalid request data',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
@@ -341,34 +419,127 @@ describe('FileManagerController', () => {
       }
     });
 
-    it('should throw an error if Path is undefined', async () => {
+    it('should throw an exception if Path is undefined', async () => {
       const request = { method: 'POST' };
       const markdownFileDTO =
         new MarkdownFileDTO();
-      markdownFileDTO.UserID = 123;
       markdownFileDTO.MarkdownID = 'abc123';
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.ParentFolderID = '123';
+
       try {
         await controller.moveFile(
           markdownFileDTO,
           request as any,
         );
-        // expect(true).toBe(false);
+        expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
           HttpException,
         );
         expect(error.message).toBe(
-          'Path cannot be undefined',
+          'Invalid request data',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
         );
       }
+    });
+
+    it('should throw an exception if ParentFolderID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = 'abc123';
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Path = 'test/test';
+
+      try {
+        await controller.moveFile(
+          markdownFileDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an exception if UserID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = 'abc123';
+      markdownFileDTO.Path = 'test/test';
+      markdownFileDTO.ParentFolderID = '123';
+
+      try {
+        await controller.moveFile(
+          markdownFileDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should return a markdownFileDTO', async () => {
+      const request = { method: 'POST' };
+
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '123';
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Path = 'test/test';
+      markdownFileDTO.Name = 'test';
+      markdownFileDTO.ParentFolderID = '123';
+
+      jest
+        .spyOn(fileManagerService, 'moveFile')
+        .mockResolvedValue(markdownFileDTO);
+
+      const result = await controller.moveFile(
+        markdownFileDTO,
+        request as any,
+      );
+
+      expect(result).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(result.Name).toBe(
+        markdownFileDTO.Name,
+      );
+      expect(result.ParentFolderID).toBe(
+        markdownFileDTO.ParentFolderID,
+      );
+      expect(result.Path).toBe(
+        markdownFileDTO.Path,
+      );
+      expect(
+        fileManagerService.moveFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
     });
   });
 
   describe('retrieve_file', () => {
-    it('should throw exception if request method is not POST', async () => {
+    it('should throw an exception if request method is not POST', async () => {
       const request = { method: 'GET' };
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -392,21 +563,55 @@ describe('FileManagerController', () => {
       }
     });
 
-    it('s3service should successfully retrieve the file', async () => {
+    it('should throw an exception if UserID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '123';
+
+      expect(() =>
+        controller.retrieveFile(
+          markdownFileDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if MarkdownID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 123;
+
+      expect(() =>
+        controller.retrieveFile(
+          markdownFileDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should return a markdownFileDTO', async () => {
       const request = { method: 'POST' };
       const markdownFileDTO =
         new MarkdownFileDTO();
 
       markdownFileDTO.UserID = 123;
-      markdownFileDTO.MarkdownID = 'abc123';
-      markdownFileDTO.Path = 'example/path';
-      markdownFileDTO.Name = 'writetopdf.md';
+      markdownFileDTO.MarkdownID = '123';
 
       jest
-        .spyOn(s3Service, 'retrieveFile')
-        .mockImplementation(
-          async () => markdownFileDTO,
-        );
+        .spyOn(fileManagerService, 'retrieveFile')
+        .mockResolvedValue(markdownFileDTO);
 
       const result =
         await controller.retrieveFile(
@@ -414,9 +619,17 @@ describe('FileManagerController', () => {
           request as any,
         );
 
-      expect(result).toEqual(markdownFileDTO);
+      expect(result).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(result.Name).toBe(
+        markdownFileDTO.Name,
+      );
+      expect(result.MarkdownID).toBe(
+        markdownFileDTO.MarkdownID,
+      );
       expect(
-        s3Service.retrieveFile,
+        fileManagerService.retrieveFile,
       ).toHaveBeenCalledWith(markdownFileDTO);
     });
 
@@ -436,7 +649,7 @@ describe('FileManagerController', () => {
           HttpException,
         );
         expect(error.message).toBe(
-          'MarkdownID cannot be undefined',
+          'Invalid request data',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
@@ -446,43 +659,17 @@ describe('FileManagerController', () => {
   });
 
   describe('save_file', () => {
-    it('should throw an error if MarkdownID is undefined', async () => {
-      const request = { method: 'POST' };
+    it('should throw an error if method is not POST', async () => {
+      const request = { method: 'GET' };
       const markdownFileDTO =
         new MarkdownFileDTO();
-      markdownFileDTO.UserID = 123;
-      markdownFileDTO.Path = 'example/path';
+
       try {
         await controller.save(
           markdownFileDTO,
           request as any,
         );
-        // expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'MarkdownID cannot be undefined',
-        );
-        expect(error.status).toBe(
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    });
-  });
-
-  describe('retrieve_all_files', () => {
-    it('should throw exception if request method is not POST', async () => {
-      const request = { method: 'GET' };
-      const directoryFilesDTO =
-        new DirectoryFilesDTO();
-      try {
-        await controller.retrieveAllFiles(
-          directoryFilesDTO,
-          request as any,
-        );
-        // expect(true).toBe(false);
+        expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
           HttpException,
@@ -496,7 +683,136 @@ describe('FileManagerController', () => {
       }
     });
 
-    it('should throw an error UserID is undefined', async () => {
+    it('should throw an exception if UserID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '123';
+      markdownFileDTO.Content = ' ';
+
+      expect(() =>
+        controller.save(
+          markdownFileDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if MarkdownID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Content = ' ';
+
+      try {
+        await controller.save(
+          markdownFileDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an exception if Content is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.MarkdownID = '123';
+
+      try {
+        await controller.save(
+          markdownFileDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should return MarkdownfileDTO', async () => {
+      const request = { method: 'POST' };
+
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '123';
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.Content = ' ';
+
+      jest
+        .spyOn(fileManagerService, 'saveFile')
+        .mockResolvedValue(markdownFileDTO);
+
+      const result = await controller.save(
+        markdownFileDTO,
+        request as any,
+      );
+
+      expect(result).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(result.MarkdownID).toBe(
+        markdownFileDTO.MarkdownID,
+      );
+      expect(result.UserID).toBe(
+        markdownFileDTO.UserID,
+      );
+      expect(
+        fileManagerService.saveFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+  });
+
+  describe('retrieve_all_files', () => {
+    it('should throw an exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const directoryFilesDTO =
+        new DirectoryFilesDTO();
+      try {
+        await controller.retrieveAllFiles(
+          directoryFilesDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an exception if UserID is undefined', async () => {
       const request = { method: 'POST' };
       const directoryFilesDTO =
         new DirectoryFilesDTO();
@@ -505,18 +821,892 @@ describe('FileManagerController', () => {
           directoryFilesDTO,
           request as any,
         );
-        // expect(true).toBe(false);
+        expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
           HttpException,
         );
         expect(error.message).toBe(
-          'UserID cannot be undefined',
+          'Invalid request data',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
         );
       }
+    });
+
+    it('should return a DirectoryFilesDTO', async () => {
+      const request = { method: 'POST' };
+
+      const directoryFilesDTO =
+        new DirectoryFilesDTO();
+      directoryFilesDTO.UserID = 123;
+
+      jest
+        .spyOn(
+          fileManagerService,
+          'retrieveAllFiles',
+        )
+        .mockResolvedValue(directoryFilesDTO);
+
+      const result =
+        await controller.retrieveAllFiles(
+          directoryFilesDTO,
+          request as any,
+        );
+
+      expect(result).toBeInstanceOf(
+        DirectoryFilesDTO,
+      );
+      expect(result.UserID).toBe(
+        directoryFilesDTO.UserID,
+      );
+      expect(
+        fileManagerService.retrieveAllFiles,
+      ).toHaveBeenCalledWith(directoryFilesDTO);
+    });
+  });
+
+  // Folder operations ################################################
+  describe('create_folder', () => {
+    it('should throw an exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const folderDTO = new FolderDTO();
+
+      try {
+        await controller.createFolder(
+          folderDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an exception if UserID is undefined', () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.Path = 'test/test';
+      folderDTO.FolderName = 'test';
+
+      expect(() =>
+        controller.createFolder(
+          folderDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if FolderName is undefined', () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.Path = 'test/test';
+      folderDTO.UserID = 123;
+
+      expect(() =>
+        controller.createFolder(
+          folderDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if Path is undefined', () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderName = 'test';
+      folderDTO.UserID = 123;
+
+      expect(() =>
+        controller.createFolder(
+          folderDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should return a FolderDTO', async () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.UserID = 123;
+      folderDTO.Path = 'test/test';
+      folderDTO.FolderName = 'test';
+
+      jest
+        .spyOn(fileManagerService, 'createFolder')
+        .mockResolvedValue(folderDTO);
+
+      const result =
+        await controller.createFolder(
+          folderDTO,
+          request as any,
+        );
+
+      expect(result).toBeInstanceOf(FolderDTO);
+      expect(result.UserID).toBe(
+        folderDTO.UserID,
+      );
+      expect(result.Path).toBe(folderDTO.Path);
+      expect(result.FolderName).toBe(
+        folderDTO.FolderName,
+      );
+      expect(
+        fileManagerService.createFolder,
+      ).toBeCalledWith(folderDTO);
+    });
+  });
+
+  describe('delete_folder', () => {
+    it('should throw an exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const folderDTO = new FolderDTO();
+
+      try {
+        await controller.deleteFolder(
+          folderDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an exception if FolderID is undefined', async () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.UserID = 123;
+
+      try {
+        await controller.deleteFolder(
+          folderDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an exception if UserID is undefined', async () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderID = '123';
+
+      try {
+        await controller.deleteFolder(
+          folderDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should return a FolderDTO', async () => {
+      const request = { method: 'POST' };
+
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderID = '123';
+      folderDTO.UserID = 123;
+
+      jest
+        .spyOn(fileManagerService, 'deleteFolder')
+        .mockResolvedValue(folderDTO);
+
+      const result =
+        await controller.deleteFolder(
+          folderDTO,
+          request as any,
+        );
+
+      expect(result).toBeInstanceOf(FolderDTO);
+      expect(
+        fileManagerService.deleteFolder,
+      ).toHaveBeenCalledWith(folderDTO);
+    });
+  });
+
+  describe('rename_folder', () => {
+    it('should throw an exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const folderDTO = new FolderDTO();
+
+      try {
+        await controller.renameFolder(
+          folderDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an exception if FolderID is undefined', () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.UserID = 123;
+      folderDTO.FolderName = 'test';
+
+      expect(() =>
+        controller.renameFolder(
+          folderDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if FolderName is undefined', () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.UserID = 123;
+      folderDTO.FolderID = 'abc123';
+
+      expect(() =>
+        controller.renameFolder(
+          folderDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if UserID is undefined', () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderName = 'test';
+      folderDTO.FolderID = '123';
+
+      expect(() =>
+        controller.renameFolder(
+          folderDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should return a FolderDTO', async () => {
+      const request = { method: 'POST' };
+
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderID = '123';
+      folderDTO.UserID = 123;
+      folderDTO.FolderName = 'test';
+
+      jest
+        .spyOn(fileManagerService, 'renameFolder')
+        .mockResolvedValue(folderDTO);
+
+      const result =
+        await controller.renameFolder(
+          folderDTO,
+          request as any,
+        );
+
+      expect(result).toBeInstanceOf(FolderDTO);
+      expect(result.FolderName).toBe(
+        folderDTO.FolderName,
+      );
+      expect(
+        fileManagerService.renameFolder,
+      ).toHaveBeenCalledWith(folderDTO);
+    });
+  });
+
+  describe('move_folder', () => {
+    it('should throw an exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const folderDTO = new FolderDTO();
+
+      try {
+        await controller.moveFolder(
+          folderDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an exception if FolderID is undefined', async () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.UserID = 123;
+      folderDTO.Path = 'test/test';
+      folderDTO.ParentFolderID = '123';
+
+      try {
+        await controller.moveFolder(
+          folderDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an exception if Path is undefined', async () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderID = 'abc123';
+      folderDTO.UserID = 123;
+      folderDTO.ParentFolderID = '123';
+
+      try {
+        await controller.moveFolder(
+          folderDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an exception if ParentFolderID is undefined', async () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderID = 'abc123';
+      folderDTO.UserID = 123;
+      folderDTO.Path = 'test/test';
+
+      try {
+        await controller.moveFolder(
+          folderDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an exception if UserID is undefined', async () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderID = 'abc123';
+      folderDTO.Path = 'test/test';
+      folderDTO.ParentFolderID = '123';
+
+      try {
+        await controller.moveFolder(
+          folderDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should return a FolderDTO', async () => {
+      const request = { method: 'POST' };
+
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderID = '123';
+      folderDTO.UserID = 123;
+      folderDTO.Path = 'test/test';
+      folderDTO.ParentFolderID = '123';
+
+      jest
+        .spyOn(fileManagerService, 'moveFolder')
+        .mockResolvedValue(folderDTO);
+
+      const result = await controller.moveFolder(
+        folderDTO,
+        request as any,
+      );
+
+      expect(result).toBeInstanceOf(FolderDTO);
+      expect(result.ParentFolderID).toBe(
+        folderDTO.ParentFolderID,
+      );
+      expect(result.Path).toBe(folderDTO.Path);
+      expect(
+        fileManagerService.moveFolder,
+      ).toHaveBeenCalledWith(folderDTO);
+    });
+  });
+
+  describe('retrieve_all_folders', () => {
+    it('should throw an exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const directoryFoldersDTO =
+        new DirectoryFoldersDTO();
+      try {
+        await controller.retrieveAllFolders(
+          directoryFoldersDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an exception if UserID is undefined', async () => {
+      const request = { method: 'POST' };
+      const directoryFoldersDTO =
+        new DirectoryFoldersDTO();
+      try {
+        await controller.retrieveAllFolders(
+          directoryFoldersDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should return a DirectoryFoldersDTO', async () => {
+      const request = { method: 'POST' };
+
+      const directoryFoldersDTO =
+        new DirectoryFoldersDTO();
+      directoryFoldersDTO.UserID = 123;
+
+      jest
+        .spyOn(
+          fileManagerService,
+          'retrieveAllFolders',
+        )
+        .mockResolvedValue(directoryFoldersDTO);
+
+      const result =
+        await controller.retrieveAllFolders(
+          directoryFoldersDTO,
+          request as any,
+        );
+
+      expect(result).toBeInstanceOf(
+        DirectoryFoldersDTO,
+      );
+      expect(result.UserID).toBe(
+        directoryFoldersDTO.UserID,
+      );
+      expect(
+        fileManagerService.retrieveAllFolders,
+      ).toHaveBeenCalledWith(directoryFoldersDTO);
+    });
+  });
+
+  // Import & Export operations #################################################
+  describe('import', () => {
+    it('should throw an exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const importDTO = new ImportDTO();
+
+      try {
+        await controller.import(
+          importDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an exception if UserID is undefined', () => {
+      const request = { method: 'POST' };
+      const importDTO = new ImportDTO();
+      importDTO.Path = 'test/test';
+      importDTO.Type = 'test';
+      importDTO.Content = 'test';
+      importDTO.Name = 'test';
+      importDTO.ParentFolderID = '123';
+
+      expect(() =>
+        controller.import(
+          importDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if Name is undefined', () => {
+      const request = { method: 'POST' };
+      const importDTO = new ImportDTO();
+      importDTO.Path = 'test/test';
+      importDTO.Type = 'test';
+      importDTO.UserID = 123;
+      importDTO.Content = 'test';
+      importDTO.ParentFolderID = '123';
+
+      expect(() =>
+        controller.import(
+          importDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if Type is undefined', () => {
+      const request = { method: 'POST' };
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 123;
+      importDTO.Path = 'test/test';
+      importDTO.Content = 'test';
+      importDTO.ParentFolderID = '123';
+      importDTO.Name = 'test';
+
+      expect(() =>
+        controller.import(
+          importDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if Content is undefined', () => {
+      const request = { method: 'POST' };
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 123;
+      importDTO.Type = 'test';
+      importDTO.Path = 'test/test';
+      importDTO.ParentFolderID = '123';
+      importDTO.Name = 'test';
+
+      expect(() =>
+        controller.import(
+          importDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if ParentFolderID is undefined', () => {
+      const request = { method: 'POST' };
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 123;
+      importDTO.Path = 'test/test';
+      importDTO.Content = 'test';
+      importDTO.Type = 'test';
+      importDTO.Name = 'test';
+
+      expect(() =>
+        controller.import(
+          importDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if Path is undefined', () => {
+      const request = { method: 'POST' };
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 123;
+      importDTO.Content = 'test';
+      importDTO.ParentFolderID = '123';
+      importDTO.Type = 'test';
+      importDTO.Name = 'test';
+
+      expect(() =>
+        controller.import(
+          importDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should return a MarkdownFileDTO', async () => {
+      const request = { method: 'POST' };
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 123;
+      importDTO.Path = 'test/test';
+      importDTO.Name = 'test';
+      importDTO.Type = 'test';
+      importDTO.Content = 'test';
+      importDTO.ParentFolderID = '123';
+
+      jest
+        .spyOn(fileManagerService, 'importFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      const result = await controller.import(
+        importDTO,
+        request as any,
+      );
+
+      expect(result).toBeInstanceOf(
+        MarkdownFileDTO,
+      );
+      expect(
+        fileManagerService.importFile,
+      ).toBeCalledWith(importDTO);
+    });
+  });
+
+  describe('export', () => {
+    it('should throw an exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const exportDTO = new ExportDTO();
+
+      try {
+        await controller.export(
+          exportDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an exception if UserID is undefined', () => {
+      const request = { method: 'POST' };
+      const exportDTO = new ExportDTO();
+      exportDTO.Type = 'test';
+      exportDTO.MarkdownID = 'test';
+
+      expect(() =>
+        controller.export(
+          exportDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if Type is undefined', () => {
+      const request = { method: 'POST' };
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 123;
+      exportDTO.MarkdownID = 'test';
+
+      expect(() =>
+        controller.export(
+          exportDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw an exception if MarkdownID is undefined', () => {
+      const request = { method: 'POST' };
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 123;
+      exportDTO.MarkdownID = '123';
+
+      expect(() =>
+        controller.export(
+          exportDTO,
+          request as any,
+        ),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should return a MarkdownFileDTO', async () => {
+      const request = { method: 'POST' };
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 123;
+      exportDTO.Type = 'test';
+      exportDTO.MarkdownID = '123';
+
+      jest
+        .spyOn(fileManagerService, 'exportFile')
+        .mockResolvedValue(exportDTO);
+
+      const result = await controller.export(
+        exportDTO,
+        request as any,
+      );
+
+      expect(result).toBeInstanceOf(ExportDTO);
+      expect(
+        fileManagerService.exportFile,
+      ).toBeCalledWith(exportDTO);
     });
   });
 });

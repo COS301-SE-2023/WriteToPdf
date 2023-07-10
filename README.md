@@ -8,12 +8,13 @@
 <!-- New badges -->
 <!--![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/COS301-SE-2023/WriteToPdf) -->
 [![codecov](https://codecov.io/gh/COS301-SE-2023/WriteToPdf/branch/main/graph/badge.svg?token=2CELOVRCM3)](https://codecov.io/gh/COS301-SE-2023/WriteToPdf)
-![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf)
 [![Build](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/build.yml)
-[![Tests](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test.yml/badge.svg?branch=test)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test.yml)
+[![Test Backend](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-backend.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-backend.yml)
+[![Test Integration](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-integration.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-integration.yml)
+[![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml)  
+![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf)
 [![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2023/WriteToPdf?color=blue)](https://github.com/COS301-SE-2023/WriteToPdf/issues?q=is%3Aissue+is%3Aclosed)
 [![Commits](https://img.shields.io/github/commit-activity/w/COS301-SE-2023/WriteToPdf)](https://github.com/COS301-SE-2023/WriteToPdf/issues)
-[![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml)
 <!-- [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2023_WriteToPdf&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2023_WriteToPdf) -->
 <!-- [![Requirements Status](https://requires.io/github/COS301-SE-2023/WriteToPdf/requirements.svg?branch=main)](https://requires.io/github/COS301-SE-2023/WriteToPdf/requirements/?branch=main) -->
 <!-- [![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml) -->

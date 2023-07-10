@@ -8,7 +8,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { UserDTO } from './dto/user.dto';
-import { SHA256 } from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 import 'dotenv/config';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class UsersService {
         'Pepper value is not defined in the environment variables.',
       );
     }
-    createUserDTO.Password = SHA256(
+    createUserDTO.Password = CryptoJS.SHA256(
       createUserDTO.Password + pepper,
       10,
     ).toString();
@@ -187,9 +187,7 @@ export class UsersService {
     return response;
   }
 
-  private getPepperedPassword(
-    password: string,
-  ): string {
+  getPepperedPassword(password: string): string {
     const pepper = process.env.PEPPER;
 
     if (!pepper) {
@@ -198,36 +196,51 @@ export class UsersService {
       );
     }
 
-    return SHA256(
+    return CryptoJS.SHA256(
       password + pepper,
       10,
     ).toString();
   }
 
-  async update(
-    UserID: number,
-    updateUserDTO: UserDTO,
-  ): Promise<User> {
-    const user = await this.findOne(UserID);
-    return this.usersRepository.save({
-      ...user,
-      ...updateUserDTO,
-    }); // returns updated user
-  }
+  // async update(
+  //   updateUserDTO: UserDTO,
+  // ): Promise<User> {
+  //   const user = await this.findOne(
+  //     updateUserDTO.UserID,
+  //   );
 
-  async remove(UserID: number): Promise<User> {
-    const user = await this.findOne(UserID);
-    return this.usersRepository.remove(user); // returns deleted user
-  }
+  //   if (!user) {
+  //     this.throwHttpException(
+  //       HttpStatus.NOT_FOUND,
+  //       'User not found',
+  //     );
+  // }
+
+  //   return this.usersRepository.save({
+  //     ...user,
+  //     ...updateUserDTO,
+  //   }); // returns updated user
+  // }
+
+  // async remove(UserID: number): Promise<User> {
+  //   const user = await this.findOne(UserID);
+  //   return this.usersRepository.remove(user); // returns deleted user
+  // }
 
   async getSalt(userDTO: UserDTO) {
     const user = await this.findOneByEmail(
       userDTO.Email,
     );
+    if (!user) {
+      this.throwHttpException(
+        HttpStatus.NOT_FOUND,
+        'User not found',
+      );
+    }
     const returnedUser = new UserDTO();
     if (user.Salt === '') {
       this.throwHttpException(
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.NOT_FOUND,
         'Salt not found',
       );
       // returnedUser.Salt = process.env.TEST_SALT;
