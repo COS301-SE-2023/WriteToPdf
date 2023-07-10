@@ -11,17 +11,25 @@ import {
 } from '@nestjs/common';
 import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
 import { FoldersService } from '../folders/folders.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import {
+  TypeOrmModule,
+  getRepositoryToken,
+} from '@nestjs/typeorm';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { Repository } from 'typeorm';
 import { Folder } from '../folders/entities/folder.entity';
 import { ConversionService } from '../conversion/conversion.service';
 import { S3Service } from '../s3/s3.service';
+import { UsersService } from '../users/users.service';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import { ImportDTO } from './dto/import.dto';
 import { ExportDTO } from './dto/export.dto';
+import { User } from '../users/entities/user.entity';
+import { AuthService } from '../auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
+import { testingModule } from '../test-utils/testingModule';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -30,6 +38,10 @@ describe('FileManagerController', () => {
   beforeEach(async () => {
     const module: TestingModule =
       await Test.createTestingModule({
+        imports: [
+          ...testingModule(),
+          // TypeOrmModule.forFeature([User]),
+        ],
         controllers: [FileManagerController],
         providers: [
           FileManagerService,
@@ -37,6 +49,9 @@ describe('FileManagerController', () => {
           FoldersService,
           ConversionService,
           S3Service,
+          UsersService,
+          AuthService,
+          JwtService,
           {
             provide: 'FileManagerService',
             useValue: {
