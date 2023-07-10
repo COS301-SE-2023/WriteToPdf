@@ -537,6 +537,7 @@ describe('UsersService', () => {
         UserID: returnedUser.UserID,
         Email: returnedUser.Email,
         FirstName: returnedUser.FirstName,
+        EncryptionKey: 'pepperedPassword',
         Token: 'token',
         ExpiresAt: 3600,
       };
