@@ -1,13 +1,21 @@
 <!--<div class="popup-overlay">-->
-  <div class="popup-container">
-    <p-fileUpload name="demo[]" url="https://www.primefaces.org/cdn/api/upload.php" (onUpload)="onUpload($event)" (onUpload)="closeDialog()"  [multiple]="true">
-      <ng-template pTemplate="content">
-        <ul *ngIf="uploadedFiles.length">
-          <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
-        </ul>
-      </ng-template>
-    </p-fileUpload>
-  </div>
+<div class="popup-container">
+  <p-fileUpload
+    name="demo[]"
+    url="https://www.primefaces.org/cdn/api/upload.php"
+    (onUpload)="onUpload($event)"
+    (onUpload)="closeDialog()"
+    [multiple]="true"
+  >
+    <ng-template pTemplate="content">
+      <ul *ngIf="uploadedFiles.length">
+        <li *ngFor="let file of uploadedFiles">
+          {{ file.name }} - {{ file.size }} bytes
+        </li>
+      </ul>
+    </ng-template>
+  </p-fileUpload>
+</div>
 <!--  TODO reimplement the code below after demo 2 -->
 <!--    <p-fileUpload name="myfile[]" url="https://www.primefaces.org/cdn/api/upload.php" [multiple]="true">-->
 <!--      &lt;!&ndash; Customize the toolbar &ndash;&gt;-->

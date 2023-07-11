@@ -1,113 +1,57 @@
 name: Upload Code Coverage
 
 on:
-  push:
-    branches: [ main, test]
-  pull_request:
-    branches: [ main, test]
+    push:
+        branches: [main, test, codecov]
+    pull_request:
+        branches: [main, test, codecov]
 
 env:
-  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-  DB_TYPE: ${{ secrets.DB_TYPE }}
-  DB_HOST: ${{ secrets.DB_HOST }}
-  DB_PORT: ${{ secrets.DB_PORT }}
-  DB_USERNAME: ${{ secrets.DB_USERNAME }}
-  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-  DB_NAME: ${{ secrets.DB_NAME }}
-  PEPPER: ${{ secrets.PEPPER }}
-  TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
-  TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-  TEST_SALT: ${{ secrets.TEST_SALT }}
-  DB_TEST_PASSWORD: ${{ secrets.DB_TEST_PASSWORD }}
-  AUTH_BEARER: ${{ secrets.AUTH_BEARER }}
-  TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
-  AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
-  AWS_S3_BUCKET_REGION: ${{ secrets.AWS_S3_BUCKET_REGION }}
-  AWS_S3_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS_KEY_ID }}
-  AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
+    JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+    DB_TYPE: ${{ secrets.DB_TYPE }}
+    DB_HOST: ${{ secrets.DB_HOST }}
+    DB_PORT: ${{ secrets.DB_PORT }}
+    DB_USERNAME: ${{ secrets.DB_USERNAME }}
+    DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+    DB_NAME: ${{ secrets.DB_NAME }}
+    PEPPER: ${{ secrets.PEPPER }}
+    TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+    TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+    TEST_SALT: ${{ secrets.TEST_SALT }}
+    DB_TEST_PASSWORD: ${{ secrets.DB_TEST_PASSWORD }}
+    AUTH_BEARER: ${{ secrets.AUTH_BEARER }}
+    TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
+    AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
+    AWS_S3_BUCKET_REGION: ${{ secrets.AWS_S3_BUCKET_REGION }}
+    AWS_S3_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS_KEY_ID }}
+    AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
 
 jobs:
-  upload_test_coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    upload_test_coverage:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16.x'
-          cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+            - name: Setup Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "16.x"
+                  cache: "npm"
+                  cache-dependency-path: backend/package-lock.json
 
-      - name: Install dependencies
-        working-directory: backend
-        run: npm install
-      
-      - name: Run backend tests
-        working-directory: backend
-        run: npm run test:cov
-        env:
-          CI: true
-      
-      - name: Upload Backend Coverage Report to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: backend/coverage/lcov.info
+            - name: Install dependencies
+              working-directory: backend
+              run: npm install
 
-  # test_frontend:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
+            - name: Run backend tests
+              working-directory: backend
+              run: npm run test:cov
+              env:
+                  CI: true
 
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v2
-  #       with:
-  #         node-version: '16.x'
-          
-  #     - name: Install dependencies
-  #       working-directory: frontend
-  #       run: npm install
-      
-  #     - name: Install cypress-istanbul
-  #       working-directory: frontend
-  #       run: npm install --save-dev cypress-istanbul
-
-  #     - name: Run frontend tests with coverage
-  #       working-directory: frontend
-  #       run: npx cypress-istanbul instrument --output coverage --no-compress
-
-  #     - name: Serve the application
-  #       working-directory: frontend
-  #       run: npm run start &
-
-  #     - name: Wait for the application to start
-  #       working-directory: frontend
-  #       run: sleep 5s
-
-  #     - name: Run Cypress tests
-  #       working-directory: frontend
-  #       run: npx cypress run
-  #       env:
-  #         CI: true
-
-  # upload-coverage:
-  #   needs: [test_backend]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v2
-
-  #     - name: Upload Backend Coverage Report to Codecov
-  #       uses: codecov/codecov-action@v3
-  #       with:
-  #         token: ${{ secrets.CODECOV_TOKEN }}
-  #         files: backend/coverage/lcov.info
-
-      # - name: Upload Frontend Coverage Report to Codecov
-      #   uses: codecov/codecov-action@v2
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     directory: ./frontend/coverage
+            - name: Upload Backend Coverage Report to Codecov
+              uses: codecov/codecov-action@v3
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+                  files: backend/coverage/lcov.info

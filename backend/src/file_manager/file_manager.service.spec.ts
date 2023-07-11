@@ -25,6 +25,9 @@ import {
 } from '@nestjs/common';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ExportDTO } from './dto/export.dto';
+import { UsersService } from '../users/users.service';
+import { AuthService } from '../auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 describe('FileManagerService', () => {
   let service: FileManagerService;
@@ -32,6 +35,7 @@ describe('FileManagerService', () => {
   let markdownFilesService: MarkdownFilesService;
   let s3Service: S3Service;
   let conversionService: ConversionService;
+  let usersService: UsersService;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -49,6 +53,9 @@ describe('FileManagerService', () => {
           MarkdownFilesService,
           S3Service,
           ConversionService,
+          UsersService,
+          AuthService,
+          JwtService,
           {
             provide: 'FileManagerService',
             useValue: {
@@ -105,6 +112,8 @@ describe('FileManagerService', () => {
       module.get<ConversionService>(
         ConversionService,
       );
+    usersService =
+      module.get<UsersService>(UsersService);
 
     module.close();
   });

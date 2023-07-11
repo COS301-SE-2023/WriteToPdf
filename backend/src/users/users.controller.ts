@@ -1,11 +1,7 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   Req,
   HttpStatus,
   HttpException,
@@ -14,8 +10,6 @@ import {
 import { UsersService } from './users.service';
 import { UserDTO } from './dto/user.dto';
 import { Public } from '../auth/auth.controller';
-import { plainToClass } from 'class-transformer';
-import { validateSync } from 'class-validator';
 import { Request } from 'express';
 
 @Controller('users')
