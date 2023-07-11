@@ -18,7 +18,7 @@ describe('AppComponent', () => {
       imports: [RouterTestingModule, BrowserModule],
       declarations: [AppComponent],
       providers: [TestComponentRenderer],
-    }).compileComponents();// These options are where the magic happens
+    }).compileComponents(); // These options are where the magic happens
   });
 
   it('should create the app', () => {

@@ -25,6 +25,12 @@ import {
 } from '@nestjs/common';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ExportDTO } from './dto/export.dto';
+import { UsersService } from '../users/users.service';
+import { AuthService } from '../auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '../users/entities/user.entity';
+import { testDBOptions } from '../../db/data-source';
+import { UserDTO } from '../users/dto/user.dto';
 
 describe('FileManagerService', () => {
   let service: FileManagerService;
@@ -32,23 +38,20 @@ describe('FileManagerService', () => {
   let markdownFilesService: MarkdownFilesService;
   let s3Service: S3Service;
   let conversionService: ConversionService;
+  let usersService: UsersService;
 
   beforeEach(async () => {
     const module: TestingModule =
       await Test.createTestingModule({
-        imports: [
-          ...testingModule(),
-          TypeOrmModule.forFeature([
-            MarkdownFile,
-            Folder,
-          ]),
-        ],
         providers: [
           FileManagerService,
           FoldersService,
           MarkdownFilesService,
           S3Service,
           ConversionService,
+          UsersService,
+          AuthService,
+          JwtService,
           {
             provide: 'FileManagerService',
             useValue: {
@@ -75,6 +78,34 @@ describe('FileManagerService', () => {
             useValue: {
               convertFrom: jest.fn(),
               convertTo: jest.fn(),
+              convertFromText: jest.fn(),
+              convertToTxt: jest.fn(),
+            },
+          },
+          {
+            provide: 'UsersService',
+            useValue: {
+              findOne: jest.fn(),
+            },
+          },
+          {
+            provide: 'MarkdownFilesService',
+            useValue: {
+              create: jest.fn(),
+              findAllByUserID: jest.fn(),
+              updateName: jest.fn(),
+              updatePath: jest.fn(),
+              remove: jest.fn(),
+              updateLastModified: jest.fn(),
+            },
+          },
+          {
+            provide: 'S3Service',
+            useValue: {
+              saveFile: jest.fn(),
+              deleteFile: jest.fn(),
+              createFile: jest.fn(),
+              retrieveFile: jest.fn(),
             },
           },
           {
@@ -86,6 +117,10 @@ describe('FileManagerService', () => {
             provide: getRepositoryToken(Folder),
             useClass: Repository,
           },
+          {
+            provide: getRepositoryToken(User),
+            useClass: Repository,
+          },
         ],
       }).compile();
 
@@ -95,7 +130,6 @@ describe('FileManagerService', () => {
     foldersService = module.get<FoldersService>(
       FoldersService,
     );
-    s3Service = module.get<S3Service>(S3Service);
     markdownFilesService =
       module.get<MarkdownFilesService>(
         MarkdownFilesService,
@@ -105,7 +139,8 @@ describe('FileManagerService', () => {
       module.get<ConversionService>(
         ConversionService,
       );
-
+    usersService =
+      module.get<UsersService>(UsersService);
     module.close();
   });
 
@@ -1351,6 +1386,10 @@ describe('FileManagerService', () => {
         .spyOn(service, 'saveFile')
         .mockResolvedValue(new MarkdownFile());
 
+      jest
+        .spyOn(usersService, 'findOne')
+        .mockResolvedValue(new UserDTO());
+
       const response = await service.importFile(
         importDTO,
       );
@@ -1385,6 +1424,10 @@ describe('FileManagerService', () => {
         .spyOn(service, 'saveFile')
         .mockResolvedValue(new MarkdownFile());
 
+      jest
+        .spyOn(usersService, 'findOne')
+        .mockResolvedValue(new UserDTO());
+
       const response = await service.importFile(
         importDTO,
       );
@@ -1410,6 +1453,10 @@ describe('FileManagerService', () => {
           'convertFrom',
         ) as any
       ).mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(usersService, 'findOne')
+        .mockResolvedValue(new UserDTO());
 
       jest
         .spyOn(service, 'createFile')
@@ -1484,6 +1531,10 @@ describe('FileManagerService', () => {
           'convertTo',
         ) as any
       ).mockResolvedValue(new ExportDTO());
+
+      jest
+        .spyOn(usersService, 'findOne')
+        .mockResolvedValue(new UserDTO());
 
       const response = await service.exportFile(
         exportDTO,

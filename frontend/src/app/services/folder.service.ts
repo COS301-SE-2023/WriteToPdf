@@ -7,15 +7,23 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MessageService } from 'primeng/api';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FolderService {
+  constructor(
+    private userService: UserService,
+    private http: HttpClient,
+    private messageService: MessageService
+  ) {}
 
-  constructor(private userService:UserService, private http: HttpClient, private messageService:MessageService) { }
-
-  moveFolder(folderID: string | undefined, path: string | undefined, parentFolderID: string | undefined): Promise<FolderDTO> {
+  moveFolder(
+    folderID: string | undefined,
+    path: string | undefined,
+    parentFolderID: string | undefined
+  ): Promise<FolderDTO> {
     return new Promise<FolderDTO>((resolve, reject) => {
       this.sendMoveData(folderID, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -23,8 +31,11 @@ export class FolderService {
           console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary:'Folder moved successfully'});
-            const folder= new FolderDTO();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Folder moved successfully',
+            });
+            const folder = new FolderDTO();
             folder.FolderID = response.body.FolderID;
             folder.DateCreated = response.body.DateCreated;
             folder.LastModified = response.body.LastModified;
@@ -47,7 +58,8 @@ export class FolderService {
     path: string | undefined,
     parentFolderID: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/move_folder';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/move_folder`;
     const body = new FolderDTO();
 
     body.UserID = this.userService.getUserID();
@@ -70,7 +82,10 @@ export class FolderService {
           console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'Folder deleted successfully'});
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Folder deleted successfully',
+            });
             resolve(true);
           } else {
             resolve(false);
@@ -81,7 +96,8 @@ export class FolderService {
   }
 
   sendDeleteData(folderID: string | undefined): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/delete_folder';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/delete_folder`;
     const body = new FolderDTO();
 
     body.UserID = this.userService.getUserID();
@@ -99,7 +115,6 @@ export class FolderService {
     return new Promise<FolderDTO[]>((resolve, reject) => {
       this.sendRetrieveAllFolders().subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 200) {
             const body = response.body;
             let folders: FolderDTO[] = [];
@@ -116,20 +131,24 @@ export class FolderService {
 
             resolve(folders);
           } else {
-            this.messageService.add({ severity: 'error', summary: 'Error retrieving folders'});
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error retrieving folders',
+            });
             reject();
           }
         },
         error: (error) => {
           console.log(error);
           reject();
-        }
+        },
       });
     });
   }
 
   sendRetrieveAllFolders(): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/retrieve_all_folders';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/retrieve_all_folders`;
     const body = new DirectoryFoldersDTO();
 
     body.UserID = this.userService.getUserID();
@@ -141,7 +160,11 @@ export class FolderService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  createFolder(path: string | undefined, folderName: string, parentFolderID: string | undefined): Promise<FolderDTO> {
+  createFolder(
+    path: string | undefined,
+    folderName: string,
+    parentFolderID: string | undefined
+  ): Promise<FolderDTO> {
     return new Promise<FolderDTO>((resolve, reject) => {
       this.sendCreateData(path, folderName, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -149,12 +172,15 @@ export class FolderService {
           console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'Folder created successfully'});
-            const folder=new FolderDTO();
-            folder.FolderName=folderName;
-            folder.Path=path;
-            folder.ParentFolderID=parentFolderID;
-            folder.FolderID=response.body.FolderID;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Folder created successfully',
+            });
+            const folder = new FolderDTO();
+            folder.FolderName = folderName;
+            folder.Path = path;
+            folder.ParentFolderID = parentFolderID;
+            folder.FolderID = response.body.FolderID;
             resolve(folder);
           } else {
             console.log('Retrieve unsuccessful');
@@ -166,7 +192,9 @@ export class FolderService {
   }
 
   sendCreateData(path: string | undefined, folderName: string, parentFolderID: string | undefined): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/create_folder';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/create_folder`;
+
     const body = new FolderDTO();
 
     body.UserID = this.userService.getUserID();
@@ -181,7 +209,11 @@ export class FolderService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  renameFolder(folderID: string|undefined, path: string|undefined, folderName: string): Promise<boolean> {
+  renameFolder(
+    folderID: string | undefined,
+    path: string | undefined,
+    folderName: string
+  ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameData(folderID, path, folderName).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -189,7 +221,10 @@ export class FolderService {
           console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'Folder renamed successfully'});
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Folder renamed successfully',
+            });
             resolve(true);
           } else {
             resolve(false);
@@ -200,7 +235,9 @@ export class FolderService {
   }
 
   sendRenameData(folderID: string|undefined, path: string|undefined, folderName: string): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/rename_folder';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/rename_folder`;
+
     const body = new FolderDTO();
 
     body.UserID = this.userService.getUserID();
@@ -214,5 +251,4 @@ export class FolderService {
     );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
-
 }

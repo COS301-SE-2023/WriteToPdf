@@ -35,8 +35,14 @@ export const testDBOptions: DataSourceOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.TEST_DB_NAME,
-  entities: ['dist/**/*.entity.js'],
-  synchronize: true, // Set this to false in production to prevent automatic schema sync
+  entities: [
+    'dist/**/*.entity.{js,ts}',
+    MarkdownFile,
+    User,
+    Folder,
+    Asset,
+  ],
+  synchronize: false, // Set this to false in production to prevent automatic schema sync
 };
 
 const dataSource = new DataSource(
@@ -47,6 +53,6 @@ const testDataSource = new DataSource(
   testDBOptions,
 );
 
-// export { dataSource, testDataSource};
+export { dataSource, testDataSource };
 
-export default dataSource;
+// export default dataSource;

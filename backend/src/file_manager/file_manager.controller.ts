@@ -19,9 +19,10 @@ import { ExportDTO } from './dto/export.dto';
 @Controller('file_manager')
 export class FileManagerController {
   constructor(
-    private readonly file_manager_service: FileManagerService,
+    private readonly fileManagerService: FileManagerService,
   ) {}
 
+  // File operations #################################################
   @Post('create_file')
   @HttpCode(HttpStatus.OK)
   createFile(
@@ -42,13 +43,7 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (markdownFileDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.createFile(
+    return this.fileManagerService.createFile(
       markdownFileDTO,
     );
   }
@@ -76,13 +71,7 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (markdownFileDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.deleteFile(
+    return this.fileManagerService.deleteFile(
       markdownFileDTO,
     );
   }
@@ -111,13 +100,7 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (markdownFileDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.renameFile(
+    return this.fileManagerService.renameFile(
       markdownFileDTO,
     );
   }
@@ -147,17 +130,94 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (markdownFileDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.moveFile(
+    return this.fileManagerService.moveFile(
       markdownFileDTO,
     );
   }
 
+  @Post('save_file')
+  @HttpCode(HttpStatus.OK)
+  save(
+    @Body()
+    markdownFileDTO: MarkdownFileDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
+    if (
+      !markdownFileDTO.UserID ||
+      !markdownFileDTO.MarkdownID ||
+      !markdownFileDTO.Content
+    )
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.fileManagerService.saveFile(
+      markdownFileDTO,
+    );
+  }
+
+  @Post('retrieve_file')
+  @HttpCode(HttpStatus.OK)
+  retrieveFile(
+    @Body()
+    markdownFileDTO: MarkdownFileDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
+    if (
+      !markdownFileDTO.UserID ||
+      !markdownFileDTO.MarkdownID
+    )
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.fileManagerService.retrieveFile(
+      markdownFileDTO,
+    );
+  }
+
+  @Post('retrieve_all_files')
+  @HttpCode(HttpStatus.OK)
+  retrieveAllFiles(
+    @Body()
+    directoryFilesDTO: DirectoryFilesDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
+    if (!directoryFilesDTO.UserID)
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.fileManagerService.retrieveAllFiles(
+      directoryFilesDTO,
+    );
+  }
+
+  // Folder operations #################################################
   @Post('create_folder')
   @HttpCode(HttpStatus.OK)
   createFolder(
@@ -174,20 +234,15 @@ export class FileManagerController {
 
     if (
       !folderDTO.UserID ||
-      !folderDTO.FolderName
+      !folderDTO.FolderName ||
+      !folderDTO.Path
     )
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
 
-    if (folderDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.createFolder(
+    return this.fileManagerService.createFolder(
       folderDTO,
     );
   }
@@ -212,13 +267,7 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (folderDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.deleteFolder(
+    return this.fileManagerService.deleteFolder(
       folderDTO,
     );
   }
@@ -236,7 +285,6 @@ export class FileManagerController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-
     if (
       !folderDTO.UserID ||
       !folderDTO.FolderID ||
@@ -247,13 +295,7 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (folderDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.renameFolder(
+    return this.fileManagerService.renameFolder(
       folderDTO,
     );
   }
@@ -283,22 +325,16 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (folderDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.moveFolder(
+    return this.fileManagerService.moveFolder(
       folderDTO,
     );
   }
 
-  @Post('save_file')
+  @Post('retrieve_all_folders')
   @HttpCode(HttpStatus.OK)
-  save(
+  retrieveAllFolders(
     @Body()
-    markdownFileDTO: MarkdownFileDTO,
+    directoryFoldersDTO: DirectoryFoldersDTO,
     @Req() request: Request,
   ) {
     if (request.method !== 'POST') {
@@ -308,27 +344,18 @@ export class FileManagerController {
       );
     }
 
-    if (
-      !markdownFileDTO.UserID ||
-      !markdownFileDTO.MarkdownID ||
-      !markdownFileDTO.Content
-    )
+    if (!directoryFoldersDTO.UserID)
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
 
-    if (markdownFileDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.saveFile(
-      markdownFileDTO,
+    return this.fileManagerService.retrieveAllFolders(
+      directoryFoldersDTO,
     );
   }
 
+  // Import & Export operations #################################################
   @Post('import')
   @HttpCode(HttpStatus.OK)
   import(
@@ -348,20 +375,15 @@ export class FileManagerController {
       !importDTO.Type ||
       !importDTO.Content ||
       !importDTO.ParentFolderID ||
-      !importDTO.Path
+      !importDTO.Path ||
+      !importDTO.Name
     )
       throw new HttpException(
         'Invalid request data',
         HttpStatus.BAD_REQUEST,
       );
 
-    if (importDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.importFile(
+    return this.fileManagerService.importFile(
       importDTO,
     );
   }
@@ -390,110 +412,8 @@ export class FileManagerController {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (exportDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.exportFile(
+    return this.fileManagerService.exportFile(
       exportDTO,
-    );
-  }
-
-  @Post('retrieve_file')
-  @HttpCode(HttpStatus.OK)
-  retrieveFile(
-    @Body()
-    markdownFileDTO: MarkdownFileDTO,
-    @Req() request: Request,
-  ) {
-    if (request.method !== 'POST') {
-      throw new HttpException(
-        'Method Not Allowed',
-        HttpStatus.METHOD_NOT_ALLOWED,
-      );
-    }
-
-    if (
-      !markdownFileDTO.UserID ||
-      !markdownFileDTO.MarkdownID
-    )
-      throw new HttpException(
-        'Invalid request data',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (markdownFileDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.retrieveFile(
-      markdownFileDTO,
-    );
-  }
-
-  @Post('retrieve_all_files')
-  @HttpCode(HttpStatus.OK)
-  retrieveAllFiles(
-    @Body()
-    directoryFilesDTO: DirectoryFilesDTO,
-    @Req() request: Request,
-  ) {
-    if (request.method !== 'POST') {
-      throw new HttpException(
-        'Method Not Allowed',
-        HttpStatus.METHOD_NOT_ALLOWED,
-      );
-    }
-
-    if (!directoryFilesDTO.UserID)
-      throw new HttpException(
-        'Invalid request data',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (directoryFilesDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.retrieveAllFiles(
-      directoryFilesDTO,
-    );
-  }
-
-  @Post('retrieve_all_folders')
-  @HttpCode(HttpStatus.OK)
-  retrieveAllFolders(
-    @Body()
-    directoryFoldersDTO: DirectoryFoldersDTO,
-    @Req() request: Request,
-  ) {
-    if (request.method !== 'POST') {
-      throw new HttpException(
-        'Method Not Allowed',
-        HttpStatus.METHOD_NOT_ALLOWED,
-      );
-    }
-
-    if (!directoryFoldersDTO.UserID)
-      throw new HttpException(
-        'Invalid request data',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (directoryFoldersDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    return this.file_manager_service.retrieveAllFolders(
-      directoryFoldersDTO,
     );
   }
 }

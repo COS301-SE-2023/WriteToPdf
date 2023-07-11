@@ -26,6 +26,7 @@ import { MarkdownFile } from './markdown_files/entities/markdown_file.entity';
 import { Folder } from './folders/entities/folder.entity';
 import { S3Service } from './s3/s3.service';
 import { ConversionService } from './conversion/conversion.service';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -33,9 +34,10 @@ import { ConversionService } from './conversion/conversion.service';
     EditModule,
     UsersModule,
     TypeOrmModule.forRoot(dataSourceOptions),
-    TypeOrmModule.forRoot(testDBOptions),
+    // TypeOrmModule.forRoot(testDBOptions),
     TypeOrmModule.forFeature([MarkdownFile]),
     TypeOrmModule.forFeature([Folder]),
+    TypeOrmModule.forFeature([User]),
     MarkdownFilesModule,
     AssetsModule,
     FoldersModule,
