@@ -10,6 +10,7 @@ import { ImportDTO } from './dto/import.dto';
 import { resolve } from 'path';
 import { ExportDTO } from './dto/export.dto';
 import { MessageService } from 'primeng/api';
+import { environment } from '../../environments/environment';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
@@ -51,7 +52,9 @@ export class FileService {
     markdownID: string | undefined,
     path: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/save_file';
+
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/save_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
@@ -92,7 +95,8 @@ export class FileService {
     markdownID: string | undefined,
     path: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/retrieve_file';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/retrieve_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
@@ -141,7 +145,8 @@ export class FileService {
     path: string | undefined,
     parentFolderID: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/create_file';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/create_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
@@ -178,7 +183,8 @@ export class FileService {
   sendDeleteData(
     markdownID: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/delete_file';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/delete_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
@@ -220,7 +226,8 @@ export class FileService {
     name: string | undefined,
     path: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/rename_file';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/rename_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
@@ -274,7 +281,8 @@ export class FileService {
     path: string | undefined,
     parentFolderID: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/move_file';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/move_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
@@ -330,7 +338,8 @@ export class FileService {
   }
 
   sendRetrieveAllFiles(): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/retrieve_all_files';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/retrieve_all_files`;
     const body = new DirectoryFilesDTO();
 
     body.UserID = this.userService.getUserID();
@@ -385,7 +394,8 @@ export class FileService {
     content: string,
     type: string
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/import';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/import`;
     const body = new ImportDTO();
 
     body.UserID = this.userService.getUserID();
@@ -443,7 +453,8 @@ export class FileService {
     content: string | undefined,
     type: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/export';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/export`;
     const body = new ExportDTO();
 
     body.MarkdownID = markdownID;
