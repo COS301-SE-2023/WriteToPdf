@@ -19,7 +19,7 @@ export class UserService {
   private isAuthenticated: boolean = false;
   private authToken: string | undefined = undefined;
   private userID: number | undefined = undefined;
-  private expiresAt: string | Date | number | undefined = undefined;
+  private expiresAt: Date | undefined = undefined;
   private email: string | undefined = undefined;
   private firstName: string | undefined = undefined;
   private doExpirationCheck: boolean = false;
@@ -270,7 +270,10 @@ export class UserService {
     const body = new RefreshTokenDTO();
     body.UserID = this.userID;
     body.Token = this.authToken;
+    body.Email = this.email;
+    body.ExpiresAt = this.expiresAt;
 
+    console.log('Body: '+JSON.stringify(body));
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.authToken
