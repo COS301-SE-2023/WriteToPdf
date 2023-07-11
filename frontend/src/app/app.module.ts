@@ -12,10 +12,10 @@ import { EditAssetComponent } from './edit-asset/edit-asset.component';
 import { WebcamModule } from 'ngx-webcam';
 import { SignupComponent } from './signup/signup.component';
 import { TreeSelectModule } from 'primeng/treeselect';
-import { TreeModule } from "primeng/tree";
-import { FormsModule } from "@angular/forms";
-import { DropdownModule } from "primeng/dropdown";
-import { NodeService } from "./services/home.service";
+import { TreeModule } from 'primeng/tree';
+import { FormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
+import { NodeService } from './services/home.service';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { TreeTableModule } from 'primeng/treetable';
 import { SidebarModule } from 'primeng/sidebar';
@@ -26,13 +26,13 @@ import { PasswordModule } from 'primeng/password';
 import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { MenubarModule } from 'primeng/menubar';
 import { SpeedDialModule } from 'primeng/speeddial';
-import { FileUploadModule } from "primeng/fileupload";
-import { ToastModule } from "primeng/toast";
-import { MessageService } from "primeng/api";
-import { DialogService } from "primeng/dynamicdialog";
+import { FileUploadModule } from 'primeng/fileupload';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { FileUploadPopupComponent } from './file-upload-popup/file-upload-popup.component';
-import { ToolbarModule } from "primeng/toolbar";
-import { ToggleButtonModule } from "primeng/togglebutton";
+import { ToolbarModule } from 'primeng/toolbar';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { DialogModule } from 'primeng/dialog';
 
@@ -45,7 +45,7 @@ import { DialogModule } from 'primeng/dialog';
     EditAssetComponent,
     SignupComponent,
     EditComponent,
-    FileUploadPopupComponent
+    FileUploadPopupComponent,
   ],
   imports: [
     ToolbarModule,
@@ -73,9 +73,9 @@ import { DialogModule } from 'primeng/dialog';
     PasswordModule,
     ConfirmPopupModule,
     ToastModule,
-    DialogModule
+    DialogModule,
   ],
   providers: [NodeService, UserService, MessageService, DialogService],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

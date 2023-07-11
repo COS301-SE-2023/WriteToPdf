@@ -33,24 +33,18 @@ export class AuthController {
         HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
-    const receivedDTO = plainToClass(
-      RefreshTokenDTO,
-      refreshTokenDTO,
-    );
-    const errors = validateSync(receivedDTO);
 
-    if (errors.length > 0) {
+    if (
+      !refreshTokenDTO.Email ||
+      !refreshTokenDTO.Token ||
+      !refreshTokenDTO.ExpiresAt ||
+      !refreshTokenDTO.UserID
+    ) {
       throw new HttpException(
-        'Invalid request data',
+        'Invalid request body',
         HttpStatus.BAD_REQUEST,
       );
     }
-
-    if (refreshTokenDTO.UserID === undefined)
-      throw new HttpException(
-        'UserID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
 
     return this.authService.refreshToken(
       refreshTokenDTO,

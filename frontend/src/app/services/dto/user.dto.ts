@@ -7,6 +7,13 @@ export class UserDTO {
   Password: string | undefined;
 
   isValid() {
-    return this.UserID && this.Email && this.Password && this.FirstName && this.LastName && this.Salt;
+    return (
+      this.UserID &&
+      this.Email &&
+      this.Password &&
+      this.FirstName &&
+      this.LastName &&
+      this.Salt
+    );
   }
 }

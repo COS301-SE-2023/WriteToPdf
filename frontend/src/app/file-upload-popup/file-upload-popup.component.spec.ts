@@ -8,7 +8,7 @@ describe('FileUploadPopupComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [FileUploadPopupComponent]
+      declarations: [FileUploadPopupComponent],
     });
     fixture = TestBed.createComponent(FileUploadPopupComponent);
     component = fixture.componentInstance;

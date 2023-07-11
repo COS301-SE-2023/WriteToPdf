@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TreeNode } from "primeng/api";
+import { TreeNode } from 'primeng/api';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { UserService } from './user.service';
@@ -18,8 +18,12 @@ import { FolderService } from './folder.service';
 
 @Injectable()
 export class NodeService {
-
-  constructor(private userService: UserService, private http: HttpClient, private fileService: FileService, private folderService: FolderService) { }
+  constructor(
+    private userService: UserService,
+    private http: HttpClient,
+    private fileService: FileService,
+    private folderService: FolderService
+  ) {}
 
   private files: MarkdownFileDTO[] = [];
   private folders: FolderDTO[] = [];
@@ -30,26 +34,25 @@ export class NodeService {
    * into the PrimeNG component. Not to be confused with the format of the Tree.
    */
 
-
-
   //What each folder object will look like:
   typicalFolder = {
     key: '0', //some unique identifier
     data: {
       name: 'folderName',
       size: '100kb',
-      type: 'Folder'
+      type: 'Folder',
     },
     children: [
-      { //contains other folders/files
-      }
+      {
+        //contains other folders/files
+      },
     ], //The above 3 attributes are required for the TreeTable to work. The below is the data related to the folder
     FolderID: '0', //FolderID from the database
     DateCreated: '2023-06-24', //DateCreated from the database
     LastModified: '2023-06-24', //DateModified from the database
     ParentFolderID: '0', //ParentID from the database
     Path: 'C:/Users/...', //Path from the database
-  }
+  };
 
   //What each file object will look like:
   typicalFile = {
@@ -57,23 +60,25 @@ export class NodeService {
     data: {
       name: 'fileName',
       size: '100kb',
-      type: 'File'
+      type: 'File',
     }, //The above 2 attributes are required for the TreeTable to work. The below is the data related to the file
     FileID: '0', //FileID from the database
     DateCreated: '2023-06-24', //DateCreated from the database
     LastModified: '2023-06-24', //DateModified from the database
     ParentFolderID: '0', //ParentID from the database
     Path: 'C:/Users/...', //Path from the database
-    Content: 'This is the content of the file' //Content from the database
-  }
-
+    Content: 'This is the content of the file', //Content from the database
+  };
 
   getTreeTableNodesData(): any {
-
     let directoryObject: {
-      key: string | undefined,
-      data: { name: string | undefined, size: number | undefined, type: string | undefined },
-      children?: [{}]
+      key: string | undefined;
+      data: {
+        name: string | undefined;
+        size: number | undefined;
+        type: string | undefined;
+      };
+      children?: [{}];
     }[] = [];
 
     // for(const file of this.files){
@@ -97,7 +102,7 @@ export class NodeService {
     for (let file of rootFiles) {
       directoryObject.push({
         key: file.MarkdownID,
-        data: { name: file.Name, size: file.Size, type: 'file' }
+        data: { name: file.Name, size: file.Size, type: 'file' },
       });
     }
 
@@ -114,26 +119,28 @@ export class NodeService {
     if (folders.length + files.length === 0) {
       return {
         key: folder.FolderID,
-        data: { name: folder.FolderName, size: 0, type: 'folder' }
-      }
+        data: { name: folder.FolderName, size: 0, type: 'folder' },
+      };
     } else {
       let folderObject = {
         key: folder.FolderID,
         data: { name: folder.FolderName, size: 0, type: 'folder' },
-        children: [{}]
-      }
+        children: [{}],
+      };
 
       let x = 0;
       folderObject.children.pop();
       for (let file of files) {
         folderObject.children.push({
           key: file.MarkdownID,
-          data: { name: file.Name, size: file.Size, type: 'file' }
+          data: { name: file.Name, size: file.Size, type: 'file' },
         });
       }
 
       for (let folder of folders) {
-        folderObject.children.push(this.getTreeTableNodesDataHelper(folder, depth + 1));
+        folderObject.children.push(
+          this.getTreeTableNodesDataHelper(folder, depth + 1)
+        );
       }
 
       return folderObject;
@@ -180,12 +187,9 @@ export class NodeService {
     return rootFolders;
   }
 
-
-
   async getFilesAndFolders() {
     this.setFolders(await this.folderService.retrieveAllFolders());
     this.setFiles(await this.fileService.retrieveAllFiles());
-
   }
 
   getFiles(): MarkdownFileDTO[] {
@@ -236,8 +240,8 @@ export class NodeService {
 
   removeFile(markdownID: string) {
     // this.files.splice(this.files.indexOf(file), 1);
-    for(let i = 0; i < this.files.length; i++){
-      if (this.files[i].MarkdownID === markdownID){
+    for (let i = 0; i < this.files.length; i++) {
+      if (this.files[i].MarkdownID === markdownID) {
         this.files.splice(i, 1);
       }
     }
@@ -260,14 +264,11 @@ export class NodeService {
         newName = name + '(' + i + ')';
         i++;
       }
-
-    }
-    else{
+    } else {
       while (this.checkIfFileExists(newName, path)) {
         newName = name + '(' + i + ')';
         i++;
       }
-
     }
     return newName;
   }
@@ -289,5 +290,4 @@ export class NodeService {
     }
     return false;
   }
-
 }

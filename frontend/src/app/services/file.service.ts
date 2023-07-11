@@ -10,6 +10,7 @@ import { ImportDTO } from './dto/import.dto';
 import { resolve } from 'path';
 import { ExportDTO } from './dto/export.dto';
 import { MessageService } from 'primeng/api';
+import { environment } from '../../environments/environment';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
@@ -21,7 +22,7 @@ export class FileService {
     private userService: UserService,
     private editService: EditService,
     private messageService: MessageService
-  ) { }
+  ) {}
 
   saveDocument(
     content: string | undefined,
@@ -31,12 +32,12 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSaveData(content, markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log("SAVE");
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'File saved successfully' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File saved successfully',
+            });
             resolve(true);
           } else {
             resolve(false);
@@ -51,12 +52,13 @@ export class FileService {
     markdownID: string | undefined,
     path: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/save_file';
+
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/save_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
-    body.Content = content;
-    const encrypted = this.encryptDocument(JSON.stringify(content));
+    body.Content = this.encryptDocument(JSON.stringify(content));
     body.MarkdownID = markdownID;
     body.Path = path;
 
@@ -74,14 +76,14 @@ export class FileService {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveData(markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
-
-            resolve(response.body.Content);
+            resolve(this.decryptDocument(response.body.Content));
           } else {
-            this.messageService.add({ severity: 'error', summary: 'File could not be retrieved' });
+            this.messageService.add({
+              severity: 'error',
+              summary: 'File could not be retrieved',
+            });
             resolve(false);
           }
         },
@@ -93,7 +95,8 @@ export class FileService {
     markdownID: string | undefined,
     path: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/retrieve_file';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/retrieve_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
@@ -115,17 +118,18 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendCreateData(name, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'File created successfully' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File created successfully',
+            });
 
             this.editService.setMarkdownID(response.body.MarkdownID);
             this.editService.setPath(response.body.Path);
             this.editService.setName(response.body.Name);
             this.editService.setParentFolderID(response.body.ParentFolderID);
-            this.editService.setContent("");
+            this.editService.setContent('');
 
             resolve(true);
           } else {
@@ -141,7 +145,8 @@ export class FileService {
     path: string | undefined,
     parentFolderID: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/create_file';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/create_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
@@ -160,11 +165,12 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'File deleted successfully' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File deleted successfully',
+            });
             resolve(true);
           } else {
             resolve(false);
@@ -177,7 +183,8 @@ export class FileService {
   sendDeleteData(
     markdownID: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/delete_file';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/delete_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
@@ -199,11 +206,12 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameData(markdownFileID, fileName, path).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'File renamed successfully' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File renamed successfully',
+            });
             resolve(true);
           } else {
             resolve(false);
@@ -218,7 +226,8 @@ export class FileService {
     name: string | undefined,
     path: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/rename_file';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/rename_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
@@ -242,11 +251,12 @@ export class FileService {
     return new Promise<MarkdownFileDTO>((resolve, reject) => {
       this.sendMoveData(markdownID, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'File moved successfully' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File moved successfully',
+            });
             const markdownFile = new MarkdownFileDTO();
             markdownFile.MarkdownID = response.body.MarkdownID;
             markdownFile.Name = response.body.Name;
@@ -255,7 +265,10 @@ export class FileService {
 
             resolve(markdownFile);
           } else {
-            this.messageService.add({ severity: 'error', summary: 'File move failed' });
+            this.messageService.add({
+              severity: 'error',
+              summary: 'File move failed',
+            });
             reject();
           }
         },
@@ -268,7 +281,8 @@ export class FileService {
     path: string | undefined,
     parentFolderID: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/move_file';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/move_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
@@ -289,7 +303,6 @@ export class FileService {
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
             const body = response.body;
-            console.log('' + body);
             let files: MarkdownFileDTO[] = [];
             for (let i = 0; i < body.Files.length; i++) {
               const fileDTO = new MarkdownFileDTO();
@@ -306,12 +319,18 @@ export class FileService {
             }
             resolve(files);
           } else {
-            this.messageService.add({ severity: 'error', summary: 'File retrieval failed' });
+            this.messageService.add({
+              severity: 'error',
+              summary: 'File retrieval failed',
+            });
             reject();
           }
         },
         error: (error) => {
-          this.messageService.add({ severity: 'error', summary: 'File retrieval failed' });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'File retrieval failed',
+          });
           reject();
         },
       });
@@ -319,7 +338,8 @@ export class FileService {
   }
 
   sendRetrieveAllFiles(): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/retrieve_all_files';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/retrieve_all_files`;
     const body = new DirectoryFilesDTO();
 
     body.UserID = this.userService.getUserID();
@@ -341,17 +361,18 @@ export class FileService {
     return new Promise<MarkdownFileDTO>((resolve, reject) => {
       this.sendImportData(name, path, parentFolderID, content, type).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
           const outputFile = new MarkdownFileDTO();
 
           if (response.status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'File imported successfully' });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File imported successfully',
+            });
 
             outputFile.Name = response.body.Name;
             outputFile.Path = response.body.Path;
             outputFile.ParentFolderID = response.body.ParentFolderID;
-            outputFile.Content = response.body.Content;
+            outputFile.Content = this.decryptDocument(response.body.Content);
             outputFile.MarkdownID = response.body.MarkdownID;
             outputFile.Size = response.body.Size;
             outputFile.DateCreated = response.body.DateCreated;
@@ -373,17 +394,17 @@ export class FileService {
     content: string,
     type: string
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/import';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/import`;
     const body = new ImportDTO();
 
     body.UserID = this.userService.getUserID();
     body.Path = path;
     body.Name = name;
     body.ParentFolderID = parentFolderID;
-    body.Content = content;
+    body.Content = this.encryptDocument(content);
     body.Type = type;
 
-    console.log('Body Import: ' + JSON.stringify(body));
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -399,11 +420,12 @@ export class FileService {
   ): void {
     this.sendExportData(markdownID, name, content, type).subscribe({
       next: (response: HttpResponse<any>) => {
-        console.log(response);
-        console.log(response.status);
         if (response.status === 200) {
-          this.messageService.add({ severity: 'success', summary: 'Export successful' });
-          const fileContent = response.body.Content;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Export successful',
+          });
+          const fileContent = this.decryptDocument(response.body.Content);
           const fileName = response.body.Name;
           const fileType = response.body.Type;
           const downloadURL = URL.createObjectURL(
@@ -416,7 +438,10 @@ export class FileService {
           URL.revokeObjectURL(downloadURL);
           // document.body.removeChild(downloadLink);
         } else {
-          this.messageService.add({ severity: 'error', summary: 'Export failed' });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Export failed',
+          });
         }
       },
     });
@@ -428,14 +453,16 @@ export class FileService {
     content: string | undefined,
     type: string | undefined
   ): Observable<HttpResponse<any>> {
-    const url = 'http://localhost:3000/file_manager/export';
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/export`;
     const body = new ExportDTO();
 
     body.MarkdownID = markdownID;
     body.Name = name;
-    body.Content = content;
+    body.Content = this.encryptDocument(JSON.stringify(content));
     body.UserID = this.userService.getUserID();
     body.Type = type;
+
 
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -444,27 +471,26 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  encryptDocument(content: string|undefined): string {
-
-    const key = this.userService.getAuthToken();
-    if (key&&content) {
+  encryptDocument(content: string | undefined): string {
+    const key = this.userService.getEncryptionKey();
+    if (key && content) {
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
       return encryptedMessage;
     } else {
       return '';
     }
-
   }
 
-  decryptDocument(content: string|undefined): string {
-      
-      const key = this.userService.getAuthToken();
-      if (key&&content) {
-        const decryptedMessage = CryptoJS.AES.decrypt(content, key).toString(CryptoJS.enc.Utf8);
-        return decryptedMessage;
-      } else {
-        return '';
-      }
-  
+  decryptDocument(content: string | undefined): string {
+    const key = this.userService.getEncryptionKey();
+    if (key && content) {
+
+      const decryptedMessage = CryptoJS.AES.decrypt(content, key).toString(
+        CryptoJS.enc.Utf8
+      ).replace(/^"(.*)"$/, '$1');
+      return decryptedMessage;
+    } else {
+      return '';
+    }
   }
 }

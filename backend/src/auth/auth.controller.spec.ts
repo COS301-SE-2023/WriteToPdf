@@ -5,9 +5,16 @@ import {
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { AuthModule } from './auth.module';
+import { RefreshTokenDTO } from './dto/refresh_token.dto';
+import {
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import e from 'express';
 
 describe('AuthController', () => {
   let controller: AuthController;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -20,9 +27,168 @@ describe('AuthController', () => {
     controller = module.get<AuthController>(
       AuthController,
     );
+    authService =
+      module.get<AuthService>(AuthService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('refreshToken', () => {
+    it('should throw exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const refreshTokenDTO =
+        new RefreshTokenDTO();
+
+      try {
+        await controller.refreshToken(
+          refreshTokenDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an exception if UserID is undefined', async () => {
+      const request = { method: 'POST' };
+      const refreshTokenDTO =
+        new RefreshTokenDTO();
+      refreshTokenDTO.Email = 'test';
+      refreshTokenDTO.Token = 'test';
+      refreshTokenDTO.ExpiresAt = new Date();
+
+      try {
+        await controller.refreshToken(
+          refreshTokenDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request body',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an exception if Email is undefined', async () => {
+      const request = { method: 'POST' };
+      const refreshTokenDTO =
+        new RefreshTokenDTO();
+      refreshTokenDTO.UserID = 1;
+      refreshTokenDTO.Token = 'test';
+      refreshTokenDTO.ExpiresAt = new Date();
+
+      try {
+        await controller.refreshToken(
+          refreshTokenDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request body',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an exception if Token is undefined', async () => {
+      const request = { method: 'POST' };
+      const refreshTokenDTO =
+        new RefreshTokenDTO();
+      refreshTokenDTO.UserID = 1;
+      refreshTokenDTO.Email = 'test';
+      refreshTokenDTO.ExpiresAt = new Date();
+
+      try {
+        await controller.refreshToken(
+          refreshTokenDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request body',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an exception if ExpiresAt is undefined', async () => {
+      const request = { method: 'POST' };
+      const refreshTokenDTO =
+        new RefreshTokenDTO();
+      refreshTokenDTO.UserID = 1;
+      refreshTokenDTO.Email = 'test';
+      refreshTokenDTO.Token = 'test';
+
+      try {
+        await controller.refreshToken(
+          refreshTokenDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request body',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should return a new access token', async () => {
+      const request = { method: 'POST' };
+      const refreshTokenDTO =
+        new RefreshTokenDTO();
+      refreshTokenDTO.UserID = 1;
+      refreshTokenDTO.Email = 'test';
+      refreshTokenDTO.Token = 'test';
+      refreshTokenDTO.ExpiresAt = new Date();
+
+      jest
+        .spyOn(authService, 'refreshToken')
+        .mockResolvedValue(new RefreshTokenDTO());
+
+      const result =
+        await controller.refreshToken(
+          refreshTokenDTO,
+          request as any,
+        );
+
+      expect(result).toBeInstanceOf(
+        RefreshTokenDTO,
+      );
+      expect(
+        authService.refreshToken,
+      ).toBeCalledWith(refreshTokenDTO);
+    });
   });
 });
