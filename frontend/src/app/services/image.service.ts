@@ -9,22 +9,20 @@ import { environment } from '../../environments/environment';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ImageService {
-
   constructor(
     private http: HttpClient,
     private userService: UserService,
     private messageService: MessageService
-  ) { }
+  ) {}
 
   uploadImage(content: string | undefined, path: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendUploadImageData(content, path).subscribe({
         next: (response: HttpResponse<any>) => {
-
-          if (response.status === 200) {
+          if (response.status === 201) {
             this.messageService.add({
               severity: 'success',
               summary: 'Image uploaded successfully',
@@ -38,8 +36,10 @@ export class ImageService {
     });
   }
 
-  sendUploadImageData(content: string | undefined, path: string): Observable<HttpResponse<any>> {
-
+  sendUploadImageData(
+    content: string | undefined,
+    path: string
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}image_manager/upload`;
     const body = new ImageDTO();
@@ -54,5 +54,4 @@ export class ImageService {
     );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
-
 }
