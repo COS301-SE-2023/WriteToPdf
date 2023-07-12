@@ -53,7 +53,13 @@ export class CameraComponent {
 
     // Calculate the desired width and height based on the device size
     // Adjust the calculations as per your requirements
-    this.webcamWidth = deviceWidth * 0.6;
-    this.webcamHeight = deviceWidth * 0.6;
+    if(deviceWidth > deviceHeight) {
+      this.webcamWidth = deviceHeight * 1;
+      this.webcamHeight = deviceHeight * 1;
+    }
+    else {
+      this.webcamWidth = deviceWidth * 1;
+      this.webcamHeight = deviceWidth * 1;
+    }
   }
 }

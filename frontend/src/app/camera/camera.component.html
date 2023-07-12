@@ -1,27 +1,19 @@
-<div class="webcamWrapper">
-  <webcam
-    [width]="webcamWidth"
-    [height]="webcamHeight"
-    [trigger]="invokeObservable"
-    (imageCapture)="captureImg($event)"
-  >
-  </webcam>
-</div>
+<div class="container">
 
-<p-sidebar [(visible)]="sidebarVisible" [fullScreen]="true">
-  <div class="imageWrapper">
-    <img
-      [src]="webcamImage.imageAsDataUrl"
-      width="webcamWidth"
-      height="webcamHeight"
-      alt=""
-    />
+  <div class="header"></div>
+  <div class="webcamWrapper">
+    <webcam [width]="webcamWidth" [height]="webcamHeight" [trigger]="invokeObservable"
+      (imageCapture)="captureImg($event)">
+    </webcam>
   </div>
-</p-sidebar>
-<div class="footer">
-  <div
-    (click)="sidebarVisible = true"
-    (click)="getSnapshot()"
-    class="capture"
-  ></div>
+
+  <p-sidebar [(visible)]="sidebarVisible" [fullScreen]="true">
+    <div class="imageWrapper">
+      <img [src]="webcamImage.imageAsDataUrl" height="webcamHeight" width="webcamWidth" alt="" />
+    </div>
+  </p-sidebar>
+  <div class="footer">
+    <div (click)="sidebarVisible = true" (click)="getSnapshot()" class="capture"></div>
+  </div>
+
 </div>
