@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
-
+import { ImageService } from '../services/image.service';
 import { Observable, Subject } from 'rxjs';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 
@@ -17,7 +17,7 @@ export class CameraComponent {
   public webcamHeight: number = 0;
   public sidebarVisible = false;
 
-  constructor(private elementRef: ElementRef) {}
+  constructor(private elementRef: ElementRef, private imageService: ImageService) { }
 
   ngOnInit() {
     this.trigger.next(void 0);
@@ -53,7 +53,7 @@ export class CameraComponent {
 
     // Calculate the desired width and height based on the device size
     // Adjust the calculations as per your requirements
-    if(deviceWidth > deviceHeight) {
+    if (deviceWidth > deviceHeight) {
       this.webcamWidth = deviceHeight * 1;
       this.webcamHeight = deviceHeight * 1;
     }
@@ -61,5 +61,9 @@ export class CameraComponent {
       this.webcamWidth = deviceWidth * 1;
       this.webcamHeight = deviceWidth * 1;
     }
+  }
+
+  uploadImage() {
+    this.imageService.uploadImage(this.sysImage, '');
   }
 }

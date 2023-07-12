@@ -11,6 +11,7 @@
     <div class="imageWrapper">
       <img [src]="webcamImage.imageAsDataUrl" height="webcamHeight" width="webcamWidth" alt="" />
     </div>
+    <p-button class="uploadImage" title="Upload Image" (click)="uploadImage()">Upload Image</p-button>
   </p-sidebar>
   <div class="footer">
     <div (click)="sidebarVisible = true" (click)="getSnapshot()" class="capture"></div>
