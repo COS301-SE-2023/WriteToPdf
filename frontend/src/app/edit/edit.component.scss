@@ -134,15 +134,15 @@ $sidebar-content-width: 225px;
     position: absolute;
 
     top: 127px;
-    // left: 260px;
+    left: 260px;
 
     z-index: -10;
     margin: 0;
     overflow: auto;
     flex-grow: 1;
 
-    // width: calc(100% - 260px);
-    width: 100%;
+    width: calc(100% - 260px);
+    // width: 100%;
     max-height: calc(100svh - 127px);
 }
 
