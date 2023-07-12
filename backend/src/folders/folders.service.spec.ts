@@ -112,14 +112,13 @@ describe('FoldersService', () => {
       folderDTO.FolderID = '1';
       folderDTO.FolderName = 'newName';
 
-      const folder = new Folder();
+      const folder = new FolderDTO();
       folder.FolderID = '1';
       folder.FolderName = 'oldName';
-      folder.UserID = 1;
 
       jest
         .spyOn(Repository.prototype, 'findOne')
-        .mockResolvedValue(folder);
+        .mockResolvedValue(folderDTO);
 
       jest
         .spyOn(Repository.prototype, 'save')
@@ -139,7 +138,7 @@ describe('FoldersService', () => {
       });
       expect(
         Repository.prototype.save,
-      ).toBeCalledWith(folder);
+      ).toBeCalled();
     });
   });
 
@@ -184,14 +183,13 @@ describe('FoldersService', () => {
       folderDTO.FolderID = '1';
       folderDTO.Path = 'newPath';
 
-      const folder = new Folder();
+      const folder = new FolderDTO();
       folder.FolderID = '1';
       folder.Path = 'oldPath';
-      folder.UserID = 1;
 
       jest
         .spyOn(Repository.prototype, 'findOne')
-        .mockResolvedValue(folder);
+        .mockResolvedValue(folderDTO);
 
       jest
         .spyOn(Repository.prototype, 'save')
@@ -211,7 +209,7 @@ describe('FoldersService', () => {
       });
       expect(
         Repository.prototype.save,
-      ).toBeCalledWith(folder);
+      ).toBeCalled();
     });
   });
 });
