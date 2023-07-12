@@ -3,7 +3,7 @@ import { Folder } from './entities/folder.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FolderDTO } from './dto/folder.dto';
-import { SHA256 } from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable()
 export class FoldersService {
@@ -19,7 +19,7 @@ export class FoldersService {
   }
 
   async create(createFolderDTO: FolderDTO) {
-    const folderID = SHA256(
+    const folderID = CryptoJS.SHA256(
       createFolderDTO.UserID.toString() +
         new Date().getTime().toString(),
     ).toString();

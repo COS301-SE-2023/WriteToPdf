@@ -16,7 +16,6 @@ import { ImportDTO } from './dto/import.dto';
 import { ConversionService } from '../conversion/conversion.service';
 import { ExportDTO } from './dto/export.dto';
 import { UsersService } from '../users/users.service';
-import { SHA256 } from 'crypto-js';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable()
@@ -451,7 +450,7 @@ export class FileManagerService {
       UserID,
     );
 
-    const encryptionKey = SHA256(
+    const encryptionKey = CryptoJS.SHA256(
       user.Password,
     ).toString();
 

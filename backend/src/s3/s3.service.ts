@@ -16,7 +16,7 @@ import {
   readFile,
   stat,
 } from 'fs/promises';
-import { SHA256 } from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable()
 export class S3Service {
@@ -142,7 +142,7 @@ export class S3Service {
     // if (markdownFileDTO.UserID === undefined)
     //   markdownFileDTO.UserID = 1;
 
-    const markdownID = SHA256(
+    const markdownID = CryptoJS.SHA256(
       markdownFileDTO.UserID.toString() +
         new Date().getTime().toString(),
     ).toString();
