@@ -1,11 +1,17 @@
 export class ImageDTO {
   UserID: number;
   Content: string;
-  AuthToken: string;
+  Path: string;
+  ImageID: number;
+  Size: number;
+  DateCreated: Date;
 
   constructor() {
     this.Content = undefined;
     this.UserID = undefined;
-    this.AuthToken = undefined;
+    this.Path = undefined;
+    this.ImageID = undefined;
+    this.Size = undefined;
+    this.DateCreated = undefined;
   }
 }
