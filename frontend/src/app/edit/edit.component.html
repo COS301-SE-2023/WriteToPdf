@@ -348,13 +348,14 @@
       </div>
     </div>
     <div class="page">
-      <p-editor
-        #quillEditor
-        [(ngModel)]="text"
-        [style]="{ height: '1138px' }"
-        class="quill-editor"
-      >
-      </p-editor>
+      <ckeditor [editor]="Editor" [(ngModel)]="editorContent"></ckeditor>
+<!--      <p-editor-->
+<!--        #quillEditor-->
+<!--        [(ngModel)]="text"-->
+<!--        [style]="{ height: '1138px' }"-->
+<!--        class="quill-editor"-->
+<!--      >-->
+<!--      </p-editor>-->
     </div>
   </div>
 </div>

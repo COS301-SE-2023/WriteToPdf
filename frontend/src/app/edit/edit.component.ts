@@ -3,8 +3,7 @@ import {
   Component,
   ElementRef,
   OnInit,
-  ViewChild,
-} from '@angular/core';
+  ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
@@ -13,6 +12,10 @@ import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
 import { Inject } from '@angular/core';
 
+import {CKEditorModule} from "@ckeditor/ckeditor5-angular";
+import {CKEditorComponent} from "@ckeditor/ckeditor5-angular";
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import * as CKE from '@ckeditor/ckeditor5-build-classic';
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
@@ -27,7 +30,13 @@ export class EditComponent implements AfterViewInit, OnInit {
   sidebarVisible: boolean = true;
   exportDialogVisible: boolean = false;
   public speedDialItems!: MenuItem[];
-
+  public Editor? = ClassicEditor;
+  public editorContent = '';
+  public editorConfig = {
+    plugins: [ 'Image' ],
+    toolbar: [ 'imageUpload', '|', 'bold', 'italic', 'bulletedList', 'numberedList', 'blockQuote' ],
+    // Additional configuration options for the editor
+  };
   constructor(
     private elementRef: ElementRef,
     @Inject(Router) private router: Router,
@@ -47,6 +56,8 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
+
+
     this.hideSideBar();
     this.speedDialItems = [
       {
@@ -79,10 +90,13 @@ export class EditComponent implements AfterViewInit, OnInit {
     ];
     this.fileName = this.editService.getName();
   }
+
+
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
-
     setTimeout(() => {
+      const htmlContent = '<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Cell 1</td><td>Cell 2</td></tr></table>';
+      quill.clipboard.dangerouslyPasteHTML(htmlContent);
       //Why wait 0ms? I don't know but it works
       const contents = this.editService.getContent();
       this.documentContent = contents;
@@ -90,22 +104,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         quill.setContents(JSON.parse(contents));
       }
     }, 0);
-
     quill.focus();
-
-    // quill.on('selection-change', (range: any, oldRange: any, source: any) => {
-    //   if (range) {
-    //     if (range.length == 0) {
-    //       this.setBold(quill.getFormat().bold);
-    //     } else {
-    //       var text = quill.getText(range.index, range.length);
-    //       console.log('User has highlighted', text);
-    //     }
-    //   } else {
-    //     console.log('Cursor not in the editor');
-    //   }
-    // });
-
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#E3E3E3';
   }

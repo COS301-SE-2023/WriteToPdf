@@ -1,5 +1,4 @@
 @import '../../styles.scss';
-
 $sidebar-content-width: 225px;
 
 .container {
@@ -132,10 +131,9 @@ $sidebar-content-width: 225px;
 .editor {
     display: flex;
     position: absolute;
-
     top: 127px;
     // left: 260px;
-
+    height: 100vh;
     z-index: -10;
     margin: 0;
     overflow: auto;
