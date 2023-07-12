@@ -27,6 +27,7 @@ import { Folder } from './folders/entities/folder.entity';
 import { S3Service } from './s3/s3.service';
 import { ConversionService } from './conversion/conversion.service';
 import { User } from './users/entities/user.entity';
+import { ImageManagerModule } from './image_manager/image_manager.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { User } from './users/entities/user.entity';
     FoldersModule,
     S3Module,
     FileManagerModule,
+    ImageManagerModule,
   ],
   controllers: [
     AppController,
