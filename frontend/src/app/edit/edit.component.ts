@@ -47,7 +47,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    this.hideSideBar();
     this.speedDialItems = [
       {
         icon: 'pi pi-pencil',
