@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 // import { FileDTO } from './dto/file.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
+import { ImageDTO } from '../image_manager/dto/image.dto';
 import 'dotenv/config';
 import {
   // DeleteObjectCommand,
@@ -318,5 +319,66 @@ export class S3Service {
 
     console.log(markdownFileDTO);
     return markdownFileDTO;
+  }
+
+  //// Image Management
+
+  async saveImage(saveImageDTO: ImageDTO) {
+    console.log(saveImageDTO);
+    const imageID = SHA256(
+      saveImageDTO.UserID.toString() +
+        new Date().getTime().toString(),
+    ).toString();
+
+    saveImageDTO.ImageID = imageID;
+    let filePath = '';
+    if (saveImageDTO.Path === '')
+      filePath = `${saveImageDTO.UserID}`;
+    else filePath = `${saveImageDTO.UserID}`; // Local Storage: filePath = `${saveImageDTO.UserID}/${saveImageDTO.Path}`;
+    console.log(saveImageDTO);
+
+    try {
+      await mkdir(`./storage/${filePath}`, {
+        recursive: true,
+      });
+    } catch (err) {
+      console.log(
+        'Directory Creation Error:' + err,
+      );
+      return undefined;
+    }
+
+    const fileData = new Uint8Array(
+      Buffer.from(saveImageDTO.Content),
+    );
+
+    try {
+      await writeFile(
+        `./storage/${filePath}/${imageID}`,
+        fileData,
+        'utf-8',
+      );
+      // /*const response = */ await this.s3Client.send(
+      //   new PutObjectCommand({
+      //     Bucket: this.awsS3BucketName,
+      //     Key: filePath,
+      //     Body: fileData,
+      //   }),
+      // );
+    } catch (err) {
+      console.log('Write File Error:' + err);
+      return undefined;
+    }
+
+    const fileStats = await stat(
+      `./storage/${filePath}`,
+    );
+    console.log(fileStats);
+    saveImageDTO.DateCreated = fileStats.mtime;
+    saveImageDTO.Size =
+      fileData.buffer.byteLength; // TODO: Change to s3 return object
+
+    console.log(saveImageDTO);
+    return saveImageDTO;
   }
 }
