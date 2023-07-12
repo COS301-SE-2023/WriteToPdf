@@ -122,8 +122,10 @@ export class FileManagerController {
     if (
       !markdownFileDTO.UserID ||
       !markdownFileDTO.MarkdownID ||
-      !markdownFileDTO.ParentFolderID ||
-      !markdownFileDTO.Path
+      (!markdownFileDTO.ParentFolderID &&
+        markdownFileDTO.ParentFolderID !== '') ||
+      (!markdownFileDTO.Path &&
+        markdownFileDTO.Path !== '')
     )
       throw new HttpException(
         'Invalid request data',
@@ -152,7 +154,8 @@ export class FileManagerController {
     if (
       !markdownFileDTO.UserID ||
       !markdownFileDTO.MarkdownID ||
-      !markdownFileDTO.Content
+      (!markdownFileDTO.Content &&
+        markdownFileDTO.Content !== '')
     )
       throw new HttpException(
         'Invalid request data',
@@ -235,7 +238,7 @@ export class FileManagerController {
     if (
       !folderDTO.UserID ||
       !folderDTO.FolderName ||
-      !folderDTO.Path
+      (!folderDTO.Path && folderDTO.Path !== '')
     )
       throw new HttpException(
         'Invalid request data',
@@ -317,8 +320,9 @@ export class FileManagerController {
     if (
       !folderDTO.UserID ||
       !folderDTO.FolderID ||
-      !folderDTO.ParentFolderID ||
-      !folderDTO.Path
+      (!folderDTO.ParentFolderID &&
+        folderDTO.ParentFolderID !== '') ||
+      (!folderDTO.Path && folderDTO.Path !== '')
     )
       throw new HttpException(
         'Invalid request data',
@@ -374,8 +378,10 @@ export class FileManagerController {
       !importDTO.UserID ||
       !importDTO.Type ||
       !importDTO.Content ||
-      !importDTO.ParentFolderID ||
-      !importDTO.Path ||
+      (!importDTO.ParentFolderID &&
+        importDTO.ParentFolderID !== '') ||
+      (!importDTO.Path &&
+        importDTO.Path !== '') ||
       !importDTO.Name
     )
       throw new HttpException(
