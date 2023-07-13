@@ -2,18 +2,13 @@ import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
 // import {NgModule} from "@angular/core";
 import { Router } from '@angular/router';
 import { TreeTable } from 'primeng/treetable';
-// import {Tree, TreeModule} from "primeng/tree";
-// import {TreeSelectModule} from "primeng/treeselect";
-// import {FormsModule} from "@angular/forms";
-// import {EditorModule} from "primeng/editor";
-// import {DropdownModule} from "primeng/dropdown";
-// import {EditComponent} from "../edit/edit.component";
 
 import { MenuItem, MessageService, TreeNode } from 'primeng/api';
 import { NodeService } from '../services/home.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { UserService } from '../services/user.service';
+import { FileManagerPopupComponent } from "../file-manager-popup/file-manager-popup.component";
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
 import { ViewChild } from '@angular/core';
 import { EditService } from '../services/edit.service';
@@ -337,7 +332,51 @@ updateTreeTableData(
     return false;
   }
 
-
+  /**
+   *
+   * @param options, must be "folder" || "move" || "document"
+   */
+  showFileManagerPopup(options: string): void {
+    if(options ===  "folder"){
+      //TODO communicate intentions to file manager pop-up
+      const ref = this.dialogService.open(FileManagerPopupComponent, {
+      header: 'Folder Creation: Select location',
+      showHeader: true,
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true
+    });
+    ref.onClose.subscribe(() => {
+      // Handle any actions after the dialog is closed
+    });
+    }
+    if(options === "move"){
+      //TODO communicate intentions to file manager pop-up
+      const ref = this.dialogService.open(FileManagerPopupComponent, {
+        header: 'Select new location',
+        showHeader: true,
+        closable: true,
+        closeOnEscape: true,
+        dismissableMask: true
+      });
+      ref.onClose.subscribe(() => {
+        // Handle any actions after the dialog is closed
+      });
+    }
+    if(options === "document"){
+      //TODO communicate intentions to file manager pop-up
+      const ref = this.dialogService.open(FileManagerPopupComponent, {
+        header: 'Select document location',
+        showHeader: true,
+        closable: true,
+        closeOnEscape: true,
+        dismissableMask: true
+      });
+      ref.onClose.subscribe(() => {
+        // Handle any actions after the dialog is closed
+      });
+    }
+  }
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
       header: 'Upload Files',
@@ -374,23 +413,17 @@ updateTreeTableData(
       });
   }
 
-  onMoveFileSelect(
-    event: any,
-    newPath: string,
-    newParentFolderID: string
-  ): void {
+  onMoveFileSelect(event: any, newPath: string, newParentFolderID: string): void {
     console.log(event);
     const file = this.nodeService.getFileDTOByID(event.key);
     this.entityToMove = event;
+    this.showFileManagerPopup("move");
     this.moveDialogVisible = true;
     console.log(file);
   }
 
-  onMoveFolderSelect(
-    event: any,
-    newPath: string,
-    newParentFolderID: string
-  ): void {
+  //TODO - implement the move folder function
+  onMoveFolderSelect(event: any, newPath: string, newParentFolderID: string): void {
     console.log(event);
     const folder = this.nodeService.getFolderDTOByID(event.key);
     this.entityToMove = event;
@@ -447,6 +480,7 @@ updateTreeTableData(
                 label: 'Folder',
                 icon: 'pi pi-fw pi-folder',
                 command: () => {
+                  this.showFileManagerPopup("folder");
                   this.createNewFolderDialogueVisible = true;
                 },
               },
@@ -454,6 +488,7 @@ updateTreeTableData(
                 label: 'Document',
                 icon: 'pi pi-fw pi-file',
                 command: () => {
+                  this.showFileManagerPopup("document");
                   this.createNewDocumentDialogueVisible = true;
                 },
               },
