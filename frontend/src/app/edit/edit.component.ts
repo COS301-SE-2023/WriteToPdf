@@ -12,6 +12,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
 import { Inject } from '@angular/core';
+import Quill from "quill";
 
 @Component({
   selector: 'app-edit',
@@ -19,7 +20,7 @@ import { Inject } from '@angular/core';
   styleUrls: ['./edit.component.scss'],
 })
 export class EditComponent implements AfterViewInit, OnInit {
-  @ViewChild('quillEditor') quillEditor: any;
+  quill: any;
   documentContent: string | undefined = '';
   fileName: string | undefined = '';
   text: any;
@@ -78,9 +79,19 @@ export class EditComponent implements AfterViewInit, OnInit {
       },
     ];
     this.fileName = this.editService.getName();
+    this.quill = new Quill('#editPage', {
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline'],
+          ['table'],
+        ],
+      },
+      theme: 'snow',
+    });
   }
   ngAfterViewInit() {
-    const quill = this.quillEditor.getQuill();
+    const quill = this.quill;
 
     setTimeout(() => {
       //Why wait 0ms? I don't know but it works
@@ -93,18 +104,6 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     quill.focus();
 
-    // quill.on('selection-change', (range: any, oldRange: any, source: any) => {
-    //   if (range) {
-    //     if (range.length == 0) {
-    //       this.setBold(quill.getFormat().bold);
-    //     } else {
-    //       var text = quill.getText(range.index, range.length);
-    //       console.log('User has highlighted', text);
-    //     }
-    //   } else {
-    //     console.log('Cursor not in the editor');
-    //   }
-    // });
 
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#E3E3E3';
@@ -115,49 +114,15 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   extractDeltaJson() {
-    const quill = this.quillEditor.getQuill();
+    const quill = this.quill.getQuill();
 
     console.log(quill.getContents());
     console.log(quill.getFormat());
   }
 
-  // flipBold() {
-  //   const quill = this.quillEditor.getQuill();
-  //   const bold = document.getElementById('bold');
-  //   if (this.bold) {
-  //     this.bold = false;
-  //     if (bold)
-  //       bold.style.backgroundColor = '#E3E3E300';
-  //     quill.format('bold', false);
-  //   }
-  //   else {
-  //     quill.format('bold', true);
-  //     this.bold = true;
-  //     if (bold)
-  //       bold.style.backgroundColor = '#E3E0E0';
-  //   }
-  // }
-
-  // setBold(isBold:boolean) {
-  //   const quill = this.quillEditor.getQuill();
-  //   const bold = document.getElementById('bold');
-  //   if (this.bold) {
-  //     this.bold = false;
-  //     if (bold)
-  //       bold.style.backgroundColor = '#E3E3E300';
-  //     quill.format('bold', false);
-  //   }
-  //   else {
-  //     quill.format('bold', true);
-  //     this.bold = true;
-  //     if (bold)
-  //       bold.style.backgroundColor = '#E3E0E0';
-  //   }
-  // }
-
   save() {
     // Save the document quill content to localStorage when changes occur
-    const quill = this.quillEditor.getQuill();
+    const quill = this.quill.getQuill();
     const contents = quill.getContents();
 
     this.fileService.saveDocument(
@@ -169,7 +134,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   async load() {
     // Load the document quill content from localStorage when changes occur
-    const quill = this.quillEditor.getQuill();
+    const quill = this.quill.getQuill();
 
     const contents = await this.fileService.retrieveDocument(
       this.editService.getMarkdownID(),
@@ -182,7 +147,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   undo() {
-    const quill = this.quillEditor.getQuill();
+    const quill = this.quill.getQuill();
     const history = quill.history;
 
     if (history.stack.undo.length > 1) {
@@ -191,7 +156,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   redo() {
-    const quill = this.quillEditor.getQuill();
+    const quill = this.quill.getQuill();
     quill.history.redo();
   }
 
@@ -236,7 +201,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   exportFile() {
-    const quill = this.quillEditor.getQuill();
+    const quill = this.quill;
     const contents = quill.getContents();
 
     const markdownID = this.editService.getMarkdownID();

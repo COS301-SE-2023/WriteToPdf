@@ -35,6 +35,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { DialogModule } from 'primeng/dialog';
+import { FileManagerPopupComponent } from './file-manager-popup/file-manager-popup.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { DialogModule } from 'primeng/dialog';
     SignupComponent,
     EditComponent,
     FileUploadPopupComponent,
+    FileManagerPopupComponent,
   ],
   imports: [
     ToolbarModule,

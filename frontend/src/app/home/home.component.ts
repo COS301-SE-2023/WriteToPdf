@@ -106,11 +106,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  updateTreeTableData(
+updateTreeTableData(
     nodes: TreeNode[],
     key: string,
     newValue: string
-  ): boolean {
+    ): boolean {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
       if (node.key === key) {
@@ -127,11 +127,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  updateTreeNodeLabel(
-    nodes: TreeNode[],
-    key: string,
-    newValue: string
-  ): boolean {
+  updateTreeNodeLabel(nodes: TreeNode[], key: string, newValue: string): boolean {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
       if (node.key === key) {
@@ -148,10 +144,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return false;
   }
 
+  //TODO Implement breadcrumb
   updateBreadcrumb(selectedNode: TreeNode | undefined) {
     // Clear the existing breadcrumb items
     this.activeDirectoryItems = [];
-
     // Traverse the selected node's ancestors to generate the breadcrumb items
     let currentNode = selectedNode;
     while (currentNode) {
@@ -176,13 +172,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // End of functions that implement editing funcitonality.
-  /**
-   *
-   * @JancoSpies, this function over here generates tree nodes from the  treetable data
-   * in essence, all that's important is that the keys remain unique and in the format as seen in
-   * home.service.ts
-   */
+  // End of functions that implement editing functionality.
   generateTreeNodes(data: any[]): TreeNode[] {
     return data.map((item) => {
       const node: TreeNode = {
@@ -282,7 +272,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   //TODO filter events from click on the left side directory contents need to rather use
   // a filter that finds the relevant directories via keys, not the actual text of the
-  // file's name or something like that.
+  // file's name.
   filterTable(filterEvent: any, searchCollapseExpandRoot: number) {
     let filterValue = '';
     let explodeOrCollapse: boolean = true;
@@ -327,6 +317,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       explodeOrCollapse
     );
   }
+
   // a helper function for filterTable that searches for child nodes inside the treeTable
   // that may be included into a parent node
   // this prevents searching in only the first node layer.
@@ -345,17 +336,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
     return false;
   }
-  // Below is the code that implements file uploading.
-  onUpload(event: any) {
-    for (let file of event.files) {
-      this.uploadedFiles.push(file);
-    }
-    this.messageService.add({
-      severity: 'info',
-      summary: 'File Uploaded',
-      detail: '',
-    });
-  }
+
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
@@ -365,12 +346,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
       closeOnEscape: true,
       dismissableMask: true,
     });
-
     // Subscribe to dialog close event if needed
     ref.onClose.subscribe(() => {
       // Handle any actions after the dialog is closed
     });
   }
+
   // this code updates the background layer to not be adjusted from the edit page after navigation.
   ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
@@ -526,11 +507,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
           {
             separator: true,
           },
-          // {
+          // {//TODO implement downloading a file from the database
           //   label: 'Export',
           //   icon: 'pi pi-fw pi-external-link',
           //   command: () => {
-          //     //TODO implement downloading a file from the database
+          //
           //   }
           // }
         ],
