@@ -3,8 +3,7 @@ import {
   Component,
   ElementRef,
   OnInit,
-  ViewChild,
-} from '@angular/core';
+  ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
@@ -14,6 +13,10 @@ import { EditService } from '../services/edit.service';
 import { Inject } from '@angular/core';
 import Quill from "quill";
 
+import {CKEditorModule} from "@ckeditor/ckeditor5-angular";
+import {CKEditorComponent} from "@ckeditor/ckeditor5-angular";
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import * as CKE from '@ckeditor/ckeditor5-build-classic';
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
@@ -28,7 +31,13 @@ export class EditComponent implements AfterViewInit, OnInit {
   sidebarVisible: boolean = true;
   exportDialogVisible: boolean = false;
   public speedDialItems!: MenuItem[];
-
+  public Editor? = ClassicEditor;
+  public editorContent = '';
+  public editorConfig = {
+    plugins: [ 'Image' ],
+    toolbar: [ 'imageUpload', '|', 'bold', 'italic', 'bulletedList', 'numberedList', 'blockQuote' ],
+    // Additional configuration options for the editor
+  };
   constructor(
     private elementRef: ElementRef,
     @Inject(Router) private router: Router,
@@ -79,21 +88,14 @@ export class EditComponent implements AfterViewInit, OnInit {
       },
     ];
     this.fileName = this.editService.getName();
-    this.quill = new Quill('#editPage', {
-      modules: {
-        toolbar: [
-          [{ header: [1, 2, 3, false] }],
-          ['bold', 'italic', 'underline'],
-          ['table'],
-        ],
-      },
-      theme: 'snow',
-    });
   }
-  ngAfterViewInit() {
-    const quill = this.quill;
 
+
+  ngAfterViewInit() {
+    const quill = this.quillEditor.getQuill();
     setTimeout(() => {
+      const htmlContent = '<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Cell 1</td><td>Cell 2</td></tr></table>';
+      quill.clipboard.dangerouslyPasteHTML(htmlContent);
       //Why wait 0ms? I don't know but it works
       const contents = this.editService.getContent();
       this.documentContent = contents;
@@ -101,10 +103,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         quill.setContents(JSON.parse(contents));
       }
     }, 0);
-
     quill.focus();
-
-
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#E3E3E3';
   }
@@ -114,7 +113,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   extractDeltaJson() {
-    const quill = this.quill.getQuill();
+    const quill = this.quillEditor.getQuill();
 
     console.log(quill.getContents());
     console.log(quill.getFormat());

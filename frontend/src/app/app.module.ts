@@ -36,6 +36,11 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { DialogModule } from 'primeng/dialog';
 import { FileManagerPopupComponent } from './file-manager-popup/file-manager-popup.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
+import EssentialsPlugin from '@ckeditor/ckeditor5-essentials/src/essentials';
+import ImagePlugin from '@ckeditor/ckeditor5-image/src/image';
+import ImageUploadPlugin from '@ckeditor/ckeditor5-image/src/imageupload';
 
 @NgModule({
   declarations: [
@@ -50,6 +55,7 @@ import { FileManagerPopupComponent } from './file-manager-popup/file-manager-pop
     FileManagerPopupComponent,
   ],
   imports: [
+    CKEditorModule,
     ToolbarModule,
     ToggleButtonModule,
     ToastModule,
