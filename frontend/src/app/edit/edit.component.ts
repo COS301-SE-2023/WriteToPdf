@@ -92,32 +92,29 @@ export class EditComponent implements AfterViewInit, OnInit {
 
 
   ngAfterViewInit() {
-    const quill = this.quillEditor.getQuill();
-    setTimeout(() => {
-      const htmlContent = '<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Cell 1</td><td>Cell 2</td></tr></table>';
-      quill.clipboard.dangerouslyPasteHTML(htmlContent);
-      //Why wait 0ms? I don't know but it works
-      const contents = this.editService.getContent();
-      this.documentContent = contents;
-      if (contents) {
-        quill.setContents(JSON.parse(contents));
-      }
-    }, 0);
-    quill.focus();
-    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
-      '#E3E3E3';
+    //TODO rework the commented code below to work for CKEditor.
+
+    // const quill = this.quillEditor.getQuill();
+    // setTimeout(() => {
+    //   const htmlContent = '<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Cell 1</td><td>Cell 2</td></tr></table>';
+    //   quill.clipboard.dangerouslyPasteHTML(htmlContent);
+    //   //Why wait 0ms? I don't know but it works
+    //   const contents = this.editService.getContent();
+    //   this.documentContent = contents;
+    //   if (contents) {
+    //     quill.setContents(JSON.parse(contents));
+    //   }
+    // }, 0);
+    // quill.focus();
+    // this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
+    //   '#E3E3E3';
   }
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
 
-  extractDeltaJson() {
-    const quill = this.quillEditor.getQuill();
 
-    console.log(quill.getContents());
-    console.log(quill.getFormat());
-  }
 
   save() {
     // Save the document quill content to localStorage when changes occur
