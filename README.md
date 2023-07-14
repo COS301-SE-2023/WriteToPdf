@@ -74,6 +74,15 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issues</a> and <a href="https://github.com/COS301-SE-2023/WriteToPdf/projects?query=is%3Aopen">Github Projects</a> to organise our team, with different members being assigned to specific tasks to ensure effective use of each member’s time. 
 
 
+## Branching strategy
+The main branch is the live/deployed branch.
+Test branch is used to run all tests. These two branches are the stable branches.
+The codecov branch is used to merge completed features into and is the branch where tests get fixed before being pushed to the Test.
+Feature branches get created off of the Test branch and be called dev/feature_name. Once a feature is completed it gets merged into codecov.
+
+The flow of merging is: dev/feature -> codecov -> test -> main
+
+
 ## Repository Structure
 The repository follows a well-organized structure to meet our client's requirements and ensure efficient development and maintenance. It consists of the following folders:
 ```
