@@ -12,6 +12,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
 import { Inject } from '@angular/core';
+import { set } from 'cypress/types/lodash';
 
 @Component({
   selector: 'app-edit',
@@ -34,7 +35,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private dialogService: DialogService,
     private fileService: FileService,
     private editService: EditService
-  ) {}
+  ) { }
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
@@ -197,15 +198,27 @@ export class EditComponent implements AfterViewInit, OnInit {
   hideSideBar() {
     // get asset sidebar and set display none
     const sidebar = document.getElementsByClassName('assetSidebar')[0];
-    if (sidebar) {
+    const editor = document.getElementsByClassName('editor')[0];
+    const showAssetSidebar = document.getElementsByClassName('showAssetSidebar')[0];
+    if (sidebar && editor && showAssetSidebar) {
       if (this.sidebarVisible) {
+        editor.setAttribute('style', 'left:130px');
+        editor.setAttribute('style', 'padding-right: 130px');
         sidebar.setAttribute('style', 'display:none');
+        showAssetSidebar.setAttribute('style', 'display:block');
         this.sidebarVisible = false;
       } else {
+        editor.setAttribute('style', 'left:260px');
+        editor.setAttribute('style', 'padding-right: 0px');
         sidebar.setAttribute('style', 'display:block');
+        showAssetSidebar.setAttribute('style', 'display:none');
         this.sidebarVisible = true;
       }
     }
+
+    // setTimeout(() => {
+    //   this.hideSideBar();
+    // },3000);
   }
 
   rename() {
