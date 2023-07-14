@@ -1,7 +1,6 @@
-import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { ImageService } from '../services/image.service';
-import { Observable, Subject } from 'rxjs';
-import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-camera',
@@ -9,61 +8,67 @@ import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
   styleUrls: ['./camera.component.scss'],
 })
 export class CameraComponent {
-  private trigger: Subject<any> = new Subject();
-  public webcamImage!: WebcamImage;
-  private nextWebcam: Subject<any> = new Subject();
+
+  @ViewChild('videoElement', { static: false }) videoElement!: ElementRef;
+
   sysImage = '';
-  public webcamWidth: number = 0;
-  public webcamHeight: number = 0;
   public sidebarVisible = false;
 
-  constructor(private elementRef: ElementRef, private imageService: ImageService) { }
+  videoRef: any;
+
+  constructor(private elementRef: ElementRef, private imageService: ImageService, private router: Router) { }
 
   ngOnInit() {
-    this.trigger.next(void 0);
-    this.setWebcamSize();
+    this.videoRef = document.getElementById('camera');
+    this.setupCamera();
+  }
+
+  ngAfterViewInit() {
+    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
+      '#FFFFFF';
+    this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
+  }
+
+  navigateToPage(pageName: string) {
+    this.disableCamera();
+    this.router.navigate([`/${pageName}`]);
+  }
+
+  setupCamera() {
+    navigator.mediaDevices.getUserMedia({
+      video: {},
+      audio: false
+    }).then(stream => {
+      this.videoRef.srcObject = stream;
+    });
+  }
+
+  disableCamera() {
+    this.videoRef.srcObject.getTracks().forEach((track: { stop: () => any; }) => track.stop());
   }
 
   public getSnapshot(): void {
-    this.trigger.next(void 0);
+    const video: HTMLVideoElement = this.videoRef;
+
+    // Create a canvas element with reduced dimensions
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth / 2;  // Reduce the width by half
+    canvas.height = video.videoHeight / 2;  // Reduce the height by half
+
+    // Draw the current frame of the video on the canvas
+    const ctx = canvas.getContext('2d');
+    ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Get the data URL of the canvas as a PNG image with reduced quality
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);  // Adjust the quality (0.0 to 1.0)
+
+    this.sysImage = dataUrl;
+    console.log(dataUrl);
   }
 
-  public captureImg(webcamImage: WebcamImage): void {
-    this.webcamImage = webcamImage;
-    this.sysImage = webcamImage!.imageAsDataUrl;
-    console.info('got webcam image', this.sysImage);
-  }
-
-  public get invokeObservable(): Observable<any> {
-    return this.trigger.asObservable();
-  }
-
-  public get nextWebcamObservable(): Observable<any> {
-    return this.nextWebcam.asObservable();
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onWindowResize(event: Event) {
-    this.setWebcamSize();
-  }
-
-  setWebcamSize() {
-    const deviceWidth = window.innerWidth;
-    const deviceHeight = window.innerHeight;
-
-    // Calculate the desired width and height based on the device size
-    // Adjust the calculations as per your requirements
-    if (deviceWidth > deviceHeight) {
-      this.webcamWidth = deviceHeight * 1;
-      this.webcamHeight = deviceHeight * 1;
-    }
-    else {
-      this.webcamWidth = deviceWidth * 1;
-      this.webcamHeight = deviceWidth * 1;
-    }
-  }
 
   uploadImage() {
     this.imageService.uploadImage(this.sysImage, '');
   }
+
 }

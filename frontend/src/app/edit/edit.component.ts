@@ -214,7 +214,11 @@ export class EditComponent implements AfterViewInit, OnInit {
       this.editService.getMarkdownID(),
       this.fileName,
       this.editService.getPath()
-    );
+    ).then((Boolean) => {
+      if (Boolean) {
+        this.editService.setName(this.fileName);
+      }
+    });
   }
 
   async delete() {

@@ -1,17 +1,19 @@
 <div class="container">
 
-  <div class="header"></div>
+  <div class="header">
+    <p-button class="backButton" icon="pi pi-arrow-left" label="Back" styleClass="p-button-rounded" (click)="navigateToPage('edit')"></p-button>
+  </div>
   <div class="webcamWrapper">
-    <webcam [width]="webcamWidth" [height]="webcamHeight" [trigger]="invokeObservable"
-      (imageCapture)="captureImg($event)">
-    </webcam>
+    <video class="camera" id="camera" autoplay width="1000px" height="800px"></video>
   </div>
 
   <p-sidebar [(visible)]="sidebarVisible" [fullScreen]="true">
     <div class="imageWrapper">
-      <img [src]="webcamImage.imageAsDataUrl" height="webcamHeight" width="webcamWidth" alt="" />
+      <img class="previewImg" [src]="sysImage" alt="" />
     </div>
-    <p-button class="uploadImage" title="Upload Image" (click)="uploadImage()">Upload Image</p-button>
+    <div class="buttonWrapper">
+      <p-button class="uploadImage" title="Upload Image" (click)="uploadImage()">Upload Image</p-button>
+    </div>
   </p-sidebar>
   <div class="footer">
     <div (click)="sidebarVisible = true" (click)="getSnapshot()" class="capture"></div>

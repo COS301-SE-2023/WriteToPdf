@@ -1,18 +1,20 @@
 .container{
+    display: flex;
     width: 100vw;
     height: 100vh;
+    flex-direction: column;
 }
 
-.webcamWrapper {
-    width: -moz-fit-content;
-    width: fit-content;
-    margin: auto;
-}
 
+.backButton{
+    margin:auto 0 auto 20px;
+}
 .imageWrapper {
     width: -moz-fit-content;
     width: fit-content;
     margin: auto;
+    width:80vw;
+    height: 85vh;
 }
 
 .header {
@@ -20,12 +22,14 @@
     margin-bottom:10px;
     height: 50px;
     background-color: grey;
+    width:100vw;
 }
 
 .footer {
     display: flex;
     background-color: grey;
     margin-top:10px;
+    width:100vw;
 }
 
 .capture {
@@ -35,4 +39,25 @@
     border-radius: 25px;
     background-color: white;
     border: 1px solid white;
+}
+
+.camera {
+    max-height: 85vh;
+}
+
+.webcamWrapper {
+    height: 85%;
+    width: -moz-fit-content;
+    width: fit-content;
+    margin: auto;
+}
+
+.buttonWrapper{
+    text-align: right;
+}
+
+.previewImg{
+    width: 80vw;
+        max-height: 85vh;
+    object-fit: contain;
 }

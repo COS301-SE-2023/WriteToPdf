@@ -23,6 +23,7 @@ export class ImageService {
       this.sendUploadImageData(content, path).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 201) {
+            console.log('Image uploaded successfully');
             this.messageService.add({
               severity: 'success',
               summary: 'Image uploaded successfully',
