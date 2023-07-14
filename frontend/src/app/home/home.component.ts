@@ -56,6 +56,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public createNewFolderDialogueVisible: boolean = false;
   public entityName: string = '';
   uploadedFiles: any[] = [];
+  contextMenuItems: any[];
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
   constructor(@Inject(Router) private router: Router,
@@ -68,7 +69,31 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private editService: EditService,
     private folderService: FolderService
-  ) {}
+  ) {
+
+    this.contextMenuItems = [
+      {
+        label: 'Create New Folder',
+        icon: 'pi pi-folder-plus',
+        // command: () => this.createNewFolder()
+      },
+      {
+        label: 'Create New File',
+        icon: 'pi pi-file',
+        // command: () => this.createNewFile()
+      },
+      {
+        label: 'Enclose in Folder',
+        icon: 'pi pi-folder-plus',
+        // command: () => this.encloseSelectionInFolder()
+      },
+      {
+        label: 'Delete',
+        icon: 'pi pi-trash',
+        // command: () => this.deleteSelection()
+      }
+    ];
+  }
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);

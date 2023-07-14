@@ -37,6 +37,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { DialogModule } from 'primeng/dialog';
 import { FileManagerPopupComponent } from './file-manager-popup/file-manager-popup.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import {ContextMenu, ContextMenuModule} from "primeng/contextmenu";
 import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
 import EssentialsPlugin from '@ckeditor/ckeditor5-essentials/src/essentials';
 import ImagePlugin from '@ckeditor/ckeditor5-image/src/image';
@@ -82,6 +83,7 @@ import ImageUploadPlugin from '@ckeditor/ckeditor5-image/src/imageupload';
     ConfirmPopupModule,
     ToastModule,
     DialogModule,
+    ContextMenuModule,
   ],
   providers: [NodeService, UserService, MessageService, DialogService],
   bootstrap: [AppComponent],
