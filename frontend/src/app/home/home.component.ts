@@ -347,6 +347,9 @@ updateTreeTableData(
       dismissableMask: true
     });
     ref.onClose.subscribe(() => {
+      //If the user creates a new folder we want it to be reflected in our home page,
+      //So we need to call ngOnInit once more to update the homepage after closing.
+      this.ngOnInit();
       // Handle any actions after the dialog is closed
     });
     }
