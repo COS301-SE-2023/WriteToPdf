@@ -74,4 +74,11 @@ export class ImageManagerService {
       removeImageDTO,
     );
   }
+
+  renameAsset(renameImageDTO: AssetDTO) {
+    // Update database
+    return this.assetsService.renameAsset(
+      renameImageDTO,
+    );
+  }
 }

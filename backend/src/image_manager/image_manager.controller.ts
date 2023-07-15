@@ -71,6 +71,27 @@ export class ImageManagerController {
     );
   }
 
+  @Post('rename_image')
+  @HttpCode(HttpStatus.OK)
+  renameImage(
+    @Body()
+    renameImageDTO: AssetDTO,
+  ) {
+    if (
+      !renameImageDTO.UserID ||
+      !renameImageDTO.AssetID ||
+      !renameImageDTO.FileName
+    )
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.imageManagerService.renameAsset(
+      renameImageDTO,
+    );
+  }
+
   @Post()
   create(
     @Body()

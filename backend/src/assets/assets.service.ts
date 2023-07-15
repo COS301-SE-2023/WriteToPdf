@@ -43,4 +43,15 @@ export class AssetsService {
   removeOne(assetID: string) {
     return this.assetsRepository.delete(assetID); // DELETE FROM assets WHERE AssetID = assetID;
   }
+
+  async renameAsset(updatedAssetDTO: AssetDTO) {
+    const asset =
+      await this.assetsRepository.findOneBy({
+        AssetID: updatedAssetDTO.AssetID,
+      });
+
+    asset.FileName = updatedAssetDTO.FileName;
+
+    return this.assetsRepository.save(asset);
+  }
 }
