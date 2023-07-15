@@ -142,13 +142,16 @@
 
       <div class="alignDiv"></div>
 
-      <div class="assetWrapper">
+      
+      <div *ngFor="let obj of assets" class="assetWrapper">
+
         <div class="assetHeader">
           <div class="assetName">
-            <h4 class="assetNameText">Asset Name</h4>
+            <h4 class="assetNameText">{{obj.FileName}}</h4>
           </div>
           <div class="copyAsset">
-            <img
+            <img 
+              (click)="retrieveAsset(obj.AssetId)"
               class="copyAssetIcon"
               src="assets/Icons/editIcons/copy.svg"
               alt=""

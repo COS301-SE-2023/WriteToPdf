@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ImageDTO } from '../services/dto/image.dto';
+import { AssetDTO } from '../services/dto/asset.dto';
+import { RetrieveAllImagesDTO } from '../services/dto/retrieve_all_images.dto';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -58,28 +60,61 @@ export class ImageService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveImage(path: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      this.sendRetrieveImageData(path).subscribe({
+  retrieveAsset(assetId:number): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.sendRetrieveAssetData(assetId).subscribe({
         next: (response: HttpResponse<any>) => {
-          if (response.status === 200) {
+          if (response.status === 201) {
             console.log('Image retrieved successfully');
-            resolve(response.body.Content);
+            resolve(response.body);
           } else {
-            resolve('');
+            resolve(null);
           }
         },
       });
     });
   }
 
-  sendRetrieveImageData(path: string): Observable<HttpResponse<any>> {
+  sendRetrieveAssetData( assetId:number ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}image_manager/retrieve`;
-    const body = new ImageDTO();
+    const url = `${environmentURL}image_manager/retrieve_image`;
+    const body = new AssetDTO();
 
     body.UserID = this.userService.getUserID();
-    body.Path = path;
+    body.AssetID = assetId;
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+
+  retrieveAll(): Promise<any[]> {
+    console.log('Retrieving all images');
+    return new Promise<any[]>((resolve, reject) => {
+      this.sendRetrieveAllData().subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          if (response.status === 201) {
+            console.log('Images retrieved successfully');
+            console.log(response.body.Content);
+            resolve(response.body);
+          } else {
+            resolve([]);
+          }
+        },
+      });
+    });
+  }
+
+  sendRetrieveAllData(): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}image_manager/retrieve_all`;
+    const body = new RetrieveAllImagesDTO();
+
+    body.UserID = this.userService.getUserID();
 
     const headers = new HttpHeaders().set(
       'Authorization',

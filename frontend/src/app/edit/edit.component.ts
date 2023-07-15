@@ -8,9 +8,11 @@ import {
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
+import { ImageService } from '../services/image.service';
 import { Inject } from '@angular/core';
 import { set } from 'cypress/types/lodash';
 
@@ -28,13 +30,16 @@ export class EditComponent implements AfterViewInit, OnInit {
   sidebarVisible: boolean = true;
   exportDialogVisible: boolean = false;
   public speedDialItems!: MenuItem[];
+  assets: any[] = [];
 
   constructor(
     private elementRef: ElementRef,
     @Inject(Router) private router: Router,
     private dialogService: DialogService,
     private fileService: FileService,
-    private editService: EditService
+    private editService: EditService,
+    private imageService: ImageService,
+    private clipboard: Clipboard
   ) { }
 
   showFileUploadPopup(): void {
@@ -47,7 +52,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     });
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.speedDialItems = [
       {
         icon: 'pi pi-pencil',
@@ -78,6 +83,10 @@ export class EditComponent implements AfterViewInit, OnInit {
       },
     ];
     this.fileName = this.editService.getName();
+
+    console.log('undo');
+    this.assets = await this.imageService.retrieveAll();
+    console.log(this.assets);
   }
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
@@ -181,7 +190,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     console.log(contents);
   }
 
-  undo() {
+  async undo() {
     const quill = this.quillEditor.getQuill();
     const history = quill.history;
 
@@ -260,6 +269,14 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     if (markdownID && name) {
       this.fileService.exportDocument(markdownID, name, contents, 'txt');
+    }
+  }
+
+  async retrieveAsset(assetId:number){
+    const asset = await this.imageService.retrieveAsset(assetId);
+    console.log(asset);
+    if (asset) {
+      this.clipboard.copy(asset.Content);
     }
   }
 }

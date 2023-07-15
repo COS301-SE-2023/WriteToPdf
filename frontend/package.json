@@ -16,6 +16,7 @@
   "dependencies": {
     "@angular-builders/jest": "^16.0.0",
     "@angular/animations": "^16.0.2",
+    "@angular/cdk": "^16.1.5",
     "@angular/common": "^16.0.2",
     "@angular/compiler": "^16.0.2",
     "@angular/core": "^16.0.2",
