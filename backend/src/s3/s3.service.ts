@@ -324,19 +324,8 @@ export class S3Service {
 
   //// Image Management
 
-  async saveImage(saveImageDTO: ImageDTO) {
-    console.log(saveImageDTO);
-    const imageID = SHA256(
-      saveImageDTO.UserID.toString() +
-        new Date().getTime().toString(),
-    ).toString();
-
-    saveImageDTO.ImageID = imageID;
-    let filePath = '';
-    if (saveImageDTO.Path === '')
-      filePath = `${saveImageDTO.UserID}`;
-    else filePath = `${saveImageDTO.UserID}`; // Local Storage: filePath = `${saveImageDTO.UserID}/${saveImageDTO.Path}`;
-    console.log(saveImageDTO);
+  async saveImage(saveImageDTO: AssetDTO) {
+    let filePath = `${saveImageDTO.UserID}`;
 
     try {
       await mkdir(`./storage/${filePath}`, {
@@ -353,9 +342,11 @@ export class S3Service {
       Buffer.from(saveImageDTO.Content),
     );
 
+    filePath = `${saveImageDTO.UserID}/${saveImageDTO.AssetID}`;
+
     try {
       await writeFile(
-        `./storage/${filePath}/${imageID}`,
+        `./storage/${filePath}/${saveImageDTO.AssetID}`,
         fileData,
         'utf-8',
       );
