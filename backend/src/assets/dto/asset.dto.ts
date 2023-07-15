@@ -8,6 +8,7 @@ export class AssetDTO {
   Size: number;
   ParentFolderID: string;
   UserID: number;
+  Content: string;
 
   constructor() {
     this.AssetID = undefined;
@@ -19,5 +20,6 @@ export class AssetDTO {
     this.Size = undefined;
     this.ParentFolderID = undefined;
     this.UserID = undefined;
+    this.Content = undefined;
   }
 }
