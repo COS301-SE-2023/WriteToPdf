@@ -21,7 +21,7 @@ export class ImageManagerController {
   @Post('upload')
   upload(
     @Body()
-    uploadImageDto: ImageDTO,
+    uploadImageDto: AssetDTO,
   ) {
     return this.imageManagerService.upload(
       uploadImageDto,
