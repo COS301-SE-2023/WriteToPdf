@@ -31,7 +31,8 @@ export class AssetsService {
     newAssetDto.ConvertedElement = 'null';
     newAssetDto.Image = 'null';
     newAssetDto.DateCreated = new Date();
-    newAssetDto.Size = uploadAssetDto.Size;
+    newAssetDto.Size =
+      uploadAssetDto.Content.length;
     newAssetDto.ParentFolderID = '0';
     newAssetDto.UserID = 6;
     const newAsset =
