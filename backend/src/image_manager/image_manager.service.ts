@@ -3,6 +3,7 @@ import { ImageDTO } from './dto/image.dto';
 import { S3Service } from '../s3/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import { RetrieveAllImagesDTO } from './dto/retrieve_all_images.dto';
+import { AssetDTO } from '../assets/dto/asset.dto';
 
 @Injectable()
 export class ImageManagerService {
@@ -48,5 +49,11 @@ export class ImageManagerService {
     retrieveAllImagesDTO: RetrieveAllImagesDTO,
   ) {
     return this.assetsService.retrieveAll();
+  }
+
+  retrieveOne(retrieveAssetDto: AssetDTO) {
+    return this.s3Service.retrieveAsset(
+      retrieveAssetDto,
+    );
   }
 }
