@@ -24,7 +24,7 @@ export class AssetsService {
     uploadAssetDto: ImageDTO,
   ): Promise<Asset> {
     const newAssetDto = new AssetDTO();
-    newAssetDto.AssetID = '123';
+    newAssetDto.AssetID = uploadAssetDto.ImageID;
     newAssetDto.Format = 'image';
     newAssetDto.FileName =
       uploadAssetDto.FileName;
@@ -40,7 +40,7 @@ export class AssetsService {
     return this.assetsRepository.save(newAsset);
   }
 
-  retrieveAll(): Promise<Asset[]> {
+  retrieveAll() {
     return this.assetsRepository.find(); // SELECT * FROM assets;
   }
 }
