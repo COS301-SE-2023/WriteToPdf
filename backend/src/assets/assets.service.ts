@@ -24,8 +24,7 @@ export class AssetsService {
     uploadAssetDto: ImageDTO,
   ): Promise<Asset> {
     const newAssetDto = new AssetDTO();
-    newAssetDto.AssetID =
-      uploadAssetDto.ImageID + '';
+    newAssetDto.AssetID = 0; // auto-incremented value 0 is ignored by the database
     newAssetDto.Format = 'image';
     newAssetDto.FileName =
       uploadAssetDto.FileName;
