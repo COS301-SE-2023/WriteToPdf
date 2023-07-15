@@ -1,13 +1,13 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity('ASSETS')
 export class Asset {
-  @PrimaryGeneratedColumn()
-  AssetID: number;
+  @PrimaryColumn()
+  AssetID: string;
 
   @Column()
   Format: string;
