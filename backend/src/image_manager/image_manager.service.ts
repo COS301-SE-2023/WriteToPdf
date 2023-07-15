@@ -64,6 +64,12 @@ export class ImageManagerService {
   }
 
   deleteAsset(removeImageDTO: AssetDTO) {
+    // Delete from database
+    this.assetsService.removeOne(
+      removeImageDTO.AssetID,
+    );
+
+    // Delete from S3/local storage
     return this.s3Service.deleteAsset(
       removeImageDTO,
     );

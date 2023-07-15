@@ -39,4 +39,8 @@ export class AssetsService {
   retrieveAll() {
     return this.assetsRepository.find(); // SELECT * FROM assets;
   }
+
+  removeOne(assetID: string) {
+    return this.assetsRepository.delete(assetID); // DELETE FROM assets WHERE AssetID = assetID;
+  }
 }
