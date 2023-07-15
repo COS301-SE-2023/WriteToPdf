@@ -10,6 +10,7 @@ import {
 import { ImageManagerService } from './image_manager.service';
 import { ImageDTO } from './dto/image.dto';
 import { RetrieveAllImagesDTO } from './dto/retrieve_all_images.dto';
+import { AssetDTO } from 'src/assets/dto/asset.dto';
 
 @Controller('image_manager')
 export class ImageManagerController {
@@ -28,12 +29,22 @@ export class ImageManagerController {
   }
 
   @Post('retrieve_all')
-  retrieve(
+  retrieveAll(
     @Body()
     retrieveAllImagesDto: RetrieveAllImagesDTO,
   ) {
     return this.imageManagerService.retrieveAll(
       retrieveAllImagesDto,
+    );
+  }
+
+  @Post('retrieve_image')
+  retrieveImage(
+    @Body()
+    retrieveAssetDto: AssetDTO,
+  ) {
+    return this.imageManagerService.retrieveOne(
+      retrieveAssetDto,
     );
   }
 
