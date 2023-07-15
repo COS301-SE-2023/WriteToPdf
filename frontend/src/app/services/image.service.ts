@@ -64,6 +64,7 @@ export class ImageService {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveAssetData(assetId).subscribe({
         next: (response: HttpResponse<any>) => {
+          console.log(response);
           if (response.status === 201) {
             console.log('Image retrieved successfully');
             resolve(response.body);
