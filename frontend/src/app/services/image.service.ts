@@ -60,7 +60,7 @@ export class ImageService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveAsset(assetId:number): Promise<any> {
+  retrieveAsset(assetId:string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveAssetData(assetId).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -76,7 +76,7 @@ export class ImageService {
     });
   }
 
-  sendRetrieveAssetData( assetId:number ): Observable<HttpResponse<any>> {
+  sendRetrieveAssetData( assetId:string ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}image_manager/retrieve_image`;
     const body = new AssetDTO();
@@ -116,6 +116,37 @@ export class ImageService {
     const body = new RetrieveAllImagesDTO();
 
     body.UserID = this.userService.getUserID();
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  deleteAsset(assetId:string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendDeleteAssetData(assetId).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          if (response.status === 201) {
+            console.log('Image deleted successfully');
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+      });
+    });
+  }
+
+  sendDeleteAssetData( assetId:string ): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}image_manager/delete_image`;
+    const body = new AssetDTO();
+
+    body.UserID = this.userService.getUserID();
+    body.AssetID = assetId;
 
     const headers = new HttpHeaders().set(
       'Authorization',

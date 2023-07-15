@@ -149,10 +149,17 @@
           <div class="assetName">
             <h4 class="assetNameText">{{obj.FileName}}</h4>
           </div>
+          <div class="deleteAsset">
+            <img
+              class="deleteAssetIcon"
+              src="assets/Icons/editIcons/delete.png"
+              alt=""
+              (click)="deleteAsset(obj.AssetID)"
+            />
+          </div>
           <div class="copyAsset">
             <img 
               (click)="retrieveAsset(obj.AssetID)"
-              class="copyAssetIcon"
               src="assets/Icons/editIcons/copy.svg"
               alt=""
             />

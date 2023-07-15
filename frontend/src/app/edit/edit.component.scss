@@ -266,8 +266,18 @@ div[contenteditable="true"]:focus {
 }
 
 .copyAsset {
+    margin-left: 10px;
+}
+
+.deleteAsset{
     margin-right: 0;
     margin-left: auto;
+
+}
+
+.deleteAssetIcon{
+    width:20px;
+    height:20px;
 }
 
 .menu {

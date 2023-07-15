@@ -14,6 +14,7 @@ import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
 import { ImageService } from '../services/image.service';
 import { Inject } from '@angular/core';
+import { MessageService } from 'primeng/api';
 import { set } from 'cypress/types/lodash';
 
 @Component({
@@ -39,7 +40,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     private fileService: FileService,
     private editService: EditService,
     private imageService: ImageService,
-    private clipboard: Clipboard
+    private clipboard: Clipboard,
+    private messageService: MessageService
   ) { }
 
   showFileUploadPopup(): void {
@@ -272,11 +274,17 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
   }
 
-  async retrieveAsset(assetId:number){
+  async retrieveAsset(assetId:string){
     const asset = await this.imageService.retrieveAsset(assetId);
     console.log(asset);
     if (asset) {
       this.clipboard.copy(asset.Content);
+      this.messageService.add({severity:'success', summary:'Success', detail:'Asset copied to clipboard'});
     }
+  }
+
+  async deleteAsset(assetId:string){
+    const asset = await this.imageService.deleteAsset(assetId);
+    console.log(asset);
   }
 }
