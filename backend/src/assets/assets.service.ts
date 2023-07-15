@@ -3,7 +3,6 @@ import { Asset } from './entities/asset.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
-import { ImageDTO } from 'src/image_manager/dto/image.dto';
 import { AssetDTO } from './dto/asset.dto';
 
 @Injectable()
@@ -21,22 +20,16 @@ export class AssetsService {
   // }
 
   createImage(
-    uploadAssetDto: ImageDTO,
+    uploadAssetDTO: AssetDTO,
   ): Promise<Asset> {
-    const newAssetDto = new AssetDTO();
-    newAssetDto.AssetID = 0; // auto-incremented value 0 is ignored by the database
-    newAssetDto.Format = 'image';
-    newAssetDto.FileName =
-      uploadAssetDto.FileName;
-    newAssetDto.ConvertedElement = 'null';
-    newAssetDto.Image = 'null';
-    newAssetDto.DateCreated = new Date();
-    newAssetDto.Size =
-      uploadAssetDto.Content.length;
-    newAssetDto.ParentFolderID = '0';
-    newAssetDto.UserID = 6;
-    const newAsset =
-      this.assetsRepository.create(newAssetDto);
+    uploadAssetDTO.Format = 'image';
+    uploadAssetDTO.DateCreated = new Date();
+    uploadAssetDTO.Size =
+      uploadAssetDTO.Content.length;
+    uploadAssetDTO.ParentFolderID = '1';
+    const newAsset = this.assetsRepository.create(
+      uploadAssetDTO,
+    );
     return this.assetsRepository.save(newAsset);
   }
 
