@@ -4,6 +4,7 @@ import { S3Service } from '../s3/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import { RetrieveAllImagesDTO } from './dto/retrieve_all_images.dto';
 import { AssetDTO } from '../assets/dto/asset.dto';
+import { SHA256 } from 'crypto-js';
 
 @Injectable()
 export class ImageManagerService {
@@ -32,10 +33,15 @@ export class ImageManagerService {
     return `This action removes a #${id} imageManager`;
   }
 
-  upload(
-    uploadImageDto: ImageDTO,
-  ): Promise<ImageDTO> {
+  upload(uploadImageDto: AssetDTO) {
     // TODO place the image in the database
+    const assetID = SHA256(
+      uploadImageDto.UserID.toString() +
+        new Date().getTime().toString(),
+    ).toString();
+
+    uploadImageDto.AssetID = assetID;
+
     this.assetsService.createImage(
       uploadImageDto,
     );
