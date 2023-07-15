@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ImageManagerService } from './image_manager.service';
 import { ImageDTO } from './dto/image.dto';
+import { RetrieveAllImagesDTO } from './dto/retrieve_all_images.dto';
 
 @Controller('image_manager')
 export class ImageManagerController {
@@ -23,6 +24,16 @@ export class ImageManagerController {
   ) {
     return this.imageManagerService.upload(
       uploadImageDto,
+    );
+  }
+
+  @Post('retrieve_all')
+  retrieve(
+    @Body()
+    retrieveAllImagesDto: RetrieveAllImagesDTO,
+  ) {
+    return this.imageManagerService.retrieveAll(
+      retrieveAllImagesDto,
     );
   }
 
