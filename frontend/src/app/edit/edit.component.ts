@@ -11,12 +11,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
 import { Inject } from '@angular/core';
-import Quill from "quill";
-
-import {CKEditorModule} from "@ckeditor/ckeditor5-angular";
-import {CKEditorComponent} from "@ckeditor/ckeditor5-angular";
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import * as CKE from '@ckeditor/ckeditor5-build-classic';
+import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
@@ -31,12 +26,17 @@ export class EditComponent implements AfterViewInit, OnInit {
   sidebarVisible: boolean = true;
   exportDialogVisible: boolean = false;
   public speedDialItems!: MenuItem[];
-  public Editor? = ClassicEditor;
-  public editorContent = '';
+  public Editor = DecoupledEditor;
+  public editorData = '<p>Hello, world!</p>'; // Initial content of the editor
   public editorConfig = {
-    plugins: [ 'Image' ],
-    toolbar: [ 'imageUpload', '|', 'bold', 'italic', 'bulletedList', 'numberedList', 'blockQuote' ],
-    // Additional configuration options for the editor
+    // Your custom configurations go here
+    toolbar: {
+      items: [
+        'heading', '|', 'bold', 'italic', 'link', 'bulletedList',
+        'numberedList', 'blockQuote', 'undo', 'redo',
+      ],
+    },
+    language: 'en',
   };
   constructor(
     private elementRef: ElementRef,
@@ -45,6 +45,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private fileService: FileService,
     private editService: EditService
   ) {}
+
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
@@ -57,6 +58,9 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
+    //Here is the code for the Decoupled editor initialization.
+
+    //End of decoupled editor code.
     this.hideSideBar();
     this.speedDialItems = [
       {
@@ -92,6 +96,28 @@ export class EditComponent implements AfterViewInit, OnInit {
 
 
   ngAfterViewInit() {
+    const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+    const toolbarContainer: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__toolbar');
+
+    if (editableArea && toolbarContainer) {
+      DecoupledEditor.create(editableArea, {
+        cloudServices: {
+          // A configuration of CKEditor Cloud Services.
+          // ...
+        },
+      })
+        .then((editor) => {
+          // Apply assertion for toolbarContainer
+          (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
+          (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+
+
+
     //TODO rework the commented code below to work for CKEditor.
 
     // const quill = this.quillEditor.getQuill();
@@ -106,8 +132,9 @@ export class EditComponent implements AfterViewInit, OnInit {
     //   }
     // }, 0);
     // quill.focus();
-    // this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
-    //   '#E3E3E3';
+
+    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
+      '#E3E3E3';
   }
 
   navigateToPage(pageName: string) {
