@@ -18,6 +18,7 @@ import {
   stat,
 } from 'fs/promises';
 import { SHA256 } from 'crypto-js';
+import { AssetDTO } from 'src/assets/dto/asset.dto';
 
 @Injectable()
 export class S3Service {
@@ -380,5 +381,60 @@ export class S3Service {
 
     console.log(saveImageDTO);
     return saveImageDTO;
+  }
+
+  async retrieveAsset(
+    retrieveAssetDTO: AssetDTO,
+  ) {
+    let filePath = `${retrieveAssetDTO.UserID}`;
+
+    try {
+      await access(`./storage/${filePath}`);
+    } catch (err) {
+      console.log('Access Error --> ' + err);
+      return undefined;
+    }
+
+    filePath += `/${retrieveAssetDTO.AssetID}`;
+
+    try {
+      retrieveAssetDTO.Content = await readFile(
+        `./storage/${filePath}`,
+        {
+          encoding: 'utf-8',
+        },
+      );
+      retrieveAssetDTO.Size =
+        retrieveAssetDTO.Content.length;
+
+      // const response = await this.s3Client.send(
+      //   new GetObjectCommand({
+      //     Bucket: this.awsS3BucketName,
+      //     Key: filePath,
+      //   }),
+      // );
+
+      // console.log(response);
+
+      // markdownFileDTO.Content =
+      //   await response.Body.transformToString();
+      // markdownFileDTO.Size =
+      //   response.ContentLength;
+    } catch (err) {
+      console.log('Read File Error:' + err);
+      return undefined;
+    }
+
+    // const fileStats = await stat(
+    //   `./storage/${filePath}`,
+    // );
+    // console.log(fileStats);
+    // markdownFileDTO.DateCreated =
+    //   fileStats.birthtime;
+    // markdownFileDTO.LastModified =
+    //   fileStats.mtime;
+
+    // console.log(markdownFileDTO);
+    return retrieveAssetDTO;
   }
 }
