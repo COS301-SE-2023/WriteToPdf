@@ -154,4 +154,36 @@ export class ImageService {
     );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
+
+  renameAsset(assetId:string, newName:string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendRenameAssetData(assetId, newName).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          if (response.status === 201) {
+            console.log('Image renamed successfully');
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+      });
+    });
+  }
+
+  sendRenameAssetData( assetId:string, newName:string ): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}image_manager/rename_image`;
+    const body = new AssetDTO();
+
+    body.UserID = this.userService.getUserID();
+    body.AssetID = assetId;
+    body.FileName = newName;
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
 }

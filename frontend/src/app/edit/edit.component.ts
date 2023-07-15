@@ -287,4 +287,11 @@ export class EditComponent implements AfterViewInit, OnInit {
     const asset = await this.imageService.deleteAsset(assetId);
     console.log(asset);
   }
+
+  async renameAsset(assetId: string, event: Event){
+    const inputElement = event.target as HTMLInputElement;
+    const inputValue = inputElement.value;
+    const asset = await this.imageService.renameAsset(assetId, inputValue);
+    console.log(asset);
+  }
 }

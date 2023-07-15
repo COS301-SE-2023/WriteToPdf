@@ -261,8 +261,13 @@ div[contenteditable="true"]:focus {
 }
 
 .assetNameText {
+    max-width:100px;
     margin: auto;
-    font-size: 18px;
+    font-size: 15px;
+    font-weight: bold;
+    border: 1px solid #00000000;
+    border-radius: 5px;
+    transition: 0.3s;
 }
 
 .copyAsset {
