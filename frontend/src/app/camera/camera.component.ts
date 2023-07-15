@@ -13,7 +13,7 @@ export class CameraComponent {
 
   sysImage = '';
   public sidebarVisible = false;
-
+  assetName: string = '';
   videoRef: any;
 
   constructor(private elementRef: ElementRef, private imageService: ImageService, private router: Router) { }
@@ -68,7 +68,7 @@ export class CameraComponent {
 
 
   uploadImage() {
-    this.imageService.uploadImage(this.sysImage, '');
+    this.imageService.uploadImage(this.sysImage, '',this.assetName);
   }
 
 }

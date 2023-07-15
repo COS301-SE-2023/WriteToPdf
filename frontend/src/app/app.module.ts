@@ -35,6 +35,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import { DialogModule } from 'primeng/dialog';
     ConfirmPopupModule,
     ToastModule,
     DialogModule,
+    InputTextModule,
   ],
   providers: [NodeService, UserService, MessageService, DialogService],
   bootstrap: [AppComponent],

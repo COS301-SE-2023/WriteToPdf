@@ -12,6 +12,7 @@
       <img class="previewImg" [src]="sysImage" alt="" />
     </div>
     <div class="buttonWrapper">
+      <input pInputText type="text" label="hi" title="hi" [(ngModel)]="assetName" placeholder="Enter Asset Name" style="margin-right:10px;"/>
       <p-button class="uploadImage" title="Upload Image" (click)="uploadImage()">Upload Image</p-button>
     </div>
   </p-sidebar>

@@ -18,9 +18,9 @@ export class ImageService {
     private messageService: MessageService
   ) {}
 
-  uploadImage(content: string | undefined, path: string): Promise<boolean> {
+  uploadImage(content: string | undefined, path: string, fileName:string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.sendUploadImageData(content, path).subscribe({
+      this.sendUploadImageData(content, path, fileName).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 201) {
             console.log('Image uploaded successfully');
@@ -39,7 +39,8 @@ export class ImageService {
 
   sendUploadImageData(
     content: string | undefined,
-    path: string
+    path: string,
+    fileName:string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}image_manager/upload`;
@@ -47,6 +48,37 @@ export class ImageService {
 
     body.UserID = this.userService.getUserID();
     body.Content = content;
+    body.Path = path;
+    body.FileName = fileName;
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  retrieveImage(path: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.sendRetrieveImageData(path).subscribe({
+        next: (response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            console.log('Image retrieved successfully');
+            resolve(response.body.Content);
+          } else {
+            resolve('');
+          }
+        },
+      });
+    });
+  }
+
+  sendRetrieveImageData(path: string): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}image_manager/retrieve`;
+    const body = new ImageDTO();
+
+    body.UserID = this.userService.getUserID();
     body.Path = path;
 
     const headers = new HttpHeaders().set(
