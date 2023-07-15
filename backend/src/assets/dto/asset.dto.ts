@@ -1,5 +1,5 @@
 export class AssetDTO {
-  AssetID: string;
+  AssetID: number;
   Format: string;
   FileName: string;
   ConvertedElement: string;
