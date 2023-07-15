@@ -24,7 +24,8 @@ export class AssetsService {
     uploadAssetDto: ImageDTO,
   ): Promise<Asset> {
     const newAssetDto = new AssetDTO();
-    newAssetDto.AssetID = uploadAssetDto.ImageID;
+    newAssetDto.AssetID =
+      uploadAssetDto.ImageID + '';
     newAssetDto.Format = 'image';
     newAssetDto.FileName =
       uploadAssetDto.FileName;
