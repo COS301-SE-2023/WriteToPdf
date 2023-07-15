@@ -1,4 +1,4 @@
-export class RetrieveRecentImagesDTO {
+export class RetrieveAllImagesDTO {
   UserID: number;
   Thumbnails: string[];
   FileNames: string[];
