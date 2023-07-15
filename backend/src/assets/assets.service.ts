@@ -27,6 +27,7 @@ export class AssetsService {
     uploadAssetDTO.Size =
       uploadAssetDTO.Content.length;
     uploadAssetDTO.ParentFolderID = '1';
+    uploadAssetDTO.ConvertedElement = 'null';
     const newAsset = this.assetsRepository.create(
       uploadAssetDTO,
     );
