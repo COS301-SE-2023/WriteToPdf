@@ -346,7 +346,7 @@ export class S3Service {
 
     try {
       await writeFile(
-        `./storage/${filePath}/${saveImageDTO.AssetID}`,
+        `./storage/${filePath}`,
         fileData,
         'utf-8',
       );
