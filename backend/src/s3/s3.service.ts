@@ -428,4 +428,31 @@ export class S3Service {
     // console.log(markdownFileDTO);
     return retrieveAssetDTO;
   }
+
+  async deleteAsset(assetDTO: AssetDTO) {
+    let filePath = `${assetDTO.UserID}`;
+
+    try {
+      await access(`./storage/${filePath}`);
+    } catch (err) {
+      console.log('Access Error --> ' + err);
+      return undefined;
+    }
+
+    filePath += `/${assetDTO.AssetID}`;
+
+    try {
+      await unlink(`./storage/${filePath}`);
+      // /*const response = */ await this.s3Client.send(
+      //   new DeleteObjectCommand({
+      //     Bucket: this.awsS3BucketName,
+      //     Key: filePath,
+      //   }),
+      // );
+    } catch (err) {
+      console.log('Delete Error --> ' + err);
+      return undefined;
+    }
+    return assetDTO;
+  }
 }

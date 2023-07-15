@@ -62,4 +62,10 @@ export class ImageManagerService {
       retrieveAssetDto,
     );
   }
+
+  deleteAsset(removeImageDTO: AssetDTO) {
+    return this.s3Service.deleteAsset(
+      removeImageDTO,
+    );
+  }
 }

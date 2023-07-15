@@ -6,6 +6,9 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
+  HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import { ImageManagerService } from './image_manager.service';
 import { ImageDTO } from './dto/image.dto';
@@ -45,6 +48,26 @@ export class ImageManagerController {
   ) {
     return this.imageManagerService.retrieveOne(
       retrieveAssetDto,
+    );
+  }
+
+  @Post('delete_image')
+  @HttpCode(HttpStatus.OK)
+  deleteFile(
+    @Body()
+    removeImageDTO: AssetDTO,
+  ) {
+    if (
+      !removeImageDTO.UserID ||
+      !removeImageDTO.AssetID
+    )
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.imageManagerService.deleteAsset(
+      removeImageDTO,
     );
   }
 
