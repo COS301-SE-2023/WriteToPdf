@@ -1,5 +1,6 @@
 export class ImageDTO {
     UserID: number | undefined;
+    FileName: string | undefined;
     Content: string | undefined;
     Path: string | undefined;
     ImageID: number | undefined;
@@ -8,6 +9,7 @@ export class ImageDTO {
 
     constructor() {
         this.Content = undefined;
+        this.FileName = undefined;
         this.UserID = undefined;
         this.Path = undefined;
         this.ImageID = undefined;
