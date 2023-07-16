@@ -122,10 +122,7 @@
               (click)="deleteAsset(obj.AssetID)" />
           </div>
           <div class="copyAsset">
-            <img (click)="retrieveAsset(obj.AssetID)" src="assets/Icons/editIcons/copy.svg" alt="" />
-          </div>
-          <div class="menu">
-            <img class="menuIcon" src="assets/Icons/editIcons/ellipse.svg" alt="" />
+            <img class="copyAssetIcon" (click)="retrieveAsset(obj.AssetID)" src="assets/Icons/editIcons/copy.svg" alt="" />
           </div>
         </div>
         <div class="assetContent">
@@ -133,6 +130,31 @@
           <p class="assetDescription">Image</p>
         </div>
       </div>
+
+
+      <!-- MOCK DATA -->
+      <div class="assetWrapper">
+      
+        <div class="assetHeader">
+          <div class="assetName">
+            <!-- <h4 class="assetNameText"></h4> -->
+            <label for="editAsset" class="displayNone">b</label>
+            <input type="text" editable="true" id="editAsset" class="assetNameText" value="ok" maxlength="50"
+               />
+          </div>
+          <div class="deleteAsset">
+            <img class="deleteAssetIcon" src="assets/Icons/editIcons/delete.png" alt="" />
+          </div>
+          <div class="copyAsset">
+            <img class="copyAssetIcon" src="assets/Icons/editIcons/copy.svg" alt="" />
+          </div>
+        </div>
+        <div class="assetContent">
+          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
+          <p class="assetDescription">Image</p>
+        </div>
+      </div>
+      <!-- Mock Data End  -->
 
     </div>
     <div class="page">

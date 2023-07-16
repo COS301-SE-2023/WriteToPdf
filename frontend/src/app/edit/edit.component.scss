@@ -277,21 +277,24 @@ div[contenteditable="true"]:focus {
 .deleteAsset{
     margin-right: 0;
     margin-left: auto;
-
 }
 
-.deleteAssetIcon{
+.deleteAsset, .copyAsset {
+    border-radius: 5px;
+    // display:flex;
+    width: 30px;
+    height: 30px;
+    padding:5px;
+}
+.deleteAsset:hover, .copyAsset:hover {
+    cursor: pointer;
+    background-color: darken($light-grey, 10%);
+}
+
+.deleteAssetIcon, .copyAssetIcon{
+    margin:auto;
     width:20px;
     height:20px;
-}
-
-.menu {
-    margin-left: 10px;
-
-}
-
-.menuIcon {
-    margin-bottom: 3px;
 }
 
 .assetContent {
