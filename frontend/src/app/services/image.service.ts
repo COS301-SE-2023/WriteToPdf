@@ -18,9 +18,9 @@ export class ImageService {
     private http: HttpClient,
     private userService: UserService,
     private messageService: MessageService
-  ) {}
+  ) { }
 
-  uploadImage(content: string | undefined, path: string, fileName:string): Promise<boolean> {
+  uploadImage(content: string | undefined, path: string, fileName: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendUploadImageData(content, path, fileName).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -42,7 +42,7 @@ export class ImageService {
   sendUploadImageData(
     content: string | undefined,
     path: string,
-    fileName:string
+    fileName: string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}image_manager/upload`;
@@ -60,7 +60,7 @@ export class ImageService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveAsset(assetId:string): Promise<any> {
+  retrieveAsset(assetId: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveAssetData(assetId).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -76,7 +76,7 @@ export class ImageService {
     });
   }
 
-  sendRetrieveAssetData( assetId:string ): Observable<HttpResponse<any>> {
+  sendRetrieveAssetData(assetId: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}image_manager/retrieve_image`;
     const body = new AssetDTO();
@@ -124,12 +124,12 @@ export class ImageService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  deleteAsset(assetId:string): Promise<boolean> {
+  deleteAsset(assetId: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteAssetData(assetId).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          if (response.status === 201) {
+          console.log("DELETE: " + JSON.stringify(response));
+          if (response.status === 200) {
             console.log('Image deleted successfully');
             resolve(true);
           } else {
@@ -140,7 +140,7 @@ export class ImageService {
     });
   }
 
-  sendDeleteAssetData( assetId:string ): Observable<HttpResponse<any>> {
+  sendDeleteAssetData(assetId: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}image_manager/delete_image`;
     const body = new AssetDTO();
@@ -155,7 +155,7 @@ export class ImageService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  renameAsset(assetId:string, newName:string): Promise<boolean> {
+  renameAsset(assetId: string, newName: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameAssetData(assetId, newName).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -171,7 +171,7 @@ export class ImageService {
     });
   }
 
-  sendRenameAssetData( assetId:string, newName:string ): Observable<HttpResponse<any>> {
+  sendRenameAssetData(assetId: string, newName: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}image_manager/rename_image`;
     const body = new AssetDTO();

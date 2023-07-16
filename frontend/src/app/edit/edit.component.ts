@@ -283,8 +283,10 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async deleteAsset(assetId:string){
-    const asset = await this.imageService.deleteAsset(assetId);
-    console.log(asset);
+    if(await this.imageService.deleteAsset(assetId)){
+      this.messageService.add({severity:'success', summary:'Success', detail:'Asset deleted'});
+      await this.refreshSidebar();
+    }
   }
 
   async renameAsset(assetId: string, event: Event){
