@@ -5,6 +5,8 @@ import { AssetsService } from '../assets/assets.service';
 import { RetrieveAllImagesDTO } from './dto/retrieve_all_images.dto';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { SHA256 } from 'crypto-js';
+import { Asset } from '../assets/entities/asset.entity';
+import sharp from 'sharp';
 
 @Injectable()
 export class ImageManagerService {
@@ -80,5 +82,34 @@ export class ImageManagerService {
     return this.assetsService.renameAsset(
       renameImageDTO,
     );
+  }
+
+  async compressImage(
+    assetID: string,
+    userID: number,
+  ) {
+    // Get image from S3/local storage
+    const imageDTO =
+      await this.s3Service.retrieveAssetByID(
+        assetID,
+        userID,
+      );
+
+    // Create buffer from image
+    const imageBuffer = Buffer.from(
+      imageDTO.Content,
+      'base64',
+    );
+
+    // Compress
+    const compressedImage = await sharp(
+      imageBuffer,
+    )
+      .resize(100, 100, {
+        fit: 'inside',
+      })
+      .toBuffer();
+
+    return compressedImage.toString('base64');
   }
 }

@@ -374,6 +374,64 @@ export class S3Service {
     return saveImageDTO;
   }
 
+  async retrieveAssetByID(
+    assetID: string,
+    userID: number,
+  ) {
+    const retrieveAssetDTO = new AssetDTO();
+
+    let filePath = `${userID}`;
+
+    try {
+      await access(`./storage/${filePath}`);
+    } catch (err) {
+      console.log('Access Error --> ' + err);
+      return undefined;
+    }
+
+    filePath += `/${assetID}`;
+
+    try {
+      retrieveAssetDTO.Content = await readFile(
+        `./storage/${filePath}`,
+        {
+          encoding: 'utf-8',
+        },
+      );
+      retrieveAssetDTO.Size =
+        retrieveAssetDTO.Content.length;
+
+      // const response = await this.s3Client.send(
+      //   new GetObjectCommand({
+      //     Bucket: this.awsS3BucketName,
+      //     Key: filePath,
+      //   }),
+      // );
+
+      // console.log(response);
+
+      // markdownFileDTO.Content =
+      //   await response.Body.transformToString();
+      // markdownFileDTO.Size =
+      //   response.ContentLength;
+    } catch (err) {
+      console.log('Read File Error:' + err);
+      return undefined;
+    }
+
+    // const fileStats = await stat(
+    //   `./storage/${filePath}`,
+    // );
+    // console.log(fileStats);
+    // markdownFileDTO.DateCreated =
+    //   fileStats.birthtime;
+    // markdownFileDTO.LastModified =
+    //   fileStats.mtime;
+
+    // console.log(markdownFileDTO);
+    return retrieveAssetDTO;
+  }
+
   async retrieveAsset(
     retrieveAssetDTO: AssetDTO,
   ) {

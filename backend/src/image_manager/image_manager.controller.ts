@@ -32,13 +32,24 @@ export class ImageManagerController {
   }
 
   @Post('retrieve_all')
-  retrieveAll(
+  async retrieveAll(
     @Body()
     retrieveAllImagesDto: RetrieveAllImagesDTO,
   ) {
-    return this.imageManagerService.retrieveAll(
-      retrieveAllImagesDto,
-    );
+    const images =
+      await this.imageManagerService.retrieveAll(
+        retrieveAllImagesDto,
+      );
+
+    const thumbnails = [];
+    for (let i = 0; i < images.length; i++) {
+      thumbnails.push(
+        this.imageManagerService.compressImage(
+          images[i].AssetID,
+          images[i].UserID,
+        ),
+      );
+    }
   }
 
   @Post('retrieve_image')

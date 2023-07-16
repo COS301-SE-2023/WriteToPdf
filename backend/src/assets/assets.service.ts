@@ -49,9 +49,7 @@ export class AssetsService {
       await this.assetsRepository.findOneBy({
         AssetID: updatedAssetDTO.AssetID,
       });
-
     asset.FileName = updatedAssetDTO.FileName;
-
     return this.assetsRepository.save(asset);
   }
 }
