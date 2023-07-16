@@ -11,8 +11,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RefreshTokenDTO } from './dto/refresh_token.dto';
-import { plainToClass } from 'class-transformer';
-import { validateSync } from 'class-validator';
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () =>
   SetMetadata(IS_PUBLIC_KEY, true);
