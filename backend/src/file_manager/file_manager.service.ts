@@ -46,6 +46,11 @@ export class FileManagerService {
     if (markdownFileDTO.Path === undefined)
       markdownFileDTO.Path = '';
 
+    if (
+      markdownFileDTO.ParentFolderID === undefined
+    )
+      markdownFileDTO.ParentFolderID = '';
+
     if (markdownFileDTO.Name === undefined)
       markdownFileDTO.Name = 'New Document';
 
