@@ -56,7 +56,9 @@ export class ImageManagerService {
   retrieveAll(
     retrieveAllImagesDTO: RetrieveAllImagesDTO,
   ) {
-    return this.assetsService.retrieveAll();
+    return this.assetsService.retrieveAll(
+      retrieveAllImagesDTO,
+    );
   }
 
   retrieveOne(retrieveAssetDto: AssetDTO) {
@@ -85,7 +87,6 @@ export class ImageManagerService {
   }
 
   async compressImage(base64String: string) {
-
     const imageBuffer = Buffer.from(
       base64String,
       'base64',
