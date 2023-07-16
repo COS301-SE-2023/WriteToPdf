@@ -293,4 +293,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     const asset = await this.imageService.renameAsset(assetId, inputValue);
     console.log(asset);
   }
+
+  async refreshSidebar(){
+    this.assets = await this.imageService.retrieveAll();
+  }
 }
