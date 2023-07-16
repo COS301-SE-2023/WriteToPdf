@@ -10,7 +10,6 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { RefreshTokenDTO } from '../src/auth/dto/refresh_token.dto';
 import * as dotenv from 'dotenv';
-import exp from 'constants';
 
 describe('AuthController (integration)', () => {
   let app: INestApplication;
@@ -81,10 +80,10 @@ describe('AuthController (integration)', () => {
         )
         .send(requestRefreshToken);
 
-      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toHaveProperty(
         'Token',
       );
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toHaveProperty(
         'Email',
       );
