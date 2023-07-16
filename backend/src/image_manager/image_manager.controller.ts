@@ -14,6 +14,7 @@ import { ImageManagerService } from './image_manager.service';
 import { ImageDTO } from './dto/image.dto';
 import { RetrieveAllImagesDTO } from './dto/retrieve_all_images.dto';
 import { AssetDTO } from 'src/assets/dto/asset.dto';
+import { Asset } from 'src/assets/entities/asset.entity';
 
 @Controller('image_manager')
 export class ImageManagerController {
@@ -36,20 +37,34 @@ export class ImageManagerController {
     @Body()
     retrieveAllImagesDto: RetrieveAllImagesDTO,
   ) {
+    // return this.imageManagerService.retrieveAll(
+    //   retrieveAllImagesDto,
+    // );
+
+    // Get images from database
     const images =
       await this.imageManagerService.retrieveAll(
         retrieveAllImagesDto,
       );
 
-    const thumbnails = [];
+    // Get base64 string of each image from s3
     for (let i = 0; i < images.length; i++) {
-      thumbnails.push(
-        this.imageManagerService.compressImage(
-          images[i].AssetID,
-          images[i].UserID,
-        ),
-      );
+      // Get the base64 string of the image
+
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = images[i].AssetID;
+      assetDTO.UserID = images[i].UserID;
+      const asset =
+        await this.imageManagerService.retrieveOne(
+          assetDTO,
+        );
+
+      images[i].Image =
+        await this.imageManagerService.compressImage(
+          asset.Content,
+        );
     }
+    return images;
   }
 
   @Post('retrieve_image')
