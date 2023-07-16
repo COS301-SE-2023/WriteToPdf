@@ -37,10 +37,6 @@ export class ImageManagerController {
     @Body()
     retrieveAllImagesDto: RetrieveAllImagesDTO,
   ) {
-    // return this.imageManagerService.retrieveAll(
-    //   retrieveAllImagesDto,
-    // );
-
     // Get images from database
     const images =
       await this.imageManagerService.retrieveAll(
