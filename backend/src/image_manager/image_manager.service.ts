@@ -87,8 +87,14 @@ export class ImageManagerService {
   }
 
   async compressImage(base64String: string) {
+    // Remove the leading "data:image/jpeg;base64,"
+    // leaving only the raw data
+    const strippedBase64 = base64String
+      .split(';base64,')
+      .pop();
+
     const imageBuffer = Buffer.from(
-      base64String,
+      strippedBase64,
       'base64',
     );
 
@@ -99,6 +105,9 @@ export class ImageManagerService {
       .toFormat('jpeg')
       .toBuffer();
 
-    return compressedImage.toString('base64');
+    let thumbnail = 'data:image/jpeg;base64,';
+    thumbnail +=
+      compressedImage.toString('base64');
+    return thumbnail;
   }
 }
