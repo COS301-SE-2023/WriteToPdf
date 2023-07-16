@@ -86,7 +86,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     ];
     this.fileName = this.editService.getName();
 
-    console.log('undo');
     this.assets = await this.imageService.retrieveAll();
     console.log(this.assets);
   }

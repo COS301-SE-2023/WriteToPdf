@@ -118,7 +118,7 @@
               maxlength="50" (blur)="renameAsset(obj.AssetID, $event)" />
           </div>
           <div class="deleteAsset">
-            <img class="deleteAssetIcon" src="assets/Icons/editIcons/delete.png" alt=""
+            <img class="deleteAssetIcon" src={{obj.Content}} alt=""
               (click)="deleteAsset(obj.AssetID)" />
           </div>
           <div class="copyAsset">
