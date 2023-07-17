@@ -86,8 +86,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     ];
     this.fileName = this.editService.getName();
 
-    this.assets = await this.assetService.retrieveAll();
-    console.log(this.assets);
   }
   ngAfterViewInit() {
     const quill = this.quillEditor.getQuill();
@@ -116,6 +114,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     //   }
     // });
 
+    this.refreshSidebar();
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#E3E3E3';
   }

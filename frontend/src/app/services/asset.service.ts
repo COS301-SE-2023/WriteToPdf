@@ -64,7 +64,7 @@ export class AssetService {
       this.sendRetrieveAssetData(assetId).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
-          if (response.status === 201) {
+          if (response.status === 200) {
             console.log('Image retrieved successfully');
             resolve(response.body);
           } else {
@@ -97,7 +97,7 @@ export class AssetService {
       this.sendRetrieveAllData().subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
-          if (response.status === 201) {
+          if (response.status === 200) {
             console.log('Images retrieved successfully');
             console.log(response.body.Content);
             resolve(response.body);
@@ -141,7 +141,7 @@ export class AssetService {
 
   sendDeleteAssetData(assetId: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}asset_manager/delete_image`;
+    const url = `${environmentURL}asset_manager/delete_asset`;
     const body = new AssetDTO();
 
     body.UserID = this.userService.getUserID();
@@ -159,7 +159,7 @@ export class AssetService {
       this.sendRenameAssetData(assetId, newName).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
-          if (response.status === 201) {
+          if (response.status === 200) {
             console.log('Image renamed successfully');
             resolve(true);
           } else {
