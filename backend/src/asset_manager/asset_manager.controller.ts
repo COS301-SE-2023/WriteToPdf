@@ -10,7 +10,7 @@ import {
 import { AssetManagerService } from './asset_manager.service';
 import { AssetDTO } from '../assets/dto/asset.dto';
 
-@Controller('asset-manager')
+@Controller('asset_manager')
 export class AssetManagerController {
   constructor(
     private readonly assetManagerService: AssetManagerService,
