@@ -44,7 +44,7 @@ export class AssetService {
     fileName: string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}asset_manager/upload`;
+    const url = `${environmentURL}asset_manager/upload_image`;
     const body = new ImageDTO();
 
     body.UserID = this.userService.getUserID();
