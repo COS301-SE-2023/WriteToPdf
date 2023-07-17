@@ -77,7 +77,7 @@ export class AssetService {
 
   sendRetrieveAssetData(assetId: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}asset_manager/retrieve_image`;
+    const url = `${environmentURL}asset_manager/retrieve_one`;
     const body = new AssetDTO();
 
     body.UserID = this.userService.getUserID();
