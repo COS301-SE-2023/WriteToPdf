@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ImageDTO } from '../services/dto/image.dto';
 import { AssetDTO } from '../services/dto/asset.dto';
-import { RetrieveAllImagesDTO } from '../services/dto/retrieve_all_images.dto';
+import { RetrieveAllDTO } from '../services/dto/retrieve_all.dto';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -112,7 +112,7 @@ export class AssetService {
   sendRetrieveAllData(): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}asset_manager/retrieve_all`;
-    const body = new RetrieveAllImagesDTO();
+    const body = new RetrieveAllDTO();
 
     body.UserID = this.userService.getUserID();
 
