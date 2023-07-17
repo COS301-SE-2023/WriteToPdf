@@ -172,7 +172,7 @@ export class AssetService {
 
   sendRenameAssetData(assetId: string, newName: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}asset_manager/rename_image`;
+    const url = `${environmentURL}asset_manager/rename_asset`;
     const body = new AssetDTO();
 
     body.UserID = this.userService.getUserID();
