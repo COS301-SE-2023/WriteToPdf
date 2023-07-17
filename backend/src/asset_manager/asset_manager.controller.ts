@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { AssetManagerService } from './asset_manager.service';
 import { AssetDTO } from '../assets/dto/asset.dto';
@@ -48,6 +50,7 @@ export class AssetManagerController {
   }
 
   @Post('delete_asset')
+  @HttpCode(HttpStatus.OK)
   delete_asset(
     @Body()
     deleteAssetDTO: AssetDTO,
