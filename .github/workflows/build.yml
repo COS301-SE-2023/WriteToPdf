@@ -2,11 +2,9 @@ name: Build Codebase
 
 on:
   push:
-    branches:
-      - "*"
+    branches: ["*"] # All branches
   pull_request:
-    branches:
-      - "*"
+    branches: ["*"] # All branches
 
 env:
   JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
