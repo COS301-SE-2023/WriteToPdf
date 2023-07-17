@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { AssetService } from '../services/asset.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-camera',
@@ -17,7 +18,7 @@ export class CameraComponent {
   assetName: string = '';
   videoRef: any;
 
-  constructor(private elementRef: ElementRef, private assetService: AssetService, private router: Router, private location: Location) { }
+  constructor(private elementRef: ElementRef, private assetService: AssetService, private router: Router, private location: Location, private messageService: MessageService) { }
 
   ngOnInit() {
     this.videoRef = document.getElementById('camera');
@@ -68,8 +69,12 @@ export class CameraComponent {
   }
 
 
-  uploadImage() {
-    this.assetService.uploadImage(this.sysImage, '', this.assetName);
+  async uploadImage() {
+    if(await this.assetService.uploadImage(this.sysImage, '', this.assetName)){
+      
+      this.navigateToPage('edit');
+    }
+
   }
 
   goBack() {

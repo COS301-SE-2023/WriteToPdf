@@ -1,4 +1,4 @@
-.container{
+.container {
     display: flex;
     width: 100vw;
     height: 100vh;
@@ -6,30 +6,24 @@
 }
 
 
-.backButton{
-    margin:auto 0 auto 20px;
+.backButton {
+    margin: auto 0 auto 20px;
 }
-.imageWrapper {
-    width: -moz-fit-content;
-    width: fit-content;
-    margin: auto;
-    width:80vw;
-    height: 85vh;
-}
+
 
 .header {
     display: flex;
-    margin-bottom:10px;
+    margin-bottom: 10px;
     height: 50px;
     background-color: grey;
-    width:100vw;
+    width: 100vw;
 }
 
 .footer {
     display: flex;
     background-color: grey;
-    margin-top:10px;
-    width:100vw;
+    margin-top: 10px;
+    width: 100vw;
 }
 
 .capture {
@@ -52,13 +46,21 @@
     margin: auto;
 }
 
-.buttonWrapper{
-    margin-top:10px;
+.buttonWrapper {
+    margin-top: 10px;
     text-align: center;
 }
 
-.previewImg{
+.previewImg {
     width: 80vw;
-        max-height: 85vh;
+    height: 80vh;
     object-fit: contain;
+}
+
+.imageWrapper {
+    width: -moz-fit-content;
+    width: fit-content;
+    margin: auto;
+    width: 80vw;
+    height: 80vh;
 }

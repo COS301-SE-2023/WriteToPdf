@@ -1,18 +1,22 @@
 <div class="container">
 
   <div class="header">
-    <p-button class="backButton" icon="pi pi-arrow-left" label="Back" styleClass="p-button-rounded" (click)="goBack()"></p-button>
+    <p-button class="backButton" icon="pi pi-arrow-left" label="Back" styleClass="p-button-rounded"
+      (click)="goBack()"></p-button>
   </div>
   <div class="webcamWrapper">
     <video class="camera" id="camera" autoplay width="1000px" height="800px"></video>
   </div>
 
   <p-sidebar [(visible)]="sidebarVisible" [fullScreen]="true">
+    <p-button class="backButton" icon="pi pi-arrow-left" label="Back" styleClass="p-button-rounded"
+      (click)="goBack()"></p-button>
     <div class="imageWrapper">
       <img class="previewImg" [src]="sysImage" alt="" />
     </div>
     <div class="buttonWrapper">
-      <input pInputText type="text" label="hi" title="hi" [(ngModel)]="assetName" placeholder="Enter Asset Name" style="margin-right:10px;"/>
+      <input pInputText type="text" label="hi" title="hi" [(ngModel)]="assetName" placeholder="Enter Asset Name"
+        style="margin-right:10px;" />
       <p-button class="uploadImage" title="Upload Image" (click)="uploadImage()">Upload Image</p-button>
     </div>
   </p-sidebar>
