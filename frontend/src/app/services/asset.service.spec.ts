@@ -3,14 +3,14 @@ import 'zone.js/dist/zone-testing.js'; // Must add both these imports
 import { TestBed } from '@angular/core/testing';
 import { expect } from '@jest/globals';
 
-import { ImageService } from './image.service';
+import { AssetService } from './asset.service';
 
-describe('ImageService', () => {
-  let service: ImageService;
+describe('AssetService', () => {
+  let service: AssetService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ImageService);
+    service = TestBed.inject(AssetService);
   });
 
   it('should be created', () => {
