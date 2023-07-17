@@ -44,7 +44,7 @@ export class AssetService {
     fileName: string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}image_manager/upload`;
+    const url = `${environmentURL}asset_manager/upload`;
     const body = new ImageDTO();
 
     body.UserID = this.userService.getUserID();
@@ -77,7 +77,7 @@ export class AssetService {
 
   sendRetrieveAssetData(assetId: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}image_manager/retrieve_image`;
+    const url = `${environmentURL}asset_manager/retrieve_image`;
     const body = new AssetDTO();
 
     body.UserID = this.userService.getUserID();
@@ -111,7 +111,7 @@ export class AssetService {
 
   sendRetrieveAllData(): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}image_manager/retrieve_all`;
+    const url = `${environmentURL}asset_manager/retrieve_all`;
     const body = new RetrieveAllImagesDTO();
 
     body.UserID = this.userService.getUserID();
@@ -141,7 +141,7 @@ export class AssetService {
 
   sendDeleteAssetData(assetId: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}image_manager/delete_image`;
+    const url = `${environmentURL}asset_manager/delete_image`;
     const body = new AssetDTO();
 
     body.UserID = this.userService.getUserID();
@@ -172,7 +172,7 @@ export class AssetService {
 
   sendRenameAssetData(assetId: string, newName: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}image_manager/rename_image`;
+    const url = `${environmentURL}asset_manager/rename_image`;
     const body = new AssetDTO();
 
     body.UserID = this.userService.getUserID();
