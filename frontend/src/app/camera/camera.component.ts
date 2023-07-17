@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { ImageService } from '../services/image.service';
+import { AssetService } from '../services/asset.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 
@@ -17,7 +17,7 @@ export class CameraComponent {
   assetName: string = '';
   videoRef: any;
 
-  constructor(private elementRef: ElementRef, private imageService: ImageService, private router: Router, private location: Location) { }
+  constructor(private elementRef: ElementRef, private assetService: AssetService, private router: Router, private location: Location) { }
 
   ngOnInit() {
     this.videoRef = document.getElementById('camera');
@@ -69,7 +69,7 @@ export class CameraComponent {
 
 
   uploadImage() {
-    this.imageService.uploadImage(this.sysImage, '', this.assetName);
+    this.assetService.uploadImage(this.sysImage, '', this.assetName);
   }
 
   goBack() {

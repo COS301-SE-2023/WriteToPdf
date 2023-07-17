@@ -12,7 +12,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
-import { ImageService } from '../services/image.service';
+import { AssetService } from '../services/asset.service';
 import { Inject } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { set } from 'cypress/types/lodash';
@@ -39,7 +39,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private dialogService: DialogService,
     private fileService: FileService,
     private editService: EditService,
-    private imageService: ImageService,
+    private assetService: AssetService,
     private clipboard: Clipboard,
     private messageService: MessageService
   ) { }
@@ -86,7 +86,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     ];
     this.fileName = this.editService.getName();
 
-    this.assets = await this.imageService.retrieveAll();
+    this.assets = await this.assetService.retrieveAll();
     console.log(this.assets);
   }
   ngAfterViewInit() {
@@ -274,7 +274,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async retrieveAsset(assetId:string){
-    const asset = await this.imageService.retrieveAsset(assetId);
+    const asset = await this.assetService.retrieveAsset(assetId);
     console.log(asset);
     if (asset) {
       this.clipboard.copy(asset.Content);
@@ -283,7 +283,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async deleteAsset(assetId:string){
-    if(await this.imageService.deleteAsset(assetId)){
+    if(await this.assetService.deleteAsset(assetId)){
       this.messageService.add({severity:'success', summary:'Success', detail:'Asset deleted'});
       await this.refreshSidebar();
     }
@@ -292,11 +292,11 @@ export class EditComponent implements AfterViewInit, OnInit {
   async renameAsset(assetId: string, event: Event){
     const inputElement = event.target as HTMLInputElement;
     const inputValue = inputElement.value;
-    const asset = await this.imageService.renameAsset(assetId, inputValue);
+    const asset = await this.assetService.renameAsset(assetId, inputValue);
     console.log(asset);
   }
 
   async refreshSidebar(){
-    this.assets = await this.imageService.retrieveAll();
+    this.assets = await this.assetService.retrieveAll();
   }
 }
