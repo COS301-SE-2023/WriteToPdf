@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { ImageManagerService } from '../image_manager/image_manager.service';
 import { RetrieveAllDTO } from './dto/retrieve_all.dto';
+import { AssetsService } from '../assets/assets.service';
 
 @Injectable()
 export class AssetManagerService {
   constructor(
     private readonly imageManagerService: ImageManagerService,
+    private readonly assetsService: AssetsService,
   ) {}
 
   upload_image(uploadImageDTO: AssetDTO) {
@@ -42,5 +44,11 @@ export class AssetManagerService {
         );
     }
     return images;
+  }
+
+  renameAsset(renameAssetDTO: AssetDTO) {
+    return this.assetsService.renameAsset(
+      renameAssetDTO,
+    );
   }
 }

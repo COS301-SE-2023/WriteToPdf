@@ -37,6 +37,16 @@ export class AssetManagerController {
     );
   }
 
+  @Post('rename_asset')
+  rename_asset(
+    @Body()
+    renameAssetDTO: AssetDTO,
+  ) {
+    return this.assetManagerService.renameAsset(
+      renameAssetDTO,
+    );
+  }
+
   // @Get()
   // findAll('retrieve_all') {
 
