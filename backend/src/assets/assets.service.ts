@@ -37,7 +37,7 @@ export class AssetsService {
     return this.assetsRepository.save(newAsset);
   }
 
-  retrieveAll(
+  retrieveAllImages(
     retrieveAllImagesDTO: RetrieveAllImagesDTO,
   ) {
     return this.assetsRepository.find({

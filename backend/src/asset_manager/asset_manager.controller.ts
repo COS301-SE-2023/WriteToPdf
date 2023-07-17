@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { AssetManagerService } from './asset_manager.service';
 import { AssetDTO } from '../assets/dto/asset.dto';
+import { RetrieveAllDTO } from './dto/retrieve_all.dto';
 
 @Controller('asset_manager')
 export class AssetManagerController {
@@ -23,6 +24,16 @@ export class AssetManagerController {
   ) {
     return this.assetManagerService.upload_image(
       uploadImageDTO,
+    );
+  }
+
+  @Post('retrieve_all')
+  retrieve_all(
+    @Body()
+    retrieveAllDTO: RetrieveAllDTO,
+  ) {
+    return this.assetManagerService.retrieve_all(
+      retrieveAllDTO,
     );
   }
 

@@ -7,6 +7,7 @@ import { AssetDTO } from '../assets/dto/asset.dto';
 import { SHA256 } from 'crypto-js';
 import { Asset } from '../assets/entities/asset.entity';
 import * as sharp from 'sharp';
+import { RetrieveAllDTO } from '../asset_manager/dto/retrieve_all.dto';
 
 @Injectable()
 export class ImageManagerService {
@@ -33,13 +34,14 @@ export class ImageManagerService {
   }
 
   retrieveAll(
-    retrieveAllImagesDTO: RetrieveAllImagesDTO,
+    retrieveAllImagesDTO: RetrieveAllDTO,
   ) {
-    return this.assetsService.retrieveAll(
+    return this.assetsService.retrieveAllImages(
       retrieveAllImagesDTO,
     );
   }
 
+  // Get the base64 string of the image
   retrieveOne(retrieveAssetDto: AssetDTO) {
     return this.s3Service.retrieveAsset(
       retrieveAssetDto,

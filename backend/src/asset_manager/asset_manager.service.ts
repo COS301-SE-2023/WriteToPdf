@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAssetManagerDto } from './dto/create-asset_manager.dto';
-import { UpdateAssetManagerDto } from './dto/update-asset_manager.dto';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { ImageManagerService } from '../image_manager/image_manager.service';
+import { RetrieveAllDTO } from './dto/retrieve_all.dto';
 
 @Injectable()
 export class AssetManagerService {
@@ -14,5 +13,34 @@ export class AssetManagerService {
     return this.imageManagerService.upload(
       uploadImageDTO,
     );
+  }
+
+  async retrieve_all(
+    retrieveAllDTO: RetrieveAllDTO,
+  ) {
+    // Get images from database
+    const images =
+      await this.imageManagerService.retrieveAll(
+        retrieveAllDTO,
+      );
+
+    for (let i = 0; i < images.length; i++) {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = images[i].AssetID;
+      assetDTO.UserID = images[i].UserID;
+
+      // Retrieve the image from s3
+      const asset =
+        await this.imageManagerService.retrieveOne(
+          assetDTO,
+        );
+
+      // compress/resize the image
+      images[i].Image =
+        await this.imageManagerService.compressImage(
+          asset.Content,
+        );
+    }
+    return images;
   }
 }
