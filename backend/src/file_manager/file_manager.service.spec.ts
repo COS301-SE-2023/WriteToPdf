@@ -31,6 +31,22 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/entities/user.entity';
 import { testDBOptions } from '../../db/data-source';
 import { UserDTO } from '../users/dto/user.dto';
+import * as CryptoJS from 'crypto-js';
+
+jest.mock('crypto-js', () => {
+  const mockedHash = jest.fn(
+    () => 'hashed string',
+  );
+
+  return {
+    SHA256: jest.fn().mockReturnValue({
+      toString: mockedHash,
+    }),
+    AES: jest.fn().mockReturnValue({
+      toString: mockedHash,
+    }),
+  };
+});
 
 describe('FileManagerService', () => {
   let service: FileManagerService;
@@ -1545,4 +1561,59 @@ describe('FileManagerService', () => {
   //     ).toHaveBeenCalledWith(exportDTO);
   //   });
   // });
+  // describe('decryptContent', () => {
+  //   it('should call decrypt method', async () => {
+  //     const content = 'test';
+  //     const encryptionKey = 'test';
+
+  //     const response =
+  //       await service.decryptContent(
+  //         content,
+  //         encryptionKey,
+  //       );
+
+  //     expect(response).toBe('hashed string');
+  //     expect(
+  //       CryptoJS.AES.decrypt,
+  //     ).toHaveBeenCalledWith(
+  //       content,
+  //       encryptionKey,
+  //     );
+  //   });
+  // });
+  describe('getEncryptionKey', () => {
+    it('should call findOne method', async () => {
+      const userID = 1;
+      const foundUser = new UserDTO();
+      foundUser.Password = 'hashed string';
+
+      jest
+        .spyOn(usersService, 'findOne')
+        .mockResolvedValue(foundUser);
+
+      await service.getEncryptionKey(userID);
+
+      expect(
+        usersService.findOne,
+      ).toHaveBeenCalledWith(userID);
+    });
+
+    it('should return the hashed the password', async () => {
+      const userID = 1;
+      const foundUser = new UserDTO();
+      foundUser.Password = 'test password';
+
+      jest
+        .spyOn(usersService, 'findOne')
+        .mockResolvedValue(foundUser);
+
+      const result =
+        await service.getEncryptionKey(userID);
+
+      expect(result).toBe('hashed string');
+      expect(
+        CryptoJS.SHA256,
+      ).toHaveBeenCalledWith(foundUser.Password);
+    });
+  });
 });
