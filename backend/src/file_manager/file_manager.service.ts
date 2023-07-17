@@ -424,29 +424,29 @@ export class FileManagerService {
   //   return returnedDTO;
   // }
 
-  decryptContent(
-    content: string | undefined,
-    encryptionKey: string,
-  ): Promise<string> {
-    const decryptedMessage = CryptoJS.AES.decrypt(
-      content,
-      encryptionKey,
-    )
-      .toString(CryptoJS.enc.Utf8)
-      .replace(/^"(.*)"$/, '$1');
-    return decryptedMessage;
-  }
+  // decryptContent(
+  //   content: string | undefined,
+  //   encryptionKey: string,
+  // ): Promise<string> {
+  //   const decryptedMessage = CryptoJS.AES.decrypt(
+  //     content,
+  //     encryptionKey,
+  //   )
+  //     .toString(CryptoJS.enc.Utf8)
+  //     .replace(/^"(.*)"$/, '$1');
+  //   return decryptedMessage;
+  // }
 
-  encryptContent(
-    content: string,
-    encryptionKey: string,
-  ) {
-    const encryptedMessage = CryptoJS.AES.encrypt(
-      content,
-      encryptionKey,
-    ).toString();
-    return encryptedMessage;
-  }
+  // encryptContent(
+  //   content: string,
+  //   encryptionKey: string,
+  // ) {
+  //   const encryptedMessage = CryptoJS.AES.encrypt(
+  //     content,
+  //     encryptionKey,
+  //   ).toString();
+  //   return encryptedMessage;
+  // }
 
   async getEncryptionKey(
     UserID: number,
