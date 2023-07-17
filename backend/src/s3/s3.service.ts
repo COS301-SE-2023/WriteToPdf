@@ -369,8 +369,7 @@ export class S3Service {
     saveImageDTO.DateCreated = fileStats.mtime;
     saveImageDTO.Size =
       fileData.buffer.byteLength; // TODO: Change to s3 return object
-
-    console.log(saveImageDTO);
+    saveImageDTO.Content = '';
     return saveImageDTO;
   }
 
