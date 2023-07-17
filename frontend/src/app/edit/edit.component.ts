@@ -19,25 +19,12 @@ import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 })
 export class EditComponent implements AfterViewInit, OnInit {
   quill: any;
-  documentContent: string | undefined = '';
   fileName: string | undefined = '';
   text: any;
-  bold: boolean = false;
   sidebarVisible: boolean = true;
   exportDialogVisible: boolean = false;
   public speedDialItems!: MenuItem[];
   public Editor = DecoupledEditor;
-  public editorData = '<p>Hello, world!</p>'; // Initial content of the editor
-  public editorConfig = {
-    // Your custom configurations go here
-    toolbar: {
-      items: [
-        'heading', '|', 'bold', 'italic', 'link', 'bulletedList',
-        'numberedList', 'blockQuote', 'undo', 'redo',
-      ],
-    },
-    language: 'en',
-  };
   constructor(
     private elementRef: ElementRef,
     @Inject(Router) private router: Router,
@@ -96,46 +83,37 @@ export class EditComponent implements AfterViewInit, OnInit {
 
 
   ngAfterViewInit() {
+    let contents: string | undefined;
+    //Waits a small amount of time to fetch content from editService.
+    setTimeout(() => {contents = this.editService.getContent();}, 0);
+    //Then, gets the actual content.
     const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+    console.log(editableArea.toString());
     const toolbarContainer: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__toolbar');
-
     if (editableArea && toolbarContainer) {
       DecoupledEditor.create(editableArea, {
         cloudServices: {
-          // A configuration of CKEditor Cloud Services.
-          // ...
+          //TODO EXTREMELY useful for cloud collaboration.
         },
       })
         .then((editor) => {
           // Apply assertion for toolbarContainer
           (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
+          if(contents){
+            editor.setData(contents);
+            this.loadDocumentContents(editableArea);
+          }
           (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
         })
         .catch((err) => {
           console.error(err);
         });
     }
-
-
-
-    //TODO rework the commented code below to work for CKEditor.
-
-    // const quill = this.quillEditor.getQuill();
-    // setTimeout(() => {
-    //   const htmlContent = '<table><tr><th>Header 1</th><th>Header 2</th></tr><tr><td>Cell 1</td><td>Cell 2</td></tr></table>';
-    //   quill.clipboard.dangerouslyPasteHTML(htmlContent);
-    //   //Why wait 0ms? I don't know but it works
-    //   const contents = this.editService.getContent();
-    //   this.documentContent = contents;
-    //   if (contents) {
-    //     quill.setContents(JSON.parse(contents));
-    //   }
-    // }, 0);
-    // quill.focus();
-
-    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
-      '#E3E3E3';
-  }
+    else {
+      console.log("An error has occurred in either fetching, parsing or rendering the document.");
+    }
+    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#E3E3E3';
+    }
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
@@ -145,9 +123,8 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   save() {
     // Save the document quill content to localStorage when changes occur
-    const quill = this.quill.getQuill();
-    const contents = quill.getContents();
-
+    const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+    let contents = editableArea.innerHTML;
     this.fileService.saveDocument(
       contents,
       this.editService.getMarkdownID(),
@@ -155,32 +132,19 @@ export class EditComponent implements AfterViewInit, OnInit {
     );
   }
 
-  async load() {
-    // Load the document quill content from localStorage when changes occur
-    const quill = this.quill.getQuill();
-
+  //TODO The below function currently has no use, but
+  // it can be put to good use with the idea of the mini home page that I had - for file management inside the
+  // doc editor.
+  // I'll call this function on ngInit, rather. To load the doc on startup of the edit page.
+  async loadDocumentContents(editArea: HTMLElement) {
     const contents = await this.fileService.retrieveDocument(
       this.editService.getMarkdownID(),
       this.editService.getPath()
     );
     if (contents) {
-      quill.setContents(JSON.parse(contents));
+      editArea.innerHTML = contents;
     }
     console.log(contents);
-  }
-
-  undo() {
-    const quill = this.quill.getQuill();
-    const history = quill.history;
-
-    if (history.stack.undo.length > 1) {
-      history.undo();
-    }
-  }
-
-  redo() {
-    const quill = this.quill.getQuill();
-    quill.history.redo();
   }
 
   hideSideBar() {
@@ -206,16 +170,15 @@ export class EditComponent implements AfterViewInit, OnInit {
     );
   }
 
+  //TODO Take this functionality to Home Page.
   async delete() {
     console.log('delete');
     await this.fileService.deleteDocument(this.editService.getMarkdownID());
-
     this.editService.setMarkdownID('');
     this.editService.setPath('');
     this.editService.setName('');
     this.editService.setContent('');
     this.editService.setParentFolderID('');
-
     this.navigateToPage('home');
   }
 
@@ -224,14 +187,12 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   exportFile() {
-    const quill = this.quill;
-    const contents = quill.getContents();
-
+    let placeHolder = "CKEditor goes here";
+    let contents = "CKEditor contents";
     const markdownID = this.editService.getMarkdownID();
     const name = this.editService.getName();
-
     if (markdownID && name) {
-      this.fileService.exportDocument(markdownID, name, contents, 'txt');
+     this.fileService.exportDocument(markdownID, name, contents, 'txt');
     }
   }
 }
