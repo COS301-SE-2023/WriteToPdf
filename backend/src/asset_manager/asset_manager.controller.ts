@@ -42,22 +42,18 @@ export class AssetManagerController {
     @Body()
     renameAssetDTO: AssetDTO,
   ) {
-    return this.assetManagerService.renameAsset(
+    return this.assetManagerService.rename_asset(
       renameAssetDTO,
     );
   }
 
-  // @Get()
-  // findAll('retrieve_all') {
-
-  //   // this.imageManagerService.retrieveAll(
-
-  //   // );
-
-  //   // this.textManagerService.retrieveAll(
-
-  //   // );
-
-  //   return this.assetManagerService.findAll();
-  // }
+  @Post('delete_asset')
+  delete_asset(
+    @Body()
+    deleteAssetDTO: AssetDTO,
+  ) {
+    return this.assetManagerService.delete_asset(
+      deleteAssetDTO,
+    );
+  }
 }

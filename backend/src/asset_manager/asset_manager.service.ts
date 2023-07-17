@@ -3,12 +3,14 @@ import { AssetDTO } from '../assets/dto/asset.dto';
 import { ImageManagerService } from '../image_manager/image_manager.service';
 import { RetrieveAllDTO } from './dto/retrieve_all.dto';
 import { AssetsService } from '../assets/assets.service';
+import { S3Service } from '../s3/s3.service';
 
 @Injectable()
 export class AssetManagerService {
   constructor(
     private readonly imageManagerService: ImageManagerService,
     private readonly assetsService: AssetsService,
+    private readonly s3Service: S3Service,
   ) {}
 
   upload_image(uploadImageDTO: AssetDTO) {
@@ -46,9 +48,21 @@ export class AssetManagerService {
     return images;
   }
 
-  renameAsset(renameAssetDTO: AssetDTO) {
+  rename_asset(renameAssetDTO: AssetDTO) {
     return this.assetsService.renameAsset(
       renameAssetDTO,
+    );
+  }
+
+  delete_asset(deleteAssetDTO: AssetDTO) {
+    // Delete from database
+    this.assetsService.removeOne(
+      deleteAssetDTO.AssetID,
+    );
+
+    // Delete from S3/local storage
+    return this.s3Service.deleteAsset(
+      deleteAssetDTO,
     );
   }
 }
