@@ -45,8 +45,22 @@ export class AssetManagerService {
           asset.Content,
         );
     }
+
+    // preprocess text
     return images;
   }
+
+  retrieve_one(retrieveAssetDTO: AssetDTO) {
+    return this.s3Service.retrieveAsset(
+      retrieveAssetDTO,
+    );
+  }
+
+  // retrieve_image(retrieveImageDTO: AssetDTO) {
+  //   return this.imageManagerService.retrieveOne(
+  //     retrieveImageDTO,
+  //   );
+  // }
 
   rename_asset(renameAssetDTO: AssetDTO) {
     return this.assetsService.renameAsset(

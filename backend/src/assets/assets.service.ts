@@ -37,12 +37,30 @@ export class AssetsService {
     return this.assetsRepository.save(newAsset);
   }
 
-  retrieveAllImages(
-    retrieveAllImagesDTO: RetrieveAllImagesDTO,
+  retrieveOne(retrieveAssetDTO: AssetDTO) {
+    return this.assetsRepository.findOne({
+      where: {
+        AssetID: retrieveAssetDTO.AssetID,
+      },
+    }); // SELECT * FROM assets WHERE AssetID = retrieveAssetDTO.AssetID;
+  }
+
+  // retrieveAllImages(
+  //   retrieveAllImagesDTO: RetrieveAllImagesDTO,
+  // ) {
+  //   return this.assetsRepository.find({
+  //     where: {
+  //       UserID: retrieveAllImagesDTO.UserID,
+  //     },
+  //   }); // SELECT * FROM assets WHERE UserID = retrieveAllImagesDTO.UserID;
+  // }
+
+  retrieveAllAssets(
+    retrieveAllDTO: RetrieveAllImagesDTO,
   ) {
     return this.assetsRepository.find({
       where: {
-        UserID: retrieveAllImagesDTO.UserID,
+        UserID: retrieveAllDTO.UserID,
       },
     }); // SELECT * FROM assets WHERE UserID = retrieveAllImagesDTO.UserID;
   }

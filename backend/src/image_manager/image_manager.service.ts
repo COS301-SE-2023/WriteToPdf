@@ -36,7 +36,7 @@ export class ImageManagerService {
   retrieveAll(
     retrieveAllImagesDTO: RetrieveAllDTO,
   ) {
-    return this.assetsService.retrieveAllImages(
+    return this.assetsService.retrieveAllAssets(
       retrieveAllImagesDTO,
     );
   }

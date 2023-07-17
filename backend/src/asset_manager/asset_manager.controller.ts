@@ -40,6 +40,17 @@ export class AssetManagerController {
     );
   }
 
+  @Post('retrieve_one')
+  @HttpCode(HttpStatus.OK)
+  retrieve_one(
+    @Body()
+    retrieveOneDTO: AssetDTO,
+  ) {
+    return this.assetManagerService.retrieve_one(
+      retrieveOneDTO,
+    );
+  }
+
   @Post('rename_asset')
   @HttpCode(HttpStatus.OK)
   rename_asset(
