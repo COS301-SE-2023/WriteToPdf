@@ -432,6 +432,7 @@ updateTreeTableData(
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
+        console.log("Data retrieved on file open: " + data)
         this.editService.setContent(data);
         this.editService.setName(file.Name);
         this.editService.setMarkdownID(file.MarkdownID);

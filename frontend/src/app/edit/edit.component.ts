@@ -83,34 +83,27 @@ export class EditComponent implements AfterViewInit, OnInit {
 
 
   ngAfterViewInit() {
-    let contents: string | undefined;
     //Waits a small amount of time to fetch content from editService.
-    setTimeout(() => {contents = this.editService.getContent();}, 0);
-    //Then, gets the actual content.
     const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
-    console.log(editableArea.toString());
     const toolbarContainer: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__toolbar');
+
     if (editableArea && toolbarContainer) {
       DecoupledEditor.create(editableArea, {
         cloudServices: {
-          //TODO EXTREMELY useful for cloud collaboration.
+          // A configuration of CKEditor Cloud Services.
+          // ...
         },
       })
         .then((editor) => {
           // Apply assertion for toolbarContainer
           (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
-          if(contents){
-            editor.setData(contents);
-            this.loadDocumentContents(editableArea);
-          }
           (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
+          // Set the saved content after the editor is ready
+          editor.setData(<string>this.editService.getContent());
         })
         .catch((err) => {
           console.error(err);
         });
-    }
-    else {
-      console.log("An error has occurred in either fetching, parsing or rendering the document.");
     }
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#E3E3E3';
     }
@@ -125,26 +118,30 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document quill content to localStorage when changes occur
     const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
     let contents = editableArea.innerHTML;
+    console.log("Before function call save:" + contents);
     this.fileService.saveDocument(
       contents,
       this.editService.getMarkdownID(),
       this.editService.getPath()
     );
+    console.log("After function call save:" + contents);
   }
 
   //TODO The below function currently has no use, but
   // it can be put to good use with the idea of the mini home page that I had - for file management inside the
   // doc editor.
   // I'll call this function on ngInit, rather. To load the doc on startup of the edit page.
-  async loadDocumentContents(editArea: HTMLElement) {
-    const contents = await this.fileService.retrieveDocument(
-      this.editService.getMarkdownID(),
-      this.editService.getPath()
-    );
-    if (contents) {
-      editArea.innerHTML = contents;
+  loadDocumentContents(): string {
+    // const contents = await this.fileService.retrieveDocument(
+    //   this.editService.getMarkdownID(),
+    //   this.editService.getPath()
+    // );
+      let contents  = this.editService.getContent();
+      console.log("During load call:" + contents);
+    if (typeof contents === "string") {
+      return  contents;
     }
-    console.log(contents);
+    else return "There was an error returning your document content, soz lol."
   }
 
   hideSideBar() {

@@ -58,10 +58,10 @@ export class FileService {
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
-    body.Content = this.encryptDocument(JSON.stringify(content));
+    console.log("Before function call sendSaveData:" + content);
+    body.Content = this.encryptDocument(content);
     body.MarkdownID = markdownID;
     body.Path = path;
-
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
