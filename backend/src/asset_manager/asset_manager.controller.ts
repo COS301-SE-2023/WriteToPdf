@@ -30,6 +30,7 @@ export class AssetManagerController {
   }
 
   @Post('retrieve_all')
+  @HttpCode(HttpStatus.OK)
   retrieve_all(
     @Body()
     retrieveAllDTO: RetrieveAllDTO,
@@ -40,6 +41,7 @@ export class AssetManagerController {
   }
 
   @Post('rename_asset')
+  @HttpCode(HttpStatus.OK)
   rename_asset(
     @Body()
     renameAssetDTO: AssetDTO,
