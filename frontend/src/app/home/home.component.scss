@@ -6,6 +6,23 @@
   // white-space: nowrap;
 }
 
+.fileOperations-container{
+
+}
+
+.fileOperations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+}
+
+.fileOperations-entity{
+  padding:8px;
+  justify-content: center;
+  align-items: center;
+}
+
 //Code Section Header Styling
 .header {
   margin-top:-10px;

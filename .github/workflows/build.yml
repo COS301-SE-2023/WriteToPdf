@@ -1,48 +1,48 @@
 name: Build Codebase
 
 on:
-    push:
-        branches: ["*"] # All branches
-    pull_request:
-        branches: ["*"] # All branches
+  push:
+    branches: ["*"] # All branches
+  pull_request:
+    branches: ["*"] # All branches
 
 env:
-    JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-    DB_TYPE: ${{ secrets.DB_TYPE }}
-    DB_HOST: ${{ secrets.DB_HOST }}
-    DB_PORT: ${{ secrets.DB_PORT }}
-    DB_USERNAME: ${{ secrets.DB_USERNAME }}
-    DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-    DB_NAME: ${{ secrets.DB_NAME }}
-    PEPPER: ${{ secrets.PEPPER }}
-    TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
-    TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-    TEST_SALT: ${{ secrets.TEST_SALT }}
-    DB_TEST_PASSWORD: ${{ secrets.DB_TEST_PASSWORD }}
-    AUTH_BEARER: ${{ secrets.AUTH_BEARER }}
-    TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
-    AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
-    AWS_S3_BUCKET_REGION: ${{ secrets.AWS_S3_BUCKET_REGION }}
-    AWS_S3_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS_KEY_ID }}
-    AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
+  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+  DB_TYPE: ${{ secrets.DB_TYPE }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  PEPPER: ${{ secrets.PEPPER }}
+  TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+  TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+  TEST_SALT: ${{ secrets.TEST_SALT }}
+  DB_TEST_PASSWORD: ${{ secrets.DB_TEST_PASSWORD }}
+  AUTH_BEARER: ${{ secrets.AUTH_BEARER }}
+  TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
+  AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
+  AWS_S3_BUCKET_REGION: ${{ secrets.AWS_S3_BUCKET_REGION }}
+  AWS_S3_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS_KEY_ID }}
+  AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v2
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v2
-              with:
-                  node-version: 16.x
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
 
-            - name: Build backend
-              working-directory: backend
-              run: npm install && npm run build
+      - name: Build backend
+        working-directory: backend
+        run: npm install && npm run build
 
-            - name: Build frontend
-              working-directory: frontend
-              run: npm install && npm run build
+      - name: Build frontend
+        working-directory: frontend
+        run: npm install && npm run build

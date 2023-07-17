@@ -4,6 +4,7 @@
 @import '~node_modules/quill/dist/quill.core.css';
 @import '~node_modules/quill/dist/quill.bubble.css';
 @import '~node_modules/quill/dist/quill.snow.css';
+
 //TODO make global variables for each style element in the figma. Ie identifiers, headings, fonts etc.
 $accent: #E61B23;
 $font-color: #0C0006;
@@ -33,7 +34,7 @@ img{
         -moz-user-drag: none;
         -ms-user-drag: none;
         user-drag: none;
-      
+
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         -moz-user-select: none;

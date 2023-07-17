@@ -2,18 +2,13 @@ import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
 // import {NgModule} from "@angular/core";
 import { Router } from '@angular/router';
 import { TreeTable } from 'primeng/treetable';
-// import {Tree, TreeModule} from "primeng/tree";
-// import {TreeSelectModule} from "primeng/treeselect";
-// import {FormsModule} from "@angular/forms";
-// import {EditorModule} from "primeng/editor";
-// import {DropdownModule} from "primeng/dropdown";
-// import {EditComponent} from "../edit/edit.component";
 
 import { MenuItem, MessageService, TreeNode } from 'primeng/api';
 import { NodeService } from '../services/home.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { UserService } from '../services/user.service';
+import { FileManagerPopupComponent } from "../file-manager-popup/file-manager-popup.component";
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
 import { ViewChild } from '@angular/core';
 import { EditService } from '../services/edit.service';
@@ -61,6 +56,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public createNewFolderDialogueVisible: boolean = false;
   public entityName: string = '';
   uploadedFiles: any[] = [];
+  contextMenuItems: any[];
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
   constructor(@Inject(Router) private router: Router,
@@ -73,7 +69,31 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private editService: EditService,
     private folderService: FolderService
-  ) {}
+  ) {
+
+    this.contextMenuItems = [
+      {
+        label: 'Create New Folder',
+        icon: 'pi pi-folder-plus',
+        // command: () => this.createNewFolder()
+      },
+      {
+        label: 'Create New File',
+        icon: 'pi pi-file',
+        // command: () => this.createNewFile()
+      },
+      {
+        label: 'Enclose in Folder',
+        icon: 'pi pi-folder-plus',
+        // command: () => this.encloseSelectionInFolder()
+      },
+      {
+        label: 'Delete',
+        icon: 'pi pi-trash',
+        // command: () => this.deleteSelection()
+      }
+    ];
+  }
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
@@ -106,11 +126,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  updateTreeTableData(
+updateTreeTableData(
     nodes: TreeNode[],
     key: string,
     newValue: string
-  ): boolean {
+    ): boolean {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
       if (node.key === key) {
@@ -127,11 +147,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  updateTreeNodeLabel(
-    nodes: TreeNode[],
-    key: string,
-    newValue: string
-  ): boolean {
+  updateTreeNodeLabel(nodes: TreeNode[], key: string, newValue: string): boolean {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
       if (node.key === key) {
@@ -148,10 +164,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return false;
   }
 
+  //TODO Implement breadcrumb
   updateBreadcrumb(selectedNode: TreeNode | undefined) {
     // Clear the existing breadcrumb items
     this.activeDirectoryItems = [];
-
     // Traverse the selected node's ancestors to generate the breadcrumb items
     let currentNode = selectedNode;
     while (currentNode) {
@@ -176,13 +192,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // End of functions that implement editing funcitonality.
-  /**
-   *
-   * @JancoSpies, this function over here generates tree nodes from the  treetable data
-   * in essence, all that's important is that the keys remain unique and in the format as seen in
-   * home.service.ts
-   */
+  // End of functions that implement editing functionality.
   generateTreeNodes(data: any[]): TreeNode[] {
     return data.map((item) => {
       const node: TreeNode = {
@@ -282,7 +292,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   //TODO filter events from click on the left side directory contents need to rather use
   // a filter that finds the relevant directories via keys, not the actual text of the
-  // file's name or something like that.
+  // file's name.
   filterTable(filterEvent: any, searchCollapseExpandRoot: number) {
     let filterValue = '';
     let explodeOrCollapse: boolean = true;
@@ -327,6 +337,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       explodeOrCollapse
     );
   }
+
   // a helper function for filterTable that searches for child nodes inside the treeTable
   // that may be included into a parent node
   // this prevents searching in only the first node layer.
@@ -345,18 +356,55 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
     return false;
   }
-  // Below is the code that implements file uploading.
-  onUpload(event: any) {
-    for (let file of event.files) {
-      this.uploadedFiles.push(file);
-    }
-    this.messageService.add({
-      severity: 'info',
-      summary: 'File Uploaded',
-      detail: '',
-    });
-  }
 
+  /**
+   *
+   * @param options, must be "folder" || "move" || "document"
+   */
+  showFileManagerPopup(options: string): void {
+    if(options ===  "folder"){
+      //TODO communicate intentions to file manager pop-up
+      const ref = this.dialogService.open(FileManagerPopupComponent, {
+      header: 'Folder Creation: Select location',
+      showHeader: true,
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true
+    });
+    ref.onClose.subscribe(() => {
+      //If the user creates a new folder we want it to be reflected in our home page,
+      //So we need to call ngOnInit once more to update the homepage after closing.
+      this.ngOnInit();
+      // Handle any actions after the dialog is closed
+    });
+    }
+    if(options === "move"){
+      //TODO communicate intentions to file manager pop-up
+      const ref = this.dialogService.open(FileManagerPopupComponent, {
+        header: 'Select new location',
+        showHeader: true,
+        closable: true,
+        closeOnEscape: true,
+        dismissableMask: true
+      });
+      ref.onClose.subscribe(() => {
+        // Handle any actions after the dialog is closed
+      });
+    }
+    if(options === "document"){
+      //TODO communicate intentions to file manager pop-up
+      const ref = this.dialogService.open(FileManagerPopupComponent, {
+        header: 'Select document location',
+        showHeader: true,
+        closable: true,
+        closeOnEscape: true,
+        dismissableMask: true
+      });
+      ref.onClose.subscribe(() => {
+        // Handle any actions after the dialog is closed
+      });
+    }
+  }
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
       header: 'Upload Files',
@@ -365,12 +413,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
       closeOnEscape: true,
       dismissableMask: true,
     });
-
     // Subscribe to dialog close event if needed
     ref.onClose.subscribe(() => {
       // Handle any actions after the dialog is closed
     });
   }
+
   // this code updates the background layer to not be adjusted from the edit page after navigation.
   ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
@@ -384,6 +432,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
+        console.log("Data retrieved on file open: " + data)
         this.editService.setContent(data);
         this.editService.setName(file.Name);
         this.editService.setMarkdownID(file.MarkdownID);
@@ -393,23 +442,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
       });
   }
 
-  onMoveFileSelect(
-    event: any,
-    newPath: string,
-    newParentFolderID: string
-  ): void {
+  onMoveFileSelect(event: any, newPath: string, newParentFolderID: string): void {
     console.log(event);
     const file = this.nodeService.getFileDTOByID(event.key);
     this.entityToMove = event;
+    this.showFileManagerPopup("move");
     this.moveDialogVisible = true;
     console.log(file);
   }
 
-  onMoveFolderSelect(
-    event: any,
-    newPath: string,
-    newParentFolderID: string
-  ): void {
+  //TODO - implement the move folder function
+  onMoveFolderSelect(event: any, newPath: string, newParentFolderID: string): void {
     console.log(event);
     const folder = this.nodeService.getFolderDTOByID(event.key);
     this.entityToMove = event;
@@ -466,6 +509,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 label: 'Folder',
                 icon: 'pi pi-fw pi-folder',
                 command: () => {
+                  this.showFileManagerPopup("folder");
                   this.createNewFolderDialogueVisible = true;
                 },
               },
@@ -473,6 +517,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 label: 'Document',
                 icon: 'pi pi-fw pi-file',
                 command: () => {
+                  this.showFileManagerPopup("document");
                   this.createNewDocumentDialogueVisible = true;
                 },
               },
@@ -526,11 +571,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
           {
             separator: true,
           },
-          // {
+          // {//TODO implement downloading a file from the database
           //   label: 'Export',
           //   icon: 'pi pi-fw pi-external-link',
           //   command: () => {
-          //     //TODO implement downloading a file from the database
+          //
           //   }
           // }
         ],

@@ -3,8 +3,7 @@ import {
   Component,
   ElementRef,
   OnInit,
-  ViewChild,
-} from '@angular/core';
+  ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
@@ -17,22 +16,22 @@ import { Inject } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { set } from 'cypress/types/lodash';
 
+import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss'],
 })
 export class EditComponent implements AfterViewInit, OnInit {
-  @ViewChild('quillEditor') quillEditor: any;
-  documentContent: string | undefined = '';
+  quill: any;
   fileName: string | undefined = '';
   text: any;
-  bold: boolean = false;
   sidebarVisible: boolean = true;
   exportDialogVisible: boolean = false;
   public speedDialItems!: MenuItem[];
   assets: any[] = [];
 
+  public Editor = DecoupledEditor;
   constructor(
     private elementRef: ElementRef,
     @Inject(Router) private router: Router,
@@ -43,6 +42,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private clipboard: Clipboard,
     private messageService: MessageService
   ) { }
+
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
@@ -87,121 +87,69 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.fileName = this.editService.getName();
 
   }
+
+
   ngAfterViewInit() {
-    const quill = this.quillEditor.getQuill();
+    //Waits a small amount of time to fetch content from editService.
+    const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+    const toolbarContainer: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__toolbar');
 
-    setTimeout(() => {
-      //Why wait 0ms? I don't know but it works
-      const contents = this.editService.getContent();
-      this.documentContent = contents;
-      if (contents) {
-        quill.setContents(JSON.parse(contents));
-      }
-    }, 0);
-
-    quill.focus();
-
-    // quill.on('selection-change', (range: any, oldRange: any, source: any) => {
-    //   if (range) {
-    //     if (range.length == 0) {
-    //       this.setBold(quill.getFormat().bold);
-    //     } else {
-    //       var text = quill.getText(range.index, range.length);
-    //       console.log('User has highlighted', text);
-    //     }
-    //   } else {
-    //     console.log('Cursor not in the editor');
-    //   }
-    // });
-
+    if (editableArea && toolbarContainer) {
+      DecoupledEditor.create(editableArea, {
+        cloudServices: {
+          // A configuration of CKEditor Cloud Services.
+          // ...
+        },
+      })
+        .then((editor) => {
+          // Apply assertion for toolbarContainer
+          (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
+          (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
+          // Set the saved content after the editor is ready
+          editor.setData(<string>this.editService.getContent());
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#E3E3E3';
     this.refreshSidebar();
-    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
-      '#E3E3E3';
-  }
+    }
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
 
-  extractDeltaJson() {
-    const quill = this.quillEditor.getQuill();
 
-    console.log(quill.getContents());
-    console.log(quill.getFormat());
-  }
-
-  // flipBold() {
-  //   const quill = this.quillEditor.getQuill();
-  //   const bold = document.getElementById('bold');
-  //   if (this.bold) {
-  //     this.bold = false;
-  //     if (bold)
-  //       bold.style.backgroundColor = '#E3E3E300';
-  //     quill.format('bold', false);
-  //   }
-  //   else {
-  //     quill.format('bold', true);
-  //     this.bold = true;
-  //     if (bold)
-  //       bold.style.backgroundColor = '#E3E0E0';
-  //   }
-  // }
-
-  // setBold(isBold:boolean) {
-  //   const quill = this.quillEditor.getQuill();
-  //   const bold = document.getElementById('bold');
-  //   if (this.bold) {
-  //     this.bold = false;
-  //     if (bold)
-  //       bold.style.backgroundColor = '#E3E3E300';
-  //     quill.format('bold', false);
-  //   }
-  //   else {
-  //     quill.format('bold', true);
-  //     this.bold = true;
-  //     if (bold)
-  //       bold.style.backgroundColor = '#E3E0E0';
-  //   }
-  // }
 
   save() {
     // Save the document quill content to localStorage when changes occur
-    const quill = this.quillEditor.getQuill();
-    const contents = quill.getContents();
-
+    const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+    let contents = editableArea.innerHTML;
+    console.log("Before function call save:" + contents);
     this.fileService.saveDocument(
       contents,
       this.editService.getMarkdownID(),
       this.editService.getPath()
     );
+    console.log("After function call save:" + contents);
   }
 
-  async load() {
-    // Load the document quill content from localStorage when changes occur
-    const quill = this.quillEditor.getQuill();
-
-    const contents = await this.fileService.retrieveDocument(
-      this.editService.getMarkdownID(),
-      this.editService.getPath()
-    );
-    if (contents) {
-      quill.setContents(JSON.parse(contents));
+  //TODO The below function currently has no use, but
+  // it can be put to good use with the idea of the mini home page that I had - for file management inside the
+  // doc editor.
+  // I'll call this function on ngInit, rather. To load the doc on startup of the edit page.
+  loadDocumentContents(): string {
+    // const contents = await this.fileService.retrieveDocument(
+    //   this.editService.getMarkdownID(),
+    //   this.editService.getPath()
+    // );
+      let contents  = this.editService.getContent();
+      console.log("During load call:" + contents);
+    if (typeof contents === "string") {
+      return  contents;
     }
-    console.log(contents);
-  }
-
-  async undo() {
-    const quill = this.quillEditor.getQuill();
-    const history = quill.history;
-
-    if (history.stack.undo.length > 1) {
-      history.undo();
-    }
-  }
-
-  redo() {
-    const quill = this.quillEditor.getQuill();
-    quill.history.redo();
+    else return "There was an error returning your document content, soz lol."
   }
 
   hideSideBar() {
@@ -243,16 +191,15 @@ export class EditComponent implements AfterViewInit, OnInit {
     });
   }
 
+  //TODO Take this functionality to Home Page.
   async delete() {
     console.log('delete');
     await this.fileService.deleteDocument(this.editService.getMarkdownID());
-
     this.editService.setMarkdownID('');
     this.editService.setPath('');
     this.editService.setName('');
     this.editService.setContent('');
     this.editService.setParentFolderID('');
-
     this.navigateToPage('home');
   }
 
@@ -261,14 +208,12 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   exportFile() {
-    const quill = this.quillEditor.getQuill();
-    const contents = quill.getContents();
-
+    let placeHolder = "CKEditor goes here";
+    let contents = "CKEditor contents";
     const markdownID = this.editService.getMarkdownID();
     const name = this.editService.getName();
-
     if (markdownID && name) {
-      this.fileService.exportDocument(markdownID, name, contents, 'txt');
+     this.fileService.exportDocument(markdownID, name, contents, 'txt');
     }
   }
 
