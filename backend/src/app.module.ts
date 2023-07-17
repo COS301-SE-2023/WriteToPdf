@@ -28,6 +28,8 @@ import { S3Service } from './s3/s3.service';
 import { ConversionService } from './conversion/conversion.service';
 import { User } from './users/entities/user.entity';
 import { ImageManagerModule } from './image_manager/image_manager.module';
+import { AssetManagerModule } from './asset_manager/asset_manager.module';
+import { TextManagerModule } from './text_manager/text_manager.module';
 
 @Module({
   imports: [
@@ -45,6 +47,8 @@ import { ImageManagerModule } from './image_manager/image_manager.module';
     S3Module,
     FileManagerModule,
     ImageManagerModule,
+    AssetManagerModule,
+    TextManagerModule,
   ],
   controllers: [
     AppController,

@@ -60,6 +60,9 @@ export class ImageManagerController {
           asset.Content,
         );
     }
+
+    // return text snippet in place of a thumbnail
+
     return images;
   }
 
@@ -114,40 +117,40 @@ export class ImageManagerController {
     );
   }
 
-  @Post()
-  create(
-    @Body()
-    createImageManagerDto: ImageDTO,
-  ) {
-    return this.imageManagerService.create(
-      createImageManagerDto,
-    );
-  }
+  // @Post()
+  // create(
+  //   @Body()
+  //   createImageManagerDto: ImageDTO,
+  // ) {
+  //   return this.imageManagerService.create(
+  //     createImageManagerDto,
+  //   );
+  // }
 
-  @Get()
-  findAll() {
-    return this.imageManagerService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.imageManagerService.findAll();
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.imageManagerService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.imageManagerService.findOne(+id);
+  // }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body()
-    updateImageManagerDto: ImageDTO,
-  ) {
-    return this.imageManagerService.update(
-      +id,
-      updateImageManagerDto,
-    );
-  }
+  // @Patch(':id')
+  // update(
+  //   @Param('id') id: string,
+  //   @Body()
+  //   updateImageManagerDto: ImageDTO,
+  // ) {
+  //   return this.imageManagerService.update(
+  //     +id,
+  //     updateImageManagerDto,
+  //   );
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.imageManagerService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.imageManagerService.remove(+id);
+  // }
 }

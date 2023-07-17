@@ -23,3 +23,5 @@ export class AssetDTO {
     this.Content = undefined;
   }
 }
+
+// textConverted,aspdofjashdf;oauhsdf ... image/jpeg:Base64,aos;dfhianpsodxou

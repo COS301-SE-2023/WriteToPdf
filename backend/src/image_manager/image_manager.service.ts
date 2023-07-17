@@ -15,39 +15,18 @@ export class ImageManagerService {
     private readonly assetsService: AssetsService,
   ) {}
 
-  create(createImageDto: ImageDTO) {
-    return 'This action adds a new imageManager';
-  }
-
-  findAll() {
-    return `This action returns all imageManager`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} imageManager`;
-  }
-
-  update(id: number, updateImageDto: ImageDTO) {
-    return `This action updates a #${id} imageManager`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} imageManager`;
-  }
-
   upload(uploadImageDto: AssetDTO) {
-    // TODO place the image in the database
-    const assetID = SHA256(
+    uploadImageDto.AssetID = SHA256(
       uploadImageDto.UserID.toString() +
         new Date().getTime().toString(),
     ).toString();
 
-    uploadImageDto.AssetID = assetID;
-
+    // Store in database
     this.assetsService.createImage(
       uploadImageDto,
     );
 
+    // Store in S3/local storage
     return this.s3Service.saveImage(
       uploadImageDto,
     );
