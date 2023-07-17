@@ -70,7 +70,7 @@ export class CameraComponent {
 
 
   async uploadImage() {
-    if(await this.assetService.uploadImage(this.sysImage, '', this.assetName)){
+    if(await this.assetService.uploadImage(this.sysImage, 'New Asset', this.assetName)){
       
       this.navigateToPage('edit');
     }
