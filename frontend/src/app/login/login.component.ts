@@ -52,7 +52,7 @@ export class LoginComponent {
   }
 
   async autoLogin(): Promise<void> {
-    this.email = 'test';
-    this.password = '123456';
+    this.email = 'Dev@Dev.com';
+    this.password = 'QWEqwe123';
   }
 }

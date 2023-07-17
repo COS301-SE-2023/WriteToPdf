@@ -7,10 +7,15 @@ import {
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
+import { AssetService } from '../services/asset.service';
 import { Inject } from '@angular/core';
+import { MessageService } from 'primeng/api';
+import { set } from 'cypress/types/lodash';
+
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 @Component({
   selector: 'app-edit',
@@ -24,14 +29,19 @@ export class EditComponent implements AfterViewInit, OnInit {
   sidebarVisible: boolean = true;
   exportDialogVisible: boolean = false;
   public speedDialItems!: MenuItem[];
+  assets: any[] = [];
+
   public Editor = DecoupledEditor;
   constructor(
     private elementRef: ElementRef,
     @Inject(Router) private router: Router,
     private dialogService: DialogService,
     private fileService: FileService,
-    private editService: EditService
-  ) {}
+    private editService: EditService,
+    private assetService: AssetService,
+    private clipboard: Clipboard,
+    private messageService: MessageService
+  ) { }
 
 
   showFileUploadPopup(): void {
@@ -44,11 +54,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     });
   }
 
-  ngOnInit(): void {
-    //Here is the code for the Decoupled editor initialization.
-
-    //End of decoupled editor code.
-    this.hideSideBar();
+  async ngOnInit(): Promise<void> {
     this.speedDialItems = [
       {
         icon: 'pi pi-pencil',
@@ -79,6 +85,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       },
     ];
     this.fileName = this.editService.getName();
+
   }
 
 
@@ -106,6 +113,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         });
     }
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#E3E3E3';
+    this.refreshSidebar();
     }
 
   navigateToPage(pageName: string) {
@@ -147,15 +155,27 @@ export class EditComponent implements AfterViewInit, OnInit {
   hideSideBar() {
     // get asset sidebar and set display none
     const sidebar = document.getElementsByClassName('assetSidebar')[0];
-    if (sidebar) {
+    const editor = document.getElementsByClassName('editor')[0];
+    const showAssetSidebar = document.getElementsByClassName('showAssetSidebar')[0];
+    if (sidebar && editor && showAssetSidebar) {
       if (this.sidebarVisible) {
+        editor.setAttribute('style', 'left:130px');
+        editor.setAttribute('style', 'padding-right: 130px');
         sidebar.setAttribute('style', 'display:none');
+        showAssetSidebar.setAttribute('style', 'display:block');
         this.sidebarVisible = false;
       } else {
+        editor.setAttribute('style', 'left:260px');
+        editor.setAttribute('style', 'padding-right: 0px');
         sidebar.setAttribute('style', 'display:block');
+        showAssetSidebar.setAttribute('style', 'display:none');
         this.sidebarVisible = true;
       }
     }
+
+    // setTimeout(() => {
+    //   this.hideSideBar();
+    // },3000);
   }
 
   rename() {
@@ -164,7 +184,11 @@ export class EditComponent implements AfterViewInit, OnInit {
       this.editService.getMarkdownID(),
       this.fileName,
       this.editService.getPath()
-    );
+    ).then((Boolean) => {
+      if (Boolean) {
+        this.editService.setName(this.fileName);
+      }
+    });
   }
 
   //TODO Take this functionality to Home Page.
@@ -191,5 +215,32 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (markdownID && name) {
      this.fileService.exportDocument(markdownID, name, contents, 'txt');
     }
+  }
+
+  async retrieveAsset(assetId:string){
+    const asset = await this.assetService.retrieveAsset(assetId);
+    console.log(asset);
+    if (asset) {
+      this.clipboard.copy(asset.Content);
+      this.messageService.add({severity:'success', summary:'Success', detail:'Asset copied to clipboard'});
+    }
+  }
+
+  async deleteAsset(assetId:string){
+    if(await this.assetService.deleteAsset(assetId)){
+      this.messageService.add({severity:'success', summary:'Success', detail:'Asset deleted'});
+      await this.refreshSidebar();
+    }
+  }
+
+  async renameAsset(assetId: string, event: Event){
+    const inputElement = event.target as HTMLInputElement;
+    const inputValue = inputElement.value;
+    const asset = await this.assetService.renameAsset(assetId, inputValue);
+    console.log(asset);
+  }
+
+  async refreshSidebar(){
+    this.assets = await this.assetService.retrieveAll();
   }
 }

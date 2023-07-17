@@ -26,6 +26,10 @@ import { MarkdownFile } from './markdown_files/entities/markdown_file.entity';
 import { Folder } from './folders/entities/folder.entity';
 import { S3Service } from './s3/s3.service';
 import { ConversionService } from './conversion/conversion.service';
+import { User } from './users/entities/user.entity';
+import { ImageManagerModule } from './image_manager/image_manager.module';
+import { AssetManagerModule } from './asset_manager/asset_manager.module';
+import { TextManagerModule } from './text_manager/text_manager.module';
 
 @Module({
   imports: [
@@ -33,14 +37,18 @@ import { ConversionService } from './conversion/conversion.service';
     EditModule,
     UsersModule,
     TypeOrmModule.forRoot(dataSourceOptions),
-    TypeOrmModule.forRoot(testDBOptions),
+    // TypeOrmModule.forRoot(testDBOptions),
     TypeOrmModule.forFeature([MarkdownFile]),
     TypeOrmModule.forFeature([Folder]),
+    TypeOrmModule.forFeature([User]),
     MarkdownFilesModule,
     AssetsModule,
     FoldersModule,
     S3Module,
     FileManagerModule,
+    ImageManagerModule,
+    AssetManagerModule,
+    TextManagerModule,
   ],
   controllers: [
     AppController,
