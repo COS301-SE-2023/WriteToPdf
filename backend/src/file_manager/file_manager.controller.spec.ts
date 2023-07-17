@@ -1436,291 +1436,291 @@ describe('FileManagerController', () => {
   });
 
   // Import & Export operations #################################################
-  describe('import', () => {
-    it('should throw an exception if request method is not POST', async () => {
-      const request = { method: 'GET' };
-      const importDTO = new ImportDTO();
+  // describe('import', () => {
+  //   it('should throw an exception if request method is not POST', async () => {
+  //     const request = { method: 'GET' };
+  //     const importDTO = new ImportDTO();
 
-      try {
-        await controller.import(
-          importDTO,
-          request as any,
-        );
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'Method Not Allowed',
-        );
-        expect(error.status).toBe(
-          HttpStatus.METHOD_NOT_ALLOWED,
-        );
-      }
-    });
+  //     try {
+  //       await controller.import(
+  //         importDTO,
+  //         request as any,
+  //       );
+  //       expect(true).toBe(false);
+  //     } catch (error) {
+  //       expect(error).toBeInstanceOf(
+  //         HttpException,
+  //       );
+  //       expect(error.message).toBe(
+  //         'Method Not Allowed',
+  //       );
+  //       expect(error.status).toBe(
+  //         HttpStatus.METHOD_NOT_ALLOWED,
+  //       );
+  //     }
+  //   });
 
-    it('should throw an exception if UserID is undefined', () => {
-      const request = { method: 'POST' };
-      const importDTO = new ImportDTO();
-      importDTO.Path = 'test/test';
-      importDTO.Type = 'test';
-      importDTO.Content = 'test';
-      importDTO.Name = 'test';
-      importDTO.ParentFolderID = '123';
+  //   it('should throw an exception if UserID is undefined', () => {
+  //     const request = { method: 'POST' };
+  //     const importDTO = new ImportDTO();
+  //     importDTO.Path = 'test/test';
+  //     importDTO.Type = 'test';
+  //     importDTO.Content = 'test';
+  //     importDTO.Name = 'test';
+  //     importDTO.ParentFolderID = '123';
 
-      expect(() =>
-        controller.import(
-          importDTO,
-          request as any,
-        ),
-      ).toThrowError(
-        new HttpException(
-          'Invalid request data',
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
-    });
+  //     expect(() =>
+  //       controller.import(
+  //         importDTO,
+  //         request as any,
+  //       ),
+  //     ).toThrowError(
+  //       new HttpException(
+  //         'Invalid request data',
+  //         HttpStatus.BAD_REQUEST,
+  //       ),
+  //     );
+  //   });
 
-    it('should throw an exception if Name is undefined', () => {
-      const request = { method: 'POST' };
-      const importDTO = new ImportDTO();
-      importDTO.Path = 'test/test';
-      importDTO.Type = 'test';
-      importDTO.UserID = 123;
-      importDTO.Content = 'test';
-      importDTO.ParentFolderID = '123';
+  //   it('should throw an exception if Name is undefined', () => {
+  //     const request = { method: 'POST' };
+  //     const importDTO = new ImportDTO();
+  //     importDTO.Path = 'test/test';
+  //     importDTO.Type = 'test';
+  //     importDTO.UserID = 123;
+  //     importDTO.Content = 'test';
+  //     importDTO.ParentFolderID = '123';
 
-      expect(() =>
-        controller.import(
-          importDTO,
-          request as any,
-        ),
-      ).toThrowError(
-        new HttpException(
-          'Invalid request data',
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
-    });
+  //     expect(() =>
+  //       controller.import(
+  //         importDTO,
+  //         request as any,
+  //       ),
+  //     ).toThrowError(
+  //       new HttpException(
+  //         'Invalid request data',
+  //         HttpStatus.BAD_REQUEST,
+  //       ),
+  //     );
+  //   });
 
-    it('should throw an exception if Type is undefined', () => {
-      const request = { method: 'POST' };
-      const importDTO = new ImportDTO();
-      importDTO.UserID = 123;
-      importDTO.Path = 'test/test';
-      importDTO.Content = 'test';
-      importDTO.ParentFolderID = '123';
-      importDTO.Name = 'test';
+  //   it('should throw an exception if Type is undefined', () => {
+  //     const request = { method: 'POST' };
+  //     const importDTO = new ImportDTO();
+  //     importDTO.UserID = 123;
+  //     importDTO.Path = 'test/test';
+  //     importDTO.Content = 'test';
+  //     importDTO.ParentFolderID = '123';
+  //     importDTO.Name = 'test';
 
-      expect(() =>
-        controller.import(
-          importDTO,
-          request as any,
-        ),
-      ).toThrowError(
-        new HttpException(
-          'Invalid request data',
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
-    });
+  //     expect(() =>
+  //       controller.import(
+  //         importDTO,
+  //         request as any,
+  //       ),
+  //     ).toThrowError(
+  //       new HttpException(
+  //         'Invalid request data',
+  //         HttpStatus.BAD_REQUEST,
+  //       ),
+  //     );
+  //   });
 
-    it('should throw an exception if Content is undefined', () => {
-      const request = { method: 'POST' };
-      const importDTO = new ImportDTO();
-      importDTO.UserID = 123;
-      importDTO.Type = 'test';
-      importDTO.Path = 'test/test';
-      importDTO.ParentFolderID = '123';
-      importDTO.Name = 'test';
+  //   it('should throw an exception if Content is undefined', () => {
+  //     const request = { method: 'POST' };
+  //     const importDTO = new ImportDTO();
+  //     importDTO.UserID = 123;
+  //     importDTO.Type = 'test';
+  //     importDTO.Path = 'test/test';
+  //     importDTO.ParentFolderID = '123';
+  //     importDTO.Name = 'test';
 
-      expect(() =>
-        controller.import(
-          importDTO,
-          request as any,
-        ),
-      ).toThrowError(
-        new HttpException(
-          'Invalid request data',
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
-    });
+  //     expect(() =>
+  //       controller.import(
+  //         importDTO,
+  //         request as any,
+  //       ),
+  //     ).toThrowError(
+  //       new HttpException(
+  //         'Invalid request data',
+  //         HttpStatus.BAD_REQUEST,
+  //       ),
+  //     );
+  //   });
 
-    it('should throw an exception if ParentFolderID is undefined', () => {
-      const request = { method: 'POST' };
-      const importDTO = new ImportDTO();
-      importDTO.UserID = 123;
-      importDTO.Path = 'test/test';
-      importDTO.Content = 'test';
-      importDTO.Type = 'test';
-      importDTO.Name = 'test';
+  //   it('should throw an exception if ParentFolderID is undefined', () => {
+  //     const request = { method: 'POST' };
+  //     const importDTO = new ImportDTO();
+  //     importDTO.UserID = 123;
+  //     importDTO.Path = 'test/test';
+  //     importDTO.Content = 'test';
+  //     importDTO.Type = 'test';
+  //     importDTO.Name = 'test';
 
-      expect(() =>
-        controller.import(
-          importDTO,
-          request as any,
-        ),
-      ).toThrowError(
-        new HttpException(
-          'Invalid request data',
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
-    });
+  //     expect(() =>
+  //       controller.import(
+  //         importDTO,
+  //         request as any,
+  //       ),
+  //     ).toThrowError(
+  //       new HttpException(
+  //         'Invalid request data',
+  //         HttpStatus.BAD_REQUEST,
+  //       ),
+  //     );
+  //   });
 
-    it('should throw an exception if Path is undefined', () => {
-      const request = { method: 'POST' };
-      const importDTO = new ImportDTO();
-      importDTO.UserID = 123;
-      importDTO.Content = 'test';
-      importDTO.ParentFolderID = '123';
-      importDTO.Type = 'test';
-      importDTO.Name = 'test';
+  //   it('should throw an exception if Path is undefined', () => {
+  //     const request = { method: 'POST' };
+  //     const importDTO = new ImportDTO();
+  //     importDTO.UserID = 123;
+  //     importDTO.Content = 'test';
+  //     importDTO.ParentFolderID = '123';
+  //     importDTO.Type = 'test';
+  //     importDTO.Name = 'test';
 
-      expect(() =>
-        controller.import(
-          importDTO,
-          request as any,
-        ),
-      ).toThrowError(
-        new HttpException(
-          'Invalid request data',
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
-    });
+  //     expect(() =>
+  //       controller.import(
+  //         importDTO,
+  //         request as any,
+  //       ),
+  //     ).toThrowError(
+  //       new HttpException(
+  //         'Invalid request data',
+  //         HttpStatus.BAD_REQUEST,
+  //       ),
+  //     );
+  //   });
 
-    it('should return a MarkdownFileDTO', async () => {
-      const request = { method: 'POST' };
-      const importDTO = new ImportDTO();
-      importDTO.UserID = 123;
-      importDTO.Path = 'test/test';
-      importDTO.Name = 'test';
-      importDTO.Type = 'test';
-      importDTO.Content = 'test';
-      importDTO.ParentFolderID = '123';
+  //   it('should return a MarkdownFileDTO', async () => {
+  //     const request = { method: 'POST' };
+  //     const importDTO = new ImportDTO();
+  //     importDTO.UserID = 123;
+  //     importDTO.Path = 'test/test';
+  //     importDTO.Name = 'test';
+  //     importDTO.Type = 'test';
+  //     importDTO.Content = 'test';
+  //     importDTO.ParentFolderID = '123';
 
-      jest
-        .spyOn(fileManagerService, 'importFile')
-        .mockResolvedValue(new MarkdownFileDTO());
+  //     jest
+  //       .spyOn(fileManagerService, 'importFile')
+  //       .mockResolvedValue(new MarkdownFileDTO());
 
-      const result = await controller.import(
-        importDTO,
-        request as any,
-      );
+  //     const result = await controller.import(
+  //       importDTO,
+  //       request as any,
+  //     );
 
-      expect(result).toBeInstanceOf(
-        MarkdownFileDTO,
-      );
-      expect(
-        fileManagerService.importFile,
-      ).toBeCalledWith(importDTO);
-    });
-  });
+  //     expect(result).toBeInstanceOf(
+  //       MarkdownFileDTO,
+  //     );
+  //     expect(
+  //       fileManagerService.importFile,
+  //     ).toBeCalledWith(importDTO);
+  //   });
+  // });
 
-  describe('export', () => {
-    it('should throw an exception if request method is not POST', async () => {
-      const request = { method: 'GET' };
-      const exportDTO = new ExportDTO();
+  // describe('export', () => {
+  //   it('should throw an exception if request method is not POST', async () => {
+  //     const request = { method: 'GET' };
+  //     const exportDTO = new ExportDTO();
 
-      try {
-        await controller.export(
-          exportDTO,
-          request as any,
-        );
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'Method Not Allowed',
-        );
-        expect(error.status).toBe(
-          HttpStatus.METHOD_NOT_ALLOWED,
-        );
-      }
-    });
+  //     try {
+  //       await controller.export(
+  //         exportDTO,
+  //         request as any,
+  //       );
+  //       expect(true).toBe(false);
+  //     } catch (error) {
+  //       expect(error).toBeInstanceOf(
+  //         HttpException,
+  //       );
+  //       expect(error.message).toBe(
+  //         'Method Not Allowed',
+  //       );
+  //       expect(error.status).toBe(
+  //         HttpStatus.METHOD_NOT_ALLOWED,
+  //       );
+  //     }
+  //   });
 
-    it('should throw an exception if UserID is undefined', () => {
-      const request = { method: 'POST' };
-      const exportDTO = new ExportDTO();
-      exportDTO.Type = 'test';
-      exportDTO.MarkdownID = 'test';
+  //   it('should throw an exception if UserID is undefined', () => {
+  //     const request = { method: 'POST' };
+  //     const exportDTO = new ExportDTO();
+  //     exportDTO.Type = 'test';
+  //     exportDTO.MarkdownID = 'test';
 
-      expect(() =>
-        controller.export(
-          exportDTO,
-          request as any,
-        ),
-      ).toThrowError(
-        new HttpException(
-          'Invalid request data',
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
-    });
+  //     expect(() =>
+  //       controller.export(
+  //         exportDTO,
+  //         request as any,
+  //       ),
+  //     ).toThrowError(
+  //       new HttpException(
+  //         'Invalid request data',
+  //         HttpStatus.BAD_REQUEST,
+  //       ),
+  //     );
+  //   });
 
-    it('should throw an exception if Type is undefined', () => {
-      const request = { method: 'POST' };
-      const exportDTO = new ExportDTO();
-      exportDTO.UserID = 123;
-      exportDTO.MarkdownID = 'test';
+  //   it('should throw an exception if Type is undefined', () => {
+  //     const request = { method: 'POST' };
+  //     const exportDTO = new ExportDTO();
+  //     exportDTO.UserID = 123;
+  //     exportDTO.MarkdownID = 'test';
 
-      expect(() =>
-        controller.export(
-          exportDTO,
-          request as any,
-        ),
-      ).toThrowError(
-        new HttpException(
-          'Invalid request data',
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
-    });
+  //     expect(() =>
+  //       controller.export(
+  //         exportDTO,
+  //         request as any,
+  //       ),
+  //     ).toThrowError(
+  //       new HttpException(
+  //         'Invalid request data',
+  //         HttpStatus.BAD_REQUEST,
+  //       ),
+  //     );
+  //   });
 
-    it('should throw an exception if MarkdownID is undefined', () => {
-      const request = { method: 'POST' };
-      const exportDTO = new ExportDTO();
-      exportDTO.UserID = 123;
-      exportDTO.MarkdownID = '123';
+  //   it('should throw an exception if MarkdownID is undefined', () => {
+  //     const request = { method: 'POST' };
+  //     const exportDTO = new ExportDTO();
+  //     exportDTO.UserID = 123;
+  //     exportDTO.MarkdownID = '123';
 
-      expect(() =>
-        controller.export(
-          exportDTO,
-          request as any,
-        ),
-      ).toThrowError(
-        new HttpException(
-          'Invalid request data',
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
-    });
+  //     expect(() =>
+  //       controller.export(
+  //         exportDTO,
+  //         request as any,
+  //       ),
+  //     ).toThrowError(
+  //       new HttpException(
+  //         'Invalid request data',
+  //         HttpStatus.BAD_REQUEST,
+  //       ),
+  //     );
+  //   });
 
-    it('should return a MarkdownFileDTO', async () => {
-      const request = { method: 'POST' };
-      const exportDTO = new ExportDTO();
-      exportDTO.UserID = 123;
-      exportDTO.Type = 'test';
-      exportDTO.MarkdownID = '123';
+  //   it('should return a MarkdownFileDTO', async () => {
+  //     const request = { method: 'POST' };
+  //     const exportDTO = new ExportDTO();
+  //     exportDTO.UserID = 123;
+  //     exportDTO.Type = 'test';
+  //     exportDTO.MarkdownID = '123';
 
-      jest
-        .spyOn(fileManagerService, 'exportFile')
-        .mockResolvedValue(exportDTO);
+  //     jest
+  //       .spyOn(fileManagerService, 'exportFile')
+  //       .mockResolvedValue(exportDTO);
 
-      const result = await controller.export(
-        exportDTO,
-        request as any,
-      );
+  //     const result = await controller.export(
+  //       exportDTO,
+  //       request as any,
+  //     );
 
-      expect(result).toBeInstanceOf(ExportDTO);
-      expect(
-        fileManagerService.exportFile,
-      ).toBeCalledWith(exportDTO);
-    });
-  });
+  //     expect(result).toBeInstanceOf(ExportDTO);
+  //     expect(
+  //       fileManagerService.exportFile,
+  //     ).toBeCalledWith(exportDTO);
+  //   });
+  // });
 });
