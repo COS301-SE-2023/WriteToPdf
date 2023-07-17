@@ -18,14 +18,14 @@ import {
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { Repository } from 'typeorm';
 import { Folder } from '../folders/entities/folder.entity';
-import { ConversionService } from '../conversion/conversion.service';
+// import { ConversionService } from '../conversion/conversion.service';
 import { S3Service } from '../s3/s3.service';
 import { UsersService } from '../users/users.service';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { FolderDTO } from '../folders/dto/folder.dto';
-import { ImportDTO } from './dto/import.dto';
-import { ExportDTO } from './dto/export.dto';
+// import { ImportDTO } from './dto/import.dto';
+// import { ExportDTO } from './dto/export.dto';
 import { User } from '../users/entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
@@ -42,7 +42,7 @@ describe('FileManagerController', () => {
           FileManagerService,
           MarkdownFilesService,
           FoldersService,
-          ConversionService,
+          // ConversionService,
           S3Service,
           UsersService,
           AuthService,

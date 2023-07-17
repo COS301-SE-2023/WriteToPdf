@@ -12,9 +12,9 @@ import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
-import { ImportDTO } from './dto/import.dto';
-import { ConversionService } from '../conversion/conversion.service';
-import { ExportDTO } from './dto/export.dto';
+// import { ImportDTO } from './dto/import.dto';
+// import { ConversionService } from '../conversion/conversion.service';
+// import { ExportDTO } from './dto/export.dto';
 import { UsersService } from '../users/users.service';
 import * as CryptoJS from 'crypto-js';
 
@@ -24,7 +24,7 @@ export class FileManagerService {
     private markdownFilesService: MarkdownFilesService,
     private folderService: FoldersService,
     private s3service: S3Service,
-    private conversionService: ConversionService,
+    // private conversionService: ConversionService,
     private userService: UsersService,
   ) {}
 

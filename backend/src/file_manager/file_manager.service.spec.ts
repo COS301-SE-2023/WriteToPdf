@@ -14,8 +14,8 @@ import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { testingModule } from '../test-utils/testingModule';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
-import { ImportDTO } from './dto/import.dto';
-import { ConversionService } from '../conversion/conversion.service';
+// import { ImportDTO } from './dto/import.dto';
+// import { ConversionService } from '../conversion/conversion.service';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
@@ -24,7 +24,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
-import { ExportDTO } from './dto/export.dto';
+// import { ExportDTO } from './dto/export.dto';
 import { UsersService } from '../users/users.service';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
@@ -37,7 +37,7 @@ describe('FileManagerService', () => {
   let foldersService: FoldersService;
   let markdownFilesService: MarkdownFilesService;
   let s3Service: S3Service;
-  let conversionService: ConversionService;
+  // let conversionService: ConversionService;
   let usersService: UsersService;
 
   beforeEach(async () => {
@@ -48,7 +48,7 @@ describe('FileManagerService', () => {
           FoldersService,
           MarkdownFilesService,
           S3Service,
-          ConversionService,
+          // ConversionService,
           UsersService,
           AuthService,
           JwtService,
@@ -135,10 +135,10 @@ describe('FileManagerService', () => {
         MarkdownFilesService,
       );
     s3Service = module.get<S3Service>(S3Service);
-    conversionService =
-      module.get<ConversionService>(
-        ConversionService,
-      );
+    // conversionService =
+    //   module.get<ConversionService>(
+    //     ConversionService,
+    //   );
     usersService =
       module.get<UsersService>(UsersService);
     module.close();
