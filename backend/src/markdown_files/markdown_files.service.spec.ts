@@ -7,6 +7,7 @@ import { MarkdownFile } from './entities/markdown_file.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
+import { create } from 'domain';
 
 describe('MarkdownFilesService', () => {
   let service: MarkdownFilesService;
@@ -35,16 +36,30 @@ describe('MarkdownFilesService', () => {
       markdownFile.MarkdownID = '1';
       markdownFile.Name = 'markdownFile1';
       markdownFile.Path = 'path1';
+      markdownFile.ParentFolderID = '1';
+
+      const createdMakdownFile =
+        new MarkdownFile();
+      createdMakdownFile.MarkdownID =
+        markdownFile.MarkdownID;
+      createdMakdownFile.Name = markdownFile.Name;
+      createdMakdownFile.Path = markdownFile.Path;
+      createdMakdownFile.DateCreated = new Date();
+      createdMakdownFile.LastModified =
+        new Date();
+      createdMakdownFile.Size = 0;
+      createdMakdownFile.ParentFolderID =
+        markdownFile.ParentFolderID;
 
       jest
         .spyOn(Repository.prototype, 'save')
-        .mockResolvedValue(markdownFile);
+        .mockResolvedValue(createdMakdownFile);
 
       const result = await service.create(
         markdownFile,
       );
 
-      expect(result).toBe(markdownFile);
+      expect(result).toBe(createdMakdownFile);
       expect(
         Repository.prototype.save,
       ).toBeCalledWith(markdownFile);
