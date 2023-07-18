@@ -82,13 +82,15 @@
 }
 
 :host ::ng-deep .p-inputtext {
-    padding-left:20px;
+    padding-left: 20px;
     border: 2px solid #ffffff;
     border-radius: 90px;
 
     background-color: $text-box-color ;
 
-    height: 40px;
+    height: 4vh;
+    max-height: 40px;
+    min-height: 30px;
     width: 80%;
     margin: auto;
 
@@ -118,9 +120,11 @@
 
     background-color: #ffffff;
 
-    height: 40px;
+    height: 4vh;
+    max-height: 40px;
+    min-height: 30px;
 
-    font-size: 16px;
+    font-size: clamp(12px, 2vh, 16px);
 
     width: 50%;
     margin: auto;
@@ -146,9 +150,11 @@
 
     background-color: #ffffff;
 
-    height: 40px;
+    height: 4vh;
+    max-height: 40px;
+    min-height: 30px;
 
-    font-size: 16px;
+    font-size: clamp(12px, 2vh, 16px);
 
     width: 50%;
     margin: auto;
