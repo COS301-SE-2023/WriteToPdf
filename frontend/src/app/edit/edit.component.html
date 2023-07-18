@@ -19,7 +19,7 @@
             class="documentTitle"
             value="New Document"
             maxlength="50"
-            (blur)="rename()"
+            (blur)="renameDocument()"
             [(ngModel)]="fileName"
           />
         </div>
@@ -36,10 +36,10 @@
         >
           <div class="flex py-2 justify-content-center"></div>
           <!-- <input type="text" pInputText [(ngModel)]="fileType" /> -->
-          <p-button label="Export to txt" (click)="exportFile()"></p-button>
+          <p-button label="Export to txt" (click)="exportTextFile()"></p-button>
         </p-dialog>
 
-        <div class="tool" (click)="save()">
+        <div class="tool" (click)="saveDocumentContents()">
           <!-- Save -->
           <img src="assets/Icons/editIcons/save.png" alt="" />
         </div>
