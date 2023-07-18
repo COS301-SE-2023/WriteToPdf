@@ -362,13 +362,11 @@ export class FileService {
       this.sendImportData(name, path, parentFolderID, content, type).subscribe({
         next: (response: HttpResponse<any>) => {
           const outputFile = new MarkdownFileDTO();
-
           if (response.status === 200) {
             this.messageService.add({
               severity: 'success',
               summary: 'File imported successfully',
             });
-
             outputFile.Name = response.body.Name;
             outputFile.Path = response.body.Path;
             outputFile.ParentFolderID = response.body.ParentFolderID;
@@ -377,7 +375,6 @@ export class FileService {
             outputFile.Size = response.body.Size;
             outputFile.DateCreated = response.body.DateCreated;
             outputFile.LastModified = response.body.LastModified;
-
             resolve(outputFile);
           } else {
             resolve(outputFile);
@@ -412,7 +409,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  exportDocument(
+  exportDocumentToTextFile(
     markdownID: string,
     name: string,
     content: string,
@@ -420,6 +417,7 @@ export class FileService {
   ): void {
     this.sendExportData(markdownID, name, content, type).subscribe({
       next: (response: HttpResponse<any>) => {
+        console.log(response);
         if (response.status === 200) {
           this.messageService.add({
             severity: 'success',
@@ -456,14 +454,11 @@ export class FileService {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/export`;
     const body = new ExportDTO();
-
     body.MarkdownID = markdownID;
     body.Name = name;
     body.Content = this.encryptDocument(JSON.stringify(content));
     body.UserID = this.userService.getUserID();
     body.Type = type;
-
-
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -480,11 +475,9 @@ export class FileService {
       return '';
     }
   }
-
   decryptDocument(content: string | undefined): string {
     const key = this.userService.getEncryptionKey();
     if (key && content) {
-
       const decryptedMessage = CryptoJS.AES.decrypt(content, key).toString(
         CryptoJS.enc.Utf8
       ).replace(/^"(.*)"$/, '$1');

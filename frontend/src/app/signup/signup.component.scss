@@ -3,25 +3,25 @@
 .signupWrapper {
 
     position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    
-        width: 90vw;
-        max-width: 420px;
-        min-width: 280px;
-    
-        height: -moz-fit-content;
-        height: fit-content;
-    
-        max-height: 99vh;
-        overflow-y: auto;
-        margin: auto;
-        background-color: $light-grey;
-    
-        border-radius: 33px;
-    
-        padding-top: min(4vh, 50px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 90vw;
+    max-width: 420px;
+    min-width: 280px;
+
+    height: -moz-fit-content;
+    height: fit-content;
+
+    max-height: 99vh;
+    overflow-y: auto;
+    margin: auto;
+    background-color: $light-grey;
+
+    border-radius: 33px;
+
+    padding-top: min(4vh, 50px);
 
 }
 
@@ -53,34 +53,37 @@
     margin: auto;
 }
 
-.textBox {
-    border: 2px solid #ffffff;
-    border-radius: 90px;
+// .textBox {
+//     border: 2px solid #ffffff;
+//     border-radius: 90px;
 
-    background-color: $text-box-color;
+//     background-color: $text-box-color;
 
-    height: 40px;
-    padding: 0 5%;
+//     height: 40px;
+//     padding: 0 5%;
+//     width: 80%;
+//     margin: auto;
+// }
+
+.password {
     width: 80%;
     margin: auto;
-}
-
-.password{
-    width: 80%;
-    margin:auto;
-    display:flex;
+    display: flex;
 }
 
 :host ::ng-deep .p-inputtext {
-    border: 2px solid #ffffff ;
-    border-radius: 90px ;
+    padding-left: 20px;
+    border: 2px solid #ffffff;
+    border-radius: 90px;
 
     background-color: $text-box-color ;
 
-    height: 40px ;
-    width: 100%;
-    margin: auto ;
-    
+    height: 4vh;
+    max-height: 40px;
+    min-height: 30px;
+    width: 80%;
+    margin: auto;
+
 }
 
 .formElement {
@@ -93,7 +96,7 @@
 }
 
 .labelElement {
-    margin-bottom: min(10px,1vh) !important;
+    margin-bottom: min(10px, 1vh) !important;
     width: 80%;
     margin: auto;
     font-size: 18px;
@@ -101,16 +104,18 @@
 }
 
 .signupButton,
-.signupButtonDisabled{
+.signupButtonDisabled {
     font-family: Cabin;
     border: none;
     border-radius: 90px;
 
     background-color: #ffffff;
 
-    height: 40px;
+    height: 4vh;
+    max-height: 40px;
+    min-height: 30px;
 
-    font-size: 16px;
+    font-size: clamp(12px, 2vh, 16px);
 
     width: 50%;
     margin: auto;
@@ -136,9 +141,12 @@
 
     background-color: #ffffff;
 
-    height: 40px;
+    height: 4vh;
+    max-height: 40px;
+    min-height: 30px;
 
-    font-size: 16px;
+    font-size: clamp(12px, 2vh, 16px);
+    text-align: center;
 
     width: 50%;
     margin: auto;

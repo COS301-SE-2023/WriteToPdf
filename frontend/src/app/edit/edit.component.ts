@@ -23,7 +23,6 @@ import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
   styleUrls: ['./edit.component.scss'],
 })
 export class EditComponent implements AfterViewInit, OnInit {
-  quill: any;
   fileName: string | undefined = '';
   text: any;
   sidebarVisible: boolean = true;
@@ -32,6 +31,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   assets: any[] = [];
 
   public Editor = DecoupledEditor;
+  public globalAreaReference!: HTMLElement;
   constructor(
     private elementRef: ElementRef,
     @Inject(Router) private router: Router,
@@ -91,14 +91,13 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   ngAfterViewInit() {
     //Waits a small amount of time to fetch content from editService.
-    const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+    let editableArea = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+    this.globalAreaReference = editableArea; //set to avoid constant referencing
     const toolbarContainer: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__toolbar');
-
     if (editableArea && toolbarContainer) {
       DecoupledEditor.create(editableArea, {
         cloudServices: {
-          // A configuration of CKEditor Cloud Services.
-          // ...
+          //TODO Great for Collaboration features.
         },
       })
         .then((editor) => {
@@ -122,7 +121,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
 
 
-  save() {
+  saveDocumentContents() {
     // Save the document quill content to localStorage when changes occur
     const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
     let contents = editableArea.innerHTML;
@@ -135,22 +134,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     console.log("After function call save:" + contents);
   }
 
-  //TODO The below function currently has no use, but
-  // it can be put to good use with the idea of the mini home page that I had - for file management inside the
-  // doc editor.
-  // I'll call this function on ngInit, rather. To load the doc on startup of the edit page.
-  loadDocumentContents(): string {
-    // const contents = await this.fileService.retrieveDocument(
-    //   this.editService.getMarkdownID(),
-    //   this.editService.getPath()
-    // );
-      let contents  = this.editService.getContent();
-      console.log("During load call:" + contents);
-    if (typeof contents === "string") {
-      return  contents;
-    }
-    else return "There was an error returning your document content, soz lol."
-  }
 
   hideSideBar() {
     // get asset sidebar and set display none
@@ -178,7 +161,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     // },3000);
   }
 
-  rename() {
+  renameDocument() {
     console.log('rename');
     this.fileService.renameDocument(
       this.editService.getMarkdownID(),
@@ -191,29 +174,16 @@ export class EditComponent implements AfterViewInit, OnInit {
     });
   }
 
-  //TODO Take this functionality to Home Page.
-  async delete() {
-    console.log('delete');
-    await this.fileService.deleteDocument(this.editService.getMarkdownID());
-    this.editService.setMarkdownID('');
-    this.editService.setPath('');
-    this.editService.setName('');
-    this.editService.setContent('');
-    this.editService.setParentFolderID('');
-    this.navigateToPage('home');
-  }
-
   showDialog() {
     this.exportDialogVisible = true;
   }
 
-  exportFile() {
-    let placeHolder = "CKEditor goes here";
-    let contents = "CKEditor contents";
+  exportTextFile() {
+    let contents = this.globalAreaReference.innerHTML;
     const markdownID = this.editService.getMarkdownID();
     const name = this.editService.getName();
     if (markdownID && name) {
-     this.fileService.exportDocument(markdownID, name, contents, 'txt');
+     this.fileService.exportDocumentToTextFile(markdownID, name, contents, 'txt');
     }
   }
 
