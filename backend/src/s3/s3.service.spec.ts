@@ -3,6 +3,7 @@ import {
   TestingModule,
 } from '@nestjs/testing';
 import { S3Service } from './s3.service';
+import { FileDTO } from './dto/file.dto';
 import { S3Client } from '@aws-sdk/client-s3';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 
@@ -26,9 +27,15 @@ describe('S3Service', () => {
     // s3Service.s3Client = mockS3Client;
   });
 
-  describe('root/config', () => {
-    it('folder service should be defined', () => {
-      expect(s3Service).toBeDefined();
+  describe('FileDTO', () => {
+    it('should be initialized with default values', () => {
+      const fileDTO = new FileDTO();
+
+      expect(fileDTO.UserID).toBeUndefined();
+      expect(fileDTO.FileName).toBeUndefined();
+      expect(
+        fileDTO.ParentDirectory,
+      ).toBeUndefined();
     });
   });
 
