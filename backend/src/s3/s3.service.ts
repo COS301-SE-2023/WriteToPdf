@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 // import { FileDTO } from './dto/file.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
+import { ImageDTO } from '../image_manager/dto/image.dto';
 import 'dotenv/config';
 import {
   // DeleteObjectCommand,
@@ -17,6 +18,7 @@ import {
   stat,
 } from 'fs/promises';
 import { SHA256 } from 'crypto-js';
+import { AssetDTO } from 'src/assets/dto/asset.dto';
 
 @Injectable()
 export class S3Service {
@@ -318,5 +320,196 @@ export class S3Service {
 
     console.log(markdownFileDTO);
     return markdownFileDTO;
+  }
+
+  //// Image Management
+
+  async saveImage(saveImageDTO: AssetDTO) {
+    let filePath = `${saveImageDTO.UserID}`;
+
+    try {
+      await mkdir(`./storage/${filePath}`, {
+        recursive: true,
+      });
+    } catch (err) {
+      console.log(
+        'Directory Creation Error:' + err,
+      );
+      return undefined;
+    }
+
+    const fileData = new Uint8Array(
+      Buffer.from(saveImageDTO.Content),
+    );
+
+    filePath = `${saveImageDTO.UserID}/${saveImageDTO.AssetID}`;
+
+    try {
+      await writeFile(
+        `./storage/${filePath}`,
+        fileData,
+        'utf-8',
+      );
+      // /*const response = */ await this.s3Client.send(
+      //   new PutObjectCommand({
+      //     Bucket: this.awsS3BucketName,
+      //     Key: filePath,
+      //     Body: fileData,
+      //   }),
+      // );
+    } catch (err) {
+      console.log('Write File Error:' + err);
+      return undefined;
+    }
+
+    const fileStats = await stat(
+      `./storage/${filePath}`,
+    );
+    console.log(fileStats);
+    saveImageDTO.DateCreated = fileStats.mtime;
+    saveImageDTO.Size =
+      fileData.buffer.byteLength; // TODO: Change to s3 return object
+    saveImageDTO.Content = '';
+    return saveImageDTO;
+  }
+
+  async retrieveAssetByID(
+    assetID: string,
+    userID: number,
+  ) {
+    const retrieveAssetDTO = new AssetDTO();
+
+    let filePath = `${userID}`;
+
+    try {
+      await access(`./storage/${filePath}`);
+    } catch (err) {
+      console.log('Access Error --> ' + err);
+      return undefined;
+    }
+
+    filePath += `/${assetID}`;
+
+    try {
+      retrieveAssetDTO.Content = await readFile(
+        `./storage/${filePath}`,
+        {
+          encoding: 'utf-8',
+        },
+      );
+      retrieveAssetDTO.Size =
+        retrieveAssetDTO.Content.length;
+
+      // const response = await this.s3Client.send(
+      //   new GetObjectCommand({
+      //     Bucket: this.awsS3BucketName,
+      //     Key: filePath,
+      //   }),
+      // );
+
+      // console.log(response);
+
+      // markdownFileDTO.Content =
+      //   await response.Body.transformToString();
+      // markdownFileDTO.Size =
+      //   response.ContentLength;
+    } catch (err) {
+      console.log('Read File Error:' + err);
+      return undefined;
+    }
+
+    // const fileStats = await stat(
+    //   `./storage/${filePath}`,
+    // );
+    // console.log(fileStats);
+    // markdownFileDTO.DateCreated =
+    //   fileStats.birthtime;
+    // markdownFileDTO.LastModified =
+    //   fileStats.mtime;
+
+    // console.log(markdownFileDTO);
+    return retrieveAssetDTO;
+  }
+
+  async retrieveAsset(
+    retrieveAssetDTO: AssetDTO,
+  ) {
+    let filePath = `${retrieveAssetDTO.UserID}`;
+
+    try {
+      await access(`./storage/${filePath}`);
+    } catch (err) {
+      console.log('Access Error --> ' + err);
+      return undefined;
+    }
+
+    filePath += `/${retrieveAssetDTO.AssetID}`;
+
+    try {
+      retrieveAssetDTO.Content = await readFile(
+        `./storage/${filePath}`,
+        {
+          encoding: 'utf-8',
+        },
+      );
+      retrieveAssetDTO.Size =
+        retrieveAssetDTO.Content.length;
+
+      // const response = await this.s3Client.send(
+      //   new GetObjectCommand({
+      //     Bucket: this.awsS3BucketName,
+      //     Key: filePath,
+      //   }),
+      // );
+
+      // console.log(response);
+
+      // markdownFileDTO.Content =
+      //   await response.Body.transformToString();
+      // markdownFileDTO.Size =
+      //   response.ContentLength;
+    } catch (err) {
+      console.log('Read File Error:' + err);
+      return undefined;
+    }
+
+    // const fileStats = await stat(
+    //   `./storage/${filePath}`,
+    // );
+    // console.log(fileStats);
+    // markdownFileDTO.DateCreated =
+    //   fileStats.birthtime;
+    // markdownFileDTO.LastModified =
+    //   fileStats.mtime;
+
+    // console.log(markdownFileDTO);
+    return retrieveAssetDTO;
+  }
+
+  async deleteAsset(assetDTO: AssetDTO) {
+    let filePath = `${assetDTO.UserID}`;
+
+    try {
+      await access(`./storage/${filePath}`);
+    } catch (err) {
+      console.log('Access Error --> ' + err);
+      return undefined;
+    }
+
+    filePath += `/${assetDTO.AssetID}`;
+
+    try {
+      await unlink(`./storage/${filePath}`);
+      // /*const response = */ await this.s3Client.send(
+      //   new DeleteObjectCommand({
+      //     Bucket: this.awsS3BucketName,
+      //     Key: filePath,
+      //   }),
+      // );
+    } catch (err) {
+      console.log('Delete Error --> ' + err);
+      return undefined;
+    }
+    return assetDTO;
   }
 }

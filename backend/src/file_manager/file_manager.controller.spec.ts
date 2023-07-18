@@ -29,7 +29,6 @@ import { ExportDTO } from './dto/export.dto';
 import { User } from '../users/entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
-import { testingModule } from '../test-utils/testingModule';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -38,10 +37,6 @@ describe('FileManagerController', () => {
   beforeEach(async () => {
     const module: TestingModule =
       await Test.createTestingModule({
-        imports: [
-          ...testingModule(),
-          // TypeOrmModule.forFeature([User]),
-        ],
         controllers: [FileManagerController],
         providers: [
           FileManagerService,
@@ -66,6 +61,10 @@ describe('FileManagerController', () => {
           },
           {
             provide: getRepositoryToken(Folder),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(User),
             useClass: Repository,
           },
         ],

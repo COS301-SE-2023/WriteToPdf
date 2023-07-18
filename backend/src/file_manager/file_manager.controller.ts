@@ -356,6 +356,7 @@ export class FileManagerController {
   }
 
   // Import & Export operations #################################################
+  // TODO: deprecated REMOVE
   @Post('import')
   @HttpCode(HttpStatus.OK)
   import(
@@ -388,6 +389,7 @@ export class FileManagerController {
     );
   }
 
+  // TODO: deprecated REMOVE
   @Post('export')
   @HttpCode(HttpStatus.OK)
   export(
