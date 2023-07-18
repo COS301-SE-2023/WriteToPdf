@@ -63,17 +63,17 @@
     margin: auto;
 }
 
-.textBox {
-    border: 2px solid #ffffff;
-    border-radius: 90px;
+// .textBox {
+//     border: 2px solid #ffffff;
+//     border-radius: 90px;
 
-    background-color: $text-box-color;
+//     background-color: $text-box-color;
 
-    height: 40px;
-    padding-top: 0 5%;
-    width: 80%;
-    margin: auto;
-}
+//     height: 40px;
+//     padding-top: 0 5%;
+//     width: 80%;
+//     margin: auto;
+// }
 
 .password {
     width: 80%;
@@ -82,13 +82,14 @@
 }
 
 :host ::ng-deep .p-inputtext {
+    padding-left:20px;
     border: 2px solid #ffffff;
     border-radius: 90px;
 
     background-color: $text-box-color ;
 
     height: 40px;
-    width: 100%;
+    width: 80%;
     margin: auto;
 
 }
