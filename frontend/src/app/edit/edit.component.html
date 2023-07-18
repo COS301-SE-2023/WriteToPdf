@@ -9,7 +9,7 @@
         <div class="docTitleWrapper">
           <label for="editHeading" class="displayNone">a</label>
           <input type="text" editable="true" id="editHeading" class="documentTitle" value="New Document" maxlength="50"
-            (blur)="rename()" [(ngModel)]="fileName" />
+            (blur)="renameDocument()" [(ngModel)]="fileName" />
         </div>
       </div>
       <div class="toolsWrapper">
@@ -27,10 +27,9 @@
           <!-- Save -->
           <img src="assets/Icons/editIcons/save.png" alt="" />
         </div>
-        <div class="tool" (click)="delete()">
-          <!-- Load -->
+        <!-- <div class="tool" (click)="delete()">
           <img src="assets/Icons/editIcons/delete.png" alt="" />
-        </div>
+        </div> -->
         <div class="tool">
           <!-- Share -->
           <img src="assets/Icons/editIcons/share.svg" alt="" />
