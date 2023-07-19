@@ -20,7 +20,7 @@ export class AssetsService {
   //   return response;
   // }
 
-  createImage(
+  saveImage(
     uploadAssetDTO: AssetDTO,
   ): Promise<Asset> {
     uploadAssetDTO.Format = 'image';
@@ -28,7 +28,7 @@ export class AssetsService {
     uploadAssetDTO.Size =
       uploadAssetDTO.Content.length;
     uploadAssetDTO.Image = '<placeholder>';
-    uploadAssetDTO.ParentFolderID = '1';
+    // uploadAssetDTO.ParentFolderID = '1';
     uploadAssetDTO.ConvertedElement =
       '<placeholder>';
     const newAsset = this.assetsRepository.create(
@@ -45,15 +45,20 @@ export class AssetsService {
     }); // SELECT * FROM assets WHERE AssetID = retrieveAssetDTO.AssetID;
   }
 
-  // retrieveAllImages(
-  //   retrieveAllImagesDTO: RetrieveAllImagesDTO,
-  // ) {
-  //   return this.assetsRepository.find({
-  //     where: {
-  //       UserID: retrieveAllImagesDTO.UserID,
-  //     },
-  //   }); // SELECT * FROM assets WHERE UserID = retrieveAllImagesDTO.UserID;
-  // }
+  saveText(uploadTextDTO: AssetDTO) {
+    uploadTextDTO.Format = 'text';
+    uploadTextDTO.DateCreated = new Date();
+    uploadTextDTO.Size =
+      uploadTextDTO.Content.length;
+    uploadTextDTO.Image = '<placeholder>';
+    // uploadTextDTO.ParentFolderID = '1';
+    uploadTextDTO.ConvertedElement =
+      '<placeholder>';
+    const newAsset = this.assetsRepository.create(
+      uploadTextDTO,
+    );
+    return this.assetsRepository.save(newAsset);
+  }
 
   retrieveAllAssets(
     retrieveAllDTO: RetrieveAllDTO,

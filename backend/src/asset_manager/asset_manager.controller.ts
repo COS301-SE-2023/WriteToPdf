@@ -25,6 +25,16 @@ export class AssetManagerController {
     );
   }
 
+  @Post('upload_text')
+  upload_text(
+    @Body()
+    uploadTextDTO: AssetDTO,
+  ) {
+    return this.assetManagerService.upload_text(
+      uploadTextDTO,
+    );
+  }
+
   @Post('retrieve_all')
   @HttpCode(HttpStatus.OK)
   retrieve_all(

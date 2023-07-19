@@ -1,31 +1,42 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTextManagerDto } from './dto/create-text_manager.dto';
-import { UpdateTextManagerDto } from './dto/update-text_manager.dto';
+import { AssetDTO } from '../assets/dto/asset.dto';
+import { S3Service } from '../s3/s3.service';
+import { AssetsService } from '../assets/assets.service';
+import { SHA256 } from 'crypto-js';
 
 @Injectable()
 export class TextManagerService {
-  create(
-    createTextManagerDto: CreateTextManagerDto,
-  ) {
-    return 'This action adds a new textManager';
+  constructor(
+    private readonly assetsService: AssetsService,
+    private readonly s3Service: S3Service,
+  ) {}
+
+  upload(uploadTextDTO: AssetDTO) {
+    uploadTextDTO.AssetID = SHA256(
+      uploadTextDTO.UserID.toString() +
+        new Date().getTime().toString(),
+    ).toString();
+
+    // Store in database
+    this.assetsService.saveText(uploadTextDTO);
+
+    // Preprocess text for storage in the s3
+    uploadTextDTO.Content = this.packageTextForS3(
+      uploadTextDTO,
+    );
+
+    // Store in the S3
+    return this.s3Service.saveAsset(
+      uploadTextDTO,
+    );
   }
 
-  findAll() {
-    return `This action returns all textManager`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} textManager`;
-  }
-
-  update(
-    id: number,
-    updateTextManagerDto: UpdateTextManagerDto,
-  ) {
-    return `This action updates a #${id} textManager`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} textManager`;
+  packageTextForS3(uploadTextDTO: AssetDTO) {
+    let newContent = '';
+    newContent += uploadTextDTO.Content.length;
+    newContent += '\n';
+    newContent += uploadTextDTO.Content;
+    newContent += uploadTextDTO.Image;
+    return newContent;
   }
 }

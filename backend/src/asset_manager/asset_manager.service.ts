@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { ImageManagerService } from '../image_manager/image_manager.service';
+import { TextManagerService } from '../text_manager/text_manager.service';
 import { RetrieveAllDTO } from './dto/retrieve_all.dto';
 import { AssetsService } from '../assets/assets.service';
 import { S3Service } from '../s3/s3.service';
@@ -11,11 +12,18 @@ export class AssetManagerService {
     private readonly imageManagerService: ImageManagerService,
     private readonly assetsService: AssetsService,
     private readonly s3Service: S3Service,
+    private readonly textManagerService: TextManagerService,
   ) {}
 
   upload_image(uploadImageDTO: AssetDTO) {
     return this.imageManagerService.upload(
       uploadImageDTO,
+    );
+  }
+
+  upload_text(uploadTextDTO: AssetDTO) {
+    return this.textManagerService.upload(
+      uploadTextDTO,
     );
   }
 
