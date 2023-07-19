@@ -334,7 +334,7 @@ div[contenteditable="true"]:focus {
     margin-bottom: 50px;
     //padding: 50px;
     margin-left: max(50px, auto);
-    height: 635px;
+    height: 100%;
     min-width: 800px;
     background-color: #ffffff;
 }
@@ -386,7 +386,8 @@ div[contenteditable="true"]:focus {
 .document-editor__editable-container .ck-editor__editable {
     /* Set the dimensions of the "page". */
     width: 15.8cm;
-    min-height: 21cm;
+    height: 30cm;
+    max-height: 30cm;
 
     /* Keep the "page" off the boundaries of the container. */
     padding: 1cm 2cm 2cm;

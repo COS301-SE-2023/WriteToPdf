@@ -31,7 +31,7 @@
         <!-- <div class="tool" (click)="delete()">
           <img src="assets/Icons/editIcons/delete.png" alt="" />
         </div> -->
-        <div class="tool">
+        <div class="tool" (click)="pageBreak()">
           <!-- Share -->
           <img src="assets/Icons/editIcons/share.svg" alt="" />
         </div>
@@ -123,11 +123,11 @@
     </div>
 
 <!--    Below is the code that allows me to work with CKEditor    -->
-    <div class = "center-page">
-      <div class="document-editor">
-        <div class="document-editor__toolbar"></div>
-        <div class="document-editor__editable-container">
-          <div  class="document-editor__editable" id = "editor-contents">
+    <div class = "center-page" >
+      <div class="document-editor"  style="overflow: hidden;">
+        <div class="document-editor__toolbar"  style="overflow: hidden;"></div>
+        <div class="document-editor__editable-container"  style="overflow: hidden;">
+          <div  class="document-editor__editable" id = "editor-contents"  style="overflow: hidden;">
           </div>
         </div>
       </div>

@@ -114,6 +114,7 @@ public editor: DecoupledEditor = {} as DecoupledEditor;
     this.globalAreaReference = editableArea; //set to avoid constant referencing
     const toolbarContainer: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__toolbar');
     if (editableArea && toolbarContainer) {
+      
       DecoupledEditor.create(editableArea, {
         cloudServices: {
           //TODO Great for Collaboration features.
@@ -238,4 +239,8 @@ public editor: DecoupledEditor = {} as DecoupledEditor;
   async refreshSidebar() {
     this.assets = await this.assetService.retrieveAll();
   }
+
+  // pageBreak() {
+  //   this.editor.execute('pageBreak');
+  // }
 }
