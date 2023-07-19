@@ -232,8 +232,7 @@ export class FileManagerController {
 
     if (
       !folderDTO.UserID ||
-      !folderDTO.FolderName ||
-      !folderDTO.Path
+      !folderDTO.FolderName
     )
       throw new HttpException(
         'Invalid request data',
