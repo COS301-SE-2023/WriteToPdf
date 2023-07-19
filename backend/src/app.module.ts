@@ -26,7 +26,6 @@ import { Folder } from './folders/entities/folder.entity';
 import { S3Service } from './s3/s3.service';
 import { User } from './users/entities/user.entity';
 import { AssetManagerModule } from './asset_manager/asset_manager.module';
-import { TextManagerModule } from './text_manager/text_manager.module';
 
 @Module({
   imports: [
@@ -43,7 +42,6 @@ import { TextManagerModule } from './text_manager/text_manager.module';
     S3Module,
     FileManagerModule,
     AssetManagerModule,
-    TextManagerModule,
   ],
   controllers: [
     AppController,
