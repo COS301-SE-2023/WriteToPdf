@@ -240,7 +240,7 @@ public editor: DecoupledEditor = {} as DecoupledEditor;
     this.assets = await this.assetService.retrieveAll();
   }
 
-  // pageBreak() {
-  //   this.editor.execute('pageBreak');
-  // }
+  pageBreak() {
+    this.editor.execute('pageBreak');
+  }
 }
