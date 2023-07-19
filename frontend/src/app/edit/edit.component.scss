@@ -377,7 +377,9 @@ div[contenteditable="true"]:focus {
   /* Make it possible to scroll the "page" of the edited content. */
   overflow-y: scroll;
 }
-
+.ck.ck-toolbar{
+  border:none;
+}
 .document-editor__editable-container .ck-editor__editable {
   /* Set the dimensions of the "page". */
   width: 15.8cm;
