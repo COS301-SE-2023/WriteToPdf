@@ -101,10 +101,10 @@ export class AssetService {
   }
 
 
-  retrieveAll(): Promise<any[]> {
+  retrieveAll(parentFolderId: string | undefined): Promise<any[]> {
     console.log('Retrieving all images');
     return new Promise<any[]>((resolve, reject) => {
-      this.sendRetrieveAllData().subscribe({
+      this.sendRetrieveAllData(parentFolderId).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
           if (response.status === 200) {
@@ -119,11 +119,17 @@ export class AssetService {
     });
   }
 
-  sendRetrieveAllData(): Observable<HttpResponse<any>> {
+  sendRetrieveAllData(parentFolderId: string | undefined): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}asset_manager/retrieve_all`;
     const body = new RetrieveAllDTO();
 
+    if (parentFolderId) {
+      body.ParentFolderID = parentFolderId;
+    }
+    else {
+      body.ParentFolderID = "";
+    }
     body.UserID = this.userService.getUserID();
 
     const headers = new HttpHeaders().set(

@@ -31,7 +31,6 @@ export class CameraComponent {
 
     this.videoRef = document.getElementById('camera');
 
-    console.log("ParentFolderID: "+this.parentFolderId);
     this.setupCamera();
   }
 
@@ -80,10 +79,10 @@ export class CameraComponent {
 
 
   async uploadImage() {
-    this.assetService.uploadImage(this.sysImage, this.parentFolderId, this.assetName, this.path).then((res) => {
+    this.assetService.uploadImage(this.sysImage, this.path, this.assetName, this.parentFolderId).then((res) => {
       if (res) {
         setTimeout(() => {
-        this.navigateToPage('edit');
+          this.navigateToPage('edit');
         }, 1000);
       }
     });

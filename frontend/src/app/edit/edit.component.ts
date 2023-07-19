@@ -249,7 +249,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async refreshSidebar() {
-    this.assets = await this.assetService.retrieveAll();
+    this.assets = await this.assetService.retrieveAll(this.editService.getParentFolderID());
   }
 
   pageBreak() {

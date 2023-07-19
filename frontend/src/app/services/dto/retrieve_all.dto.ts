@@ -6,6 +6,7 @@ export class RetrieveAllDTO {
     DatesCreated: Date[] | undefined; // from db
     ImageIDs: number[] | undefined; // from db
     Sizes: number[] | undefined;
+    ParentFolderID: string | undefined;
 
     constructor() {
         this.UserID = undefined;
@@ -15,5 +16,6 @@ export class RetrieveAllDTO {
         this.DatesCreated = undefined;
         this.ImageIDs = undefined;
         this.Sizes = undefined;
+        this.ParentFolderID = undefined;
     }
 }
