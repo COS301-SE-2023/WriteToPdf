@@ -60,30 +60,23 @@ export class AssetsService {
     return this.assetsRepository.save(newAsset);
   }
 
-  retrieveAllAssets(
+  async retrieveAllAssets(
     retrieveAllDTO: RetrieveAllDTO,
   ) {
-    // SELECT * FROM ASSETS
-    // WHERE UserID = retrieveAllImagesDTO.UserID
-    // and ParentFolderID = retrieveAllImagesDTO.ParentFolderID;
-    return this.assetsRepository.find({
-      where: {
+    return await this.assetsRepository
+      .createQueryBuilder('asset')
+      .where('asset.UserID = :UserID', {
         UserID: retrieveAllDTO.UserID,
-        ParentFolderID:
-          retrieveAllDTO.ParentFolderID,
-      },
-    });
-  }
-
-  retrieveAllRootAssets(
-    retrieveAllDTO: RetrieveAllDTO,
-  ) {
-    return this.assetsRepository.find({
-      where: {
-        UserID: retrieveAllDTO.UserID,
-        ParentFolderID: '',
-      },
-    });
+      })
+      .andWhere(
+        "(asset.ParentFolderID = :ParentFolderID OR asset.ParentFolderID = '')",
+        {
+          ParentFolderID:
+            retrieveAllDTO.ParentFolderID,
+        },
+      )
+      .orderBy('asset.DateCreated', 'DESC') // Sort by DateCreated in descending order
+      .getMany();
   }
 
   removeOne(assetID: string) {
