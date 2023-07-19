@@ -315,9 +315,8 @@ export class S3Service {
     return markdownFileDTO;
   }
 
-  //// Image Management
-  async saveImage(saveImageDTO: AssetDTO) {
-    let filePath = `${saveImageDTO.UserID}`;
+  async saveAsset(saveAssetDTO: AssetDTO) {
+    let filePath = `${saveAssetDTO.UserID}`;
 
     try {
       await mkdir(`./storage/${filePath}`, {
@@ -331,10 +330,10 @@ export class S3Service {
     }
 
     const fileData = new Uint8Array(
-      Buffer.from(saveImageDTO.Content),
+      Buffer.from(saveAssetDTO.Content),
     );
 
-    filePath = `${saveImageDTO.UserID}/${saveImageDTO.AssetID}`;
+    filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.AssetID}`;
 
     try {
       await writeFile(
@@ -358,11 +357,11 @@ export class S3Service {
       `./storage/${filePath}`,
     );
     console.log(fileStats);
-    saveImageDTO.DateCreated = fileStats.mtime;
-    saveImageDTO.Size =
+    saveAssetDTO.DateCreated = fileStats.mtime;
+    saveAssetDTO.Size =
       fileData.buffer.byteLength; // TODO: Change to s3 return object
-    saveImageDTO.Content = '';
-    return saveImageDTO;
+    saveAssetDTO.Content = '';
+    return saveAssetDTO;
   }
 
   async retrieveAssetByID(
