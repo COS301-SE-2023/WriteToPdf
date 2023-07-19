@@ -58,7 +58,7 @@
     <div class="leftSideBarTools">
       <img (click)="createNewFolderDialogueVisible = true" class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png" />
       <img (click)="navigateToPage('edit')" class="icon newDoc" src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png" />
-      <img class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" />
+      <img (click)="navigateToPage('camera')" class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" />
     </div>
     <div class="directoryTree">
       <p-tree (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile" [value]="filesDirectoryTree"
@@ -86,7 +86,7 @@
     </div>
     <div class="directoryContents">
       <!--      The Current directory variable below in the main view is used to allow for intelligent file placement-->
-      <p-treeTable #myTreeTable  [contextMenu]="cm" [(contextMenuSelection)]="currentDirectory" (onNodeSelect)="outputCurrDir()" [(selection)]="currentDirectory"
+      <p-treeTable (dblclick)="openFile()" (keyup.enter)="onEnterKeyPressed($event)" #myTreeTable  [contextMenu]="cm" [(contextMenuSelection)]="currentDirectory" (onNodeSelect)="outputCurrDir()" [(selection)]="currentDirectory"
                    [columns]="treeTableColumns" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }"
                    [value]="filteredFilesDirectoryTreeTable" dataKey="name" selectionMode="single">
         <ng-template let-columns pTemplate="header">

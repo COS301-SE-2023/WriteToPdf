@@ -766,5 +766,22 @@ updateTreeTableData(
     ];
     this.filterTable('', 3);
   }
+
+  onEnterKeyPressed(event: any): void {
+    if (this.currentDirectory != null)
+      this.onOpenFileSelect(this.currentDirectory);
+    else {
+
+    }
+  }
+
+  openFile(){
+    console.log("UNIQUE: "+this.currentDirectory);
+    if (this.currentDirectory != null)
+      this.onOpenFileSelect(this.currentDirectory);
+    else {
+
+    }
+  }
   protected readonly focus = focus;
 }
