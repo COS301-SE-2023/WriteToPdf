@@ -7,6 +7,7 @@ import { Asset } from 'src/assets/entities/asset.entity';
 import { AssetsService } from 'src/assets/assets.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from 'src/auth/auth.service';
+import { TextManagerService } from '../text_manager/text_manager.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Asset])],
@@ -17,6 +18,7 @@ import { AuthService } from 'src/auth/auth.service';
     S3Service,
     AssetsService,
     AuthService,
+    TextManagerService,
   ],
 })
 export class AssetManagerModule {}
