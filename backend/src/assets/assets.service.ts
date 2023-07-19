@@ -75,6 +75,17 @@ export class AssetsService {
     });
   }
 
+  retrieveAllRootAssets(
+    retrieveAllDTO: RetrieveAllDTO,
+  ) {
+    return this.assetsRepository.find({
+      where: {
+        UserID: retrieveAllDTO.UserID,
+        ParentFolderID: '',
+      },
+    });
+  }
+
   removeOne(assetID: string) {
     return this.assetsRepository.delete(assetID); // DELETE FROM assets WHERE AssetID = assetID;
   }

@@ -58,6 +58,14 @@ export class AssetManagerService {
     return images;
   }
 
+  retrieve_all_root_assets(
+    retrieveAllDTO: RetrieveAllDTO,
+  ) {
+    return this.assetsService.retrieveAllRootAssets(
+      retrieveAllDTO,
+    );
+  }
+
   retrieve_one(retrieveAssetDTO: AssetDTO) {
     return this.s3Service.retrieveAsset(
       retrieveAssetDTO,
