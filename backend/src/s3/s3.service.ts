@@ -1,14 +1,7 @@
 import { Injectable } from '@nestjs/common';
-// import { FileDTO } from './dto/file.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
-import { ImageDTO } from '../image_manager/dto/image.dto';
 import 'dotenv/config';
-import {
-  // DeleteObjectCommand,
-  // GetObjectCommand,
-  // PutObjectCommand,
-  S3Client,
-} from '@aws-sdk/client-s3';
+import { S3Client } from '@aws-sdk/client-s3';
 import {
   writeFile,
   mkdir,
@@ -323,7 +316,6 @@ export class S3Service {
   }
 
   //// Image Management
-
   async saveImage(saveImageDTO: AssetDTO) {
     let filePath = `${saveImageDTO.UserID}`;
 

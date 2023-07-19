@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ImageDTO } from './dto/image.dto';
 import { S3Service } from '../s3/s3.service';
 import { AssetsService } from '../assets/assets.service';
-import { RetrieveAllImagesDTO } from './dto/retrieve_all_images.dto';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { SHA256 } from 'crypto-js';
-import { Asset } from '../assets/entities/asset.entity';
 import * as sharp from 'sharp';
 import { RetrieveAllDTO } from '../asset_manager/dto/retrieve_all.dto';
 

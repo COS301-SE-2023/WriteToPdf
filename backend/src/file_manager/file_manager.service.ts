@@ -12,9 +12,6 @@ import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
-import { ImportDTO } from './dto/import.dto';
-import { ConversionService } from '../conversion/conversion.service';
-import { ExportDTO } from './dto/export.dto';
 import { UsersService } from '../users/users.service';
 import { SHA256 } from 'crypto-js';
 import * as CryptoJS from 'crypto-js';
@@ -25,7 +22,7 @@ export class FileManagerService {
     private markdownFilesService: MarkdownFilesService,
     private folderService: FoldersService,
     private s3service: S3Service,
-    private conversionService: ConversionService,
+    // private conversionService: ConversionService,
     private userService: UsersService,
   ) {}
 
@@ -225,7 +222,6 @@ export class FileManagerService {
   }
 
   // Folder operations: #########################################################
-
   createFolder(folderDTO: FolderDTO) {
     if (folderDTO.FolderName === undefined)
       throw new HttpException(
@@ -352,73 +348,73 @@ export class FileManagerService {
   }
 
   // Import & Export operations: #########################################################
-  async importFile(importDTO: ImportDTO) {
-    if (importDTO.Path === undefined)
-      throw new HttpException(
-        'Path cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
+  // async importFile(importDTO: ImportDTO) {
+  //   if (importDTO.Path === undefined)
+  //     throw new HttpException(
+  //       'Path cannot be undefined',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
 
-    if (importDTO.Name === undefined)
-      throw new HttpException(
-        'Name cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
+  //   if (importDTO.Name === undefined)
+  //     throw new HttpException(
+  //       'Name cannot be undefined',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
 
-    if (importDTO.Content === undefined)
-      throw new HttpException(
-        'Content cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
+  //   if (importDTO.Content === undefined)
+  //     throw new HttpException(
+  //       'Content cannot be undefined',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
 
-    const encryptionKey =
-      await this.getEncryptionKey(
-        importDTO.UserID,
-      );
+  //   const encryptionKey =
+  //     await this.getEncryptionKey(
+  //       importDTO.UserID,
+  //     );
 
-    importDTO.Content = await this.decryptContent(
-      importDTO.Content,
-      encryptionKey,
-    );
-    const convertedMarkdownFileDTO =
-      this.conversionService.convertFrom(
-        importDTO,
-      );
+  //   importDTO.Content = await this.decryptContent(
+  //     importDTO.Content,
+  //     encryptionKey,
+  //   );
+  //   const convertedMarkdownFileDTO =
+  //     this.conversionService.convertFrom(
+  //       importDTO,
+  //     );
 
-    convertedMarkdownFileDTO.Content =
-      await this.encryptContent(
-        convertedMarkdownFileDTO.Content,
-        encryptionKey,
-      );
-    const deltaContent =
-      convertedMarkdownFileDTO.Content;
+  //   convertedMarkdownFileDTO.Content =
+  //     await this.encryptContent(
+  //       convertedMarkdownFileDTO.Content,
+  //       encryptionKey,
+  //     );
+  //   const deltaContent =
+  //     convertedMarkdownFileDTO.Content;
 
-    const createdFile = await this.createFile(
-      convertedMarkdownFileDTO,
-    );
+  //   const createdFile = await this.createFile(
+  //     convertedMarkdownFileDTO,
+  //   );
 
-    createdFile.Content = deltaContent;
+  //   createdFile.Content = deltaContent;
 
-    const savedFile = await this.saveFile(
-      createdFile,
-    );
+  //   const savedFile = await this.saveFile(
+  //     createdFile,
+  //   );
 
-    const returnedDTO = new MarkdownFileDTO();
-    returnedDTO.MarkdownID = savedFile.MarkdownID;
-    returnedDTO.UserID = savedFile.UserID;
-    returnedDTO.DateCreated =
-      savedFile.DateCreated;
-    returnedDTO.LastModified =
-      savedFile.LastModified;
-    returnedDTO.Name = savedFile.Name;
-    returnedDTO.Path = savedFile.Path;
-    returnedDTO.Size = savedFile.Size;
-    returnedDTO.ParentFolderID =
-      savedFile.ParentFolderID;
-    returnedDTO.Content = deltaContent;
+  //   const returnedDTO = new MarkdownFileDTO();
+  //   returnedDTO.MarkdownID = savedFile.MarkdownID;
+  //   returnedDTO.UserID = savedFile.UserID;
+  //   returnedDTO.DateCreated =
+  //     savedFile.DateCreated;
+  //   returnedDTO.LastModified =
+  //     savedFile.LastModified;
+  //   returnedDTO.Name = savedFile.Name;
+  //   returnedDTO.Path = savedFile.Path;
+  //   returnedDTO.Size = savedFile.Size;
+  //   returnedDTO.ParentFolderID =
+  //     savedFile.ParentFolderID;
+  //   returnedDTO.Content = deltaContent;
 
-    return returnedDTO;
-  }
+  //   return returnedDTO;
+  // }
 
   decryptContent(
     content: string | undefined,
@@ -458,52 +454,52 @@ export class FileManagerService {
     return encryptionKey;
   }
 
-  async exportFile(exportDTO: ExportDTO) {
-    if (exportDTO.MarkdownID === undefined)
-      throw new HttpException(
-        'MarkdownID cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
+  // async exportFile(exportDTO: ExportDTO) {
+  //   if (exportDTO.MarkdownID === undefined)
+  //     throw new HttpException(
+  //       'MarkdownID cannot be undefined',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
 
-    if (exportDTO.Content === undefined) {
-      // Idea for future: if content is undefined, retrieve it from the storage
-      // const markdownFile =
-      //   await this.markdownFilesService.findOneByMarkdownID(
-      //     exportDTO.MarkdownID,
-      //   );
+  //   if (exportDTO.Content === undefined) {
+  //     // Idea for future: if content is undefined, retrieve it from the storage
+  //     // const markdownFile =
+  //     //   await this.markdownFilesService.findOneByMarkdownID(
+  //     //     exportDTO.MarkdownID,
+  //     //   );
 
-      // if (markdownFile === undefined) {
-      throw new HttpException(
-        'Content cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-      // }
+  //     // if (markdownFile === undefined) {
+  //     throw new HttpException(
+  //       'Content cannot be undefined',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //     // }
 
-      // exportDTO.Content = markdownFile.Content;
-    }
+  //     // exportDTO.Content = markdownFile.Content;
+  //   }
 
-    const encryptionKey =
-      await this.getEncryptionKey(
-        exportDTO.UserID,
-      );
+  //   const encryptionKey =
+  //     await this.getEncryptionKey(
+  //       exportDTO.UserID,
+  //     );
 
-    // decrypt content
-    exportDTO.Content = await this.decryptContent(
-      exportDTO.Content,
-      encryptionKey,
-    );
+  //   // decrypt content
+  //   exportDTO.Content = await this.decryptContent(
+  //     exportDTO.Content,
+  //     encryptionKey,
+  //   );
 
-    // convert
-    const convertedDTO =
-      this.conversionService.convertTo(exportDTO);
+  //   // convert
+  //   const convertedDTO =
+  //     this.conversionService.convertTo(exportDTO);
 
-    // re-encrypt content
-    convertedDTO.Content =
-      await this.encryptContent(
-        convertedDTO.Content,
-        encryptionKey,
-      );
+  //   // re-encrypt content
+  //   convertedDTO.Content =
+  //     await this.encryptContent(
+  //       convertedDTO.Content,
+  //       encryptionKey,
+  //     );
 
-    return convertedDTO;
-  }
+  //   return convertedDTO;
+  // }
 }

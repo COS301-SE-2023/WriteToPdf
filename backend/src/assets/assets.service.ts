@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { AssetDTO } from './dto/asset.dto';
-import { RetrieveAllImagesDTO } from '../image_manager/dto/retrieve_all_images.dto';
+import { RetrieveAllDTO } from '../asset_manager/dto/retrieve_all.dto';
 
 @Injectable()
 export class AssetsService {
@@ -56,7 +56,7 @@ export class AssetsService {
   // }
 
   retrieveAllAssets(
-    retrieveAllDTO: RetrieveAllImagesDTO,
+    retrieveAllDTO: RetrieveAllDTO,
   ) {
     return this.assetsRepository.find({
       where: {
