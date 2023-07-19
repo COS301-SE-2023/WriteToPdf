@@ -1,4 +1,5 @@
 @import '../../styles.scss';
+$header-height: 140px;
 $sidebar-content-width: 225px;
 
 .container {
@@ -16,7 +17,8 @@ $sidebar-content-width: 225px;
     background-image: linear-gradient(to right, #ffffff, #e7e7e7);
     border-bottom: 1px solid #ccc;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 
 .header {
@@ -27,6 +29,7 @@ $sidebar-content-width: 225px;
 
 
 .titleWrapper {
+    position: fixed;
     display: flex;
     margin: 10px;
     margin-left: 20px;
@@ -47,7 +50,11 @@ $sidebar-content-width: 225px;
 
 .toolsWrapper {
     display: flex;
+    padding-bottom: 0;
+    margin-top:71px;
     margin-left: 10px;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 
 .documentTitle {
@@ -133,7 +140,7 @@ $sidebar-content-width: 225px;
 .editor {
     display: flex;
     position: absolute;
-    top: 127px;
+    top: $header-height;
     left: 260px;
 
     //     height: 100vh;
@@ -144,7 +151,7 @@ $sidebar-content-width: 225px;
 
     width: calc(100% - 260px);
     // width: 100%;
-    max-height: calc(100svh - 127px);
+    max-height: calc(100svh - $header-height);
 }
 
 
@@ -154,7 +161,7 @@ $sidebar-content-width: 225px;
 
 .assetSidebar {
     position: fixed;
-    top: 127px;
+    top: $header-height;
     left: 0;
     bottom: 0;
     width: 261px;
@@ -314,7 +321,7 @@ div[contenteditable="true"]:focus {
 
 .showAssetSidebar {
     position: fixed;
-    top: 127px;
+    top:$header-height;
     left: 0;
     bottom: 0;
     display: none;
