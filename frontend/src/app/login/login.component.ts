@@ -32,13 +32,13 @@ export class LoginComponent {
   }
 
   async login(): Promise<void> {
-    if (this.email === '') {
+    if (!this.email||this.email==='') {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: `Email field empty`,
       });
-    } else if (this.password === '') {
+    } else if (!this.password||this.password==='') {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
