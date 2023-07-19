@@ -20,6 +20,7 @@
         <p-dialog header="Export File" [(visible)]="exportDialogVisible" [style]="{ width: '50vw' }">
           <div class="flex py-2 justify-content-center"></div>
           <!-- <input type="text" pInputText [(ngModel)]="fileType" /> -->
+          <p-button label="Export to pdf" (click)="convertToPdf()"></p-button>
           <p-button label="Export to txt" (click)="exportTextFile()"></p-button>
         </p-dialog>
 
@@ -30,7 +31,7 @@
         <!-- <div class="tool" (click)="delete()">
           <img src="assets/Icons/editIcons/delete.png" alt="" />
         </div> -->
-        <div class="tool">
+        <div class="tool" (click)="pageBreak()">
           <!-- Share -->
           <img src="assets/Icons/editIcons/share.svg" alt="" />
         </div>
@@ -38,9 +39,9 @@
       <div class="pageIconWrapper"></div>
       <div class="miscWrapper"></div>
     </div>
-    <div class="speedDialEditMenu">
+    <!-- <div class="speedDialEditMenu">
       <p-speedDial class="speedDial" [model]="speedDialItems" direction="down"></p-speedDial>
-    </div>
+    </div> -->
   </div>
 
   <div class="editor">
@@ -77,8 +78,8 @@
           <div class="assetName">
             <!-- <h4 class="assetNameText"></h4> -->
             <label for="editAsset" class="displayNone">b</label>
-            <input type="text" editable="true" id="editAsset" class="assetNameText" value={{obj.FileName}}
-              maxlength="50" (blur)="renameAsset(obj.AssetID, $event)" />
+            <input type="text" editable="true" id="editAssetMock" class="assetNameText" value={{obj.FileName}}
+              maxlength="50" (blur)="renameAsset(obj.AssetID, $event)" title="ok"/>
           </div>
           <div class="deleteAsset">
             <img class="deleteAssetIcon" src="assets/Icons/editIcons/delete.png" alt=""
@@ -122,11 +123,11 @@
     </div>
 
 <!--    Below is the code that allows me to work with CKEditor    -->
-    <div class = "center-page">
-      <div class="document-editor">
-        <div class="document-editor__toolbar"></div>
-        <div class="document-editor__editable-container">
-          <div  class="document-editor__editable" id = "editor-contents">
+    <div class = "center-page" >
+      <div class="document-editor"  style="overflow: hidden;">
+        <div class="document-editor__toolbar"  style="overflow: hidden;"></div>
+        <div class="document-editor__editable-container"  style="overflow: hidden;">
+          <div  class="document-editor__editable" id = "editor-contents"  style="overflow: hidden;">
           </div>
         </div>
       </div>
