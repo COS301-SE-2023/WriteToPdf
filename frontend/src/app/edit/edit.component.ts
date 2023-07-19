@@ -126,7 +126,8 @@ public editor: DecoupledEditor = {} as DecoupledEditor;
       )
         .then(editor => {
           // Apply assertion for toolbarContainer
-          (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
+          // (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
+          document.getElementsByClassName('toolsWrapper')[0].appendChild(editor.ui.view.toolbar.element as Node);
           (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
           // Set the saved content after the editor is ready
           editor.setData(<string>this.editService.getContent());
