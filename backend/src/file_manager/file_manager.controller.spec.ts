@@ -944,6 +944,26 @@ describe('FileManagerController', () => {
       );
     });
 
+    it('should not throw an exception if Path is empty', () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderName = 'test';
+      folderDTO.UserID = 123;
+      folderDTO.Path = '';
+
+      expect(() =>
+        controller.createFolder(
+          folderDTO,
+          request as any,
+        ),
+      ).not.toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
     it('should throw an exception if Path is undefined', () => {
       const request = { method: 'POST' };
       const folderDTO = new FolderDTO();
