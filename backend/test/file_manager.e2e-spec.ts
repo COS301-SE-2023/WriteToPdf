@@ -74,12 +74,42 @@ describe('FileManagerController (integration)', () => {
           'DELETE FROM MARKDOWN_FILES WHERE UserID = ? AND LastModified > ?',
           [process.env.TEST_USERID, startTime],
         );
-        console.log('startTime: ', startTime);
         break;
     }
   }
 
   describe('file-manager endpoint', () => {
+    it('/file-manager/create_file/ (POST) - missing UserID', async () => {
+      const requestMarkdownFileDTO =
+        new MarkdownFileDTO();
+
+      const response = await request(
+        app.getHttpServer(),
+      )
+        .post('/file_manager/create_file/')
+        .set(
+          'Authorization',
+          'Bearer ' + process.env.AUTH_BEARER,
+        )
+        .send(requestMarkdownFileDTO);
+
+      expect(response.status).toBe(
+        HttpStatus.BAD_REQUEST,
+      );
+      expect(response.body).toHaveProperty(
+        'statusCode',
+      );
+      expect(response.body).toHaveProperty(
+        'message',
+      );
+      expect(response.body.statusCode).toEqual(
+        HttpStatus.BAD_REQUEST,
+      );
+      expect(response.body.message).toEqual(
+        'Invalid request data',
+      );
+    });
+
     it('/file-manager/create_file/ (POST) - valid request', async () => {
       const requestMarkdownFileDTO =
         new MarkdownFileDTO();
