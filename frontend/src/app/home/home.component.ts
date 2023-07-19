@@ -39,7 +39,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public menuBarItems!: MenuItem[];
   public speedDialItems!: MenuItem[];
   public treeTableColumns!: Column[];
+
   public currentDirectory!: any;
+
+  public previousNode!: any;
+  public currentNode!: any;
+
   public treeSelectedFile!: any;
   public directoryData!: any;
   public recentToggle: boolean = false;
@@ -126,11 +131,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-updateTreeTableData(
+  updateTreeTableData(
     nodes: TreeNode[],
     key: string,
     newValue: string
-    ): boolean {
+  ): boolean {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
       if (node.key === key) {
@@ -183,12 +188,12 @@ updateTreeTableData(
       const folder = this.nodeService.getFolderDTOByID(key);
       this.folderService
         .renameFolder(folder.FolderID, folder.Path, event)
-        .then((data) => {});
+        .then((data) => { });
     } else {
       const file = this.nodeService.getFileDTOByID(key);
       this.fileService
         .renameDocument(file.MarkdownID, event, file.Path)
-        .then((data) => {});
+        .then((data) => { });
     }
   }
 
@@ -362,23 +367,23 @@ updateTreeTableData(
    * @param options, must be "folder" || "move" || "document"
    */
   showFileManagerPopup(options: string): void {
-    if(options ===  "folder"){
+    if (options === "folder") {
       //TODO communicate intentions to file manager pop-up
       const ref = this.dialogService.open(FileManagerPopupComponent, {
-      header: 'Folder Creation: Select location',
-      showHeader: true,
-      closable: true,
-      closeOnEscape: true,
-      dismissableMask: true
-    });
-    ref.onClose.subscribe(() => {
-      //If the user creates a new folder we want it to be reflected in our home page,
-      //So we need to call ngOnInit once more to update the homepage after closing.
-      this.ngOnInit();
-      // Handle any actions after the dialog is closed
-    });
+        header: 'Folder Creation: Select location',
+        showHeader: true,
+        closable: true,
+        closeOnEscape: true,
+        dismissableMask: true
+      });
+      ref.onClose.subscribe(() => {
+        //If the user creates a new folder we want it to be reflected in our home page,
+        //So we need to call ngOnInit once more to update the homepage after closing.
+        this.ngOnInit();
+        // Handle any actions after the dialog is closed
+      });
     }
-    if(options === "move"){
+    if (options === "move") {
       //TODO communicate intentions to file manager pop-up
       const ref = this.dialogService.open(FileManagerPopupComponent, {
         header: 'Select new location',
@@ -391,7 +396,7 @@ updateTreeTableData(
         // Handle any actions after the dialog is closed
       });
     }
-    if(options === "document"){
+    if (options === "document") {
       //TODO communicate intentions to file manager pop-up
       const ref = this.dialogService.open(FileManagerPopupComponent, {
         header: 'Select document location',
@@ -746,10 +751,6 @@ updateTreeTableData(
     }
   }
 
-  outputCurrDir() {
-    console.log(this.currentDirectory);
-  }
-
   refreshTree() {
     const directory = this.nodeService.getTreeTableNodesData();
     this.filesDirectoryTree = this.generateTreeNodes(directory);
@@ -767,21 +768,31 @@ updateTreeTableData(
     this.filterTable('', 3);
   }
 
-  onEnterKeyPressed(event: any): void {
-    if (this.currentDirectory != null)
-      this.onOpenFileSelect(this.currentDirectory);
+  openFileEnter(event: any): void {
+    if (this.currentNode != null)
+      this.onOpenFileSelect(this.currentNode);
     else {
 
     }
   }
 
-  openFile(){
-    console.log("UNIQUE: "+this.currentDirectory);
-    if (this.currentDirectory != null)
-      this.onOpenFileSelect(this.currentDirectory);
+  openFileDoubleClick() {
+    console.log("UNIQUE: " + this.currentDirectory);
+    if (this.currentNode == this.previousNode && this.previousNode != null)
+      this.onOpenFileSelect(this.previousNode);
     else {
 
     }
   }
+
+  selectNode($event: any) {
+    this.currentNode = $event.node;
+  }
+
+  unselectNode($event: any) {
+    this.previousNode = $event.node;
+  }
+
+
   protected readonly focus = focus;
 }
