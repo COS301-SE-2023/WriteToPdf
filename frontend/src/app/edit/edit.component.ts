@@ -16,6 +16,7 @@ import { AssetService } from '../services/asset.service';
 import { Inject } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { set } from 'cypress/types/lodash';
+import { PageBreak } from '@ckeditor/ckeditor5-page-break';
 
 import html2pdf from 'html2pdf.js/dist/html2pdf';
 
@@ -119,6 +120,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         cloudServices: {
           //TODO Great for Collaboration features.
         },
+        // plugins: [PageBreak],
         link: {
           // Automatically add target="_blank" and rel="noopener noreferrer" to all external links.
           addTargetToExternalLinks: true,
