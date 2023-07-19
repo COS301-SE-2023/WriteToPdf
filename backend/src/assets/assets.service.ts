@@ -63,11 +63,16 @@ export class AssetsService {
   retrieveAllAssets(
     retrieveAllDTO: RetrieveAllDTO,
   ) {
+    // SELECT * FROM ASSETS
+    // WHERE UserID = retrieveAllImagesDTO.UserID
+    // and ParentFolderID = retrieveAllImagesDTO.ParentFolderID;
     return this.assetsRepository.find({
       where: {
         UserID: retrieveAllDTO.UserID,
+        ParentFolderID:
+          retrieveAllDTO.ParentFolderID,
       },
-    }); // SELECT * FROM assets WHERE UserID = retrieveAllImagesDTO.UserID;
+    });
   }
 
   removeOne(assetID: string) {
