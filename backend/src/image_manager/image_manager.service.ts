@@ -20,12 +20,10 @@ export class ImageManagerService {
     ).toString();
 
     // Store in database
-    this.assetsService.createImage(
-      uploadImageDto,
-    );
+    this.assetsService.saveImage(uploadImageDto);
 
     // Store in S3/local storage
-    return this.s3Service.saveImage(
+    return this.s3Service.saveAsset(
       uploadImageDto,
     );
   }
