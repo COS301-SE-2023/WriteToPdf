@@ -17,11 +17,21 @@ export class CameraComponent {
   public sidebarVisible = false;
   assetName: string = '';
   videoRef: any;
+  parentFolderId: string = '';
+  path: string = '';
 
   constructor(private elementRef: ElementRef, private assetService: AssetService, private router: Router, private location: Location, private messageService: MessageService) { }
 
   ngOnInit() {
+    const data = history.state;
+    if (data) {
+      this.parentFolderId = data['ParentFolderId'];
+      this.path = data['Path'];
+    }
+
     this.videoRef = document.getElementById('camera');
+
+    console.log("ParentFolderID: "+this.parentFolderId);
     this.setupCamera();
   }
 
@@ -70,7 +80,7 @@ export class CameraComponent {
 
 
   async uploadImage() {
-    this.assetService.uploadImage(this.sysImage, 'New Asset', this.assetName).then((res) => {
+    this.assetService.uploadImage(this.sysImage, this.parentFolderId, this.assetName, this.path).then((res) => {
       if (res) {
         setTimeout(() => {
         this.navigateToPage('edit');

@@ -35,7 +35,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   public speedDialItems!: MenuItem[];
   assets: any[] = [];
 
-public editor: DecoupledEditor = {} as DecoupledEditor;
+  public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
   constructor(
     private elementRef: ElementRef,
@@ -114,7 +114,7 @@ public editor: DecoupledEditor = {} as DecoupledEditor;
     this.globalAreaReference = editableArea; //set to avoid constant referencing
     const toolbarContainer: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__toolbar');
     if (editableArea && toolbarContainer) {
-      
+
       DecoupledEditor.create(editableArea, {
         cloudServices: {
           //TODO Great for Collaboration features.
@@ -130,7 +130,7 @@ public editor: DecoupledEditor = {} as DecoupledEditor;
           // (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
           editor.ui.view.toolbar.element?.style.setProperty('background', '#00000000');
           editor.ui.view.toolbar.element?.style.setProperty('border', 'none');
-          
+
           document.getElementsByClassName('toolsWrapper')[0].appendChild(editor.ui.view.toolbar.element as Node);
           (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
           // Set the saved content after the editor is ready
@@ -148,6 +148,15 @@ public editor: DecoupledEditor = {} as DecoupledEditor;
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
+  }
+
+  navigateToCameraPage() {
+    const data = {
+      ParentFolderId: this.editService.getParentFolderID(),
+      Path: this.editService.getPath(),
+    };
+    console.log('On move to cam page: ' + this.editService.getParentFolderID());
+    this.router.navigate(['/camera'], { state: data });
   }
 
   saveDocumentContents() {

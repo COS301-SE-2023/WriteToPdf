@@ -436,6 +436,7 @@ updateTreeTableData(
         this.editService.setContent(data);
         this.editService.setName(file.Name);
         this.editService.setMarkdownID(file.MarkdownID);
+        console.log("Parent Folder ID: " + file.ParentFolderID);
         this.editService.setParentFolderID(file.ParentFolderID);
         this.editService.setPath(file.Path);
         this.navigateToPage('edit');

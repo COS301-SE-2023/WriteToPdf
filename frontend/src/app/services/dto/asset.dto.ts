@@ -3,10 +3,11 @@ export class AssetDTO {
     Format: string | undefined;
     FileName: string | undefined;
     ConvertedElement: string | undefined;
-    Image: string | undefined;
+    Content: string | undefined;
     DateCreated: Date | undefined;
     Size: number | undefined;
     ParentFolderID: string | undefined;
+    Path:string|undefined;
     UserID: number | undefined;
 
     constructor() {
@@ -14,7 +15,7 @@ export class AssetDTO {
         this.Format = undefined;
         this.FileName = undefined;
         this.ConvertedElement = undefined;
-        this.Image = undefined;
+        this.Content = undefined;
         this.DateCreated = undefined;
         this.Size = undefined;
         this.ParentFolderID = undefined;
