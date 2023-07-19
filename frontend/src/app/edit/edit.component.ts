@@ -147,8 +147,8 @@ public editor: DecoupledEditor = {} as DecoupledEditor;
 
   saveDocumentContents() {
     // Save the document quill content to localStorage when changes occur
-    const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
-    let contents = editableArea.innerHTML;
+    // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+    let contents = this.editor.getData();
     console.log("Before function call save:" + contents);
     this.fileService.saveDocument(
       contents,

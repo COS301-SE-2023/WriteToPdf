@@ -78,8 +78,8 @@
           <div class="assetName">
             <!-- <h4 class="assetNameText"></h4> -->
             <label for="editAsset" class="displayNone">b</label>
-            <input type="text" editable="true" id="editAsset" class="assetNameText" value={{obj.FileName}}
-              maxlength="50" (blur)="renameAsset(obj.AssetID, $event)" />
+            <input type="text" editable="true" id="editAssetMock" class="assetNameText" value={{obj.FileName}}
+              maxlength="50" (blur)="renameAsset(obj.AssetID, $event)" title="ok"/>
           </div>
           <div class="deleteAsset">
             <img class="deleteAssetIcon" src="assets/Icons/editIcons/delete.png" alt=""
