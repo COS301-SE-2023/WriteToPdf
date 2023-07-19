@@ -106,6 +106,7 @@ export class EditComponent implements AfterViewInit, OnInit {
           (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
           // Set the saved content after the editor is ready
           editor.setData(<string>this.editService.getContent());
+          console.log(<string>this.editService.getContent());
         })
         .catch((err) => {
           console.error(err);

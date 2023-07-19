@@ -335,23 +335,22 @@ div[contenteditable="true"]:focus {
     background-color: #ffffff;
 }
 
-.document-editor {
-
-  //padding: 50px;
-  height: auto;
-  min-width: 800px;
-  background-color: #ffffff;
-  overflow-x: auto;
-  border: 1px solid var(--ck-color-base-border);
-  border-radius: var(--ck-border-radius);
-
-  /* Set vertical boundaries for the document editor. */
-  max-height: 700px;
-
-  /* This element is a flex container for easier rendering. */
-  display: flex;
-  flex-flow: column nowrap;
-}
+//.document-editor {
+//  //padding: 50px;
+//  height: auto;
+//  min-width: 800px;
+//  background-color: #ffffff;
+//  overflow-x: auto;
+//  border: 1px solid var(--ck-color-base-border);
+//  border-radius: var(--ck-border-radius);
+//
+//  /* Set vertical boundaries for the document editor. */
+//  max-height: 700px;
+//
+//  /* This element is a flex container for easier rendering. */
+//  display: flex;
+//  flex-flow: column nowrap;
+//}
 
 .document-editor__toolbar {
   /* Make sure the toolbar container is always above the editable. */
