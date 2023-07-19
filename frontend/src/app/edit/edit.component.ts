@@ -3,7 +3,8 @@ import {
   Component,
   ElementRef,
   OnInit,
-  ViewChild} from '@angular/core';
+  ViewChild
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
@@ -16,7 +17,11 @@ import { Inject } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { set } from 'cypress/types/lodash';
 
+import html2pdf from 'html2pdf.js/dist/html2pdf';
+
+
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
+
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
@@ -30,7 +35,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   public speedDialItems!: MenuItem[];
   assets: any[] = [];
 
-  public Editor = DecoupledEditor;
+public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
   constructor(
     private elementRef: ElementRef,
@@ -41,8 +46,22 @@ export class EditComponent implements AfterViewInit, OnInit {
     private assetService: AssetService,
     private clipboard: Clipboard,
     private messageService: MessageService
-  ) { }
+  ) {
+  }
 
+  convertToPdf() {
+    console.log(this.editor);
+    const content = (this.editor.getData());
+    const options = {
+      margin: 10,
+      filename: `${this.fileName}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().from(content).set(options).save();
+  }
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
@@ -95,18 +114,26 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.globalAreaReference = editableArea; //set to avoid constant referencing
     const toolbarContainer: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__toolbar');
     if (editableArea && toolbarContainer) {
+      
       DecoupledEditor.create(editableArea, {
         cloudServices: {
           //TODO Great for Collaboration features.
         },
-      })
-        .then((editor) => {
+        link: {
+          // Automatically add target="_blank" and rel="noopener noreferrer" to all external links.
+          addTargetToExternalLinks: true,
+        },
+      },
+      )
+        .then(editor => {
           // Apply assertion for toolbarContainer
-          (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
+          // (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
+          document.getElementsByClassName('toolsWrapper')[0].appendChild(editor.ui.view.toolbar.element as Node);
           (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
           // Set the saved content after the editor is ready
           editor.setData(<string>this.editService.getContent());
           console.log(<string>this.editService.getContent());
+          this.editor = editor;
         })
         .catch((err) => {
           console.error(err);
@@ -114,18 +141,16 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#E3E3E3';
     this.refreshSidebar();
-    }
+  }
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
 
-
-
   saveDocumentContents() {
     // Save the document quill content to localStorage when changes occur
-    const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
-    let contents = editableArea.innerHTML;
+    // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+    let contents = this.editor.getData();
     console.log("Before function call save:" + contents);
     this.fileService.saveDocument(
       contents,
@@ -184,34 +209,38 @@ export class EditComponent implements AfterViewInit, OnInit {
     const markdownID = this.editService.getMarkdownID();
     const name = this.editService.getName();
     if (markdownID && name) {
-     this.fileService.exportDocumentToTextFile(markdownID, name, contents, 'txt');
+      this.fileService.exportDocumentToTextFile(markdownID, name, contents, 'txt');
     }
   }
 
-  async retrieveAsset(assetId:string){
+  async retrieveAsset(assetId: string) {
     const asset = await this.assetService.retrieveAsset(assetId);
     console.log(asset);
     if (asset) {
       this.clipboard.copy(asset.Content);
-      this.messageService.add({severity:'success', summary:'Success', detail:'Asset copied to clipboard'});
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Asset copied to clipboard' });
     }
   }
 
-  async deleteAsset(assetId:string){
-    if(await this.assetService.deleteAsset(assetId)){
-      this.messageService.add({severity:'success', summary:'Success', detail:'Asset deleted'});
+  async deleteAsset(assetId: string) {
+    if (await this.assetService.deleteAsset(assetId)) {
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Asset deleted' });
       await this.refreshSidebar();
     }
   }
 
-  async renameAsset(assetId: string, event: Event){
+  async renameAsset(assetId: string, event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const inputValue = inputElement.value;
     const asset = await this.assetService.renameAsset(assetId, inputValue);
     console.log(asset);
   }
 
-  async refreshSidebar(){
+  async refreshSidebar() {
     this.assets = await this.assetService.retrieveAll();
+  }
+
+  pageBreak() {
+    this.editor.execute('pageBreak');
   }
 }

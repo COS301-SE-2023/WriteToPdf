@@ -136,7 +136,7 @@ $sidebar-content-width: 225px;
     top: 127px;
     left: 260px;
 
-//     height: 100vh;
+    //     height: 100vh;
     z-index: -10;
     margin: 0;
     overflow: auto;
@@ -335,22 +335,22 @@ div[contenteditable="true"]:focus {
     background-color: #ffffff;
 }
 
-.document-editor {
+//.document-editor {
 //  //padding: 50px;
-  height: auto;
-  min-width: 800px;
-  background-color: #ffffff;
-  overflow-x: auto;
-  border: 1px solid var(--ck-color-base-border);
-  border-radius: var(--ck-border-radius);
-
-  /* Set vertical boundaries for the document editor. */
-  max-height: 700px;
-
-  /* This element is a flex container for easier rendering. */
-  display: flex;
-  flex-flow: column nowrap;
-}
+//  height: auto;
+//  min-width: 800px;
+//  background-color: #ffffff;
+//  overflow-x: auto;
+//  border: 1px solid var(--ck-color-base-border);
+//  border-radius: var(--ck-border-radius);
+//
+//  /* Set vertical boundaries for the document editor. */
+//  max-height: 700px;
+//
+//  /* This element is a flex container for easier rendering. */
+//  display: flex;
+//  flex-flow: column nowrap;
+//}
 
 .document-editor__toolbar {
   /* Make sure the toolbar container is always above the editable. */
@@ -369,10 +369,6 @@ div[contenteditable="true"]:focus {
   border-radius: 0;
 }
 
-.ck.ck-toolbar {
-  border:none;
-}
-
 /* Make the editable container look like the inside of a native word processor application. */
 .document-editor__editable-container {
   padding: calc( 2 * var(--ck-spacing-large) );
@@ -385,7 +381,7 @@ div[contenteditable="true"]:focus {
 .document-editor__editable-container .ck-editor__editable {
   /* Set the dimensions of the "page". */
   width: 15.8cm;
-  min-height: 30cm;
+  min-height: 21cm;
 
   /* Keep the "page" off the boundaries of the container. */
   padding: 1cm 2cm 2cm;
