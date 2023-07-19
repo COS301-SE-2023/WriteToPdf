@@ -35,17 +35,6 @@ export class AssetManagerController {
     );
   }
 
-  @Post('retrieve_all_root')
-  @HttpCode(HttpStatus.OK)
-  retrieve_all_root_assets(
-    @Body()
-    retrieveAllDTO: RetrieveAllDTO,
-  ) {
-    return this.assetManagerService.retrieve_all_root_assets(
-      retrieveAllDTO,
-    );
-  }
-
   @Post('retrieve_all')
   @HttpCode(HttpStatus.OK)
   retrieve_all(

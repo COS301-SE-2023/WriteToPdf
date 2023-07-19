@@ -58,25 +58,11 @@ export class AssetManagerService {
     return images;
   }
 
-  retrieve_all_root_assets(
-    retrieveAllDTO: RetrieveAllDTO,
-  ) {
-    return this.assetsService.retrieveAllRootAssets(
-      retrieveAllDTO,
-    );
-  }
-
   retrieve_one(retrieveAssetDTO: AssetDTO) {
     return this.s3Service.retrieveAsset(
       retrieveAssetDTO,
     );
   }
-
-  // retrieve_image(retrieveImageDTO: AssetDTO) {
-  //   return this.imageManagerService.retrieveOne(
-  //     retrieveImageDTO,
-  //   );
-  // }
 
   rename_asset(renameAssetDTO: AssetDTO) {
     return this.assetsService.renameAsset(
