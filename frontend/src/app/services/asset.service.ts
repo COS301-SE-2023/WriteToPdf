@@ -71,9 +71,9 @@ export class AssetService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveAsset(assetId: string): Promise<any> {
+  retrieveAsset(assetId: string, type: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      this.sendRetrieveAssetData(assetId).subscribe({
+      this.sendRetrieveAssetData(assetId, type).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
           if (response.status === 200) {
@@ -87,7 +87,7 @@ export class AssetService {
     });
   }
 
-  sendRetrieveAssetData(assetId: string): Observable<HttpResponse<any>> {
+  sendRetrieveAssetData(assetId: string, type: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}asset_manager/retrieve_one`;
     const body = new AssetDTO();
@@ -95,6 +95,7 @@ export class AssetService {
     body.UserID = this.userService.getUserID();
     body.AssetID = assetId;
 
+    console.log('BODY', body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
