@@ -56,6 +56,7 @@ export class AssetManagerService {
         const assetDTO = new AssetDTO();
         assetDTO.AssetID = assets[i].AssetID;
         assetDTO.UserID = assets[i].UserID;
+        assetDTO.ConvertedElement = '';
 
         // Retrieve the image from s3
         const asset =
@@ -70,6 +71,26 @@ export class AssetManagerService {
           );
       }
     }
+
+    for (let j = 0; j < assets.length; j++) {
+      if (assets[j].Format === 'text') {
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = assets[j].AssetID;
+        assetDTO.UserID = assets[j].UserID;
+        assetDTO.ConvertedElement = '';
+
+        // Retrieve the delineated data from S3
+        const tempAssetDTO =
+          await this.textManagerService.retrieveOne(
+            assetDTO,
+          );
+
+        assets[j].ConvertedElement =
+          tempAssetDTO.Content;
+        assets[j].Image = tempAssetDTO.Image;
+      }
+    }
+
     return assets;
   }
 
