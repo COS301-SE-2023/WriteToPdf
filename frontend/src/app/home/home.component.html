@@ -91,7 +91,7 @@
     <div class="directoryContents">
       <!--      The Current directory variable below in the main view is used to allow for intelligent file placement-->
       <p-treeTable class="non-selectable" appClickAtCoordinate (dblclick)="openFileDoubleClick()"
-        (keyup.enter)="openFileEnter($event)" #myTreeTable [contextMenu]="cm"
+        (keydown.enter)="openFileEnter($event)" (keydown.delete)="deleteSelectedEntity($event)" #myTreeTable [contextMenu]="cm"
         [(contextMenuSelection)]="currentDirectory" (onNodeUnselect)="unselectNode($event)"
         (onNodeSelect)="selectNode($event)" [(selection)]="currentDirectory" [columns]="treeTableColumns"
         [scrollable]="true" [tableStyle]="{ 'min-width': '50rem', 'overflow':'hidden' }"

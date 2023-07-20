@@ -148,7 +148,7 @@ export class NodeService {
     }
   }
 
-  private findAllChildrenFiles(parentID: string | undefined) {
+  public findAllChildrenFiles(parentID: string | undefined) {
     let children: any[] = [];
     for (let file of this.files) {
       if (file.ParentFolderID === parentID) {
@@ -158,7 +158,7 @@ export class NodeService {
     return children;
   }
 
-  private findAllChildrenFolders(parentID: string | undefined) {
+  public findAllChildrenFolders(parentID: string | undefined) {
     let children: any[] = [];
     for (let folder of this.folders) {
       if (folder.ParentFolderID === parentID) {
