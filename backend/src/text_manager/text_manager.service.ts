@@ -12,20 +12,34 @@ export class TextManagerService {
   ) {}
 
   upload(uploadTextDTO: AssetDTO) {
+    // Generate AssetID
     uploadTextDTO.AssetID = SHA256(
       uploadTextDTO.UserID.toString() +
         new Date().getTime().toString(),
     ).toString();
 
-    // Store text asset in database
+    if (!uploadTextDTO.ConvertedElement) {
+      uploadTextDTO.ConvertedElement = '';
+    }
+
+    // Simulate OCR-generated text
+    if (!uploadTextDTO.Content) {
+      uploadTextDTO.Content =
+        'The quick brown fox, jumped over the hill. From there it obtained a degree. After that it took over the world.';
+    }
+
+    // Save text asset in database
+    const imageData = uploadTextDTO.Image;
+    uploadTextDTO.Image = '';
     this.assetsService.saveAsset(uploadTextDTO);
+    uploadTextDTO.Image = imageData;
 
     // Preprocess text for storage in the S3
     uploadTextDTO.Content = this.packageTextForS3(
       uploadTextDTO,
     );
 
-    // Store in the S3
+    // Save asset in the S3/local storage
     return this.s3Service.saveAsset(
       uploadTextDTO,
     );
