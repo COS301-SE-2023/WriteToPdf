@@ -21,10 +21,10 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { MarkdownFile } from '../src/markdown_files/entities/markdown_file.entity';
 import { S3Service } from '../src/s3/s3.service';
 import { FileDTO } from '../src/s3/dto/file.dto';
+import { create } from 'domain';
 
 let startTime: string;
-let fileID: string;
-const DELETE_MARKDOWN_ID = '1';
+let fileID = '';
 
 describe('FileManagerController (integration)', () => {
   let app: INestApplication;
@@ -53,6 +53,8 @@ describe('FileManagerController (integration)', () => {
     >(getRepositoryToken(MarkdownFile));
     s3Service =
       moduleFixture.get<S3Service>(S3Service);
+
+    await resetUser();
   });
 
   afterAll(async () => {
@@ -68,45 +70,124 @@ describe('FileManagerController (integration)', () => {
   });
 
   afterEach(async () => {
-    await cleanUp();
+    // await cleanUp();
+    await resetUser();
   });
 
-  async function cleanUp() {
-    console.log(
-      'expect.getState().currentTestName: ',
-      expect.getState().currentTestName,
-    );
-    switch (expect.getState().currentTestName) {
-      case 'FileManagerController (integration) file-manager endpoint create_file /file-manager/create_file/ (POST) - valid request':
-        await markdownFileRepository.query(
-          'DELETE FROM MARKDOWN_FILES WHERE MarkdownID = ? AND UserID = ?',
-          [fileID, process.env.TEST_USERID],
-        );
-        const fileDTO = new MarkdownFileDTO();
-        fileDTO.UserID = parseInt(
-          process.env.TEST_USERID,
-        );
-        fileDTO.Path = '';
-        fileDTO.MarkdownID = fileID;
-        await s3Service.deleteFile(fileDTO);
-        break;
+  // afterAll(async () => {
+  // });
 
-      case 'FileManagerController (integration) file-manager endpoint /file-manager/delete_file/ (POST) - valid request':
-        console.log('Cleaning up delete');
-        await markdownFileRepository.query(
-          'INSERT INTO MARKDOWN_FILES (MarkdownID, Name, Path, Size, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?, ?)',
-          [
-            DELETE_MARKDOWN_ID,
-            'Test Delete',
-            '',
-            0,
-            '',
-            process.env.TEST_USERID,
-          ],
-        );
-        break;
+  async function resetUser() {
+    // Get all the test user's files
+    const testUserFiles =
+      await markdownFileRepository.query(
+        'SELECT * FROM MARKDOWN_FILES WHERE UserID = ?',
+        [process.env.TEST_USERID],
+      );
+
+    // console.log('testUserFiles: ', testUserFiles);
+
+    // Delete all the test user's files
+    for (const file of testUserFiles) {
+      const deleteFileDTO = new MarkdownFileDTO();
+      deleteFileDTO.UserID = parseInt(
+        process.env.TEST_USERID,
+      );
+      deleteFileDTO.MarkdownID = file.MarkdownID;
+
+      await s3Service.deleteFile(deleteFileDTO);
     }
+
+    // Reset the db for the test user
+    await markdownFileRepository.query(
+      'DELETE FROM MARKDOWN_FILES WHERE UserID = ?',
+      [process.env.TEST_USERID],
+    );
+
+    // Create a test file
+    const createFileDTO = new MarkdownFileDTO();
+    createFileDTO.UserID = parseInt(
+      process.env.TEST_USERID,
+    );
+    createFileDTO.Path = '';
+    createFileDTO.Name = 'Test File';
+    createFileDTO.Size = 0;
+    createFileDTO.ParentFolderID = '';
+
+    const s3Response = await s3Service.createFile(
+      createFileDTO,
+    );
+
+    fileID = s3Response.MarkdownID;
+    // console.log('Setting fileID to ', fileID);
+    // console.log('s3Response: ', s3Response);
+
+    await markdownFileRepository.query(
+      'INSERT INTO MARKDOWN_FILES (MarkdownID, Name, Path, Size, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?, ?)',
+      [
+        s3Response.MarkdownID,
+        createFileDTO.Name,
+        createFileDTO.Path,
+        createFileDTO.Size,
+        createFileDTO.ParentFolderID,
+        createFileDTO.UserID,
+      ],
+    );
   }
+
+  // async function cleanUp() {
+  //   console.log(
+  //     'expect.getState().currentTestName: ',
+  //     expect.getState().currentTestName,
+  //   );
+  //   switch (expect.getState().currentTestName) {
+  //     case 'FileManagerController (integration) file-manager endpoint create_file /file-manager/create_file/ (POST) - valid request':
+  //       await markdownFileRepository.query(
+  //         'DELETE FROM MARKDOWN_FILES WHERE MarkdownID = ? AND UserID = ?',
+  //         [fileID, process.env.TEST_USERID],
+  //       );
+  //       const createFileDTO =
+  //         new MarkdownFileDTO();
+  //       createFileDTO.UserID = parseInt(
+  //         process.env.TEST_USERID,
+  //       );
+  //       createFileDTO.Path = '';
+  //       createFileDTO.MarkdownID = fileID;
+  //       await s3Service.deleteFile(createFileDTO);
+  //       break;
+
+  //     case 'FileManagerController (integration) file-manager endpoint /file-manager/delete_file/ (POST) - valid request':
+  //       const deleteFileDTO =
+  //         new MarkdownFileDTO();
+  //       deleteFileDTO.UserID = parseInt(
+  //         process.env.TEST_USERID,
+  //       );
+  //       deleteFileDTO.Path = '';
+  //       deleteFileDTO.Name = 'Test File';
+  //       deleteFileDTO.Size = 0;
+  //       deleteFileDTO.ParentFolderID = '';
+
+  //       const s3Response =
+  //         await s3Service.createFile(
+  //           deleteFileDTO,
+  //         );
+
+  //       fileID = s3Response.MarkdownID;
+
+  //       await markdownFileRepository.query(
+  //         'INSERT INTO MARKDOWN_FILES (MarkdownID, Name, Path, Size, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?, ?)',
+  //         [
+  //           s3Response.MarkdownID,
+  //           deleteFileDTO.Name,
+  //           deleteFileDTO.Path,
+  //           deleteFileDTO.Size,
+  //           deleteFileDTO.ParentFolderID,
+  //           deleteFileDTO.UserID,
+  //         ],
+  //       );
+  //       break;
+  //   }
+  // }
 
   describe('file-manager endpoint', () => {
     describe('create_file', () => {
@@ -202,7 +283,7 @@ describe('FileManagerController (integration)', () => {
     //     const requestMarkdownFileDTO =
     //       new MarkdownFileDTO();
     //     requestMarkdownFileDTO.MarkdownID =
-    //       DELETE_MARKDOWN_ID;
+    //       fileID;
 
     //     const response = await request(
     //       app.getHttpServer(),
@@ -271,8 +352,18 @@ describe('FileManagerController (integration)', () => {
     //     requestMarkdownFileDTO.UserID = parseInt(
     //       process.env.TEST_USERID,
     //     );
+
+    //     console.log(
+    //       'fileID here in func is ',
+    //       fileID,
+    //     );
     //     requestMarkdownFileDTO.MarkdownID =
-    //       DELETE_MARKDOWN_ID;
+    //       fileID;
+
+    //     console.log(
+    //       'requestMarkdownFileDTO: ',
+    //       requestMarkdownFileDTO,
+    //     );
 
     //     const response = await request(
     //       app.getHttpServer(),
@@ -284,12 +375,12 @@ describe('FileManagerController (integration)', () => {
     //       )
     //       .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
     //     console.log(
     //       'response.body: ',
     //       response.body,
+    //     );
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
     //     );
     //     expect(response.body).toHaveProperty(
     //       'affected',
