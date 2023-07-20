@@ -102,7 +102,7 @@ export class S3Service {
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     else
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
-    console.log(markdownFileDTO);
+    // console.log(markdownFileDTO);
 
     // console.log(`./storage/${filePath}`);
 
@@ -126,7 +126,7 @@ export class S3Service {
       return undefined;
     }
 
-    console.log(markdownFileDTO);
+    // console.log(markdownFileDTO);
     return markdownFileDTO;
   }
 
@@ -152,7 +152,7 @@ export class S3Service {
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}`;
     else filePath = `${markdownFileDTO.UserID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
-    console.log(markdownFileDTO);
+    // console.log(markdownFileDTO);
 
     try {
       await mkdir(`./storage/${filePath}`, {
@@ -194,7 +194,7 @@ export class S3Service {
       fileStats.mtime;
     markdownFileDTO.Size = 0;
 
-    console.log(markdownFileDTO);
+    // console.log(markdownFileDTO);
     return markdownFileDTO;
   }
 
@@ -206,13 +206,13 @@ export class S3Service {
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    console.log(markdownFileDTO);
+    // console.log(markdownFileDTO);
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     else
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
-    console.log(markdownFileDTO);
+    // console.log(markdownFileDTO);
 
     // console.log(`./storage/${filePath}`);
 
@@ -248,13 +248,13 @@ export class S3Service {
     const fileStats = await stat(
       `./storage/${filePath}`,
     );
-    console.log(fileStats);
+    // console.log(fileStats);
     markdownFileDTO.LastModified =
       fileStats.mtime;
     markdownFileDTO.Size =
       fileData.buffer.byteLength; // TODO: Change to s3 return object
 
-    console.log(markdownFileDTO);
+    // console.log(markdownFileDTO);
     return markdownFileDTO;
   }
 
@@ -270,7 +270,7 @@ export class S3Service {
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     else
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
-    console.log(markdownFileDTO);
+    // console.log(markdownFileDTO);
 
     try {
       await access(`./storage/${filePath}`);
@@ -310,13 +310,13 @@ export class S3Service {
     const fileStats = await stat(
       `./storage/${filePath}`,
     );
-    console.log(fileStats);
+    // console.log(fileStats);
     markdownFileDTO.DateCreated =
       fileStats.birthtime;
     markdownFileDTO.LastModified =
       fileStats.mtime;
 
-    console.log(markdownFileDTO);
+    // console.log(markdownFileDTO);
     return markdownFileDTO;
   }
 }

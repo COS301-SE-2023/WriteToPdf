@@ -170,7 +170,7 @@ describe('FileManagerService', () => {
       try {
         const response =
           await service.createFolder(folderDTO);
-        console.log(response);
+        // console.log(response);
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -194,7 +194,7 @@ describe('FileManagerService', () => {
       try {
         const response =
           await service.createFolder(folderDTO);
-        console.log(response);
+        // console.log(response);
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -218,7 +218,7 @@ describe('FileManagerService', () => {
       try {
         const response =
           await service.createFolder(folderDTO);
-        console.log(response);
+        // console.log(response);
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -242,7 +242,7 @@ describe('FileManagerService', () => {
       try {
         const response =
           await service.createFolder(folderDTO);
-        console.log(response);
+        // console.log(response);
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -267,7 +267,7 @@ describe('FileManagerService', () => {
       try {
         const response =
           await service.createFolder(folderDTO);
-        console.log(response);
+        // console.log(response);
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -314,7 +314,7 @@ describe('FileManagerService', () => {
           await service.retrieveAllFolders(
             directory_foldersDTO,
           );
-        console.log(response);
+        // console.log(response);
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
