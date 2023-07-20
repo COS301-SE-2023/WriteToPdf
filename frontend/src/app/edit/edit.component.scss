@@ -549,6 +549,10 @@ Preserve the relative scale, though. */
     margin-right: calc(2 * var(--ck-spacing-large));
 }
 
+.currentZoom{
+    width: 30px;
+    text-align: center;
+}
 
 
 // Above are all the stylings for the document editor

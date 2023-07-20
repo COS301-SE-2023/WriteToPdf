@@ -262,6 +262,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   zoomIn() {
     if(this.currentZoom >= 2) return;
     this.currentZoom += 0.1; // Increase zoom by 10% (adjust as needed)
+    this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
     const element = document.getElementsByClassName('center-page')[0] as HTMLElement;
     element.style.transform = `scale(${this.currentZoom})`;
     element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
@@ -270,6 +271,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   zoomOut() {
     if(this.currentZoom <= 0.5) return;
     this.currentZoom -= 0.1; // Decrease zoom by 10% (adjust as needed)
+    this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
     const element = document.getElementsByClassName('center-page')[0] as HTMLElement;
     element.style.transform = `scale(${this.currentZoom})`;
     element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)

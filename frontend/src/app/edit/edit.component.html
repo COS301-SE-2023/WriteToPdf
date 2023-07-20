@@ -35,13 +35,14 @@
           <!-- Share -->
           <img src="assets/Icons/editIcons/share.svg" alt="" />
         </div>
-        <div class="tool" (click)="zoomIn()">
-          <!-- Zoom In -->
-          <img src="assets/Icons/editIcons/zoom-in.png" alt="" />
-        </div>
         <div class="tool" (click)="zoomOut()">
           <!-- Zoom Out -->
           <img src="assets/Icons/editIcons/zoom-out.png" alt="" />
+        </div>
+        <p class="currentZoom">{{currentZoom}}</p>
+        <div class="tool" (click)="zoomIn()">
+          <!-- Zoom In -->
+          <img src="assets/Icons/editIcons/zoom-in.png" alt="" />
         </div>
       </div>
       <div class="pageIconWrapper"></div>
