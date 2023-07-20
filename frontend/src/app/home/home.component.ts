@@ -42,11 +42,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public treeTableColumns!: Column[];
 
   public currentDirectory!: any;
-  
+
   //variables for double click and enter key to open doc
   public previousNode!: any;
   public currentNode!: any;
-  
+
   //variables for drag and drop
   public originalPosition: { x: number, y: number } | null = null;
   public currentlyDraggedNode!: any;
@@ -804,14 +804,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onNodeDrag($event: any) {
     this.isDraggingNode = true;
-    console.log("Drag start: ", ($event.event.srcElement));
+    console.log("Drag start: ", ($event));
+    const key = $event.source.element.nativeElement?.getAttribute('data-key');
+    console.log("Key: ", JSON.stringify(key));
     this.originalPosition = {
       x: $event.source._dragRef._passiveTransform.x,
       y: $event.source._dragRef._passiveTransform.y,
     }
     this.currentlyDraggedNode = this.getParentElement($event.event.srcElement);
     this.currentlyDraggedNode.style.pointerEvents = 'none';
-    this.currentlyDraggedNode.style.width = '100px';
     this.currentlyDraggedNode.classList.add('dragging');
   }
 
@@ -826,11 +827,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
     // Reset the draggable element's position back to its original position
     $event.source._dragRef.reset();
     setTimeout(() => {
-      console.log("Released in Element: ", this.getParentElement(this.coordinateService.getElementAtCoordinate()));
-    },10);
+      const keyOfDragged = this.currentlyDraggedNode.getAttribute('data-key');
+      const keyOfDropped = this.getParentElement(this.coordinateService.getElementAtCoordinate())?.getAttribute('data-key');
+      console.log("Key of dragged: ", keyOfDragged);
+      console.log("Key of dropped: ", keyOfDropped);
+
+      this.moveByKey(keyOfDragged,keyOfDropped);
+    }, 10);
     if (this.currentlyDraggedNode) {
       this.currentlyDraggedNode.classList.remove('dragging');
     }
+
+
   }
 
   getElementAtCoordinate(x: number, y: number): HTMLElement | null {
@@ -839,13 +847,56 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
 
   getParentElement(currentElement: HTMLElement | null) {
-    if(currentElement == null) return null;
+    if (currentElement == null) return null;
     const parentElement: HTMLElement | null = currentElement.parentElement;
 
     if (parentElement) {
       return parentElement;
     } else {
       return null;
+    }
+  }
+
+  getData(rowData: any) {
+    return rowData.key;
+  }
+
+  moveByKey(keyOfDragged: string|undefined|null, keyOfDropped: string|undefined|null) {
+    if(keyOfDragged==keyOfDropped) return;
+    const folder = this.nodeService.getParentFolderByID(keyOfDropped);
+
+    let path: string | undefined =
+      folder.Path + `/${folder.FolderName}`;
+    if (folder.Path === '') {
+      path = folder.FolderName;
+    }
+
+    const type = this.nodeService.checkType(keyOfDragged);
+    if (type === 'file') {
+      const movingNode = this.nodeService.getFileDTOByID(keyOfDragged);
+      console.log('Folder:',folder);
+      this.fileService
+        .moveDocument(movingNode.MarkdownID, path, folder.FolderID)
+        .then((data) => {
+          this.nodeService.removeFile(movingNode.MarkdownID);
+          data.Name = movingNode.Name;
+          data.Size = movingNode.Size;
+          this.nodeService.addFile(data);
+          this.refreshTree();
+        });
+    }else if(type === 'folder') {
+      const movingNode = this.nodeService.getFolderDTOByID(keyOfDragged);
+
+      this.folderService
+        .moveFolder(movingNode.FolderID, path, folder.FolderID)
+        .then((data) => {
+          this.nodeService.removeFolder(movingNode.FolderID);
+          data.FolderName = movingNode.FolderName;
+
+          this.nodeService.addFolder(data);
+          this.refreshTree();
+        });
+
     }
   }
 

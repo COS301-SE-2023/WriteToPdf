@@ -290,6 +290,7 @@ export class FileService {
     body.MarkdownID = markdownID;
     body.ParentFolderID = parentFolderID;
 
+    console.log('Moving File: ',body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
