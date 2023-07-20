@@ -4,6 +4,7 @@ export class AssetDTO {
     FileName: string | undefined;
     ConvertedElement: string | undefined;
     Content: string | undefined;
+    Image: string | undefined;
     DateCreated: Date | undefined;
     Size: number | undefined;
     ParentFolderID: string | undefined;
