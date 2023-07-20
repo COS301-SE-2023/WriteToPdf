@@ -111,12 +111,16 @@ describe('MarkdownFilesService', () => {
       markdownFile.MarkdownID = '1';
       markdownFile.Name = 'markdownFile1';
       markdownFile.Path = 'oldPath';
+      markdownFile.ParentFolderID =
+        'oldParentFolderID';
 
       const updatedMarkdownFile =
         new MarkdownFileDTO();
       updatedMarkdownFile.MarkdownID = '1';
       updatedMarkdownFile.Name = 'markdownFile1';
       updatedMarkdownFile.Path = 'newPath';
+      updatedMarkdownFile.ParentFolderID =
+        'newParentFolderID';
 
       jest
         .spyOn(Repository.prototype, 'findOne')
@@ -124,13 +128,17 @@ describe('MarkdownFilesService', () => {
 
       jest
         .spyOn(Repository.prototype, 'save')
-        .mockResolvedValue(updatedMarkdownFile);
+        .mockImplementation((markdownFile) => {
+          return markdownFile;
+        });
 
       const result = await service.updatePath(
-        markdownFile,
+        updatedMarkdownFile,
       );
 
-      expect(result).toBe(updatedMarkdownFile);
+      expect(result).toStrictEqual(
+        updatedMarkdownFile,
+      );
       expect(
         Repository.prototype.findOne,
       ).toBeCalledWith({
