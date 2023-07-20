@@ -32,6 +32,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   fileName: string | undefined = '';
   text: any;
   sidebarVisible: boolean = true;
+  currentZoom: number = 1;
   exportDialogVisible: boolean = false;
   public speedDialItems!: MenuItem[];
   assets: any[] = [];
@@ -256,5 +257,21 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   pageBreak() {
     this.editor.execute('pageBreak');
+  }
+
+  zoomIn() {
+    console.log('zoom in');
+    this.currentZoom += 0.1; // Increase zoom by 10% (adjust as needed)
+    const element = document.getElementsByClassName('center-page')[0] as HTMLElement;
+    element.style.transform = `scale(${this.currentZoom})`;
+    element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
+  }
+
+  zoomOut() {
+    console.log('zoom out');
+    this.currentZoom -= 0.1; // Decrease zoom by 10% (adjust as needed)
+    const element = document.getElementsByClassName('center-page')[0] as HTMLElement;
+    element.style.transform = `scale(${this.currentZoom})`;
+    element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
   }
 }

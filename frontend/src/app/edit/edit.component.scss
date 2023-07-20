@@ -350,7 +350,7 @@ div[contenteditable="true"]:focus {
 .center-page {
     margin: auto;
     margin-top: 50px;
-    margin-bottom: 50px;
+    margin-bottom: 50px !important;
     width: calc($page-width + 40px) !important;
     height: $page-height !important;
     padding-left: 20px !important;
