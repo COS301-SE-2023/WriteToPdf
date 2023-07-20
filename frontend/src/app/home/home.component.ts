@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 // import {NgModule} from "@angular/core";
 import { Router } from '@angular/router';
 import { TreeTable } from 'primeng/treetable';
@@ -14,6 +14,7 @@ import { ViewChild } from '@angular/core';
 import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
 import { Inject } from '@angular/core';
+import { CoordinateService } from '../services/coordinate-service.service';
 
 interface Column {
   field: string;
@@ -41,9 +42,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public treeTableColumns!: Column[];
 
   public currentDirectory!: any;
-
+  
+  //variables for double click and enter key to open doc
   public previousNode!: any;
   public currentNode!: any;
+  
+  //variables for drag and drop
+  public originalPosition: { x: number, y: number } | null = null;
+  public currentlyDraggedNode!: any;
+  public isDraggingNode = false;
 
   public treeSelectedFile!: any;
   public directoryData!: any;
@@ -73,7 +80,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private fileService: FileService,
     private userService: UserService,
     private editService: EditService,
-    private folderService: FolderService
+    private folderService: FolderService,
+    private renderer: Renderer2,
+    private coordinateService: CoordinateService
   ) {
 
     this.contextMenuItems = [
@@ -793,6 +802,52 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.previousNode = $event.node;
   }
 
+  onNodeDrag($event: any) {
+    this.isDraggingNode = true;
+    console.log("Drag start: ", ($event.event.srcElement));
+    this.originalPosition = {
+      x: $event.source._dragRef._passiveTransform.x,
+      y: $event.source._dragRef._passiveTransform.y,
+    }
+    this.currentlyDraggedNode = this.getParentElement($event.event.srcElement);
+    this.currentlyDraggedNode.style.pointerEvents = 'none';
+    this.currentlyDraggedNode.style.width = '100px';
+    this.currentlyDraggedNode.classList.add('dragging');
+  }
+
+  onDragReleased($event: any) {
+    this.currentlyDraggedNode.style.pointerEvents = 'auto';
+    this.isDraggingNode = false;
+    this.originalPosition = {
+      x: $event.source._dragRef._passiveTransform.x,
+      y: $event.source._dragRef._passiveTransform.y,
+    };
+
+    // Reset the draggable element's position back to its original position
+    $event.source._dragRef.reset();
+    setTimeout(() => {
+      console.log("Released in Element: ", this.getParentElement(this.coordinateService.getElementAtCoordinate()));
+    },10);
+    if (this.currentlyDraggedNode) {
+      this.currentlyDraggedNode.classList.remove('dragging');
+    }
+  }
+
+  getElementAtCoordinate(x: number, y: number): HTMLElement | null {
+    return document.elementFromPoint(x, y) as HTMLElement;
+  }
+
+
+  getParentElement(currentElement: HTMLElement | null) {
+    if(currentElement == null) return null;
+    const parentElement: HTMLElement | null = currentElement.parentElement;
+
+    if (parentElement) {
+      return parentElement;
+    } else {
+      return null;
+    }
+  }
 
   protected readonly focus = focus;
 }

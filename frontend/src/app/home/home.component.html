@@ -90,19 +90,22 @@
     </div>
     <div class="directoryContents">
       <!--      The Current directory variable below in the main view is used to allow for intelligent file placement-->
-      <p-treeTable (dblclick)="openFileDoubleClick()" (keyup.enter)="openFileEnter($event)" #myTreeTable
+      <p-treeTable class="non-selectable" appClickAtCoordinate (dblclick)="openFileDoubleClick()" (keyup.enter)="openFileEnter($event)" #myTreeTable
         [contextMenu]="cm" [(contextMenuSelection)]="currentDirectory" (onNodeUnselect)="unselectNode($event)"
         (onNodeSelect)="selectNode($event)" [(selection)]="currentDirectory" [columns]="treeTableColumns"
-        [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }" [value]="filteredFilesDirectoryTreeTable"
-        dataKey="name" selectionMode="single">
+        [scrollable]="true" [tableStyle]="{ 'min-width': '50rem', 'overflow':'hidden' }"
+        [value]="filteredFilesDirectoryTreeTable" dataKey="name" selectionMode="single">
         <ng-template let-columns pTemplate="header">
           <tr>
             <th *ngFor="let col of columns">{{ col.header }}</th>
           </tr>
         </ng-template>
         <ng-template let-columns="columns" let-rowData="rowData" let-rowNode pTemplate="body">
-          <tr [ttRow]="rowNode" [ttRow]="rowNode" [ttSelectableRow]="rowNode" [ttContextMenuRow]="rowNode">
-            <td *ngFor="let col of columns; let i = index" [ngClass]="{ 'p-toggler-column': i === 0 }" ttEditableColumn>
+
+          <tr cdkDrag (cdkDragStarted)="onNodeDrag($event)" (cdkDragReleased)="onDragReleased($event)" [ttRow]="rowNode"
+            [ttSelectableRow]="rowNode" [ttContextMenuRow]="rowNode" [ngClass]="{ 'drag-hover': isDraggingNode }">
+            <td *ngFor="let  col of columns; let i = index" [ngClass]="{ 'p-toggler-column': i === 0 }"
+              ttEditableColumn>
               <p-treeTableToggler *ngIf="i === 0" [rowNode]="rowNode"></p-treeTableToggler>
               <p-treeTableCellEditor *ngIf="i === 0 && editToggle">
                 <div class="p-2 w-15rem h-10rem drop-column">

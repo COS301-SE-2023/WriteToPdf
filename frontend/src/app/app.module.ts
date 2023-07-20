@@ -38,11 +38,13 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { FileManagerPopupComponent } from './file-manager-popup/file-manager-popup.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import {ContextMenu, ContextMenuModule} from "primeng/contextmenu";
 import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
 import EssentialsPlugin from '@ckeditor/ckeditor5-essentials/src/essentials';
 import ImagePlugin from '@ckeditor/ckeditor5-image/src/image';
 import ImageUploadPlugin from '@ckeditor/ckeditor5-image/src/imageupload';
+import { ClickAtCoordinateDirective } from './click-at-coordinate.directive';
 
 @NgModule({
   declarations: [
@@ -55,6 +57,7 @@ import ImageUploadPlugin from '@ckeditor/ckeditor5-image/src/imageupload';
     EditComponent,
     FileUploadPopupComponent,
     FileManagerPopupComponent,
+    ClickAtCoordinateDirective,
   ],
   imports: [
     CKEditorModule,
@@ -86,6 +89,7 @@ import ImageUploadPlugin from '@ckeditor/ckeditor5-image/src/imageupload';
     DialogModule,
     InputTextModule,
     ContextMenuModule,
+    DragDropModule,
   ],
   providers: [NodeService, UserService, MessageService, DialogService],
   bootstrap: [AppComponent],

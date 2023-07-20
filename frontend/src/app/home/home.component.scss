@@ -122,6 +122,10 @@ to co-operate.
   overflow: auto;
 }
 
+.cdk-drag {
+  pointer-events: auto;
+}
+
 .leftSideBarHeading {
   padding-top: 15px;
   padding-left: 50px;
@@ -207,4 +211,15 @@ textarea {
 
 .moveDialogueContainer{
   display: flex;
+}
+
+.drag-hover:hover {
+  // background-color: lightgray !important;
+  /* Add other styles as needed */
+  z-index: 1;
+}
+
+.non-selectable {
+  -webkit-user-select: none;
+  user-select: none;
 }
