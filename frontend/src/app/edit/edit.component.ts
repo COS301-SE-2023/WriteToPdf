@@ -183,7 +183,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (sidebar && editor && showAssetSidebar) {
       if (this.sidebarVisible) {//then hide the sidebar
         console.log('hide');
-        editor.setAttribute('style', 'left:0px;width:100%;margin-auto;');
+        editor.setAttribute('style', 'left:0px;width:100%;margin:auto;');
         sidebar.setAttribute('style', 'display:none');
         showAssetSidebar.setAttribute('style', 'display:block');
         this.sidebarVisible = false;

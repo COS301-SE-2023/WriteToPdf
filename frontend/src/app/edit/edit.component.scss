@@ -1,6 +1,8 @@
 @import '../../styles.scss';
 $header-height: 140px;
 $sidebar-content-width: 225px;
+$page-width: 21cm;
+$page-height: 29.7cm;
 
 .container {
     width: 100%;
@@ -347,16 +349,24 @@ div[contenteditable="true"]:focus {
 
 .center-page {
     margin: auto;
-    margin-top: 15px;
+    margin-top: 50px;
     margin-bottom: 50px;
-    //padding: 50px;
-    margin-left: max(50px, auto);
-    height: 100%;
-    min-width: 800px;
-    background-color: #ffffff;
+    width: calc($page-width + 40px) !important;
+    height: $page-height !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    background: #00000000 !important;
+
+    // margin-top: 15px;
+    // margin-bottom: 50px;
+    // //padding: 50px;
+    // margin-left: max(50px, auto);
+    // height: 100%;
+    // min-width: 800px;
+    // background-color: #ffffff;
 }
 
-//.document-editor {
+// .document-editor {
 //  //padding: 50px;
 //  height: auto;
 //  min-width: 800px;
@@ -364,14 +374,22 @@ div[contenteditable="true"]:focus {
 //  overflow-x: auto;
 //  border: 1px solid var(--ck-color-base-border);
 //  border-radius: var(--ck-border-radius);
-//
+
 //  /* Set vertical boundaries for the document editor. */
 //  max-height: 700px;
-//
+
 //  /* This element is a flex container for easier rendering. */
 //  display: flex;
 //  flex-flow: column nowrap;
-//}
+// }
+
+.document-editor {
+    width: $page-width ;
+    height: $page-height ;
+    padding: 0;
+    background: #00000000;
+    margin:auto;
+}
 
 .document-editor__toolbar {
     /* Make sure the toolbar container is always above the editable. */
@@ -381,7 +399,7 @@ div[contenteditable="true"]:focus {
     box-shadow: 0 0 5px hsla(0, 0%, 0%, .2);
 
     /* Use the CKEditor CSS variables to keep the UI consistent. */
-    border-bottom: 1px solid var(--ck-color-toolbar-border);
+    // border-bottom: 1px solid var(--ck-color-toolbar-border);
 }
 
 /* Adjust the look of the toolbar inside the container. */
@@ -392,8 +410,10 @@ div[contenteditable="true"]:focus {
 
 /* Make the editable container look like the inside of a native word processor application. */
 .document-editor__editable-container {
-    padding: calc(2 * var(--ck-spacing-large));
-    background: var(--ck-color-base-foreground);
+    width: $page-width !important;
+    height: $page-height !important;
+    padding: 0 !important;
+    background: #00000000 !important;
 
     /* Make it possible to scroll the "page" of the edited content. */
     overflow-y: scroll;
@@ -405,13 +425,13 @@ div[contenteditable="true"]:focus {
 
 .document-editor__editable-container .ck-editor__editable {
     /* Set the dimensions of the "page". */
-    width: 15.8cm;
-    min-height: 21cm;
+    width: $page-width;
+    height: $page-height;
 
     /* Keep the "page" off the boundaries of the container. */
-    padding: 1cm 2cm 2cm;
+    padding: 1rem;
 
-    border: 1px hsl(0, 0%, 82.7%) solid;
+    // border: 1px hsl(0, 0%, 82.7%) solid;
     border-radius: var(--ck-border-radius);
     background: white;
 
@@ -424,7 +444,7 @@ div[contenteditable="true"]:focus {
 
 /* Make the editable container look like the inside of a native word processor application. */
 .document-editor__editable-container {
-    padding: calc(2 * var(--ck-spacing-large));
+    padding: 0;
     background: var(--ck-color-base-foreground);
 
     /* Make it possible to scroll the "page" of the edited content. */
@@ -433,13 +453,13 @@ div[contenteditable="true"]:focus {
 
 .document-editor__editable-container .ck-editor__editable {
     /* Set the dimensions of the "page". */
-    width: 15.8cm;
-    min-height: 21cm;
+    width: $page-width;
+    height: $page-height;
 
     /* Keep the "page" off the boundaries of the container. */
     padding: 1cm 2cm 2cm;
 
-    border: 1px hsl(0, 0%, 82.7%) solid;
+    // border: 1px hsl(0, 0%, 82.7%) solid;
     border-radius: var(--ck-border-radius);
     background: white;
 
