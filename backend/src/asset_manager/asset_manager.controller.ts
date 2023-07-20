@@ -16,22 +16,13 @@ export class AssetManagerController {
   ) {}
 
   @Post('upload_asset')
-  upload_image(
+  upload_asset(
     @Body()
     uploadImageDTO: AssetDTO,
   ) {
-    // upload image
-    if (uploadImageDTO.Format === 'image') {
-      return this.assetManagerService.upload_image(
-        uploadImageDTO,
-      );
-
-      // upload text
-    } else if (uploadImageDTO.Format === 'text') {
-      return this.assetManagerService.upload_text(
-        uploadImageDTO,
-      );
-    }
+    return this.assetManagerService.upload_asset(
+      uploadImageDTO,
+    );
   }
 
   @Post('retrieve_all')
