@@ -978,30 +978,6 @@ describe('FileManagerService', () => {
       }
     });
 
-    it('should throw an error if Path is undefined', async () => {
-      const markdownFileDTO =
-        new MarkdownFileDTO();
-      markdownFileDTO.MarkdownID = '1';
-      markdownFileDTO.Name = 'test';
-      markdownFileDTO.UserID = 0;
-      markdownFileDTO.ParentFolderID = '1';
-
-      try {
-        await service.renameFile(markdownFileDTO);
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'Path cannot be undefined',
-        );
-        expect(error.status).toBe(
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    });
-
     it('should throw an error if UserID is undefined', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();

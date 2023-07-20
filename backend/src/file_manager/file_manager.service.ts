@@ -144,12 +144,6 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (markdownFileDTO.Path === undefined)
-      throw new HttpException(
-        'Path cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
     if (markdownFileDTO.Name === undefined)
       throw new HttpException(
         'Name cannot be undefined',
