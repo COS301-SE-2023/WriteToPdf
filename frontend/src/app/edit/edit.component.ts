@@ -181,15 +181,15 @@ export class EditComponent implements AfterViewInit, OnInit {
     const editor = document.getElementsByClassName('editor')[0];
     const showAssetSidebar = document.getElementsByClassName('showAssetSidebar')[0];
     if (sidebar && editor && showAssetSidebar) {
-      if (this.sidebarVisible) {
-        editor.setAttribute('style', 'left:130px');
-        editor.setAttribute('style', 'padding-right: 130px');
+      if (this.sidebarVisible) {//then hide the sidebar
+        console.log('hide');
+        editor.setAttribute('style', 'left:0px;width:100%;margin-auto;');
         sidebar.setAttribute('style', 'display:none');
         showAssetSidebar.setAttribute('style', 'display:block');
         this.sidebarVisible = false;
-      } else {
-        editor.setAttribute('style', 'left:260px');
-        editor.setAttribute('style', 'padding-right: 0px');
+      } else {//then show the sidebar
+        
+        editor.setAttribute('style', 'padding-right: 0px;left:260px');
         sidebar.setAttribute('style', 'display:block');
         showAssetSidebar.setAttribute('style', 'display:none');
         this.sidebarVisible = true;
