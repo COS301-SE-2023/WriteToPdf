@@ -14,13 +14,10 @@ export class AssetsService {
     private authService: AuthService,
   ) {}
 
-  saveImage(uploadAssetDTO: AssetDTO) {
-    uploadAssetDTO.Format = 'image';
+  saveAsset(uploadAssetDTO: AssetDTO) {
     uploadAssetDTO.DateCreated = new Date();
     uploadAssetDTO.Size =
       uploadAssetDTO.Content.length;
-    uploadAssetDTO.Image = '';
-    uploadAssetDTO.ConvertedElement = '';
     const newAsset = this.assetsRepository.create(
       uploadAssetDTO,
     );
@@ -33,19 +30,6 @@ export class AssetsService {
         AssetID: retrieveAssetDTO.AssetID,
       },
     }); // SELECT * FROM assets WHERE AssetID = retrieveAssetDTO.AssetID;
-  }
-
-  saveText(uploadTextDTO: AssetDTO) {
-    uploadTextDTO.DateCreated = new Date();
-    uploadTextDTO.Size =
-      uploadTextDTO.Content.length;
-    // uploadTextDTO.ParentFolderID = '1';
-    uploadTextDTO.ConvertedElement =
-      '<placeholder>';
-    const newAsset = this.assetsRepository.create(
-      uploadTextDTO,
-    );
-    return this.assetsRepository.save(newAsset);
   }
 
   async retrieveAllAssets(
