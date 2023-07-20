@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { S3Service } from '../s3/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import { AssetDTO } from '../assets/dto/asset.dto';
@@ -47,8 +51,20 @@ export class ImageManagerService {
     );
   }
 
-  // Get the base64 string of the image
-  retrieveOne(retrieveAssetDto: AssetDTO) {
+  async retrieveOne(retrieveAssetDto: AssetDTO) {
+    const response =
+      await this.assetsService.retrieveOne(
+        retrieveAssetDto,
+      );
+
+    // AssetID does not exist as specified asset type
+    if (!response) {
+      throw new HttpException(
+        'Asset not found, check AssetID and Format',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     return this.s3Service.retrieveAsset(
       retrieveAssetDto,
     );
