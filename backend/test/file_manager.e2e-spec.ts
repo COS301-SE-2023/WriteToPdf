@@ -278,115 +278,102 @@ describe('FileManagerController (integration)', () => {
       });
     });
 
-    // describe('delete_file', () => {
-    //   it('/file-manager/delete_file/ (POST) - missing UserID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
+    describe('delete_file', () => {
+      it('/file-manager/delete_file/ (POST) - missing UserID', async () => {
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/delete_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/delete_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
-    //   it('/file-manager/delete_file/ (POST) - missing MarkdownID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
+      it('/file-manager/delete_file/ (POST) - missing MarkdownID', async () => {
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/delete_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/delete_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
-    //   it('/file-manager/delete_file/ (POST) - valid request', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
+      it('/file-manager/delete_file/ (POST) - valid request', async () => {
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
 
-    //     console.log(
-    //       'fileID here in func is ',
-    //       fileID,
-    //     );
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
 
-    //     console.log(
-    //       'requestMarkdownFileDTO: ',
-    //       requestMarkdownFileDTO,
-    //     );
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/delete_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestMarkdownFileDTO);
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/delete_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
-
-    //     console.log(
-    //       'response.body: ',
-    //       response.body,
-    //     );
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'affected',
-    //     );
-    //     expect(response.body.affected).toEqual(1);
-    //   });
-    // });
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'affected',
+        );
+        expect(response.body.affected).toEqual(1);
+      });
+    });
   });
 });
