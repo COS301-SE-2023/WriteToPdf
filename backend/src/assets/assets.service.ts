@@ -28,6 +28,7 @@ export class AssetsService {
     return this.assetsRepository.findOne({
       where: {
         AssetID: retrieveAssetDTO.AssetID,
+        Format: retrieveAssetDTO.Format,
       },
     }); // SELECT * FROM assets WHERE AssetID = retrieveAssetDTO.AssetID;
   }
