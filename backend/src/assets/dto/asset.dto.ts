@@ -15,8 +15,8 @@ export class AssetDTO {
     this.AssetID = undefined;
     this.Format = undefined;
     this.FileName = undefined;
-    this.ConvertedElement = '';
-    this.Image = '';
+    this.ConvertedElement = undefined;
+    this.Image = undefined;
     this.DateCreated = undefined;
     this.Size = undefined;
     this.ParentFolderID = undefined;
