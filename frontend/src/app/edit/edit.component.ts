@@ -228,8 +228,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
   }
 
-  async retrieveAsset(assetId: string, type: string) {
-    const asset = await this.assetService.retrieveAsset(assetId, type);
+  async retrieveAsset(assetId: string, format: string) {
+    const asset = await this.assetService.retrieveAsset(assetId, format);
     console.log(asset);
     if (asset) {
       this.clipboard.copy(asset.Content);
