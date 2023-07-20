@@ -13,18 +13,29 @@ export class ImageManagerService {
     private readonly assetsService: AssetsService,
   ) {}
 
-  upload(uploadImageDto: AssetDTO) {
-    uploadImageDto.AssetID = SHA256(
-      uploadImageDto.UserID.toString() +
+  upload(uploadImageDTO: AssetDTO) {
+    uploadImageDTO.AssetID = SHA256(
+      uploadImageDTO.UserID.toString() +
         new Date().getTime().toString(),
     ).toString();
 
+    if (!uploadImageDTO.ConvertedElement) {
+      uploadImageDTO.ConvertedElement = '';
+    }
+
+    if (!uploadImageDTO.Content) {
+      uploadImageDTO.Content = '';
+    }
+
     // Store in database
-    this.assetsService.saveAsset(uploadImageDto);
+    const imageData = uploadImageDTO.Image;
+    uploadImageDTO.Image = '';
+    this.assetsService.saveAsset(uploadImageDTO);
+    uploadImageDTO.Image = imageData;
 
     // Store in S3/local storage
     return this.s3Service.saveAsset(
-      uploadImageDto,
+      uploadImageDTO,
     );
   }
 
