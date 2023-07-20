@@ -18,7 +18,7 @@ export class TextManagerService {
     ).toString();
 
     // Store text asset in database
-    this.assetsService.saveText(uploadTextDTO);
+    this.assetsService.saveAsset(uploadTextDTO);
 
     // Preprocess text for storage in the S3
     uploadTextDTO.Content = this.packageTextForS3(
