@@ -45,6 +45,7 @@ import EssentialsPlugin from '@ckeditor/ckeditor5-essentials/src/essentials';
 import ImagePlugin from '@ckeditor/ckeditor5-image/src/image';
 import ImageUploadPlugin from '@ckeditor/ckeditor5-image/src/imageupload';
 import { ClickAtCoordinateDirective } from './click-at-coordinate.directive';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @NgModule({
   declarations: [
@@ -90,6 +91,7 @@ import { ClickAtCoordinateDirective } from './click-at-coordinate.directive';
     InputTextModule,
     ContextMenuModule,
     DragDropModule,
+    CheckboxModule,
   ],
   providers: [NodeService, UserService, MessageService, DialogService],
   bootstrap: [AppComponent],
