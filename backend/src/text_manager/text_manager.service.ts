@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { S3Service } from '../s3/s3.service';
 import { AssetsService } from '../assets/assets.service';
@@ -51,6 +55,14 @@ export class TextManagerService {
       await this.assetsService.retrieveOne(
         retrieveTextDTO,
       );
+
+    // AssetID does not exist as specified asset type
+    if (!asset) {
+      throw new HttpException(
+        'Asset not found, check AssetID and Format',
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     // Retrieve text asset from S3
     const assetDTO =
