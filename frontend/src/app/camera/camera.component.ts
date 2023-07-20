@@ -19,6 +19,7 @@ export class CameraComponent {
   videoRef: any;
   parentFolderId: string = '';
   path: string = '';
+  isAsset: boolean = false;
 
   constructor(private elementRef: ElementRef, private assetService: AssetService, private router: Router, private location: Location, private messageService: MessageService) { }
 
@@ -79,7 +80,11 @@ export class CameraComponent {
 
 
   async uploadImage() {
-    this.assetService.uploadImage(this.sysImage, this.path, this.assetName, this.parentFolderId).then((res) => {
+    let format = 'image';
+    if(this.isAsset) {
+      format='text';
+    }
+    this.assetService.uploadImage(this.sysImage, this.path, this.assetName, this.parentFolderId, format).then((res) => {
       if (res) {
         setTimeout(() => {
           this.navigateToPage('edit');

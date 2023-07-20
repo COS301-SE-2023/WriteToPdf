@@ -19,9 +19,9 @@ export class AssetService {
     private messageService: MessageService
   ) { }
 
-  uploadImage(content: string | undefined, path: string, fileName: string, parentFolderId: string | undefined): Promise<boolean> {
+  uploadImage(content: string | undefined, path: string, fileName: string, parentFolderId: string | undefined, format:string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.sendUploadImageData(content, path, fileName, parentFolderId).subscribe({
+      this.sendUploadImageData(content, path, fileName, parentFolderId, format).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 201) {
             console.log('Image uploaded successfully');
@@ -42,10 +42,11 @@ export class AssetService {
     content: string | undefined,
     path: string,
     fileName: string,
-    parentFolderId: string | undefined
+    parentFolderId: string | undefined,
+    format:string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}asset_manager/upload_image`;
+    const url = `${environmentURL}asset_manager/upload_asset`;
     const body = new AssetDTO();
 
     body.UserID = this.userService.getUserID();
@@ -61,6 +62,7 @@ export class AssetService {
     } else {
       body.ParentFolderID = "";
     }
+    body.Format=format;
 
     const headers = new HttpHeaders().set(
       'Authorization',
