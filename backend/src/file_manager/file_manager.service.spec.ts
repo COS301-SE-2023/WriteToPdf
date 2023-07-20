@@ -1051,6 +1051,29 @@ describe('FileManagerService', () => {
       }
     });
 
+    it('should throw an error if ParentFolderID is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.Path = 'test';
+
+      try {
+        await service.moveFile(markdownFileDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'ParentFolderID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
     it('should throw an error if Path is undefined', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();

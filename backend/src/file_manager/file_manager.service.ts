@@ -171,6 +171,14 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
+    if (
+      markdownFileDTO.ParentFolderID === undefined
+    )
+      throw new HttpException(
+        'ParentFolderID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     if (markdownFileDTO.UserID === undefined)
       throw new HttpException(
         'UserID cannot be undefined',
