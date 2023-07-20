@@ -16,7 +16,7 @@ export class AssetDTO {
     this.Format = undefined;
     this.FileName = undefined;
     this.ConvertedElement = undefined;
-    this.Image = undefined;
+    this.Image = '';
     this.DateCreated = undefined;
     this.Size = undefined;
     this.ParentFolderID = undefined;
@@ -25,5 +25,3 @@ export class AssetDTO {
     this.Type = undefined;
   }
 }
-
-// textConverted,aspdofjashdf;oauhsdf ... image/jpeg:Base64,aos;dfhianpsodxou
