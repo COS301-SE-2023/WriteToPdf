@@ -260,7 +260,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   zoomIn() {
-    console.log('zoom in');
+    if(this.currentZoom >= 2) return;
     this.currentZoom += 0.1; // Increase zoom by 10% (adjust as needed)
     const element = document.getElementsByClassName('center-page')[0] as HTMLElement;
     element.style.transform = `scale(${this.currentZoom})`;
@@ -268,7 +268,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   zoomOut() {
-    console.log('zoom out');
+    if(this.currentZoom <= 0.5) return;
     this.currentZoom -= 0.1; // Decrease zoom by 10% (adjust as needed)
     const element = document.getElementsByClassName('center-page')[0] as HTMLElement;
     element.style.transform = `scale(${this.currentZoom})`;
