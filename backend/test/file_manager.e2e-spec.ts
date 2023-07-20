@@ -21,7 +21,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { MarkdownFile } from '../src/markdown_files/entities/markdown_file.entity';
 import { S3Service } from '../src/s3/s3.service';
 import { FileDTO } from '../src/s3/dto/file.dto';
-import { create } from 'domain';
 
 let startTime: string;
 let fileID = '';
@@ -373,6 +372,157 @@ describe('FileManagerController (integration)', () => {
           'affected',
         );
         expect(response.body.affected).toEqual(1);
+      });
+    });
+
+    describe('rename_file', () => {
+      it('/file-manager/rename_file/ (POST) - missing UserID', async () => {
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+        requestMarkdownFileDTO.Name = 'New Name';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestMarkdownFileDTO);
+
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
+
+      it('/file-manager/rename_file/ (POST) - missing MarkdownID', async () => {
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.Name = 'New Name';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestMarkdownFileDTO);
+
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
+
+      it('/file-manager/rename_file/ (POST) - missing Name', async () => {
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestMarkdownFileDTO);
+
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
+
+      it('/file-manager/rename_file/ (POST) - valid request', async () => {
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+        requestMarkdownFileDTO.Name = 'New Name';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestMarkdownFileDTO);
+
+        // console.log('response.body: ', response.body);
+        expect(response.body).toHaveProperty(
+          'MarkdownID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'Name',
+        );
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.body.MarkdownID).toEqual(
+          fileID,
+        );
+        expect(response.body.Name).toEqual(
+          'New Name',
+        );
+        expect(response.body.UserID).toEqual(
+          parseInt(process.env.TEST_USERID),
+        );
       });
     });
   });
