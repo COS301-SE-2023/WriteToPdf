@@ -15,16 +15,30 @@ export class AssetManagerService {
     private readonly textManagerService: TextManagerService,
   ) {}
 
-  upload_image(uploadImageDTO: AssetDTO) {
-    return this.imageManagerService.upload(
-      uploadImageDTO,
-    );
-  }
+  // upload_image(uploadImageDTO: AssetDTO) {
+  //   return this.imageManagerService.upload(
+  //     uploadImageDTO,
+  //   );
+  // }
 
-  upload_text(uploadTextDTO: AssetDTO) {
-    return this.textManagerService.upload(
-      uploadTextDTO,
-    );
+  // upload_text(uploadTextDTO: AssetDTO) {
+  //   return this.textManagerService.upload(
+  //     uploadTextDTO,
+  //   );
+  // }
+
+  upload_asset(uploadAssetDTO: AssetDTO) {
+    if (uploadAssetDTO.Format === 'text') {
+      return this.textManagerService.upload(
+        uploadAssetDTO,
+      );
+    } else if (
+      uploadAssetDTO.Format === 'image'
+    ) {
+      return this.imageManagerService.upload(
+        uploadAssetDTO,
+      );
+    }
   }
 
   async retrieve_all(
