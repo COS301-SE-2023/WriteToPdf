@@ -14,23 +14,13 @@ export class AssetsService {
     private authService: AuthService,
   ) {}
 
-  // findRecent(): Promise<Asset[]> {
-  //   const response = this.assetsRepository.find(); // SELECT * FROM assets;
-  //   response = response.orderby('DateCreated', 'DESC');
-  //   return response;
-  // }
-
-  saveImage(
-    uploadAssetDTO: AssetDTO,
-  ): Promise<Asset> {
+  saveImage(uploadAssetDTO: AssetDTO) {
     uploadAssetDTO.Format = 'image';
     uploadAssetDTO.DateCreated = new Date();
     uploadAssetDTO.Size =
       uploadAssetDTO.Content.length;
-    uploadAssetDTO.Image = '<placeholder>';
-    // uploadAssetDTO.ParentFolderID = '1';
-    uploadAssetDTO.ConvertedElement =
-      '<placeholder>';
+    uploadAssetDTO.Image = '';
+    uploadAssetDTO.ConvertedElement = '';
     const newAsset = this.assetsRepository.create(
       uploadAssetDTO,
     );
@@ -46,11 +36,9 @@ export class AssetsService {
   }
 
   saveText(uploadTextDTO: AssetDTO) {
-    uploadTextDTO.Format = 'text';
     uploadTextDTO.DateCreated = new Date();
     uploadTextDTO.Size =
       uploadTextDTO.Content.length;
-    uploadTextDTO.Image = '<placeholder>';
     // uploadTextDTO.ParentFolderID = '1';
     uploadTextDTO.ConvertedElement =
       '<placeholder>';

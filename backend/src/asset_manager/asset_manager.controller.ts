@@ -15,24 +15,23 @@ export class AssetManagerController {
     private readonly assetManagerService: AssetManagerService,
   ) {}
 
-  @Post('upload_image')
+  @Post('upload_asset')
   upload_image(
     @Body()
     uploadImageDTO: AssetDTO,
   ) {
-    return this.assetManagerService.upload_image(
-      uploadImageDTO,
-    );
-  }
+    // upload image
+    if (uploadImageDTO.Format === 'image') {
+      return this.assetManagerService.upload_image(
+        uploadImageDTO,
+      );
 
-  @Post('upload_text')
-  upload_text(
-    @Body()
-    uploadTextDTO: AssetDTO,
-  ) {
-    return this.assetManagerService.upload_text(
-      uploadTextDTO,
-    );
+      // upload text
+    } else if (uploadImageDTO.Format === 'text') {
+      return this.assetManagerService.upload_text(
+        uploadImageDTO,
+      );
+    }
   }
 
   @Post('retrieve_all')
@@ -46,6 +45,7 @@ export class AssetManagerController {
     );
   }
 
+  // Copy to clipboard
   @Post('retrieve_one')
   @HttpCode(HttpStatus.OK)
   retrieve_one(

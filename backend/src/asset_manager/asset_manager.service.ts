@@ -30,38 +30,48 @@ export class AssetManagerService {
   async retrieve_all(
     retrieveAllDTO: RetrieveAllDTO,
   ) {
-    // Get images from database
-    const images =
-      await this.imageManagerService.retrieveAll(
+    // Get asset references from database
+    const assets =
+      await this.assetsService.retrieveAllAssets(
         retrieveAllDTO,
       );
 
-    for (let i = 0; i < images.length; i++) {
-      const assetDTO = new AssetDTO();
-      assetDTO.AssetID = images[i].AssetID;
-      assetDTO.UserID = images[i].UserID;
+    // Resize all image assets
+    for (let i = 0; i < assets.length; i++) {
+      if (assets[i].Format === 'image') {
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = assets[i].AssetID;
+        assetDTO.UserID = assets[i].UserID;
 
-      // Retrieve the image from s3
-      const asset =
-        await this.imageManagerService.retrieveOne(
-          assetDTO,
-        );
+        // Retrieve the image from s3
+        const asset =
+          await this.imageManagerService.retrieveOne(
+            assetDTO,
+          );
 
-      // compress/resize the image
-      images[i].Image =
-        await this.imageManagerService.compressImage(
-          asset.Content,
-        );
+        // Compress/Resize the image
+        assets[i].Image =
+          await this.imageManagerService.compressImage(
+            asset.Content,
+          );
+      }
     }
-
-    // preprocess text
-    return images;
+    return assets;
   }
 
+  // When user copies an asset to clipboard
   retrieve_one(retrieveAssetDTO: AssetDTO) {
-    return this.s3Service.retrieveAsset(
-      retrieveAssetDTO,
-    );
+    if (retrieveAssetDTO.Format === 'text') {
+      return this.textManagerService.retrieveOne(
+        retrieveAssetDTO,
+      );
+    }
+
+    if (retrieveAssetDTO.Format === 'image') {
+      return this.imageManagerService.retrieveOne(
+        retrieveAssetDTO,
+      );
+    }
   }
 
   rename_asset(renameAssetDTO: AssetDTO) {
@@ -71,12 +81,12 @@ export class AssetManagerService {
   }
 
   delete_asset(deleteAssetDTO: AssetDTO) {
-    // Delete from database
+    // Delete asset from database
     this.assetsService.removeOne(
       deleteAssetDTO.AssetID,
     );
 
-    // Delete from S3/local storage
+    // Delete asset from S3/local storage
     return this.s3Service.deleteAsset(
       deleteAssetDTO,
     );
