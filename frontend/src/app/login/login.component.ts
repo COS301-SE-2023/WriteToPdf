@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Inject } from '@angular/core';
 
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -14,7 +13,13 @@ import { Inject } from '@angular/core';
 export class LoginComponent {
   email: string = '';
   password: string = '';
-  constructor(@Inject(Router) private router: Router, private elementRef: ElementRef, private userService: UserService, @Inject(ActivatedRoute) private route: ActivatedRoute, private messageService: MessageService) { }
+  constructor(
+    @Inject(Router) private router: Router,
+    private elementRef: ElementRef,
+    private userService: UserService,
+    @Inject(ActivatedRoute) private route: ActivatedRoute,
+    private messageService: MessageService
+  ) {}
   ngOnInit(): void {
     const data = history.state;
     if (data) {
@@ -32,13 +37,13 @@ export class LoginComponent {
   }
 
   async login(): Promise<void> {
-    if (!this.email||this.email==='') {
+    if (!this.email || this.email === '') {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: `Email field empty`,
       });
-    } else if (!this.password||this.password==='') {
+    } else if (!this.password || this.password === '') {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',

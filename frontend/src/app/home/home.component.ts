@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 // import {NgModule} from "@angular/core";
 import { Router } from '@angular/router';
 import { TreeTable } from 'primeng/treetable';
@@ -8,7 +14,7 @@ import { NodeService } from '../services/home.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { UserService } from '../services/user.service';
-import { FileManagerPopupComponent } from "../file-manager-popup/file-manager-popup.component";
+import { FileManagerPopupComponent } from '../file-manager-popup/file-manager-popup.component';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
 import { ViewChild } from '@angular/core';
 import { EditService } from '../services/edit.service';
@@ -48,7 +54,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public currentNode!: any;
 
   //variables for drag and drop
-  public originalPosition: { x: number, y: number } | null = null;
+  public originalPosition: { x: number; y: number } | null = null;
   public currentlyDraggedNode!: any;
   public isDraggingNode = false;
 
@@ -71,7 +77,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   contextMenuItems: any[];
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
-  constructor(@Inject(Router) private router: Router,
+  constructor(
+    @Inject(Router) private router: Router,
 
     private nodeService: NodeService,
     private elementRef: ElementRef,
@@ -84,7 +91,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private renderer: Renderer2,
     private coordinateService: CoordinateService
   ) {
-
     this.contextMenuItems = [
       {
         label: 'Create New Folder',
@@ -105,7 +111,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         label: 'Delete',
         icon: 'pi pi-trash',
         // command: () => this.deleteSelection()
-      }
+      },
     ];
   }
 
@@ -161,7 +167,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  updateTreeNodeLabel(nodes: TreeNode[], key: string, newValue: string): boolean {
+  updateTreeNodeLabel(
+    nodes: TreeNode[],
+    key: string,
+    newValue: string
+  ): boolean {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
       if (node.key === key) {
@@ -197,12 +207,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const folder = this.nodeService.getFolderDTOByID(key);
       this.folderService
         .renameFolder(folder.FolderID, folder.Path, event)
-        .then((data) => { });
+        .then((data) => {});
     } else {
       const file = this.nodeService.getFileDTOByID(key);
       this.fileService
         .renameDocument(file.MarkdownID, event, file.Path)
-        .then((data) => { });
+        .then((data) => {});
     }
   }
 
@@ -376,14 +386,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
    * @param options, must be "folder" || "move" || "document"
    */
   showFileManagerPopup(options: string): void {
-    if (options === "folder") {
+    if (options === 'folder') {
       //TODO communicate intentions to file manager pop-up
       const ref = this.dialogService.open(FileManagerPopupComponent, {
         header: 'Folder Creation: Select location',
         showHeader: true,
         closable: true,
         closeOnEscape: true,
-        dismissableMask: true
+        dismissableMask: true,
       });
       ref.onClose.subscribe(() => {
         //If the user creates a new folder we want it to be reflected in our home page,
@@ -392,27 +402,27 @@ export class HomeComponent implements OnInit, AfterViewInit {
         // Handle any actions after the dialog is closed
       });
     }
-    if (options === "move") {
+    if (options === 'move') {
       //TODO communicate intentions to file manager pop-up
       const ref = this.dialogService.open(FileManagerPopupComponent, {
         header: 'Select new location',
         showHeader: true,
         closable: true,
         closeOnEscape: true,
-        dismissableMask: true
+        dismissableMask: true,
       });
       ref.onClose.subscribe(() => {
         // Handle any actions after the dialog is closed
       });
     }
-    if (options === "document") {
+    if (options === 'document') {
       //TODO communicate intentions to file manager pop-up
       const ref = this.dialogService.open(FileManagerPopupComponent, {
         header: 'Select document location',
         showHeader: true,
         closable: true,
         closeOnEscape: true,
-        dismissableMask: true
+        dismissableMask: true,
       });
       ref.onClose.subscribe(() => {
         // Handle any actions after the dialog is closed
@@ -446,28 +456,36 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
-        console.log("Data retrieved on file open: " + data)
+        console.log('Data retrieved on file open: ' + data);
         this.editService.setContent(data);
         this.editService.setName(file.Name);
         this.editService.setMarkdownID(file.MarkdownID);
-        console.log("Parent Folder ID: " + file.ParentFolderID);
+        console.log('Parent Folder ID: ' + file.ParentFolderID);
         this.editService.setParentFolderID(file.ParentFolderID);
         this.editService.setPath(file.Path);
         this.navigateToPage('edit');
       });
   }
 
-  onMoveFileSelect(event: any, newPath: string, newParentFolderID: string): void {
+  onMoveFileSelect(
+    event: any,
+    newPath: string,
+    newParentFolderID: string
+  ): void {
     console.log(event);
     const file = this.nodeService.getFileDTOByID(event.key);
     this.entityToMove = event;
-    this.showFileManagerPopup("move");
+    this.showFileManagerPopup('move');
     this.moveDialogVisible = true;
     console.log(file);
   }
 
   //TODO - implement the move folder function
-  onMoveFolderSelect(event: any, newPath: string, newParentFolderID: string): void {
+  onMoveFolderSelect(
+    event: any,
+    newPath: string,
+    newParentFolderID: string
+  ): void {
     console.log(event);
     const folder = this.nodeService.getFolderDTOByID(event.key);
     this.entityToMove = event;
@@ -526,7 +544,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 label: 'Folder',
                 icon: 'pi pi-fw pi-folder',
                 command: () => {
-                  this.showFileManagerPopup("folder");
+                  this.showFileManagerPopup('folder');
                   this.createNewFolderDialogueVisible = true;
                 },
               },
@@ -534,7 +552,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 label: 'Document',
                 icon: 'pi pi-fw pi-file',
                 command: () => {
-                  this.showFileManagerPopup("document");
+                  this.showFileManagerPopup('document');
                   this.createNewDocumentDialogueVisible = true;
                 },
               },
@@ -780,24 +798,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   openFileEnter(event: any): void {
-    if (this.currentNode != null)
-      this.onOpenFileSelect(this.currentNode);
+    if (this.currentNode != null) this.onOpenFileSelect(this.currentNode);
     else {
-
     }
   }
 
   deleteSelectedEntity(event: any): void {
-    if (this.currentDirectory != null)
-      this.delete(this.currentDirectory);
+    if (this.currentDirectory != null) this.delete(this.currentDirectory);
   }
 
   openFileDoubleClick() {
-    console.log("UNIQUE: " + this.currentDirectory);
+    console.log('UNIQUE: ' + this.currentDirectory);
     if (this.currentNode == this.previousNode && this.previousNode != null)
       this.onOpenFileSelect(this.previousNode);
     else {
-
     }
   }
 
@@ -811,13 +825,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onNodeDrag($event: any) {
     this.isDraggingNode = true;
-    console.log("Drag start: ", ($event));
+    console.log('Drag start: ', $event);
     const key = $event.source.element.nativeElement?.getAttribute('data-key');
-    console.log("Key: ", JSON.stringify(key));
+    console.log('Key: ', JSON.stringify(key));
     this.originalPosition = {
       x: $event.source._dragRef._passiveTransform.x,
       y: $event.source._dragRef._passiveTransform.y,
-    }
+    };
     this.currentlyDraggedNode = this.getParentElement($event.event.srcElement);
     this.currentlyDraggedNode.style.pointerEvents = 'none';
     this.currentlyDraggedNode.classList.add('dragging');
@@ -835,23 +849,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
     $event.source._dragRef.reset();
     setTimeout(() => {
       const keyOfDragged = this.currentlyDraggedNode.getAttribute('data-key');
-      const keyOfDropped = this.getParentElement(this.coordinateService.getElementAtCoordinate())?.getAttribute('data-key');
-      console.log("Key of dragged: ", keyOfDragged);
-      console.log("Key of dropped: ", keyOfDropped);
+      const keyOfDropped = this.getParentElement(
+        this.coordinateService.getElementAtCoordinate()
+      )?.getAttribute('data-key');
+      console.log('Key of dragged: ', keyOfDragged);
+      console.log('Key of dropped: ', keyOfDropped);
 
       this.moveByKey(keyOfDragged, keyOfDropped);
     }, 10);
     if (this.currentlyDraggedNode) {
       this.currentlyDraggedNode.classList.remove('dragging');
     }
-
-
   }
 
   getElementAtCoordinate(x: number, y: number): HTMLElement | null {
     return document.elementFromPoint(x, y) as HTMLElement;
   }
-
 
   getParentElement(currentElement: HTMLElement | null) {
     if (currentElement == null) return null;
@@ -868,12 +881,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return rowData.key;
   }
 
-  moveByKey(keyOfDragged: string | undefined | null, keyOfDropped: string | undefined | null) {
+  moveByKey(
+    keyOfDragged: string | undefined | null,
+    keyOfDropped: string | undefined | null
+  ) {
     if (keyOfDragged == keyOfDropped) return;
     const folder = this.nodeService.getParentFolderByID(keyOfDropped);
 
-    let path: string | undefined =
-      folder.Path + `/${folder.FolderName}`;
+    let path: string | undefined = folder.Path + `/${folder.FolderName}`;
     if (folder.Path === '') {
       path = folder.FolderName;
     }
@@ -903,7 +918,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
           this.nodeService.addFolder(data);
           this.refreshTree();
         });
-
     }
   }
 

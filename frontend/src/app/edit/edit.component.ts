@@ -3,7 +3,7 @@ import {
   Component,
   ElementRef,
   OnInit,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
@@ -19,7 +19,6 @@ import { set } from 'cypress/types/lodash';
 import { PageBreak } from '@ckeditor/ckeditor5-page-break';
 
 import html2pdf from 'html2pdf.js/dist/html2pdf';
-
 
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 
@@ -48,8 +47,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private assetService: AssetService,
     private clipboard: Clipboard,
     private messageService: MessageService
-  ) {
-  }
+  ) {}
 
   convertToPdf() {
     // console.log(this.editor);
@@ -64,7 +62,12 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     // html2pdf().from(content).set(options).save();
     console.log(this.editor.getData());
-    this.fileService.exportDocumentToTextFile(this.editService.getMarkdownID(), this.editService.getName(), `<body style="word-wrap: break-word; word-break: break-all;">${this.editor.getData()}</body>`, 'pdf');
+    this.fileService.exportDocumentToTextFile(
+      this.editService.getMarkdownID(),
+      this.editService.getName(),
+      `<body style="word-wrap: break-word; word-break: break-all;">${this.editor.getData()}</body>`,
+      'pdf'
+    );
   }
 
   showFileUploadPopup(): void {
@@ -108,20 +111,20 @@ export class EditComponent implements AfterViewInit, OnInit {
       },
     ];
     this.fileName = this.editService.getName();
-
   }
-
 
   ngAfterViewInit() {
     //Waits a small amount of time to fetch content from editService.
-    let editableArea = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+    let editableArea = this.elementRef.nativeElement.querySelector(
+      '.document-editor__editable'
+    );
     this.globalAreaReference = editableArea; //set to avoid constant referencing
-    const toolbarContainer: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__toolbar');
+    const toolbarContainer: HTMLElement =
+      this.elementRef.nativeElement.querySelector('.document-editor__toolbar');
     if (editableArea && toolbarContainer) {
-
       DecoupledEditor.create(editableArea, {
         toolbar: {
-          shouldNotGroupWhenFull: false
+          shouldNotGroupWhenFull: false,
         },
         cloudServices: {
           //TODO Great for Collaboration features.
@@ -131,17 +134,27 @@ export class EditComponent implements AfterViewInit, OnInit {
           // Automatically add target="_blank" and rel="noopener noreferrer" to all external links.
           addTargetToExternalLinks: true,
         },
-      },
-      )
-        .then(editor => {
+      })
+        .then((editor) => {
           // Apply assertion for toolbarContainer
           // (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
-          editor.ui.view.toolbar.element?.style.setProperty('background', '#00000000');
+          editor.ui.view.toolbar.element?.style.setProperty(
+            'background',
+            '#00000000'
+          );
           editor.ui.view.toolbar.element?.style.setProperty('border', 'none');
-          editor.ui.view.toolbar.element?.style.setProperty('width', 'calc(100vw - 300px)');
-          editor.ui.view.toolbar.element?.style.setProperty('overflow-x', 'hidden !important');
+          editor.ui.view.toolbar.element?.style.setProperty(
+            'width',
+            'calc(100vw - 300px)'
+          );
+          editor.ui.view.toolbar.element?.style.setProperty(
+            'overflow-x',
+            'hidden !important'
+          );
 
-          document.getElementsByClassName('toolsWrapper')[0].appendChild(editor.ui.view.toolbar.element as Node);
+          document
+            .getElementsByClassName('toolsWrapper')[0]
+            .appendChild(editor.ui.view.toolbar.element as Node);
           (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
           // Set the saved content after the editor is ready
           editor.setData(<string>this.editService.getContent());
@@ -152,7 +165,8 @@ export class EditComponent implements AfterViewInit, OnInit {
           console.error(err);
         });
     }
-    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#E3E3E3';
+    this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
+      '#E3E3E3';
     this.elementRef.nativeElement.ownerDocument.body.style.overflow = 'hidden';
     this.refreshSidebar();
   }
@@ -174,29 +188,31 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
     let contents = this.editor.getData();
-    console.log("Before function call save:" + contents);
+    console.log('Before function call save:' + contents);
     this.fileService.saveDocument(
       contents,
       this.editService.getMarkdownID(),
       this.editService.getPath()
     );
-    console.log("After function call save:" + contents);
+    console.log('After function call save:' + contents);
   }
-
 
   hideSideBar() {
     // get asset sidebar and set display none
     const sidebar = document.getElementsByClassName('assetSidebar')[0];
     const editor = document.getElementsByClassName('editor')[0];
-    const showAssetSidebar = document.getElementsByClassName('showAssetSidebar')[0];
+    const showAssetSidebar =
+      document.getElementsByClassName('showAssetSidebar')[0];
     if (sidebar && editor && showAssetSidebar) {
-      if (this.sidebarVisible) {//then hide the sidebar
+      if (this.sidebarVisible) {
+        //then hide the sidebar
         console.log('hide');
         editor.setAttribute('style', 'left:0px;width:100%;margin:auto;');
         sidebar.setAttribute('style', 'display:none');
         showAssetSidebar.setAttribute('style', 'display:block');
         this.sidebarVisible = false;
-      } else {//then show the sidebar
+      } else {
+        //then show the sidebar
 
         editor.setAttribute('style', 'padding-right: 0px;left:260px');
         sidebar.setAttribute('style', 'display:block');
@@ -212,15 +228,17 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   renameDocument() {
     console.log('rename');
-    this.fileService.renameDocument(
-      this.editService.getMarkdownID(),
-      this.fileName,
-      this.editService.getPath()
-    ).then((Boolean) => {
-      if (Boolean) {
-        this.editService.setName(this.fileName);
-      }
-    });
+    this.fileService
+      .renameDocument(
+        this.editService.getMarkdownID(),
+        this.fileName,
+        this.editService.getPath()
+      )
+      .then((Boolean) => {
+        if (Boolean) {
+          this.editService.setName(this.fileName);
+        }
+      });
   }
 
   showDialog() {
@@ -232,7 +250,12 @@ export class EditComponent implements AfterViewInit, OnInit {
     const markdownID = this.editService.getMarkdownID();
     const name = this.editService.getName();
     if (markdownID && name) {
-      this.fileService.exportDocumentToTextFile(markdownID, name, contents, 'txt');
+      this.fileService.exportDocumentToTextFile(
+        markdownID,
+        name,
+        contents,
+        'txt'
+      );
     }
   }
 
@@ -241,13 +264,21 @@ export class EditComponent implements AfterViewInit, OnInit {
     console.log(asset);
     if (asset) {
       this.clipboard.copy(asset.Content);
-      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Asset copied to clipboard' });
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Asset copied to clipboard',
+      });
     }
   }
 
   async deleteAsset(assetId: string) {
     if (await this.assetService.deleteAsset(assetId)) {
-      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Asset deleted' });
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Asset deleted',
+      });
       await this.refreshSidebar();
     }
   }
@@ -260,7 +291,9 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async refreshSidebar() {
-    this.assets = await this.assetService.retrieveAll(this.editService.getParentFolderID());
+    this.assets = await this.assetService.retrieveAll(
+      this.editService.getParentFolderID()
+    );
   }
 
   pageBreak() {
@@ -271,20 +304,21 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (this.currentZoom >= 2) return;
     this.currentZoom += 0.1; // Increase zoom by 10% (adjust as needed)
     this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
-    const element = document.getElementsByClassName('center-page')[0] as HTMLElement;
+    const element = document.getElementsByClassName(
+      'center-page'
+    )[0] as HTMLElement;
     element.style.transform = `scale(${this.currentZoom})`;
     element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
     element.style.marginLeft = 'auto';
     if (this.sidebarVisible) {
       const leftPosition = this.getLeftPosition(element);
       if (leftPosition < 270) {
-        element.style.marginLeft = `${(447 - leftPosition)}px`;
+        element.style.marginLeft = `${447 - leftPosition}px`;
       }
-    }
-    else{
+    } else {
       const leftPosition = this.getLeftPosition(element);
       if (leftPosition < 0) {
-        element.style.marginLeft = `${(177 - leftPosition)}px`;
+        element.style.marginLeft = `${177 - leftPosition}px`;
       }
     }
   }
@@ -293,20 +327,21 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (this.currentZoom <= 0.5) return;
     this.currentZoom -= 0.1; // Decrease zoom by 10% (adjust as needed)
     this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
-    const element = document.getElementsByClassName('center-page')[0] as HTMLElement;
+    const element = document.getElementsByClassName(
+      'center-page'
+    )[0] as HTMLElement;
     element.style.transform = `scale(${this.currentZoom})`;
     element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
     element.style.marginLeft = 'auto';
     if (this.sidebarVisible) {
       const leftPosition = this.getLeftPosition(element);
       if (leftPosition < 270) {
-        element.style.marginLeft = `${(447 - leftPosition)}px`;
+        element.style.marginLeft = `${447 - leftPosition}px`;
       }
-    }
-    else {
+    } else {
       const leftPosition = this.getLeftPosition(element);
       if (leftPosition < 0) {
-        element.style.marginLeft = `${(177 - leftPosition)}px`;
+        element.style.marginLeft = `${177 - leftPosition}px`;
       }
     }
   }
@@ -314,5 +349,4 @@ export class EditComponent implements AfterViewInit, OnInit {
     const rect = element.getBoundingClientRect();
     return rect.left;
   }
-
 }

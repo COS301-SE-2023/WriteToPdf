@@ -13,7 +13,10 @@ import { Inject } from '@angular/core';
   providedIn: 'root',
 })
 export class AuthGuard {
-    constructor(private userService: UserService, @Inject(Router) private router: Router) { }
+  constructor(
+    private userService: UserService,
+    @Inject(Router) private router: Router
+  ) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,

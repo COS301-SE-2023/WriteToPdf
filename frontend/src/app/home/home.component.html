@@ -2,7 +2,11 @@
   <p-toast></p-toast>
   <div class="header">
     <div (click)="navigateToPage('home')" class="logoWrapper">
-      <img alt="Home Page" class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" />
+      <img
+        alt="Home Page"
+        class="logo"
+        src="assets/Logos/WriteToPdf_Logo_white.png"
+      />
     </div>
     <div class="headerNavigation">
       <div class="menuBar">
@@ -11,26 +15,49 @@
     </div>
     <!--    TODO FileManagerPopup below-->
     <div class="fileOperations-container">
-      <p-dialog [(visible)]="moveDialogVisible" [style]="{ width: '50vw' }" header="Export File">
+      <p-dialog
+        [(visible)]="moveDialogVisible"
+        [style]="{ width: '50vw' }"
+        header="Export File"
+      >
         <div class="fileOperations">
-          <p>Move {{ getEntityToMoveName() }} to: {{ getCurrentDirectoryName() }}</p>
+          <p>
+            Move {{ getEntityToMoveName() }} to: {{ getCurrentDirectoryName() }}
+          </p>
           <!-- <input type="text" pInputText [(ngModel)]="folderTo" /> -->
         </div>
-        <p-button class="fileOperations-entity" (click)="moveEntity()" label="Move"></p-button>
+        <p-button
+          class="fileOperations-entity"
+          (click)="moveEntity()"
+          label="Move"
+        ></p-button>
       </p-dialog>
     </div>
     <!--    TODO FileManagerPopup above-->
     <div class="speedDialEditMenu">
-      <p-speedDial [model]="speedDialItems" class="speedDial" direction="down"></p-speedDial>
+      <p-speedDial
+        [model]="speedDialItems"
+        class="speedDial"
+        direction="down"
+      ></p-speedDial>
     </div>
 
     <!--    TODO FileManagerPopup below-->
     <div class="fileOperations-container">
-      <p-dialog [(visible)]="createNewDocumentDialogueVisible" [modal]="true" [style]="{ width: '50vw' }"
-        header="Create Document">
+      <p-dialog
+        [(visible)]="createNewDocumentDialogueVisible"
+        [modal]="true"
+        [style]="{ width: '50vw' }"
+        header="Create Document"
+      >
         <div class="fileOperations">
           <p>Document Name:</p>
-          <input [(ngModel)]="entityName" label="Document Name: " pInputText type="text" />
+          <input
+            [(ngModel)]="entityName"
+            label="Document Name: "
+            pInputText
+            type="text"
+          />
           <br />
           <br />
           <p-button (click)="createNewDocument()" label="Create"></p-button>
@@ -39,11 +66,21 @@
     </div>
     <!--    TODO FileManagerPopup below-->
     <div class="fileOperations-container">
-      <p-dialog [(visible)]="createNewFolderDialogueVisible" [modal]="true" [style]="{ width: '50vw' }"
-        header="Create Folder">
+      <p-dialog
+        [(visible)]="createNewFolderDialogueVisible"
+        [modal]="true"
+        [style]="{ width: '50vw' }"
+        header="Create Folder"
+      >
         <div class="fileOperations">
           <p class="fileOperations-entity">Folder Name:</p>
-          <input class="fileOperations-entity" [(ngModel)]="entityName" label="Folder Name: " pInputText type="text" />
+          <input
+            class="fileOperations-entity"
+            [(ngModel)]="entityName"
+            label="Folder Name: "
+            pInputText
+            type="text"
+          />
           <br />
           <br />
           <p-button (click)="newFolder()" label="Create"></p-button>
@@ -51,20 +88,34 @@
       </p-dialog>
     </div>
     <!--    TODO FileManagerPopup above-->
-
   </div>
   <div class="leftSideBarWrapper" id="scrollingDiv">
     <div class="leftSideBarHeading">{{ getUserFirstName() }}'s Projects</div>
     <div class="leftSideBarTools">
-      <img (click)="createNewFolderDialogueVisible = true" class="icon"
-        src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png" />
-      <img (click)="navigateToPage('edit')" class="icon newDoc"
-        src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png" />
-      <img (click)="navigateToPage('camera')" class="icon" src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" />
+      <img
+        (click)="createNewFolderDialogueVisible = true"
+        class="icon"
+        src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png"
+      />
+      <img
+        (click)="navigateToPage('edit')"
+        class="icon newDoc"
+        src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png"
+      />
+      <img
+        (click)="navigateToPage('camera')"
+        class="icon"
+        src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png"
+      />
     </div>
     <div class="directoryTree">
-      <p-tree (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile" [value]="filesDirectoryTree"
-        class="w-full md:w-30rem" selectionMode="single"></p-tree>
+      <p-tree
+        (onNodeSelect)="onNodeSelect($event)"
+        [(selection)]="treeSelectedFile"
+        [value]="filesDirectoryTree"
+        class="w-full md:w-30rem"
+        selectionMode="single"
+      ></p-tree>
     </div>
   </div>
   <div class="mainWindowHome" id="fadingDiv">
@@ -75,59 +126,142 @@
     <div class="filterButtons">
       <p-toolbar>
         <div class="p-toolbar-group-start">
-          <p-button (onClick)="reloadMainFromRoot()" class="toolbarItem" label="Root"></p-button>
-          <p-toggleButton [(ngModel)]="editToggle" class="toolbarItem" offLabel="Edit" onLabel="Edit"></p-toggleButton>
-          <p-toggleButton [(ngModel)]="recentToggle" class="toolbarItem" offLabel="Recent"
-            onLabel="Recent"></p-toggleButton>
-          <p-toggleButton [(ngModel)]="selectToggle" class="toolbarItem" offLabel="Select"
-            onLabel="Select"></p-toggleButton>
+          <p-button
+            (onClick)="reloadMainFromRoot()"
+            class="toolbarItem"
+            label="Root"
+          ></p-button>
+          <p-toggleButton
+            [(ngModel)]="editToggle"
+            class="toolbarItem"
+            offLabel="Edit"
+            onLabel="Edit"
+          ></p-toggleButton>
+          <p-toggleButton
+            [(ngModel)]="recentToggle"
+            class="toolbarItem"
+            offLabel="Recent"
+            onLabel="Recent"
+          ></p-toggleButton>
+          <p-toggleButton
+            [(ngModel)]="selectToggle"
+            class="toolbarItem"
+            offLabel="Select"
+            onLabel="Select"
+          ></p-toggleButton>
         </div>
       </p-toolbar>
     </div>
     <div class="searchBar">
       <img src="assets/Icons/homeIcons/mainWindow/searchIcon.png" />
-      <input (input)="filterTable($event, 0)" class="search-input" placeholder="Search..." type="text" />
+      <input
+        (input)="filterTable($event, 0)"
+        class="search-input"
+        placeholder="Search..."
+        type="text"
+      />
     </div>
     <div class="directoryContents">
       <!--      The Current directory variable below in the main view is used to allow for intelligent file placement-->
-      <p-treeTable class="non-selectable" appClickAtCoordinate (dblclick)="openFileDoubleClick()"
-        (keydown.enter)="openFileEnter($event)" (keydown.delete)="deleteSelectedEntity($event)" #myTreeTable [contextMenu]="cm"
-        [(contextMenuSelection)]="currentDirectory" (onNodeUnselect)="unselectNode($event)"
-        (onNodeSelect)="selectNode($event)" [(selection)]="currentDirectory" [columns]="treeTableColumns"
-        [scrollable]="true" [tableStyle]="{ 'min-width': '50rem', 'overflow':'hidden' }"
-        [value]="filteredFilesDirectoryTreeTable" dataKey="name" selectionMode="single">
+      <p-treeTable
+        class="non-selectable"
+        appClickAtCoordinate
+        (dblclick)="openFileDoubleClick()"
+        (keydown.enter)="openFileEnter($event)"
+        (keydown.delete)="deleteSelectedEntity($event)"
+        #myTreeTable
+        [contextMenu]="cm"
+        [(contextMenuSelection)]="currentDirectory"
+        (onNodeUnselect)="unselectNode($event)"
+        (onNodeSelect)="selectNode($event)"
+        [(selection)]="currentDirectory"
+        [columns]="treeTableColumns"
+        [scrollable]="true"
+        [tableStyle]="{ 'min-width': '50rem', overflow: 'hidden' }"
+        [value]="filteredFilesDirectoryTreeTable"
+        dataKey="name"
+        selectionMode="single"
+      >
         <ng-template let-columns pTemplate="header">
           <tr>
             <th *ngFor="let col of columns">{{ col.header }}</th>
           </tr>
         </ng-template>
-        <ng-template let-columns="columns" let-rowData="rowData" let-rowNode pTemplate="body">
-
-          <tr cdkDrag (cdkDragStarted)="onNodeDrag($event)" (cdkDragReleased)="onDragReleased($event)" [ttRow]="rowNode"
-            [ttSelectableRow]="rowNode" [ttContextMenuRow]="rowNode" [ngClass]="{ 'drag-hover': isDraggingNode }"
-            [attr.data-key]="getData(rowData)">
-            <td *ngFor="let  col of columns; let i = index" [ngClass]="{ 'p-toggler-column': i === 0 }"
-              ttEditableColumn [attr.data-key]="rowData[col.key]">
-              <p-treeTableToggler *ngIf="i === 0" [rowNode]="rowNode"></p-treeTableToggler>
+        <ng-template
+          let-columns="columns"
+          let-rowData="rowData"
+          let-rowNode
+          pTemplate="body"
+        >
+          <tr
+            cdkDrag
+            (cdkDragStarted)="onNodeDrag($event)"
+            (cdkDragReleased)="onDragReleased($event)"
+            [ttRow]="rowNode"
+            [ttSelectableRow]="rowNode"
+            [ttContextMenuRow]="rowNode"
+            [ngClass]="{ 'drag-hover': isDraggingNode }"
+            [attr.data-key]="getData(rowData)"
+          >
+            <td
+              *ngFor="let col of columns; let i = index"
+              [ngClass]="{ 'p-toggler-column': i === 0 }"
+              ttEditableColumn
+              [attr.data-key]="rowData[col.key]"
+            >
+              <p-treeTableToggler
+                *ngIf="i === 0"
+                [rowNode]="rowNode"
+              ></p-treeTableToggler>
               <p-treeTableCellEditor *ngIf="i === 0 && editToggle">
                 <div class="p-2 w-15rem h-10rem drop-column">
                   <ng-template pTemplate="input">
-                    <input (focus)="valueBeforeEdit = rowData[col.field]"
-                      (focusout)="onRowLabelEdit((rowData[col.field] = rowData[col.field].trim() === '' ? valueBeforeEdit : rowData[col.field]), rowNode)"
-                      (keydown.enter)="onRowLabelEdit((rowData[col.field] = rowData[col.field].trim() === '' ? valueBeforeEdit : rowData[col.field]), rowNode)"
-                      [(ngModel)]="rowData[col.field]" pInputText type="text" />
+                    <input
+                      (focus)="valueBeforeEdit = rowData[col.field]"
+                      (focusout)="
+                        onRowLabelEdit(
+                          (rowData[col.field] =
+                            rowData[col.field].trim() === ''
+                              ? valueBeforeEdit
+                              : rowData[col.field]),
+                          rowNode
+                        )
+                      "
+                      (keydown.enter)="
+                        onRowLabelEdit(
+                          (rowData[col.field] =
+                            rowData[col.field].trim() === ''
+                              ? valueBeforeEdit
+                              : rowData[col.field]),
+                          rowNode
+                        )
+                      "
+                      [(ngModel)]="rowData[col.field]"
+                      pInputText
+                      type="text"
+                    />
                   </ng-template>
                 </div>
-                <ng-template pTemplate="output">{{ rowData[col.field] }}</ng-template>
+                <ng-template pTemplate="output">{{
+                  rowData[col.field]
+                }}</ng-template>
               </p-treeTableCellEditor>
-              <ng-container *ngIf="i === 0 && !editToggle">{{ rowData[col.field] }}</ng-container>
-              <ng-container *ngIf="i > 0">{{ rowData[col.field] }}</ng-container>
+              <ng-container *ngIf="i === 0 && !editToggle">{{
+                rowData[col.field]
+              }}</ng-container>
+              <ng-container *ngIf="i > 0">{{
+                rowData[col.field]
+              }}</ng-container>
             </td>
           </tr>
         </ng-template>
       </p-treeTable>
     </div>
   </div>
-  <p-contextMenu #cm [model]="contextMenuItems" appendTo="parent"></p-contextMenu>
+  <p-contextMenu
+    #cm
+    [model]="contextMenuItems"
+    appendTo="parent"
+  ></p-contextMenu>
   <!-- file-upload-popup.component.html -->
 </div>

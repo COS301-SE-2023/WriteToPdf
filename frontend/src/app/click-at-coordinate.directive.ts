@@ -2,10 +2,13 @@ import { Directive, HostListener, ElementRef } from '@angular/core';
 import { CoordinateService } from './services/coordinate-service.service';
 
 @Directive({
-  selector: '[appClickAtCoordinate]'
+  selector: '[appClickAtCoordinate]',
 })
 export class ClickAtCoordinateDirective {
-  constructor(private elementRef: ElementRef, private coordinateService: CoordinateService) { }
+  constructor(
+    private elementRef: ElementRef,
+    private coordinateService: CoordinateService
+  ) {}
 
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent) {

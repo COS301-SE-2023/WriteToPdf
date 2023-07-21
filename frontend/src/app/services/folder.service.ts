@@ -191,7 +191,11 @@ export class FolderService {
     });
   }
 
-  sendCreateData(path: string | undefined, folderName: string, parentFolderID: string | undefined): Observable<HttpResponse<any>> {
+  sendCreateData(
+    path: string | undefined,
+    folderName: string,
+    parentFolderID: string | undefined
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/create_folder`;
 
@@ -234,7 +238,11 @@ export class FolderService {
     });
   }
 
-  sendRenameData(folderID: string|undefined, path: string|undefined, folderName: string): Observable<HttpResponse<any>> {
+  sendRenameData(
+    folderID: string | undefined,
+    path: string | undefined,
+    folderName: string
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/rename_folder`;
 

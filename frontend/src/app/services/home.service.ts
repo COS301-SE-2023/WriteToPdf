@@ -103,7 +103,12 @@ export class NodeService {
     for (let file of rootFiles) {
       directoryObject.push({
         key: file.MarkdownID,
-        data: { name: file.Name, size: file.Size, type: 'file', key: file.MarkdownID },
+        data: {
+          name: file.Name,
+          size: file.Size,
+          type: 'file',
+          key: file.MarkdownID,
+        },
       });
     }
 
@@ -120,12 +125,22 @@ export class NodeService {
     if (folders.length + files.length === 0) {
       return {
         key: folder.FolderID,
-        data: { name: folder.FolderName, size: 0, type: 'folder', key: folder.FolderID },
+        data: {
+          name: folder.FolderName,
+          size: 0,
+          type: 'folder',
+          key: folder.FolderID,
+        },
       };
     } else {
       let folderObject = {
         key: folder.FolderID,
-        data: { name: folder.FolderName, size: 0, type: 'folder', key: folder.FolderID },
+        data: {
+          name: folder.FolderName,
+          size: 0,
+          type: 'folder',
+          key: folder.FolderID,
+        },
         children: [{}],
       };
 
@@ -134,7 +149,12 @@ export class NodeService {
       for (let file of files) {
         folderObject.children.push({
           key: file.MarkdownID,
-          data: { name: file.Name, size: file.Size, type: 'file', key: file.MarkdownID },
+          data: {
+            name: file.Name,
+            size: file.Size,
+            type: 'file',
+            key: file.MarkdownID,
+          },
         });
       }
 
@@ -213,7 +233,7 @@ export class NodeService {
     return Promise.resolve(await this.getTreeTableNodesData());
   }
 
-  getFileDTOByID(MarkdownID: string|undefined|null): MarkdownFileDTO {
+  getFileDTOByID(MarkdownID: string | undefined | null): MarkdownFileDTO {
     for (let file of this.files) {
       if (file.MarkdownID === MarkdownID) {
         return file;
@@ -222,7 +242,7 @@ export class NodeService {
     return new MarkdownFileDTO();
   }
 
-  getFolderDTOByID(FolderID: string|undefined|null): FolderDTO {
+  getFolderDTOByID(FolderID: string | undefined | null): FolderDTO {
     for (let folder of this.folders) {
       if (folder.FolderID === FolderID) {
         return folder;
@@ -231,7 +251,7 @@ export class NodeService {
     return new FolderDTO();
   }
 
-  checkType(KeyID: string|undefined|null): string {
+  checkType(KeyID: string | undefined | null): string {
     for (let file of this.files) {
       if (file.MarkdownID === KeyID) {
         return 'file';
@@ -253,7 +273,7 @@ export class NodeService {
     this.folders.push(folder);
   }
 
-  removeFile(markdownID: string|undefined) {
+  removeFile(markdownID: string | undefined) {
     // this.files.splice(this.files.indexOf(file), 1);
     for (let i = 0; i < this.files.length; i++) {
       if (this.files[i].MarkdownID === markdownID) {
@@ -262,7 +282,7 @@ export class NodeService {
     }
   }
 
-  removeFolder(folderID: string|undefined) {
+  removeFolder(folderID: string | undefined) {
     // this.folders.splice(this.folders.indexOf(folder), 1);
     for (let i = 0; i < this.folders.length; i++) {
       if (this.folders[i].FolderID === folderID) {
@@ -271,7 +291,7 @@ export class NodeService {
     }
   }
 
-  getParentFolderByID(ID: string|undefined|null): FolderDTO {
+  getParentFolderByID(ID: string | undefined | null): FolderDTO {
     for (let folder of this.folders) {
       if (folder.FolderID === ID) {
         return folder;

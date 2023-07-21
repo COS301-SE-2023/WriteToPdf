@@ -17,11 +17,23 @@ export class AssetService {
     private http: HttpClient,
     private userService: UserService,
     private messageService: MessageService
-  ) { }
+  ) {}
 
-  uploadImage(image: string | undefined, path: string, fileName: string, parentFolderId: string | undefined, format:string): Promise<boolean> {
+  uploadImage(
+    image: string | undefined,
+    path: string,
+    fileName: string,
+    parentFolderId: string | undefined,
+    format: string
+  ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.sendUploadImageData(image, path, fileName, parentFolderId, format).subscribe({
+      this.sendUploadImageData(
+        image,
+        path,
+        fileName,
+        parentFolderId,
+        format
+      ).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 201) {
             console.log('Image uploaded successfully');
@@ -43,7 +55,7 @@ export class AssetService {
     path: string,
     fileName: string,
     parentFolderId: string | undefined,
-    format:string
+    format: string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}asset_manager/upload_asset`;
@@ -52,17 +64,17 @@ export class AssetService {
     body.UserID = this.userService.getUserID();
     body.Image = image;
     body.Path = path;
-    if (fileName === "") {
-      body.FileName = "New Asset";
+    if (fileName === '') {
+      body.FileName = 'New Asset';
     } else {
       body.FileName = fileName;
     }
     if (parentFolderId) {
       body.ParentFolderID = parentFolderId;
     } else {
-      body.ParentFolderID = "";
+      body.ParentFolderID = '';
     }
-    body.Format=format;
+    body.Format = format;
 
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -87,7 +99,10 @@ export class AssetService {
     });
   }
 
-  sendRetrieveAssetData(assetId: string, format: string): Observable<HttpResponse<any>> {
+  sendRetrieveAssetData(
+    assetId: string,
+    format: string
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}asset_manager/retrieve_one`;
     const body = new AssetDTO();
@@ -104,13 +119,12 @@ export class AssetService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-
   retrieveAll(parentFolderId: string | undefined): Promise<any[]> {
     console.log('Retrieving all images');
     return new Promise<any[]>((resolve, reject) => {
       this.sendRetrieveAllData(parentFolderId).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log('Retreive All: ',response);
+          console.log('Retreive All: ', response);
           if (response.status === 200) {
             console.log('Images retrieved successfully');
             console.log(response.body.Content);
@@ -123,16 +137,17 @@ export class AssetService {
     });
   }
 
-  sendRetrieveAllData(parentFolderId: string | undefined): Observable<HttpResponse<any>> {
+  sendRetrieveAllData(
+    parentFolderId: string | undefined
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}asset_manager/retrieve_all`;
     const body = new RetrieveAllDTO();
 
     if (parentFolderId) {
       body.ParentFolderID = parentFolderId;
-    }
-    else {
-      body.ParentFolderID = "";
+    } else {
+      body.ParentFolderID = '';
     }
     body.UserID = this.userService.getUserID();
 
@@ -147,7 +162,7 @@ export class AssetService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteAssetData(assetId).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log("DELETE: " + JSON.stringify(response));
+          console.log('DELETE: ' + JSON.stringify(response));
           if (response.status === 200) {
             console.log('Image deleted successfully');
             resolve(true);
@@ -190,7 +205,10 @@ export class AssetService {
     });
   }
 
-  sendRenameAssetData(assetId: string, newName: string): Observable<HttpResponse<any>> {
+  sendRenameAssetData(
+    assetId: string,
+    newName: string
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}asset_manager/rename_asset`;
     const body = new AssetDTO();

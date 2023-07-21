@@ -8,7 +8,7 @@ describe('FileManagerPopupComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [FileManagerPopupComponent]
+      declarations: [FileManagerPopupComponent],
     });
     fixture = TestBed.createComponent(FileManagerPopupComponent);
     component = fixture.componentInstance;

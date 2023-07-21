@@ -26,9 +26,12 @@ export class UserService {
   private timer: any;
   private encryptionKey: string | undefined = undefined;
 
-  constructor(private http: HttpClient, private messageService: MessageService, @Inject(Router) private router: Router) { }
-  
-  
+  constructor(
+    private http: HttpClient,
+    private messageService: MessageService,
+    @Inject(Router) private router: Router
+  ) {}
+
   async login(email: string, password: string): Promise<boolean> {
     let salt: string;
     await this.retrieveSalt(email)
@@ -135,7 +138,7 @@ export class UserService {
     this.expiresAt = undefined;
     this.doExpirationCheck = false;
     this.navigateToPage('/login');
-    if(this.timer) {
+    if (this.timer) {
       clearInterval(this.timer);
     }
   }
@@ -166,7 +169,11 @@ export class UserService {
     return this.encryptionKey;
   }
 
-  sendLoginData(email: string, password: string, salt: string): Observable<HttpResponse<any>> {
+  sendLoginData(
+    email: string,
+    password: string,
+    salt: string
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}users/login`;
     const body = new UserDTO();
@@ -183,9 +190,13 @@ export class UserService {
     return salt;
   }
 
-
-  sendSignupData(email: string, fName: string, lName: string, password: string): Observable<HttpResponse<any>> {
-        const environmentURL = environment.apiURL;
+  sendSignupData(
+    email: string,
+    fName: string,
+    lName: string,
+    password: string
+  ): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
     const url = `${environmentURL}users/signup`;
 
     const body = new UserDTO();
@@ -222,9 +233,8 @@ export class UserService {
   private startExpirationCheck() {
     const checkInterval = 30000;
 
-    this.timer=setInterval(() => {
+    this.timer = setInterval(() => {
       this.checkExpiration();
-
     }, checkInterval);
   }
 
@@ -273,7 +283,7 @@ export class UserService {
     body.Email = this.email;
     body.ExpiresAt = this.expiresAt;
 
-    console.log('Body: '+JSON.stringify(body));
+    console.log('Body: ' + JSON.stringify(body));
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.authToken

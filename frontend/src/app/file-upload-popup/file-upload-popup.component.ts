@@ -28,7 +28,7 @@ export class FileUploadPopupComponent {
     private nodeService: NodeService,
     private editService: EditService,
     @Inject(Router) private router: Router
-  ) { }
+  ) {}
 
   onUpload(event: any) {
     const file = event.files[0];

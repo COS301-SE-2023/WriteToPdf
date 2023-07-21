@@ -10,7 +10,6 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./camera.component.scss'],
 })
 export class CameraComponent {
-
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef;
 
   sysImage = '';
@@ -21,7 +20,13 @@ export class CameraComponent {
   path: string = '';
   isAsset: boolean = false;
 
-  constructor(private elementRef: ElementRef, private assetService: AssetService, private router: Router, private location: Location, private messageService: MessageService) { }
+  constructor(
+    private elementRef: ElementRef,
+    private assetService: AssetService,
+    private router: Router,
+    private location: Location,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit() {
     const data = history.state;
@@ -47,16 +52,20 @@ export class CameraComponent {
   }
 
   setupCamera() {
-    navigator.mediaDevices.getUserMedia({
-      video: {},
-      audio: false
-    }).then(stream => {
-      this.videoRef.srcObject = stream;
-    });
+    navigator.mediaDevices
+      .getUserMedia({
+        video: {},
+        audio: false,
+      })
+      .then((stream) => {
+        this.videoRef.srcObject = stream;
+      });
   }
 
   disableCamera() {
-    this.videoRef.srcObject.getTracks().forEach((track: { stop: () => any; }) => track.stop());
+    this.videoRef.srcObject
+      .getTracks()
+      .forEach((track: { stop: () => any }) => track.stop());
   }
 
   public getSnapshot(): void {
@@ -64,39 +73,44 @@ export class CameraComponent {
 
     // Create a canvas element with reduced dimensions
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth / 2;  // Reduce the width by half
-    canvas.height = video.videoHeight / 2;  // Reduce the height by half
+    canvas.width = video.videoWidth / 2; // Reduce the width by half
+    canvas.height = video.videoHeight / 2; // Reduce the height by half
 
     // Draw the current frame of the video on the canvas
     const ctx = canvas.getContext('2d');
     ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     // Get the data URL of the canvas as a PNG image with reduced quality
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);  // Adjust the quality (0.0 to 1.0)
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9); // Adjust the quality (0.0 to 1.0)
 
     this.sysImage = dataUrl;
     console.log(dataUrl);
   }
 
-
   async uploadImage() {
     let format = 'image';
-    if(this.isAsset) {
-      format='text';
+    if (this.isAsset) {
+      format = 'text';
     }
-    this.assetService.uploadImage(this.sysImage, this.path, this.assetName, this.parentFolderId, format).then((res) => {
-      if (res) {
-        setTimeout(() => {
-          this.navigateToPage('edit');
-        }, 1000);
-      }
-    });
-
+    this.assetService
+      .uploadImage(
+        this.sysImage,
+        this.path,
+        this.assetName,
+        this.parentFolderId,
+        format
+      )
+      .then((res) => {
+        if (res) {
+          setTimeout(() => {
+            this.navigateToPage('edit');
+          }, 1000);
+        }
+      });
   }
 
   goBack() {
     this.disableCamera();
     this.location.back();
   }
-
 }
