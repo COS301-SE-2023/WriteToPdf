@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
-import * as Docxtemplater from 'docxtemplater';
-import * as HtmlToDocx from 'html-to-docx';
 
 @Injectable()
 export class ConversionService {
@@ -32,7 +30,5 @@ export class ConversionService {
     return pdf;
   }
 
-  async generateDocx(html: string) {
-    return await HtmlToDocx.asBlob(html);
-  }
+  async generateDocx(html: string) {}
 }
