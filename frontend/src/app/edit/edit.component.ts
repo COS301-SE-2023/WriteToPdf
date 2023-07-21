@@ -47,7 +47,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private assetService: AssetService,
     private clipboard: Clipboard,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   convertToPdf() {
     // console.log(this.editor);
@@ -313,12 +313,14 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (this.sidebarVisible) {
       const leftPosition = this.getLeftPosition(element);
       if (leftPosition < 270) {
-        element.style.marginLeft = `${447 - leftPosition}px`;
+        element.style.marginLeft = '0';
+        element.style.marginLeft = `${(447 - this.getLeftPosition(element))}px`;
       }
     } else {
       const leftPosition = this.getLeftPosition(element);
       if (leftPosition < 0) {
-        element.style.marginLeft = `${177 - leftPosition}px`;
+        element.style.marginLeft = '0';
+        element.style.marginLeft = `${(177 - this.getLeftPosition(element))}px`;
       }
     }
   }
@@ -336,12 +338,14 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (this.sidebarVisible) {
       const leftPosition = this.getLeftPosition(element);
       if (leftPosition < 270) {
-        element.style.marginLeft = `${447 - leftPosition}px`;
+        element.style.marginLeft = '0';
+        element.style.marginLeft = `${(447 - this.getLeftPosition(element))}px`;
       }
     } else {
       const leftPosition = this.getLeftPosition(element);
       if (leftPosition < 0) {
-        element.style.marginLeft = `${177 - leftPosition}px`;
+        element.style.marginLeft = '0';
+        element.style.marginLeft = `${(177 - this.getLeftPosition(element))}px`;
       }
     }
   }
