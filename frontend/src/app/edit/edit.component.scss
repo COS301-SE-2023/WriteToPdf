@@ -352,7 +352,7 @@ div[contenteditable="true"]:focus {
     margin-top: 50px;
     margin-bottom: 50px !important;
     width: calc($page-width + 40px) !important;
-    height: $page-height !important;
+    min-height: $page-height !important;
     padding-left: 20px !important;
     padding-right: 20px !important;
     background: #00000000 !important;
@@ -385,7 +385,7 @@ div[contenteditable="true"]:focus {
 
 .document-editor {
     width: $page-width ;
-    height: $page-height ;
+    min-height: $page-height ;
     padding: 0;
     background: #00000000;
     margin:auto;
@@ -411,7 +411,7 @@ div[contenteditable="true"]:focus {
 /* Make the editable container look like the inside of a native word processor application. */
 .document-editor__editable-container {
     width: $page-width !important;
-    height: $page-height !important;
+    min-height: $page-height !important;
     padding: 0 !important;
     background: #00000000 !important;
 
@@ -426,7 +426,7 @@ div[contenteditable="true"]:focus {
 .document-editor__editable-container .ck-editor__editable {
     /* Set the dimensions of the "page". */
     width: $page-width;
-    height: $page-height;
+    min-height: $page-height;
 
     /* Keep the "page" off the boundaries of the container. */
     padding: 1rem;
@@ -454,7 +454,7 @@ div[contenteditable="true"]:focus {
 .document-editor__editable-container .ck-editor__editable {
     /* Set the dimensions of the "page". */
     width: $page-width;
-    height: $page-height;
+    min-height: $page-height;
 
     /* Keep the "page" off the boundaries of the container. */
     padding: 1cm 2cm 2cm;
