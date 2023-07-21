@@ -492,18 +492,29 @@ export class FileManagerService {
     // );
 
     // convert
-    const pdfBuffer =
-      await this.conversionService.generatePdf(
-        exportDTO.Content,
+    if (exportDTO.Type === 'pdf') {
+      const pdfBuffer =
+        await this.conversionService.generatePdf(
+          exportDTO.Content,
+        );
+      return pdfBuffer;
+    } else if (exportDTO.Type === 'docx') {
+      const docxBuffer =
+        await this.conversionService.generateDocx(
+          exportDTO.Content,
+        );
+      return docxBuffer;
+    } else {
+      throw new HttpException(
+        'Invalid export type',
+        HttpStatus.BAD_REQUEST,
       );
-
+    }
     // re-encrypt content
     // const converted = await this.encryptContent(
     //   (await pdfBuffer).toString(),
     //   encryptionKey,
     // );
-
-    return pdfBuffer;
   }
 
   // async generatePdf(html: string) {
