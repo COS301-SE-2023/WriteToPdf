@@ -411,31 +411,32 @@ export class FileService {
   }
 
   exportDocumentToTextFile(
-    markdownID: string,
-    name: string,
-    content: string,
-    type: string
+    markdownID: string|undefined,
+    name: string | undefined,
+    content: string | undefined,
+    type: string | undefined
   ): void {
     this.sendExportData(markdownID, name, content, type).subscribe({
       next: (response: HttpResponse<any>) => {
-        console.log(response);
+        console.log('RES: ',response);
         if (response.status === 200) {
+          const pdfData: number[] = response.body.data;
+          const uint8Array = new Uint8Array(pdfData);
+          const blob = new Blob([uint8Array], { type: 'application/pdf' });
+
+          // Download the PDF
+          const fileURL = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = fileURL;
+          link.download = name + '.'+type;
+          link.click();
+          URL.revokeObjectURL(fileURL);
+
+          // Show success message
           this.messageService.add({
             severity: 'success',
             summary: 'Export successful',
           });
-          const fileContent = this.decryptDocument(response.body.Content);
-          const fileName = response.body.Name;
-          const fileType = response.body.Type;
-          const downloadURL = URL.createObjectURL(
-            new Blob([fileContent], { type: 'text/plain' })
-          );
-          const downloadLink = document.createElement('a');
-          downloadLink.href = downloadURL;
-          downloadLink.download = fileName + '.' + fileType;
-          downloadLink.click();
-          URL.revokeObjectURL(downloadURL);
-          // document.body.removeChild(downloadLink);
         } else {
           this.messageService.add({
             severity: 'error',
@@ -457,7 +458,7 @@ export class FileService {
     const body = new ExportDTO();
     body.MarkdownID = markdownID;
     body.Name = name;
-    body.Content = this.encryptDocument(JSON.stringify(content));
+    body.Content = (content);
     body.UserID = this.userService.getUserID();
     body.Type = type;
     const headers = new HttpHeaders().set(

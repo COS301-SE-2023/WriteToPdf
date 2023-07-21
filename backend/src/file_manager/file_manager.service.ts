@@ -2,6 +2,10 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Controller,
+  Get,
+  Res,
+  Header,
 } from '@nestjs/common';
 import { FoldersService } from '../folders/folders.service';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
@@ -14,7 +18,10 @@ import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
 import { UsersService } from '../users/users.service';
 import { SHA256 } from 'crypto-js';
+import { ExportDTO } from './dto/export.dto';
 import * as CryptoJS from 'crypto-js';
+import exp from 'constants';
+import * as puppeteer from 'puppeteer';
 
 @Injectable()
 export class FileManagerService {
@@ -454,52 +461,79 @@ export class FileManagerService {
     return encryptionKey;
   }
 
-  // async exportFile(exportDTO: ExportDTO) {
-  //   if (exportDTO.MarkdownID === undefined)
-  //     throw new HttpException(
-  //       'MarkdownID cannot be undefined',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
+  async exportFile(exportDTO: ExportDTO) {
+    if (exportDTO.MarkdownID === undefined)
+      throw new HttpException(
+        'MarkdownID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
 
-  //   if (exportDTO.Content === undefined) {
-  //     // Idea for future: if content is undefined, retrieve it from the storage
-  //     // const markdownFile =
-  //     //   await this.markdownFilesService.findOneByMarkdownID(
-  //     //     exportDTO.MarkdownID,
-  //     //   );
+    if (exportDTO.Content === undefined) {
+      // Idea for future: if content is undefined, retrieve it from the storage
+      // const markdownFile =
+      //   await this.markdownFilesService.findOneByMarkdownID(
+      //     exportDTO.MarkdownID,
+      //   );
 
-  //     // if (markdownFile === undefined) {
-  //     throw new HttpException(
-  //       'Content cannot be undefined',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //     // }
+      // if (markdownFile === undefined) {
+      throw new HttpException(
+        'Content cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+      // }
 
-  //     // exportDTO.Content = markdownFile.Content;
-  //   }
+      // exportDTO.Content = markdownFile.Content;
+    }
 
-  //   const encryptionKey =
-  //     await this.getEncryptionKey(
-  //       exportDTO.UserID,
-  //     );
+    const encryptionKey =
+      await this.getEncryptionKey(
+        exportDTO.UserID,
+      );
 
-  //   // decrypt content
-  //   exportDTO.Content = await this.decryptContent(
-  //     exportDTO.Content,
-  //     encryptionKey,
-  //   );
+    // decrypt content
+    // exportDTO.Content = await this.decryptContent(
+    //   exportDTO.Content,
+    //   encryptionKey,
+    // );
 
-  //   // convert
-  //   const convertedDTO =
-  //     this.conversionService.convertTo(exportDTO);
+    // convert
+    const pdfBuffer = this.generatePdf(
+      exportDTO.Content,
+    );
 
-  //   // re-encrypt content
-  //   convertedDTO.Content =
-  //     await this.encryptContent(
-  //       convertedDTO.Content,
-  //       encryptionKey,
-  //     );
+    // re-encrypt content
+    // const converted = await this.encryptContent(
+    //   (await pdfBuffer).toString(),
+    //   encryptionKey,
+    // );
 
-  //   return convertedDTO;
-  // }
+    return pdfBuffer;
+  }
+
+  async generatePdf(html: string) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    // Emulate a screen to apply CSS styles correctly
+    await page.setViewport({
+      width: 1920,
+      height: 1080,
+    });
+
+    await page.setContent(html, {
+      waitUntil: 'networkidle0',
+    });
+
+    // Set a higher scale to improve quality (e.g., 2 for Retina displays)
+    const pdf = await page.pdf({
+      format: 'A4',
+      scale: 1,
+      printBackground: true,
+    });
+
+    await browser.close();
+
+    // Send the generated PDF as a response
+    return pdf;
+  }
 }

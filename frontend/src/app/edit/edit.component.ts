@@ -52,17 +52,19 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   convertToPdf() {
-    console.log(this.editor);
-    const content = (this.editor.getData());
-    const options = {
-      margin: 10,
-      filename: `${this.fileName}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+    // console.log(this.editor);
+    // const content = (this.editor.getData());
+    // const options = {
+    //   margin: 10,
+    //   filename: `${this.fileName}.pdf`,
+    //   image: { type: 'jpeg', quality: 0.98 },
+    //   html2canvas: { scale: 2, useCORS: true },
+    //   jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    // };
 
-    html2pdf().from(content).set(options).save();
+    // html2pdf().from(content).set(options).save();
+    console.log(this.editor.getData());
+    this.fileService.exportDocumentToTextFile(this.editService.getMarkdownID(), this.editService.getName(), `<body style="word-wrap: break-word; word-break: break-all;">${this.editor.getData()}</body>`, 'pdf');
   }
 
   showFileUploadPopup(): void {

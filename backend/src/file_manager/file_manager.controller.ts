@@ -13,6 +13,7 @@ import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
+import { ExportDTO } from './dto/export.dto';
 
 @Controller('file_manager')
 export class FileManagerController {
@@ -386,33 +387,33 @@ export class FileManagerController {
   //   );
   // }
 
-  // // TODO: deprecated REMOVE
-  // @Post('export')
-  // @HttpCode(HttpStatus.OK)
-  // export(
-  //   @Body()
-  //   exportDTO: ExportDTO,
-  //   @Req() request: Request,
-  // ) {
-  //   if (request.method !== 'POST') {
-  //     throw new HttpException(
-  //       'Method Not Allowed',
-  //       HttpStatus.METHOD_NOT_ALLOWED,
-  //     );
-  //   }
+  // TODO: deprecated REMOVE
+  @Post('export')
+  @HttpCode(HttpStatus.OK)
+  export(
+    @Body()
+    exportDTO: ExportDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
 
-  //   if (
-  //     !exportDTO.UserID ||
-  //     !exportDTO.Type ||
-  //     !exportDTO.MarkdownID
-  //   )
-  //     throw new HttpException(
-  //       'Invalid request data',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
+    if (
+      !exportDTO.UserID ||
+      !exportDTO.Type ||
+      !exportDTO.MarkdownID
+    )
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
 
-  //   return this.fileManagerService.exportFile(
-  //     exportDTO,
-  //   );
-  // }
+    return this.fileManagerService.exportFile(
+      exportDTO,
+    );
+  }
 }
