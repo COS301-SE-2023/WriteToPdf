@@ -10,6 +10,7 @@ import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { AuthService } from '../auth/auth.service';
 import { FileManagerController } from './file_manager.controller';
+import { ConversionService } from '../conversion/conversion.service';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { FileManagerController } from './file_manager.controller';
     S3Service,
     UsersService,
     AuthService,
+    ConversionService,
   ],
 })
 export class FileManagerModule {}

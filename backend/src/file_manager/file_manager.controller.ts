@@ -14,11 +14,13 @@ import { FolderDTO } from '../folders/dto/folder.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ExportDTO } from './dto/export.dto';
+import { ConversionService } from '../conversion/conversion.service';
 
 @Controller('file_manager')
 export class FileManagerController {
   constructor(
     private readonly fileManagerService: FileManagerService,
+    private readonly conversionService: ConversionService,
   ) {}
 
   // File operations #################################################
@@ -387,7 +389,6 @@ export class FileManagerController {
   //   );
   // }
 
-  // TODO: deprecated REMOVE
   @Post('export')
   @HttpCode(HttpStatus.OK)
   export(

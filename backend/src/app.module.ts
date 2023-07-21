@@ -26,6 +26,7 @@ import { Folder } from './folders/entities/folder.entity';
 import { S3Service } from './s3/s3.service';
 import { User } from './users/entities/user.entity';
 import { AssetManagerModule } from './asset_manager/asset_manager.module';
+import { ConversionService } from './conversion/conversion.service';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { AssetManagerModule } from './asset_manager/asset_manager.module';
     MarkdownFilesService,
     FoldersService,
     S3Service,
+    ConversionService,
   ],
 })
 export class AppModule {}

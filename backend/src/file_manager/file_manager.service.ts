@@ -2,10 +2,6 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  Controller,
-  Get,
-  Res,
-  Header,
 } from '@nestjs/common';
 import { FoldersService } from '../folders/folders.service';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
@@ -20,8 +16,7 @@ import { UsersService } from '../users/users.service';
 import { SHA256 } from 'crypto-js';
 import { ExportDTO } from './dto/export.dto';
 import * as CryptoJS from 'crypto-js';
-import exp from 'constants';
-import * as puppeteer from 'puppeteer';
+import { ConversionService } from '../conversion/conversion.service';
 
 @Injectable()
 export class FileManagerService {
@@ -29,7 +24,7 @@ export class FileManagerService {
     private markdownFilesService: MarkdownFilesService,
     private folderService: FoldersService,
     private s3service: S3Service,
-    // private conversionService: ConversionService,
+    private conversionService: ConversionService,
     private userService: UsersService,
   ) {}
 
@@ -497,9 +492,10 @@ export class FileManagerService {
     // );
 
     // convert
-    const pdfBuffer = this.generatePdf(
-      exportDTO.Content,
-    );
+    const pdfBuffer =
+      await this.conversionService.generatePdf(
+        exportDTO.Content,
+      );
 
     // re-encrypt content
     // const converted = await this.encryptContent(
@@ -510,30 +506,30 @@ export class FileManagerService {
     return pdfBuffer;
   }
 
-  async generatePdf(html: string) {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+  // async generatePdf(html: string) {
+  //   const browser = await puppeteer.launch();
+  //   const page = await browser.newPage();
 
-    // Emulate a screen to apply CSS styles correctly
-    await page.setViewport({
-      width: 1920,
-      height: 1080,
-    });
+  //   // Emulate a screen to apply CSS styles correctly
+  //   await page.setViewport({
+  //     width: 1920,
+  //     height: 1080,
+  //   });
 
-    await page.setContent(html, {
-      waitUntil: 'networkidle0',
-    });
+  //   await page.setContent(html, {
+  //     waitUntil: 'networkidle0',
+  //   });
 
-    // Set a higher scale to improve quality (e.g., 2 for Retina displays)
-    const pdf = await page.pdf({
-      format: 'A4',
-      scale: 1,
-      printBackground: true,
-    });
+  //   // Set a higher scale to improve quality (e.g., 2 for Retina displays)
+  //   const pdf = await page.pdf({
+  //     format: 'A4',
+  //     scale: 1,
+  //     printBackground: true,
+  //   });
 
-    await browser.close();
+  //   await browser.close();
 
-    // Send the generated PDF as a response
-    return pdf;
-  }
+  //   // Send the generated PDF as a response
+  //   return pdf;
+  // }
 }
