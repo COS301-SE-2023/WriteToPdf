@@ -189,7 +189,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         showAssetSidebar.setAttribute('style', 'display:block');
         this.sidebarVisible = false;
       } else {//then show the sidebar
-        
+
         editor.setAttribute('style', 'padding-right: 0px;left:260px');
         sidebar.setAttribute('style', 'display:block');
         showAssetSidebar.setAttribute('style', 'display:none');
@@ -260,20 +260,51 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   zoomIn() {
-    if(this.currentZoom >= 2) return;
+    if (this.currentZoom >= 2) return;
     this.currentZoom += 0.1; // Increase zoom by 10% (adjust as needed)
     this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
     const element = document.getElementsByClassName('center-page')[0] as HTMLElement;
     element.style.transform = `scale(${this.currentZoom})`;
     element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
+    element.style.marginLeft = 'auto';
+    if (this.sidebarVisible) {
+      const leftPosition = this.getLeftPosition(element);
+      if (leftPosition < 270) {
+        element.style.marginLeft = `${(447 - leftPosition)}px`;
+      }
+    }
+    else{
+      const leftPosition = this.getLeftPosition(element);
+      if (leftPosition < 0) {
+        element.style.marginLeft = `${(177 - leftPosition)}px`;
+      }
+    }
   }
 
   zoomOut() {
-    if(this.currentZoom <= 0.5) return;
+    if (this.currentZoom <= 0.5) return;
     this.currentZoom -= 0.1; // Decrease zoom by 10% (adjust as needed)
     this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
     const element = document.getElementsByClassName('center-page')[0] as HTMLElement;
     element.style.transform = `scale(${this.currentZoom})`;
     element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
+    element.style.marginLeft = 'auto';
+    if (this.sidebarVisible) {
+      const leftPosition = this.getLeftPosition(element);
+      if (leftPosition < 270) {
+        element.style.marginLeft = `${(447 - leftPosition)}px`;
+      }
+    }
+    else {
+      const leftPosition = this.getLeftPosition(element);
+      if (leftPosition < 0) {
+        element.style.marginLeft = `${(177 - leftPosition)}px`;
+      }
+    }
   }
+  getLeftPosition(element: HTMLElement): number {
+    const rect = element.getBoundingClientRect();
+    return rect.left;
+  }
+
 }

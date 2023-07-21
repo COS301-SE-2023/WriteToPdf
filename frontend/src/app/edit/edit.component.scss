@@ -149,7 +149,7 @@ $page-height: 29.7cm;
     z-index: -10;
     margin: 0;
     overflow: auto;
-    flex-grow: 1;
+    // flex-grow: 1;
 
     width: calc(100% - 260px);
     // width: 100%;
@@ -348,6 +348,7 @@ div[contenteditable="true"]:focus {
 //REGION Below are all the stylings for the document editor.
 
 .center-page {
+    position: relative;
     margin: auto;
     margin-top: 50px;
     margin-bottom: 50px !important;
