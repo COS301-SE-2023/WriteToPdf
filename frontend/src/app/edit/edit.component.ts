@@ -118,6 +118,9 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (editableArea && toolbarContainer) {
 
       DecoupledEditor.create(editableArea, {
+        toolbar: {
+          shouldNotGroupWhenFull: false
+        },
         cloudServices: {
           //TODO Great for Collaboration features.
         },
@@ -133,6 +136,8 @@ export class EditComponent implements AfterViewInit, OnInit {
           // (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
           editor.ui.view.toolbar.element?.style.setProperty('background', '#00000000');
           editor.ui.view.toolbar.element?.style.setProperty('border', 'none');
+          editor.ui.view.toolbar.element?.style.setProperty('width', 'calc(100vw - 300px)');
+          editor.ui.view.toolbar.element?.style.setProperty('overflow-x', 'hidden !important');
 
           document.getElementsByClassName('toolsWrapper')[0].appendChild(editor.ui.view.toolbar.element as Node);
           (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
