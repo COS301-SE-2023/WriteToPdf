@@ -62,12 +62,22 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     // html2pdf().from(content).set(options).save();
     console.log(this.editor.getData());
-    this.fileService.exportDocumentToTextFile(
+    this.fileService.exportDocumentToNewFileType(
       this.editService.getMarkdownID(),
       this.editService.getName(),
       `<body style="word-wrap: break-word; word-break: break-all;">${this.editor.getData()}</body>`,
       'pdf'
     );
+  }
+
+  exportDocxFile() {
+    console.log(this.editor.getData());
+    this.fileService.exportDocumentToNewFileType(
+      this.editService.getMarkdownID(),
+      this.editService.getName(),
+      `<body style="word-wrap: break-word; word-break: break-all;">${this.editor.getData()}</body>`,
+      'docx'
+    )
   }
 
   showFileUploadPopup(): void {
@@ -250,7 +260,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     const markdownID = this.editService.getMarkdownID();
     const name = this.editService.getName();
     if (markdownID && name) {
-      this.fileService.exportDocumentToTextFile(
+      this.fileService.exportDocumentToNewFileType(
         markdownID,
         name,
         contents,

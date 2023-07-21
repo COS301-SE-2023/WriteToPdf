@@ -403,7 +403,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  exportDocumentToTextFile(
+  exportDocumentToNewFileType(
     markdownID: string | undefined,
     name: string | undefined,
     content: string | undefined,
