@@ -153,6 +153,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         });
     }
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '#E3E3E3';
+    this.elementRef.nativeElement.ownerDocument.body.style.overflow = 'hidden';
     this.refreshSidebar();
   }
 
