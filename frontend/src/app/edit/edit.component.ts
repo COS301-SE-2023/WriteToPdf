@@ -327,13 +327,13 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.fileService.exportDocumentToNewFileType(
       this.editService.getMarkdownID(),
       this.editService.getName(),
-      `<body style="word-wrap: break-word; word-break: break-all;">${this.editor.getData()}</body>`,
+      `<body style="word-break: normal; font-family: Arial, Helvetica, sans-serif;">${this.editor.getData()}</body>`,
       'pdf'
     );
   }
 
   exportTextFile() {
-    let contents = this.globalAreaReference.innerHTML;
+    let contents = this.editor.getData();
     const markdownID = this.editService.getMarkdownID();
     const name = this.editService.getName();
     if (markdownID && name) {
@@ -344,6 +344,21 @@ export class EditComponent implements AfterViewInit, OnInit {
         'txt'
       );
     }
+  }
+
+  exportHtmlFile() {
+    let contents = `<body style="word-break: normal; font-family: Arial, Helvetica, sans-serif;">${this.editor.getData()}</body>`;
+    const markdownID = this.editService.getMarkdownID();
+    const name = this.editService.getName();
+    if (markdownID && name) {
+      this.fileService.exportDocumentToNewFileType(
+        markdownID,
+        name,
+        contents,
+        'html'
+      );
+    }
+
   }
 
 }

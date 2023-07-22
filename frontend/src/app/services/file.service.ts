@@ -22,7 +22,7 @@ export class FileService {
     private userService: UserService,
     private editService: EditService,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   saveDocument(
     content: string | undefined,
@@ -409,15 +409,19 @@ export class FileService {
     content: string | undefined,
     type: string | undefined
   ): void {
+    if (type === 'html') {
+      this.downloadAsHtmlFile(content, name);
+      return;
+    }
     this.sendExportData(markdownID, name, content, type).subscribe({
       next: (response: HttpResponse<any>) => {
         console.log('RES: ', response);
         if (response.status === 200) {
-          const pdfData: number[] = response.body.data;
-          const uint8Array = new Uint8Array(pdfData);
+          const fileData: number[] = response.body.data;
+          const uint8Array = new Uint8Array(fileData);
           const blob = new Blob([uint8Array], { type: 'application/pdf' });
 
-          // Download the PDF
+          // Download the File
           const fileURL = URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = fileURL;
@@ -459,6 +463,24 @@ export class FileService {
       'Bearer ' + this.userService.getAuthToken()
     );
     return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  downloadAsHtmlFile(htmlContent: string | undefined, fileName: string | undefined) {
+    if (htmlContent !== undefined && fileName !== undefined) {
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const fileURL = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = fileURL;
+      link.download = fileName + '.html';
+      link.click();
+      URL.revokeObjectURL(fileURL);
+
+      // Show success message
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Export successful',
+      });
+    }
   }
 
   encryptDocument(content: string | undefined): string {
