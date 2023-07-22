@@ -162,10 +162,7 @@ export class FileService {
       this.sendDeleteData(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'File deleted successfully',
-            });
+
             resolve(true);
           } else {
             resolve(false);

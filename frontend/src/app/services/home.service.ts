@@ -326,14 +326,12 @@ export class NodeService {
     if (destinationDirectory.ParentFolderID === '') return false;
     let parentFolder = this.getParentFolderByID(destinationDirectory.FolderID);
     while (parentFolder.FolderID !== destinationDirectory.FolderID) {
-      console.log('This 1: ',parentFolder.FolderID);
-      console.log('This 2: ', destinationDirectory.FolderID);
       if (parentFolder.FolderID === '') {
         return false;
       }
       parentFolder = this.getParentFolderByID(parentFolder.FolderID);
     }
-    
+
     return true;
   }
 

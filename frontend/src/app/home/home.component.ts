@@ -498,12 +498,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     console.log('delete');
     console.log(event);
     if (event.data.type == 'folder') {
-      this.folderService.deleteFolder(event.key);
-      this.deleteEntryByKey(this.filesDirectoryTree, event.key);
-      this.deleteEntryByKey(this.filesDirectoryTreeTable, event.key);
-      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.key);
-      this.filterTable('', 3);
-      this.nodeService.removeFolder(event.key);
+      this.deleteAllChildren(this.nodeService.getFolderDTOByID(event.key));
+
       this.refreshTree();
       this.currentDirectory = null;
     } else {
@@ -516,6 +512,34 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.refreshTree();
       this.currentDirectory = null;
     }
+  }
+
+  deleteAllChildren(event: any) {
+    const files = this.nodeService.findAllChildrenFiles(event.FolderID);
+    const folders = this.nodeService.findAllChildrenFolders(event.FolderID);
+    for (const file of files) {
+      this.fileService.deleteDocument(file.MarkdownID);
+      this.deleteEntryByKey(this.filesDirectoryTree, file.MarkdownID);
+      this.deleteEntryByKey(this.filesDirectoryTreeTable, file.MarkdownID);
+      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, file.MarkdownID);
+      this.filterTable('', 3);
+      this.nodeService.removeFile(file.MarkdownID);
+    }
+    for (const folder of folders) {
+      this.deleteAllChildren(folder);
+      this.folderService.deleteFolder(folder.FolderID);
+      this.deleteEntryByKey(this.filesDirectoryTree, folder.FolderID);
+      this.deleteEntryByKey(this.filesDirectoryTreeTable, folder.FolderID);
+      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, folder.FolderID);
+      this.filterTable('', 3);
+      this.nodeService.removeFolder(folder.FolderID);
+    }
+    this.folderService.deleteFolder(event.FolderID);
+    this.deleteEntryByKey(this.filesDirectoryTree, event.FolderID);
+    this.deleteEntryByKey(this.filesDirectoryTreeTable, event.FolderID);
+    this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.FolderID);
+    this.filterTable('', 3);
+    this.nodeService.removeFolder(event.FolderID);
   }
 
   deleteEntryByKey(data: TreeNode[], keyToDelete: string): void {
@@ -775,17 +799,29 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   deleteSelectedEntity(event: any): void {
-    if (this.currentDirectory != null){
+    if (this.currentDirectory != null) {
       let message = `Are you sure that you want to delete '${this.currentDirectory.data.name}'?`;
-      if(this.currentDirectory.data.type === 'folder'){
+      const type = this.currentDirectory.data.type;
+      if (type === 'folder') {
         message = `Are you sure that you want to delete '${this.currentDirectory.data.name}' and all of its contents?`;
       }
       this.confirmationService.confirm({
         message: message,
         header: 'Delete Confirmation',
         icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-          this.delete(this.currentDirectory);
+        accept: async () => {
+          await this.delete(this.currentDirectory);
+
+          if (type === 'folder')
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Folder deleted successfully',
+            });
+          else
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File deleted successfully',
+            });
         },
         reject: () => {
 

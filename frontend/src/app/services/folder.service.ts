@@ -78,14 +78,9 @@ export class FolderService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(folderID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
-
+          
           if (response.status === 200) {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Folder deleted successfully',
-            });
+
             resolve(true);
           } else {
             resolve(false);
