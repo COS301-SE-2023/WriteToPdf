@@ -322,6 +322,21 @@ export class NodeService {
     return newName;
   }
 
+  checkIfChildFolder(destinationDirectory: FolderDTO, movingDirectory: FolderDTO):boolean {
+    if (destinationDirectory.ParentFolderID === '') return false;
+    let parentFolder = this.getParentFolderByID(destinationDirectory.FolderID);
+    while (parentFolder.FolderID !== destinationDirectory.FolderID) {
+      console.log('This 1: ',parentFolder.FolderID);
+      console.log('This 2: ', destinationDirectory.FolderID);
+      if (parentFolder.FolderID === '') {
+        return false;
+      }
+      parentFolder = this.getParentFolderByID(parentFolder.FolderID);
+    }
+    
+    return true;
+  }
+
   private checkIfFolderExists(name: string, path: string | undefined): boolean {
     for (let folder of this.folders) {
       if (folder.FolderName === name && folder.Path === path) {

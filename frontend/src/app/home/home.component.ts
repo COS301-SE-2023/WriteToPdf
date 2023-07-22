@@ -207,12 +207,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const folder = this.nodeService.getFolderDTOByID(key);
       this.folderService
         .renameFolder(folder.FolderID, folder.Path, event)
-        .then((data) => {});
+        .then((data) => { });
     } else {
       const file = this.nodeService.getFileDTOByID(key);
       this.fileService
         .renameDocument(file.MarkdownID, event, file.Path)
-        .then((data) => {});
+        .then((data) => { });
     }
   }
 
@@ -866,7 +866,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const type = this.nodeService.checkType(keyOfDragged);
     if (type === 'file') {
       const movingNode = this.nodeService.getFileDTOByID(keyOfDragged);
-      if(movingNode.ParentFolderID === folder.FolderID) return;
+      if (movingNode.ParentFolderID === folder.FolderID) return;
       console.log('Folder:', folder);
       this.fileService
         .moveDocument(movingNode.MarkdownID, path, folder.FolderID)
@@ -880,6 +880,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     } else if (type === 'folder') {
       const movingNode = this.nodeService.getFolderDTOByID(keyOfDragged);
       if (movingNode.ParentFolderID === folder.FolderID) return;
+      //check if moving parent folder into some child folder
+      if (this.nodeService.checkIfChildFolder(folder, movingNode)) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Cannot move folder into child folder',
+          detail: '',
+        });
+        return;
+      }
       this.folderService
         .moveFolder(movingNode.FolderID, path, folder.FolderID)
         .then((data) => {
