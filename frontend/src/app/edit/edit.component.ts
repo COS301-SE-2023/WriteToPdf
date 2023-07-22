@@ -277,15 +277,15 @@ export class EditComponent implements AfterViewInit, OnInit {
     element.style.marginLeft = 'auto';
     if (this.sidebarVisible) {
       const leftPosition = this.getLeftPosition(element);
-      if (leftPosition < 270) {
+      if (leftPosition < 250) {
         element.style.marginLeft = '0';
-        element.style.marginLeft = `${(447 - this.getLeftPosition(element))}px`;
+        element.style.marginLeft = `${(270 - this.getLeftPosition(element))}px`;
       }
     } else {
       const leftPosition = this.getLeftPosition(element);
-      if (leftPosition < 0) {
+      if (leftPosition < -10) {
         element.style.marginLeft = '0';
-        element.style.marginLeft = `${(177 - this.getLeftPosition(element))}px`;
+        element.style.marginLeft = `${(20 - this.getLeftPosition(element))}px`;
       }
     }
   }
@@ -302,15 +302,15 @@ export class EditComponent implements AfterViewInit, OnInit {
     element.style.marginLeft = 'auto';
     if (this.sidebarVisible) {
       const leftPosition = this.getLeftPosition(element);
-      if (leftPosition < 270) {
+      if (leftPosition < 250) {
         element.style.marginLeft = '0';
-        element.style.marginLeft = `${(447 - this.getLeftPosition(element))}px`;
+        element.style.marginLeft = `${(270 - this.getLeftPosition(element))}px`;
       }
     } else {
       const leftPosition = this.getLeftPosition(element);
-      if (leftPosition < 0) {
+      if (leftPosition < -10) {
         element.style.marginLeft = '0';
-        element.style.marginLeft = `${(177 - this.getLeftPosition(element))}px`;
+        element.style.marginLeft = `${(20 - this.getLeftPosition(element))}px`;
       }
     }
   }
