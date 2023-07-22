@@ -322,31 +322,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
 
   //Functions for exporting from HTML
-  convertToPdf() {
-    console.log(this.editor.getData());
-    this.fileService.exportDocumentToNewFileType(
-      this.editService.getMarkdownID(),
-      this.editService.getName(),
-      `<body style="word-break: normal; font-family: Arial, Helvetica, sans-serif;">${this.editor.getData()}</body>`,
-      'pdf'
-    );
-  }
-
-  exportTextFile() {
-    let contents = this.editor.getData();
-    const markdownID = this.editService.getMarkdownID();
-    const name = this.editService.getName();
-    if (markdownID && name) {
-      this.fileService.exportDocumentToNewFileType(
-        markdownID,
-        name,
-        contents,
-        'txt'
-      );
-    }
-  }
-
-  exportHtmlFile() {
+  convertToFileType(fileType: string) {
     let contents = `<body style="word-break: normal; font-family: Arial, Helvetica, sans-serif;">${this.editor.getData()}</body>`;
     const markdownID = this.editService.getMarkdownID();
     const name = this.editService.getName();
@@ -355,10 +331,9 @@ export class EditComponent implements AfterViewInit, OnInit {
         markdownID,
         name,
         contents,
-        'html'
+        fileType
       );
     }
-
   }
 
 }

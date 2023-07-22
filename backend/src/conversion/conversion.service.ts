@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import puppeteer from 'puppeteer';
-import * as cheerio from 'cheerio';
+import puppeteer from 'puppeteer'; //PDF converter
+import * as cheerio from 'cheerio'; //Plain text converter
+import * as TurndownService from 'turndown'; //Markdown converter
 
 @Injectable()
 export class ConversionService {
+  private turndownService: TurndownService;
+  constructor() {
+    this.turndownService = new TurndownService();
+  }
   async generatePdf(html: string) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -34,5 +39,9 @@ export class ConversionService {
   generateTxt(html: string) {
     const $ = cheerio.load(html);
     return $.text();
+  }
+
+  generateMarkdown(html: string): string {
+    return this.turndownService.turndown(html);
   }
 }

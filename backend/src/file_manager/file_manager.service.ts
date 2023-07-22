@@ -500,11 +500,18 @@ export class FileManagerService {
       return pdfBuffer;
     } else if (exportDTO.Type === 'txt') {
       const txt =
-        await this.conversionService.generateTxt(
+        this.conversionService.generateTxt(
           exportDTO.Content,
         );
       const txtBuffer = Buffer.from(txt);
       return txtBuffer;
+    } else if (exportDTO.Type === 'md') {
+      const md =
+        this.conversionService.generateMarkdown(
+          exportDTO.Content,
+        );
+      const mdBuffer = Buffer.from(md);
+      return mdBuffer;
     } else {
       throw new HttpException(
         'Invalid export type',
