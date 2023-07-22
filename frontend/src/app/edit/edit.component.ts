@@ -49,37 +49,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     private messageService: MessageService
   ) { }
 
-  convertToPdf() {
-    // console.log(this.editor);
-    // const content = (this.editor.getData());
-    // const options = {
-    //   margin: 10,
-    //   filename: `${this.fileName}.pdf`,
-    //   image: { type: 'jpeg', quality: 0.98 },
-    //   html2canvas: { scale: 2, useCORS: true },
-    //   jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    // };
-
-    // html2pdf().from(content).set(options).save();
-    console.log(this.editor.getData());
-    this.fileService.exportDocumentToNewFileType(
-      this.editService.getMarkdownID(),
-      this.editService.getName(),
-      `<body style="word-wrap: break-word; word-break: break-all;">${this.editor.getData()}</body>`,
-      'pdf'
-    );
-  }
-
-  exportDocxFile() {
-    console.log(this.editor.getData());
-    this.fileService.exportDocumentToNewFileType(
-      this.editService.getMarkdownID(),
-      this.editService.getName(),
-      `<body style="word-wrap: break-word; word-break: break-all;">${this.editor.getData()}</body>`,
-      'docx'
-    )
-  }
-
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
       header: 'Upload Files',
@@ -255,20 +224,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.exportDialogVisible = true;
   }
 
-  exportTextFile() {
-    let contents = this.globalAreaReference.innerHTML;
-    const markdownID = this.editService.getMarkdownID();
-    const name = this.editService.getName();
-    if (markdownID && name) {
-      this.fileService.exportDocumentToNewFileType(
-        markdownID,
-        name,
-        contents,
-        'txt'
-      );
-    }
-  }
-
   async retrieveAsset(assetId: string, format: string) {
     const asset = await this.assetService.retrieveAsset(assetId, format);
     console.log(asset);
@@ -359,8 +314,36 @@ export class EditComponent implements AfterViewInit, OnInit {
       }
     }
   }
+
   getLeftPosition(element: HTMLElement): number {
     const rect = element.getBoundingClientRect();
     return rect.left;
   }
+
+
+  //Functions for exporting from HTML
+  convertToPdf() {
+    console.log(this.editor.getData());
+    this.fileService.exportDocumentToNewFileType(
+      this.editService.getMarkdownID(),
+      this.editService.getName(),
+      `<body style="word-wrap: break-word; word-break: break-all;">${this.editor.getData()}</body>`,
+      'pdf'
+    );
+  }
+
+  exportTextFile() {
+    let contents = this.globalAreaReference.innerHTML;
+    const markdownID = this.editService.getMarkdownID();
+    const name = this.editService.getName();
+    if (markdownID && name) {
+      this.fileService.exportDocumentToNewFileType(
+        markdownID,
+        name,
+        contents,
+        'txt'
+      );
+    }
+  }
+
 }

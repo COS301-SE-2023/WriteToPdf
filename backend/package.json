@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json --detectOpenHandles"
   },
   "dependencies": {
+    "@angular/platform-browser": "^16.1.6",
     "@aws-sdk/client-s3": "^3.350.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
@@ -29,6 +30,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^9.0.1",
     "@types/multer": "^1.4.7",
+    "cheerio": "^1.0.0-rc.12",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "crypto-js": "^4.1.1",

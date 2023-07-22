@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
+import * as cheerio from 'cheerio';
 
 @Injectable()
 export class ConversionService {
@@ -28,5 +29,10 @@ export class ConversionService {
 
     // Send the generated PDF as a response
     return pdf;
+  }
+
+  generateTxt(html: string) {
+    const $ = cheerio.load(html);
+    return $.text();
   }
 }
