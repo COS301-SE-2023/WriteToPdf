@@ -29,6 +29,4 @@ export class ConversionService {
     // Send the generated PDF as a response
     return pdf;
   }
-
-  async generateDocx(html: string) {}
 }

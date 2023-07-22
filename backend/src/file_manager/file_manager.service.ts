@@ -498,12 +498,6 @@ export class FileManagerService {
           exportDTO.Content,
         );
       return pdfBuffer;
-    } else if (exportDTO.Type === 'docx') {
-      const docxBuffer =
-        await this.conversionService.generateDocx(
-          exportDTO.Content,
-        );
-      return docxBuffer;
     } else {
       throw new HttpException(
         'Invalid export type',
