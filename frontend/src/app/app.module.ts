@@ -28,7 +28,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileUploadPopupComponent } from './file-upload-popup/file-upload-popup.component';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -46,6 +46,7 @@ import ImagePlugin from '@ckeditor/ckeditor5-image/src/image';
 import ImageUploadPlugin from '@ckeditor/ckeditor5-image/src/imageupload';
 import { ClickAtCoordinateDirective } from './click-at-coordinate.directive';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   declarations: [
@@ -92,8 +93,9 @@ import { CheckboxModule } from 'primeng/checkbox';
     ContextMenuModule,
     DragDropModule,
     CheckboxModule,
+    ConfirmDialogModule,
   ],
-  providers: [NodeService, UserService, MessageService, DialogService],
+  providers: [NodeService, UserService, MessageService, DialogService, ConfirmationService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

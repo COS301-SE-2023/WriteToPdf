@@ -19,6 +19,9 @@
         [(visible)]="moveDialogVisible"
         [style]="{ width: '50vw' }"
         header="Export File"
+        [focusOnShow]="true"
+        (keydown.enter)="moveEntity()"
+        (keydown.escape)="moveDialogVisible = false"
       >
         <div class="fileOperations">
           <p>
@@ -49,14 +52,18 @@
         [modal]="true"
         [style]="{ width: '50vw' }"
         header="Create Document"
+        [focusOnShow]="true"
+        (keydown.escape)="createNewDocumentDialogueVisible = false"
       >
         <div class="fileOperations">
           <p>Document Name:</p>
           <input
+            placeholder="Document Name"
             [(ngModel)]="entityName"
             label="Document Name: "
             pInputText
             type="text"
+            (keydown.enter)="createNewDocument()"
           />
           <br />
           <br />
@@ -71,19 +78,23 @@
         [modal]="true"
         [style]="{ width: '50vw' }"
         header="Create Folder"
+        [focusOnShow]="true"
+        (keydown.escape)="createNewFolderDialogueVisible = false"
       >
         <div class="fileOperations">
           <p class="fileOperations-entity">Folder Name:</p>
           <input
+          placeholder="Folder Name"
             class="fileOperations-entity"
             [(ngModel)]="entityName"
             label="Folder Name: "
             pInputText
             type="text"
+            (keydown.enter)="createNewFolder()"
           />
           <br />
           <br />
-          <p-button (click)="newFolder()" label="Create"></p-button>
+          <p-button (click)="createNewFolder()" label="Create"></p-button>
         </div>
       </p-dialog>
     </div>
@@ -93,16 +104,19 @@
     <div class="leftSideBarHeading">{{ getUserFirstName() }}'s Projects</div>
     <div class="leftSideBarTools">
       <img
+        alt="New Folder"
         (click)="createNewFolderDialogueVisible = true"
         class="icon"
         src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png"
       />
       <img
-        (click)="navigateToPage('edit')"
+        alt="New Document"
+        (click)="createNewDocumentDialogueVisible = true"
         class="icon newDoc"
         src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png"
       />
       <img
+        alt="New Scan"
         (click)="navigateToPage('camera')"
         class="icon"
         src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png"
@@ -153,7 +167,7 @@
       </p-toolbar>
     </div>
     <div class="searchBar">
-      <img src="assets/Icons/homeIcons/mainWindow/searchIcon.png" />
+      <img alt="searchIcon" src="assets/Icons/homeIcons/mainWindow/searchIcon.png" />
       <input
         (input)="filterTable($event, 0)"
         class="search-input"
@@ -217,6 +231,7 @@
                 <div class="p-2 w-15rem h-10rem drop-column">
                   <ng-template pTemplate="input">
                     <input
+                      placeholder="File Name"
                       (focus)="valueBeforeEdit = rowData[col.field]"
                       (focusout)="
                         onRowLabelEdit(
@@ -264,4 +279,6 @@
     appendTo="parent"
   ></p-contextMenu>
   <!-- file-upload-popup.component.html -->
+  <p-confirmDialog [style]="{width: '50vw', minWidth:'300px'}"></p-confirmDialog>
+
 </div>

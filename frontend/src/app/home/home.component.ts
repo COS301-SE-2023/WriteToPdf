@@ -9,7 +9,7 @@ import {
 import { Router } from '@angular/router';
 import { TreeTable } from 'primeng/treetable';
 
-import { MenuItem, MessageService, TreeNode } from 'primeng/api';
+import { MenuItem, MessageService, TreeNode, ConfirmationService, ConfirmEventType } from 'primeng/api';
 import { NodeService } from '../services/home.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
@@ -89,7 +89,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private editService: EditService,
     private folderService: FolderService,
     private renderer: Renderer2,
-    private coordinateService: CoordinateService
+    private coordinateService: CoordinateService,
+    private confirmationService: ConfirmationService,
   ) {
     this.contextMenuItems = [
       {
@@ -593,7 +594,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             icon: 'pi pi-fw pi-trash',
             command: () => {
               if (this.currentDirectory != null)
-                this.delete(this.currentDirectory);
+                this.deleteSelectedEntity(this.currentDirectory);
               else {
                 this.messageService.add({
                   severity: 'warn',
@@ -642,7 +643,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return this.userService.getFirstName();
   }
 
-  async newFolder() {
+  async createNewFolder() {
     let path: string | undefined = '';
     let parentFolderID: string | undefined = '';
     if (this.entityName == '') {
@@ -774,7 +775,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   deleteSelectedEntity(event: any): void {
-    if (this.currentDirectory != null) this.delete(this.currentDirectory);
+    if (this.currentDirectory != null){
+      let message = `Are you sure that you want to delete '${this.currentDirectory.data.name}'?`;
+      if(this.currentDirectory.data.type === 'folder'){
+        message = `Are you sure that you want to delete '${this.currentDirectory.data.name}' and all of its contents?`;
+      }
+      this.confirmationService.confirm({
+        message: message,
+        header: 'Delete Confirmation',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          this.delete(this.currentDirectory);
+        },
+        reject: () => {
+
+        }
+      });
+    }
   }
 
   openFileDoubleClick() {
