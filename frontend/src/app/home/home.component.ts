@@ -700,38 +700,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   moveEntity() {
-    const destinationFolder = this.nodeService.getFolderDTOByID(
-      this.currentDirectory.key
-    );
-    let path: string | undefined =
-      destinationFolder.Path + `/${destinationFolder.FolderName}`;
-    if (destinationFolder.Path === '') {
-      path = destinationFolder.FolderName;
-    }
-
-    if (this.entityToMove.data.type === 'folder') {
-      this.folderService
-        .moveFolder(this.entityToMove.key, path, destinationFolder.FolderID)
-        .then((data) => {
-          this.nodeService.removeFolder(this.entityToMove.key);
-          data.FolderName = this.entityToMove.data.name;
-
-          this.nodeService.addFolder(data);
-          this.refreshTree();
-          this.moveDialogVisible = false;
-        });
-    } else {
-      this.fileService
-        .moveDocument(this.entityToMove.key, path, destinationFolder.FolderID)
-        .then((data) => {
-          this.nodeService.removeFile(this.entityToMove.key);
-          data.Name = this.entityToMove.data.name;
-          data.Size = this.entityToMove.data.size;
-          this.nodeService.addFile(data);
-          this.refreshTree();
-          this.moveDialogVisible = false;
-        });
-    }
+    this.moveByKey(this.entityToMove.data.key, this.currentDirectory.key);
+    this.moveDialogVisible = false;
   }
 
   async createNewDocument() {
@@ -896,6 +866,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const type = this.nodeService.checkType(keyOfDragged);
     if (type === 'file') {
       const movingNode = this.nodeService.getFileDTOByID(keyOfDragged);
+      if(movingNode.ParentFolderID === folder.FolderID) return;
       console.log('Folder:', folder);
       this.fileService
         .moveDocument(movingNode.MarkdownID, path, folder.FolderID)
@@ -908,7 +879,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         });
     } else if (type === 'folder') {
       const movingNode = this.nodeService.getFolderDTOByID(keyOfDragged);
-
+      if (movingNode.ParentFolderID === folder.FolderID) return;
       this.folderService
         .moveFolder(movingNode.FolderID, path, folder.FolderID)
         .then((data) => {
