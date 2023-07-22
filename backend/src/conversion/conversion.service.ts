@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer'; //PDF converter
 import * as cheerio from 'cheerio'; //Plain text converter
 import * as TurndownService from 'turndown'; //Markdown converter
+import * as sharp from 'sharp'; //jpeg converter
 
 @Injectable()
 export class ConversionService {
@@ -43,5 +44,32 @@ export class ConversionService {
 
   generateMarkdown(html: string): string {
     return this.turndownService.turndown(html);
+  }
+
+  async generateJpeg(
+    html: string,
+  ): Promise<Buffer> {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(html);
+    const screenshot = await page.screenshot();
+    await browser.close();
+
+    const jpegImage = await sharp(screenshot)
+      .toFormat('jpeg')
+      .toBuffer();
+    return jpegImage;
+  }
+
+  async generatePng(
+    html: string,
+  ): Promise<Buffer> {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(html);
+    const screenshot = await page.screenshot();
+    await browser.close();
+
+    return screenshot;
   }
 }

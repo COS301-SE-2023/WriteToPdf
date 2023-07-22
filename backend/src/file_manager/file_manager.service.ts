@@ -512,6 +512,18 @@ export class FileManagerService {
         );
       const mdBuffer = Buffer.from(md);
       return mdBuffer;
+    } else if (exportDTO.Type === 'jpeg') {
+      const jpegBuffer =
+        await this.conversionService.generateJpeg(
+          exportDTO.Content,
+        );
+      return jpegBuffer;
+    } else if (exportDTO.Type === 'png') {
+      const pngBuffer =
+        await this.conversionService.generatePng(
+          exportDTO.Content,
+        );
+      return pngBuffer;
     } else {
       throw new HttpException(
         'Invalid export type',
