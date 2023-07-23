@@ -50,44 +50,55 @@ export class TextractService {
     region: this.awsS3BucketRegion,
   });
 
+  extraction = null;
+
   async _extractDocumentAsynchronous(
     markdownFileDTO: MarkdownFileDTO,
     extractType: string,
   ) {
-    const input = {
-      DocumentLocation: {
-        S3Object: {
-          Bucket: this.awsS3BucketName,
-          Name: markdownFileDTO.Name,
-        },
-      },
-      NotificationChannel: {
-        SNSTopicArn: this.snsTopicArn,
-        RoleArn: this.roleArn,
-      },
-    };
-
-    let command;
+    let textCommand: StartDocumentTextDetectionCommand;
+    let tableCommand: StartDocumentAnalysisCommand;
     if (extractType === 'text') {
-      command =
-        new StartDocumentTextDetectionCommand(
-          input,
-        );
+      textCommand =
+        new StartDocumentTextDetectionCommand({
+          DocumentLocation: {
+            S3Object: {
+              Bucket: this.awsS3BucketName,
+              Name: markdownFileDTO.Name,
+            },
+          },
+          NotificationChannel: {
+            SNSTopicArn: this.snsTopicArn,
+            RoleArn: this.roleArn,
+          },
+        });
     } else {
-      input['FeatureTypes'] = [
-        FeatureType.TABLES,
-      ];
-      command = new StartDocumentAnalysisCommand(
-        input,
-      );
+      tableCommand =
+        new StartDocumentAnalysisCommand({
+          DocumentLocation: {
+            S3Object: {
+              Bucket: this.awsS3BucketName,
+              Name: markdownFileDTO.Name,
+            },
+          },
+          NotificationChannel: {
+            SNSTopicArn: this.snsTopicArn,
+            RoleArn: this.roleArn,
+          },
+          FeatureTypes: [FeatureType.TABLES],
+        });
     }
 
     const { JobId: jobId } =
-      await this.textractClient.send(command);
+      await this.textractClient.send(
+        extractType === 'text'
+          ? textCommand
+          : tableCommand,
+      );
     console.log(`JobId: ${jobId}`);
 
     let waitTime = 0;
-    const getJob = async () => {
+    const getJob = async (jobId) => {
       const { Messages } =
         await this.sqsClient.send(
           new ReceiveMessageCommand({
@@ -111,29 +122,31 @@ export class TextractService {
             JSON.parse(Messages[0].Body).Message,
           ).Status === JobStatus.SUCCEEDED
         ) {
-          let getCommand;
+          let getTextCommand: GetDocumentTextDetectionCommand;
+          let getTableCommand: GetDocumentAnalysisCommand;
           if (extractType === 'text') {
-            getCommand =
+            getTextCommand =
               new GetDocumentTextDetectionCommand(
                 { JobId: jobId },
               );
           } else {
-            getCommand =
+            getTableCommand =
               new GetDocumentAnalysisCommand({
                 JobId: jobId,
               });
           }
           const { Blocks } =
             await this.textractClient.send(
-              getCommand,
+              extractType === 'text'
+                ? getTextCommand
+                : getTableCommand,
             );
           this.extraction = {
-            Name: this.imageData.objectKey,
+            Name: markdownFileDTO.Name,
             ExtractType: extractType,
-            Children:
-              this._make_page_hierarchy(Blocks),
+            Extracted: Blocks,
           };
-          this.inform();
+          // this.inform();
         }
       } else {
         const tick = 5000;
