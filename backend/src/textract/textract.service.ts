@@ -54,116 +54,122 @@ export class TextractService {
 
   extraction = null;
 
-  // async _extractDocumentAsynchronous(
-  //   markdownFileDTO: MarkdownFileDTO,
-  //   extractType: string,
-  // ) {
-  //   console.log(markdownFileDTO);
-  //   let textCommand: StartDocumentTextDetectionCommand;
-  //   let tableCommand: StartDocumentAnalysisCommand;
-  //   if (extractType === 'text') {
-  //     textCommand =
-  //       new StartDocumentTextDetectionCommand({
-  //         DocumentLocation: {
-  //           S3Object: {
-  //             Bucket: this.awsS3BucketName,
-  //             Name: markdownFileDTO.MarkdownID,
-  //           },
-  //         },
-  //         NotificationChannel: {
-  //           SNSTopicArn: this.snsTopicArn,
-  //           RoleArn: this.roleArn,
-  //         },
-  //       });
-  //   } else {
-  //     tableCommand =
-  //       new StartDocumentAnalysisCommand({
-  //         DocumentLocation: {
-  //           S3Object: {
-  //             Bucket: this.awsS3BucketName,
-  //             Name: markdownFileDTO.MarkdownID,
-  //           },
-  //         },
-  //         NotificationChannel: {
-  //           SNSTopicArn: this.snsTopicArn,
-  //           RoleArn: this.roleArn,
-  //         },
-  //         FeatureTypes: [FeatureType.TABLES],
-  //       });
-  //   }
+  async _extractDocumentAsynchronous(
+    markdownFileDTO: MarkdownFileDTO,
+    extractType: string,
+  ) {
+    console.log(markdownFileDTO);
+    let textCommand: StartDocumentTextDetectionCommand;
+    let tableCommand: StartDocumentAnalysisCommand;
+    if (extractType === 'text') {
+      textCommand =
+        new StartDocumentTextDetectionCommand({
+          DocumentLocation: {
+            S3Object: {
+              Bucket: this.awsS3BucketName,
+              Name: markdownFileDTO.MarkdownID,
+            },
+          },
+          NotificationChannel: {
+            SNSTopicArn: this.snsTopicArn,
+            RoleArn: this.roleArn,
+          },
+        });
+    } else {
+      tableCommand =
+        new StartDocumentAnalysisCommand({
+          DocumentLocation: {
+            S3Object: {
+              Bucket: this.awsS3BucketName,
+              Name: markdownFileDTO.MarkdownID,
+            },
+          },
+          NotificationChannel: {
+            SNSTopicArn: this.snsTopicArn,
+            RoleArn: this.roleArn,
+          },
+          FeatureTypes: [FeatureType.TABLES],
+        });
+    }
 
-  //   const { JobId: jobId } =
-  //     await this.textractClient.send(
-  //       extractType === 'text'
-  //         ? textCommand
-  //         : tableCommand,
-  //     );
-  //   console.log(`JobId: ${jobId}`);
+    const { JobId: jobId } =
+      await this.textractClient.send(
+        extractType === 'text'
+          ? textCommand
+          : tableCommand,
+      );
+    console.log(`JobId: ${jobId}`);
 
-  //   let waitTime = 0;
-  //   const getJob = async (jobId) => {
-  //     const { Messages } =
-  //       await this.sqsClient.send(
-  //         new ReceiveMessageCommand({
-  //           QueueUrl: this.queueUrl,
-  //           MaxNumberOfMessages: 1,
-  //         }),
-  //       );
-  //     if (Messages) {
-  //       console.log(
-  //         `Message[0]: ${Messages[0].Body}`,
-  //       );
-  //       await this.sqsClient.send(
-  //         new DeleteMessageCommand({
-  //           QueueUrl: this.queueUrl,
-  //           ReceiptHandle:
-  //             Messages[0].ReceiptHandle,
-  //         }),
-  //       );
-  //       if (
-  //         JSON.parse(
-  //           JSON.parse(Messages[0].Body).Message,
-  //         ).Status === JobStatus.SUCCEEDED
-  //       ) {
-  //         let getTextCommand: GetDocumentTextDetectionCommand;
-  //         let getTableCommand: GetDocumentAnalysisCommand;
-  //         if (extractType === 'text') {
-  //           getTextCommand =
-  //             new GetDocumentTextDetectionCommand(
-  //               { JobId: jobId },
-  //             );
-  //         } else {
-  //           getTableCommand =
-  //             new GetDocumentAnalysisCommand({
-  //               JobId: jobId,
-  //             });
-  //         }
-  //         const { Blocks } =
-  //           await this.textractClient.send(
-  //             extractType === 'text'
-  //               ? getTextCommand
-  //               : getTableCommand,
-  //           );
-  //         this.extraction = {
-  //           Name: markdownFileDTO.MarkdownID,
-  //           ExtractType: extractType,
-  //           Extracted: Blocks,
-  //         };
-  //         return this.extraction;
-  //       }
-  //     } else {
-  //       const tick = 5000;
-  //       waitTime += tick;
-  //       console.log(
-  //         `Waited ${
-  //           waitTime / 1000
-  //         } seconds. No messages yet.`,
-  //       );
-  //       setTimeout(getJob, tick);
-  //     }
-  //   };
-  //   await getJob(jobId);
-  // }
+    let waitTime = 0;
+    const getJob = async (jobId: string) => {
+      const { Messages } =
+        await this.sqsClient.send(
+          new ReceiveMessageCommand({
+            QueueUrl: this.queueUrl,
+            MaxNumberOfMessages: 1,
+          }),
+        );
+      if (Messages) {
+        console.log(
+          `Message[0]: ${Messages[0].Body}`,
+        );
+        await this.sqsClient.send(
+          new DeleteMessageCommand({
+            QueueUrl: this.queueUrl,
+            ReceiptHandle:
+              Messages[0].ReceiptHandle,
+          }),
+        );
+        if (
+          JSON.parse(
+            JSON.parse(Messages[0].Body).Message,
+          ).Status === JobStatus.SUCCEEDED
+        ) {
+          let getTextCommand: GetDocumentTextDetectionCommand;
+          let getTableCommand: GetDocumentAnalysisCommand;
+          if (extractType === 'text') {
+            getTextCommand =
+              new GetDocumentTextDetectionCommand(
+                { JobId: jobId },
+              );
+          } else {
+            getTableCommand =
+              new GetDocumentAnalysisCommand({
+                JobId: jobId,
+              });
+          }
+          const { Blocks } =
+            await this.textractClient.send(
+              extractType === 'text'
+                ? getTextCommand
+                : getTableCommand,
+            );
+          this.extraction = {
+            Name: markdownFileDTO.MarkdownID,
+            ExtractType: extractType,
+            Extracted: Blocks,
+          };
+
+          // if (waitTime > 20000) {
+          //   return;
+          // }
+
+          console.log(this.extraction);
+        }
+      } else {
+        const tick = 5000;
+        waitTime += tick;
+        console.log(
+          `Waited ${
+            waitTime / 1000
+          } seconds. No messages yet.`,
+        );
+        setTimeout(getJob, tick);
+      }
+    };
+    await getJob(jobId);
+    return this.extraction;
+  }
 
   async _extractDocumentSynchronous(
     markdownFileDTO: MarkdownFileDTO,
@@ -203,13 +209,14 @@ export class TextractService {
     this.extraction = {
       Name: markdownFileDTO.MarkdownID,
       ExtractType: extractType,
-      Children: this._make_page_hierarchy(
-        textractResponse['Blocks'],
-      ),
+      // Children: this._make_page_hierarchy(
+      //   textractResponse['Blocks'],
+      // ),
+      Children: textractResponse,
     };
     console.log(textractResponse);
 
-    return this.extraction;
+    return textractResponse;
   }
 
   _add_children(block, block_dict) {
@@ -240,5 +247,44 @@ export class TextractService {
       }
     });
     return pages;
+  }
+
+  async test_get(jobId: string) {
+    const retVal = await this.textractClient.send(
+      new GetDocumentAnalysisCommand({
+        JobId:
+          '3e8eb41e481cced553bd49108cbf3ec02b6397acfec80b5281118c022ddd91a4',
+      }),
+    );
+
+    return retVal;
+  }
+
+  async test_msg() {
+    const { Messages } =
+      await this.sqsClient.send(
+        new ReceiveMessageCommand({
+          QueueUrl: this.queueUrl,
+          MaxNumberOfMessages: 10,
+        }),
+      );
+
+    return Messages;
+  }
+
+  async test_del() {
+    const { Messages } =
+      await this.sqsClient.send(
+        new ReceiveMessageCommand({
+          QueueUrl: this.queueUrl,
+          MaxNumberOfMessages: 10,
+        }),
+      );
+    await this.sqsClient.send(
+      new DeleteMessageCommand({
+        QueueUrl: this.queueUrl,
+        ReceiptHandle: Messages[0].ReceiptHandle,
+      }),
+    );
   }
 }
