@@ -27,6 +27,8 @@ import { Folder } from './folders/entities/folder.entity';
 import { S3Service } from './s3/s3.service';
 import { ConversionService } from './conversion/conversion.service';
 import { User } from './users/entities/user.entity';
+import { TextractController } from './textract/textract.controller';
+import { TextractModule } from './textract/textract.module';
 
 @Module({
   imports: [
@@ -43,6 +45,7 @@ import { User } from './users/entities/user.entity';
     FoldersModule,
     S3Module,
     FileManagerModule,
+    TextractModule,
   ],
   controllers: [
     AppController,
@@ -50,6 +53,7 @@ import { User } from './users/entities/user.entity';
     EditController,
     S3Controller,
     FileManagerController,
+    TextractController,
   ],
   providers: [
     AppService,
