@@ -176,11 +176,8 @@ export class TextractService {
         {
           Document: {
             S3Object: {
-              Bucket:
-                'writetopdfs3stack-writetopdfappbucketfc6d0172-1rmwa22kdzix8',
-              // Bucket: this.awsS3BucketName,
-              Name: 'IMG_3601.jpeg',
-              // Name: markdownFileDTO.MarkdownID,
+              Bucket: this.awsS3BucketName,
+              Name: markdownFileDTO.MarkdownID,
             },
           },
         },
@@ -189,11 +186,8 @@ export class TextractService {
       tableCommand = new AnalyzeDocumentCommand({
         Document: {
           S3Object: {
-            Bucket:
-              'writetopdfs3stack-writetopdfappbucketfc6d0172-1rmwa22kdzix8',
-            // Bucket: this.awsS3BucketName,
-            Name: 'IMG_3601.jpeg',
-            // Name: markdownFileDTO.MarkdownID,
+            Bucket: this.awsS3BucketName,
+            Name: markdownFileDTO.MarkdownID,
           },
         },
         FeatureTypes: [FeatureType.TABLES],
@@ -209,10 +203,42 @@ export class TextractService {
     this.extraction = {
       Name: markdownFileDTO.MarkdownID,
       ExtractType: extractType,
-      Children: textractResponse,
+      Children: this._make_page_hierarchy(
+        textractResponse['Blocks'],
+      ),
     };
-    console.log(textractResponse['Blocks']);
+    console.log(textractResponse);
 
-    return textractResponse;
+    return this.extraction;
+  }
+
+  _add_children(block, block_dict) {
+    const rels_list = block.Relationships || [];
+    rels_list.forEach((rels) => {
+      if (rels.Type === 'CHILD') {
+        block['Children'] = [];
+        rels.Ids.forEach((relId) => {
+          const kid = block_dict[relId];
+          block['Children'].push(kid);
+          this._add_children(kid, block_dict);
+        });
+      }
+    });
+  }
+
+  _make_page_hierarchy(blocks) {
+    const block_dict = {};
+    blocks.forEach(
+      (block) => (block_dict[block.Id] = block),
+    );
+
+    const pages = [];
+    blocks.forEach((block) => {
+      if (block.BlockType === 'PAGE') {
+        pages.push(block);
+        this._add_children(block, block_dict);
+      }
+    });
+    return pages;
   }
 }
