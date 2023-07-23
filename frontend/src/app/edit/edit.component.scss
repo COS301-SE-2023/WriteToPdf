@@ -163,8 +163,9 @@ $page-height: 29.7cm;
     width: 261px;
     background-color: #ffffff;
     border-right: 1px solid #c7c7c7;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
+    z-index: 1;
 }
 
 .pageName {

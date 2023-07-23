@@ -200,9 +200,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       }
     }
 
-    // setTimeout(() => {
-    //   this.hideSideBar();
-    // },3000);
+    this.reCenterPage();
   }
 
   renameDocument() {
@@ -275,19 +273,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     element.style.transform = `scale(${this.currentZoom})`;
     element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
     element.style.marginLeft = 'auto';
-    if (this.sidebarVisible) {
-      const leftPosition = this.getLeftPosition(element);
-      if (leftPosition < 250) {
-        element.style.marginLeft = '0';
-        element.style.marginLeft = `${(270 - this.getLeftPosition(element))}px`;
-      }
-    } else {
-      const leftPosition = this.getLeftPosition(element);
-      if (leftPosition < -10) {
-        element.style.marginLeft = '0';
-        element.style.marginLeft = `${(20 - this.getLeftPosition(element))}px`;
-      }
-    }
+    this.reCenterPage();
   }
 
   zoomOut() {
@@ -299,6 +285,13 @@ export class EditComponent implements AfterViewInit, OnInit {
     )[0] as HTMLElement;
     element.style.transform = `scale(${this.currentZoom})`;
     element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
+    this.reCenterPage();
+  }
+
+  reCenterPage() {
+    const element = document.getElementsByClassName(
+      'center-page'
+    )[0] as HTMLElement;
     element.style.marginLeft = 'auto';
     if (this.sidebarVisible) {
       const leftPosition = this.getLeftPosition(element);
