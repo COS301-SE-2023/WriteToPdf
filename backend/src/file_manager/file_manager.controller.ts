@@ -394,32 +394,32 @@ export class FileManagerController {
   //   );
   // }
 
-  // @Post('export')
-  // @HttpCode(HttpStatus.OK)
-  // export(
-  //   @Body()
-  //   exportDTO: ExportDTO,
-  //   @Req() request: Request,
-  // ) {
-  //   if (request.method !== 'POST') {
-  //     throw new HttpException(
-  //       'Method Not Allowed',
-  //       HttpStatus.METHOD_NOT_ALLOWED,
-  //     );
-  //   }
+  @Post('export')
+  @HttpCode(HttpStatus.OK)
+  export(
+    @Body()
+    exportDTO: ExportDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
 
-  //   if (
-  //     !exportDTO.UserID ||
-  //     !exportDTO.Type ||
-  //     !exportDTO.MarkdownID
-  //   )
-  //     throw new HttpException(
-  //       'Invalid request data',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
+    if (
+      !exportDTO.UserID ||
+      !exportDTO.Type ||
+      !exportDTO.MarkdownID
+    )
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
 
-  //   return this.fileManagerService.exportFile(
-  //     exportDTO,
-  //   );
-  // }
+    return this.fileManagerService.exportFile(
+      exportDTO,
+    );
+  }
 }

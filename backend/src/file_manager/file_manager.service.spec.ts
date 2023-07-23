@@ -15,7 +15,7 @@ import { testingModule } from '../test-utils/testingModule';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
 // import { ImportDTO } from './dto/import.dto';
-// import { ConversionService } from '../conversion/conversion.service';
+import { ConversionService } from '../conversion/conversion.service';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
@@ -24,7 +24,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
-// import { ExportDTO } from './dto/export.dto';
+import { ExportDTO } from './dto/export.dto';
 import { UsersService } from '../users/users.service';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
@@ -64,7 +64,7 @@ describe('FileManagerService', () => {
           FoldersService,
           MarkdownFilesService,
           S3Service,
-          // ConversionService,
+          ConversionService,
           UsersService,
           AuthService,
           JwtService,

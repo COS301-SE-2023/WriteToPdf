@@ -57,7 +57,7 @@ import { ConversionService } from './conversion/conversion.service';
     MarkdownFilesService,
     FoldersService,
     S3Service,
-    // ConversionService,
+    ConversionService,
   ],
 })
 export class AppModule {}

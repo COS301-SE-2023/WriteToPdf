@@ -12,7 +12,7 @@ import {
 } from 'fs/promises';
 import * as CryptoJS from 'crypto-js';
 import { SHA256 } from 'crypto-js';
-import { AssetDTO } from 'src/assets/dto/asset.dto';
+import { AssetDTO } from '../assets/dto/asset.dto';
 
 @Injectable()
 export class S3Service {
