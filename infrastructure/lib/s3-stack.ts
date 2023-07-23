@@ -1,5 +1,5 @@
 import { App, CfnOutput, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
-import { PolicyStatement, User } from "aws-cdk-lib/aws-iam";
+import { PolicyStatement, ServicePrincipal, User } from "aws-cdk-lib/aws-iam";
 import { Bucket, BucketAccessControl } from "aws-cdk-lib/aws-s3";
 
 export class S3Stack extends Stack {
@@ -13,6 +13,9 @@ export class S3Stack extends Stack {
       // blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
       accessControl: BucketAccessControl.BUCKET_OWNER_FULL_CONTROL,
     });
+
+    let textract = new ServicePrincipal("textract.amazonaws.com");
+    bucket.grantReadWrite(textract);
 
     const user = new User(this, "MyIAMUser", {
       userName: "writetopdf-webapp-test",
