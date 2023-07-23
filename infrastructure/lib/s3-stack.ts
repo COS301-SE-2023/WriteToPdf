@@ -49,6 +49,12 @@ export class S3Stack extends Stack {
 
     user.addToPolicy(policy);
 
+    new CfnOutput(this, "TopicArn", { value: topic.topicArn });
+
+    new CfnOutput(this, "RoleArn", { value: role.roleArn });
+
+    new CfnOutput(this, "QueueUrl", { value: queue.queueUrl });
+
     new CfnOutput(this, "S3BucketName", {
       value: bucket.bucketName,
     });
@@ -56,11 +62,5 @@ export class S3Stack extends Stack {
     new CfnOutput(this, "S3BucketRegion", {
       value: bucket.bucketRegionalDomainName,
     });
-
-    new CfnOutput(this, "TopicArn", { value: topic.topicArn });
-
-    new CfnOutput(this, "RoleArn", { value: role.roleArn });
-
-    new CfnOutput(this, "QueueUrl", { value: queue.queueUrl });
   }
 }

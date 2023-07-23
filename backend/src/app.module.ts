@@ -29,6 +29,7 @@ import { ConversionService } from './conversion/conversion.service';
 import { User } from './users/entities/user.entity';
 import { TextractController } from './textract/textract.controller';
 import { TextractModule } from './textract/textract.module';
+import { TextractService } from './textract/textract.service';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { TextractModule } from './textract/textract.module';
     FoldersService,
     S3Service,
     ConversionService,
+    TextractService,
   ],
 })
 export class AppModule {}

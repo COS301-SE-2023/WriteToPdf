@@ -52,7 +52,118 @@ export class TextractService {
 
   extraction = null;
 
-  async _extractDocumentAsynchronous(
+  // async _extractDocumentAsynchronous(
+  //   markdownFileDTO: MarkdownFileDTO,
+  //   extractType: string,
+  // ) {
+  //   console.log(markdownFileDTO);
+  //   let textCommand: StartDocumentTextDetectionCommand;
+  //   let tableCommand: StartDocumentAnalysisCommand;
+  //   if (extractType === 'text') {
+  //     textCommand =
+  //       new StartDocumentTextDetectionCommand({
+  //         DocumentLocation: {
+  //           S3Object: {
+  //             Bucket: this.awsS3BucketName,
+  //             Name: markdownFileDTO.MarkdownID,
+  //           },
+  //         },
+  //         NotificationChannel: {
+  //           SNSTopicArn: this.snsTopicArn,
+  //           RoleArn: this.roleArn,
+  //         },
+  //       });
+  //   } else {
+  //     tableCommand =
+  //       new StartDocumentAnalysisCommand({
+  //         DocumentLocation: {
+  //           S3Object: {
+  //             Bucket: this.awsS3BucketName,
+  //             Name: markdownFileDTO.MarkdownID,
+  //           },
+  //         },
+  //         NotificationChannel: {
+  //           SNSTopicArn: this.snsTopicArn,
+  //           RoleArn: this.roleArn,
+  //         },
+  //         FeatureTypes: [FeatureType.TABLES],
+  //       });
+  //   }
+
+  //   const { JobId: jobId } =
+  //     await this.textractClient.send(
+  //       extractType === 'text'
+  //         ? textCommand
+  //         : tableCommand,
+  //     );
+  //   console.log(`JobId: ${jobId}`);
+
+  //   let waitTime = 0;
+  //   const getJob = async (jobId) => {
+  //     const { Messages } =
+  //       await this.sqsClient.send(
+  //         new ReceiveMessageCommand({
+  //           QueueUrl: this.queueUrl,
+  //           MaxNumberOfMessages: 1,
+  //         }),
+  //       );
+  //     if (Messages) {
+  //       console.log(
+  //         `Message[0]: ${Messages[0].Body}`,
+  //       );
+  //       await this.sqsClient.send(
+  //         new DeleteMessageCommand({
+  //           QueueUrl: this.queueUrl,
+  //           ReceiptHandle:
+  //             Messages[0].ReceiptHandle,
+  //         }),
+  //       );
+  //       if (
+  //         JSON.parse(
+  //           JSON.parse(Messages[0].Body).Message,
+  //         ).Status === JobStatus.SUCCEEDED
+  //       ) {
+  //         let getTextCommand: GetDocumentTextDetectionCommand;
+  //         let getTableCommand: GetDocumentAnalysisCommand;
+  //         if (extractType === 'text') {
+  //           getTextCommand =
+  //             new GetDocumentTextDetectionCommand(
+  //               { JobId: jobId },
+  //             );
+  //         } else {
+  //           getTableCommand =
+  //             new GetDocumentAnalysisCommand({
+  //               JobId: jobId,
+  //             });
+  //         }
+  //         const { Blocks } =
+  //           await this.textractClient.send(
+  //             extractType === 'text'
+  //               ? getTextCommand
+  //               : getTableCommand,
+  //           );
+  //         this.extraction = {
+  //           Name: markdownFileDTO.MarkdownID,
+  //           ExtractType: extractType,
+  //           Extracted: Blocks,
+  //         };
+  //         return this.extraction;
+  //       }
+  //     } else {
+  //       const tick = 5000;
+  //       waitTime += tick;
+  //       console.log(
+  //         `Waited ${
+  //           waitTime / 1000
+  //         } seconds. No messages yet.`,
+  //       );
+  //       setTimeout(getJob, tick);
+  //     }
+  //   };
+  //   await getJob(jobId);
+  // }
+
+  async _extractDocumentSynchronous(
     markdownFileDTO: MarkdownFileDTO,
     extractType: string,
   ) {
@@ -64,7 +175,7 @@ export class TextractService {
           DocumentLocation: {
             S3Object: {
               Bucket: this.awsS3BucketName,
-              Name: markdownFileDTO.Name,
+              Name: markdownFileDTO.MarkdownID,
             },
           },
           NotificationChannel: {
@@ -78,7 +189,7 @@ export class TextractService {
           DocumentLocation: {
             S3Object: {
               Bucket: this.awsS3BucketName,
-              Name: markdownFileDTO.Name,
+              Name: markdownFileDTO.MarkdownID,
             },
           },
           NotificationChannel: {
@@ -88,77 +199,20 @@ export class TextractService {
           FeatureTypes: [FeatureType.TABLES],
         });
     }
-
-    const { JobId: jobId } =
+    const textractResponse =
       await this.textractClient.send(
         extractType === 'text'
           ? textCommand
           : tableCommand,
       );
-    console.log(`JobId: ${jobId}`);
 
-    let waitTime = 0;
-    const getJob = async (jobId) => {
-      const { Messages } =
-        await this.sqsClient.send(
-          new ReceiveMessageCommand({
-            QueueUrl: this.queueUrl,
-            MaxNumberOfMessages: 1,
-          }),
-        );
-      if (Messages) {
-        console.log(
-          `Message[0]: ${Messages[0].Body}`,
-        );
-        await this.sqsClient.send(
-          new DeleteMessageCommand({
-            QueueUrl: this.queueUrl,
-            ReceiptHandle:
-              Messages[0].ReceiptHandle,
-          }),
-        );
-        if (
-          JSON.parse(
-            JSON.parse(Messages[0].Body).Message,
-          ).Status === JobStatus.SUCCEEDED
-        ) {
-          let getTextCommand: GetDocumentTextDetectionCommand;
-          let getTableCommand: GetDocumentAnalysisCommand;
-          if (extractType === 'text') {
-            getTextCommand =
-              new GetDocumentTextDetectionCommand(
-                { JobId: jobId },
-              );
-          } else {
-            getTableCommand =
-              new GetDocumentAnalysisCommand({
-                JobId: jobId,
-              });
-          }
-          const { Blocks } =
-            await this.textractClient.send(
-              extractType === 'text'
-                ? getTextCommand
-                : getTableCommand,
-            );
-          this.extraction = {
-            Name: markdownFileDTO.Name,
-            ExtractType: extractType,
-            Extracted: Blocks,
-          };
-          // this.inform();
-        }
-      } else {
-        const tick = 5000;
-        waitTime += tick;
-        console.log(
-          `Waited ${
-            waitTime / 1000
-          } seconds. No messages yet.`,
-        );
-        setTimeout(getJob, tick);
-      }
+    this.extraction = {
+      Name: markdownFileDTO.MarkdownID,
+      ExtractType: extractType,
+      Children: textractResponse,
     };
-    await getJob(jobId);
+    console.log(textractResponse);
+
+    return textractResponse;
   }
 }
