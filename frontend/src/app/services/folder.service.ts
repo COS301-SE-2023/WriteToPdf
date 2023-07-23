@@ -78,14 +78,9 @@ export class FolderService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(folderID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
-
+          
           if (response.status === 200) {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Folder deleted successfully',
-            });
+
             resolve(true);
           } else {
             resolve(false);
@@ -191,7 +186,11 @@ export class FolderService {
     });
   }
 
-  sendCreateData(path: string | undefined, folderName: string, parentFolderID: string | undefined): Observable<HttpResponse<any>> {
+  sendCreateData(
+    path: string | undefined,
+    folderName: string,
+    parentFolderID: string | undefined
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/create_folder`;
 
@@ -234,7 +233,11 @@ export class FolderService {
     });
   }
 
-  sendRenameData(folderID: string|undefined, path: string|undefined, folderName: string): Observable<HttpResponse<any>> {
+  sendRenameData(
+    folderID: string | undefined,
+    path: string | undefined,
+    folderName: string
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/rename_folder`;
 

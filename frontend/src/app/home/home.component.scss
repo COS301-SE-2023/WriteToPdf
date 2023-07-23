@@ -6,6 +6,23 @@
   // white-space: nowrap;
 }
 
+.fileOperations-container{
+
+}
+
+.fileOperations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+}
+
+.fileOperations-entity{
+  padding:8px;
+  justify-content: center;
+  align-items: center;
+}
+
 //Code Section Header Styling
 .header {
   margin-top:-10px;
@@ -27,8 +44,8 @@
   margin:0;
 }
 .speedDialEditMenu{
-
-  margin-right:100px;
+  margin-left:auto;
+  margin-right:160px;
   margin-top:24px;
 
 }
@@ -49,7 +66,7 @@
   //TODO rename this to something more relevant
   display: flex;
   margin: auto;
-  margin-left: 153px;
+  margin-left: 0;
 }
 
 /**
@@ -103,6 +120,10 @@ to co-operate.
 
 .directoryTree{
   overflow: auto;
+}
+
+.cdk-drag {
+  pointer-events: auto;
 }
 
 .leftSideBarHeading {
@@ -191,3 +212,27 @@ textarea {
 .moveDialogueContainer{
   display: flex;
 }
+
+.drag-hover:hover {
+  // background-color: lightgray !important;
+  /* Add other styles as needed */
+  z-index: 1;
+}
+
+.non-selectable {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+// .dragging{
+//   background-color: lightgray !important;
+//   /* Add other styles as needed */
+//   z-index: 21 !important;
+//   display:inline-block;
+//   width: 100px !important;
+// }
+
+// .dragging:nth-child(1)> :nth-child(2),
+// .dragging:nth-child(1)> :nth-child(3) {
+//   display: none !important;
+// }

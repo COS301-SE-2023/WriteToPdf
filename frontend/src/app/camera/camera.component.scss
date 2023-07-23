@@ -1,23 +1,66 @@
-.webcamWrapper{
-    width: -moz-fit-content;
-    width:fit-content;
-    margin:auto;
+.container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
 }
 
-.imageWrapper{
-    width: -moz-fit-content;
-    width:fit-content;
-    margin:auto;
-}
-.footer{
-    display:flex;
+
+.backButton {
+    margin: auto 0 auto 20px;
 }
 
-.capture{
-    margin:auto;
+
+.header {
+    display: flex;
+    margin-bottom: 10px;
+    height: 50px;
+    background-color: grey;
+    width: 100vw;
+}
+
+.footer {
+    display: flex;
+    background-color: grey;
+    margin-top: 10px;
+    width: 100vw;
+}
+
+.capture {
+    margin: auto;
     width: 50px;
     height: 50px;
     border-radius: 25px;
     background-color: white;
     border: 1px solid white;
+}
+
+.camera {
+    max-height: 85vh;
+}
+
+.webcamWrapper {
+    height: 85%;
+    width: -moz-fit-content;
+    width: fit-content;
+    margin: auto;
+}
+
+.buttonWrapper {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.previewImg {
+    width: 80vw;
+    height: 80vh;
+    object-fit: contain;
+}
+
+.imageWrapper {
+    width: -moz-fit-content;
+    width: fit-content;
+    margin: auto;
+    width: 80vw;
+    height: 80vh;
 }

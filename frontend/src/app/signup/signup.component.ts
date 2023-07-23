@@ -17,9 +17,12 @@ export class SignupComponent {
   confirmPassword: string = '';
 
   value: string = '';
-  
-  constructor(@Inject(Router) private router: Router, private elementRef: ElementRef, private userService: UserService) { }
 
+  constructor(
+    @Inject(Router) private router: Router,
+    private elementRef: ElementRef,
+    private userService: UserService
+  ) {}
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);

@@ -6,11 +6,11 @@ import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
-// import { ConversionService } from '../conversion/conversion.service';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { AuthService } from '../auth/auth.service';
 import { FileManagerController } from './file_manager.controller';
+import { ConversionService } from '../conversion/conversion.service';
 
 @Module({
   imports: [
@@ -24,9 +24,9 @@ import { FileManagerController } from './file_manager.controller';
     MarkdownFilesService,
     FileManagerService,
     S3Service,
-    // ConversionService,
     UsersService,
     AuthService,
+    ConversionService,
   ],
 })
 export class FileManagerModule {}

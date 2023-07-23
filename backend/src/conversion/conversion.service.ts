@@ -1,86 +1,75 @@
-// import {
-//   HttpException,
-//   HttpStatus,
-//   Injectable,
-// } from '@nestjs/common';
-// import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
-// import { ImportDTO } from '../file_manager/dto/import.dto';
-// import { ExportDTO } from '../file_manager/dto/export.dto';
-// import {
-//   convertTextToDelta,
-//   convertDeltaToHtml,
-// } from 'node-quill-converter';
+import { Injectable } from '@nestjs/common';
+import puppeteer from 'puppeteer'; //PDF converter
+import * as cheerio from 'cheerio'; //Plain text converter
+import * as TurndownService from 'turndown'; //Markdown converter
+import * as sharp from 'sharp'; //jpeg converter
 
-// @Injectable()
-// export class ConversionService {
-//   constructor() {
-//     /* empty */
-//   }
+@Injectable()
+export class ConversionService {
+  private turndownService: TurndownService;
+  constructor() {
+    this.turndownService = new TurndownService();
+  }
+  async generatePdf(html: string) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
 
-//   convertFrom(
-//     importDTO: ImportDTO,
-//   ): MarkdownFileDTO {
-//     if (importDTO.Type === 'txt') {
-//       return this.convertFromText(importDTO);
-//     } else
-//       throw new HttpException(
-//         `Conversion from ${importDTO.Type} is not supported`,
-//         HttpStatus.BAD_REQUEST,
-//       );
-//   }
+    // Emulate a screen to apply CSS styles correctly
+    await page.setViewport({
+      width: 1920,
+      height: 1080,
+    });
 
-//   convertTo(exportDTO: ExportDTO) {
-//     if (exportDTO.Type === 'txt') {
-//       return this.convertToTxt(exportDTO);
-//     } else
-//       throw new HttpException(
-//         `Conversion to ${exportDTO.Type} is not supported`,
-//         HttpStatus.BAD_REQUEST,
-//       );
-//   }
+    await page.setContent(html, {
+      waitUntil: 'networkidle0',
+    });
 
-//   convertFromText(textDTO: ImportDTO) {
-//     const delta = convertTextToDelta(
-//       textDTO.Content,
-//     ) as JSON;
+    // Set a higher scale to improve quality (e.g., 2 for Retina displays)
+    const pdf = await page.pdf({
+      format: 'A4',
+      scale: 1,
+      printBackground: true,
+    });
 
-//     const markdownFileDTO = new MarkdownFileDTO();
-//     markdownFileDTO.Content =
-//       JSON.stringify(delta);
-//     markdownFileDTO.Name = textDTO.Name;
-//     markdownFileDTO.Path = textDTO.Path;
-//     markdownFileDTO.ParentFolderID =
-//       textDTO.ParentFolderID;
-//     markdownFileDTO.UserID = textDTO.UserID;
-//     return markdownFileDTO;
-//   }
+    await browser.close();
 
-//   convertToTxt(markdownDTO: ExportDTO) {
-//     const html = convertDeltaToHtml(
-//       JSON.parse(markdownDTO.Content),
-//     );
+    // Send the generated PDF as a response
+    return pdf;
+  }
 
-//     const text = html.replace(
-//       /<\/?[^>]*>/g,
-//       (match) => {
-//         if (
-//           match.startsWith('</p>') ||
-//           match.startsWith('</li>')
-//         ) {
-//           return '\n';
-//         } else if (match.startsWith('<li>')) {
-//           return '- ';
-//         } else {
-//           return '';
-//         }
-//       },
-//     );
+  generateTxt(html: string) {
+    const $ = cheerio.load(html);
+    return $.text();
+  }
 
-//     const textDTO = new ExportDTO();
-//     textDTO.Content = text;
-//     textDTO.Name = markdownDTO.Name;
-//     textDTO.Type = markdownDTO.Type;
-//     textDTO.UserID = markdownDTO.UserID;
-//     return textDTO;
-//   }
-// }
+  generateMarkdown(html: string): string {
+    return this.turndownService.turndown(html);
+  }
+
+  async generateJpeg(
+    html: string,
+  ): Promise<Buffer> {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(html);
+    const screenshot = await page.screenshot();
+    await browser.close();
+
+    const jpegImage = await sharp(screenshot)
+      .toFormat('jpeg')
+      .toBuffer();
+    return jpegImage;
+  }
+
+  async generatePng(
+    html: string,
+  ): Promise<Buffer> {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(html);
+    const screenshot = await page.screenshot();
+    await browser.close();
+
+    return screenshot;
+  }
+}

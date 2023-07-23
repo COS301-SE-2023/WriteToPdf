@@ -19,7 +19,7 @@
             class="documentTitle"
             value="New Document"
             maxlength="50"
-            (blur)="rename()"
+            (blur)="renameDocument()"
             [(ngModel)]="fileName"
           />
         </div>
@@ -36,71 +36,49 @@
         >
           <div class="flex py-2 justify-content-center"></div>
           <!-- <input type="text" pInputText [(ngModel)]="fileType" /> -->
-          <p-button label="Export to txt" (click)="exportFile()"></p-button>
+          <p-button label="Export to pdf" (click)="convertToFileType('pdf')"></p-button>
+          <p-button label="Export to txt" (click)="convertToFileType('txt')"></p-button>
+          <p-button label="Export to html" (click)="convertToFileType('html')"></p-button>
+          <p-button label="Export to md" (click)="convertToFileType('md')"></p-button>
+          <p-button label="Export to jpeg" (click)="convertToFileType('jpeg')"></p-button>
+          <p-button label="Export to png" (click)="convertToFileType('png')"></p-button>
         </p-dialog>
 
-        <div class="tool" (click)="save()">
+        <div class="tool" (click)="saveDocumentContents()">
           <!-- Save -->
           <img src="assets/Icons/editIcons/save.png" alt="" />
         </div>
-        <div class="tool" (click)="delete()">
-          <!-- Load -->
+        <!-- <div class="tool" (click)="delete()">
           <img src="assets/Icons/editIcons/delete.png" alt="" />
-        </div>
-        <div class="tool">
+        </div> -->
+        <div class="tool" (click)="pageBreak()">
           <!-- Share -->
           <img src="assets/Icons/editIcons/share.svg" alt="" />
         </div>
-        <div class="tool" (click)="undo()">
-          <!-- Undo -->
-          <img src="assets/Icons/editIcons/undo.svg" alt="" />
+        <div class="tool" (click)="zoomOut()">
+          <!-- Zoom Out -->
+          <img src="assets/Icons/editIcons/zoom-out.png" alt="" />
         </div>
-        <div class="tool" (click)="redo()">
-          <!-- Redo -->
-          <img src="assets/Icons/editIcons/redo.svg" alt="" />
-
-          <!--        <div class="tool" id="bold" (click)="flipBold()">-->
-          <!--          <img src="assets/Icons/editIcons/bold.svg" alt="">-->
-          <!--        </div>-->
-          <!--        <div class="tool" id="italic">-->
-          <!--          <img src="assets/Icons/editIcons/italic.svg" alt="">-->
-          <!--        </div>-->
-          <!--        <div class="tool" id="strikethrough">-->
-          <!--          <img src="assets/Icons/editIcons/strikethrough.svg" alt="">-->
-          <!--        </div>-->
-          <!--        <div class="tool" id="unorderedList">-->
-          <!--          <img src="assets/Icons/editIcons/unorderedList.svg" alt="">-->
-          <!--        </div>-->
-          <!--        <div class="tool" id="orderedList">-->
-          <!--          <img src="assets/Icons/editIcons/orderedList.svg" alt="">-->
-          <!--        </div>-->
-          <!--        <div class="dropdownWrapper">-->
-          <!--          <div class="dropdownInput">-->
-          <!--            <h4 class="dropdownText">Heading 1</h4>-->
-          <!--          </div>-->
-          <!--          <div class="dropdownContent">-->
-          <!--            <p>HI</p>-->
-          <!--            <p>HI</p>-->
-          <!--            <p>HI</p>-->
-          <!--            <p>HI</p>-->
-          <!--            <p>HI</p>-->
-          <!--          </div>-->
-          <!--        </div>-->
+        <p class="currentZoom">{{ currentZoom }}</p>
+        <div class="tool" (click)="zoomIn()">
+          <!-- Zoom In -->
+          <img src="assets/Icons/editIcons/zoom-in.png" alt="" />
         </div>
       </div>
       <div class="pageIconWrapper"></div>
       <div class="miscWrapper"></div>
     </div>
-    <div class="speedDialEditMenu">
-      <p-speedDial
-        class="speedDial"
-        [model]="speedDialItems"
-        direction="down"
-      ></p-speedDial>
-    </div>
+    <!-- <div class="speedDialEditMenu">
+      <p-speedDial class="speedDial" [model]="speedDialItems" direction="down"></p-speedDial>
+    </div> -->
   </div>
 
   <div class="editor">
+    <p-button
+      class="showAssetSidebar"
+      icon="pi pi-arrow-right"
+      (click)="hideSideBar()"
+    ></p-button>
     <div class="assetSidebar">
       <div class="sidebarHeaderWrapper">
         <div class="sidebarHeader">
@@ -124,11 +102,11 @@
               class="sidebarHeaderIcon"
               src="assets/Icons/editIcons/addAsset.png"
               alt=""
-              (click)="navigateToPage('camera')"
+              (click)="navigateToCameraPage()"
             />
           </div>
 
-          <div class="sidebarHeaderIconWrapper">
+          <div class="sidebarHeaderIconWrapper" (click)="refreshSidebar()">
             <img
               class="sidebarHeaderIcon"
               src="assets/Icons/editIcons/refresh.svg"
@@ -141,48 +119,71 @@
 
       <div class="alignDiv"></div>
 
-      <div class="assetWrapper">
+      <div *ngFor="let obj of assets" class="assetWrapper">
         <div class="assetHeader">
           <div class="assetName">
-            <h4 class="assetNameText">Asset Name</h4>
+            <!-- <h4 class="assetNameText"></h4> -->
+            <label for="editAsset" class="displayNone">b</label>
+            <input
+              type="text"
+              editable="true"
+              id="editAssetMock"
+              class="assetNameText"
+              value="{{ obj.FileName }}"
+              maxlength="50"
+              (blur)="renameAsset(obj.AssetID, $event)"
+              title="ok"
+            />
+          </div>
+          <div class="deleteAsset">
+            <img
+              class="deleteAssetIcon"
+              src="assets/Icons/editIcons/delete.png"
+              alt=""
+              (click)="deleteAsset(obj.AssetID)"
+            />
           </div>
           <div class="copyAsset">
             <img
               class="copyAssetIcon"
+              (click)="retrieveAsset(obj.AssetID, obj.Format)"
               src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
-          </div>
-          <div class="menu">
-            <img
-              class="menuIcon"
-              src="assets/Icons/editIcons/ellipse.svg"
               alt=""
             />
           </div>
         </div>
         <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
+          <img class="assetImage" src="{{ obj.Image }}" alt="" />
           <p class="assetDescription">Image</p>
         </div>
       </div>
 
+      <!-- MOCK DATA -->
       <div class="assetWrapper">
         <div class="assetHeader">
           <div class="assetName">
-            <h4 class="assetNameText">Asset Name</h4>
+            <!-- <h4 class="assetNameText"></h4> -->
+            <label for="editAsset" class="displayNone">b</label>
+            <input
+              type="text"
+              editable="true"
+              id="editAsset"
+              class="assetNameText"
+              value="ok"
+              maxlength="50"
+            />
+          </div>
+          <div class="deleteAsset">
+            <img
+              class="deleteAssetIcon"
+              src="assets/Icons/editIcons/delete.png"
+              alt=""
+            />
           </div>
           <div class="copyAsset">
             <img
               class="copyAssetIcon"
               src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
-          </div>
-          <div class="menu">
-            <img
-              class="menuIcon"
-              src="assets/Icons/editIcons/ellipse.svg"
               alt=""
             />
           </div>
@@ -192,169 +193,27 @@
           <p class="assetDescription">Image</p>
         </div>
       </div>
-
-      <div class="assetWrapper">
-        <div class="assetHeader">
-          <div class="assetName">
-            <h4 class="assetNameText">Asset Name</h4>
-          </div>
-          <div class="copyAsset">
-            <img
-              class="copyAssetIcon"
-              src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
-          </div>
-          <div class="menu">
-            <img
-              class="menuIcon"
-              src="assets/Icons/editIcons/ellipse.svg"
-              alt=""
-            />
-          </div>
-        </div>
-        <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
-          <p class="assetDescription">Image</p>
-        </div>
-      </div>
-
-      <div class="assetWrapper">
-        <div class="assetHeader">
-          <div class="assetName">
-            <h4 class="assetNameText">Asset Name</h4>
-          </div>
-          <div class="copyAsset">
-            <img
-              class="copyAssetIcon"
-              src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
-          </div>
-          <div class="menu">
-            <img
-              class="menuIcon"
-              src="assets/Icons/editIcons/ellipse.svg"
-              alt=""
-            />
-          </div>
-        </div>
-        <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
-          <p class="assetDescription">Image</p>
-        </div>
-      </div>
-
-      <div class="assetWrapper">
-        <div class="assetHeader">
-          <div class="assetName">
-            <h4 class="assetNameText">Asset Name</h4>
-          </div>
-          <div class="copyAsset">
-            <img
-              class="copyAssetIcon"
-              src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
-          </div>
-          <div class="menu">
-            <img
-              class="menuIcon"
-              src="assets/Icons/editIcons/ellipse.svg"
-              alt=""
-            />
-          </div>
-        </div>
-        <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
-          <p class="assetDescription">Image</p>
-        </div>
-      </div>
-
-      <div class="assetWrapper">
-        <div class="assetHeader">
-          <div class="assetName">
-            <h4 class="assetNameText">Asset Name</h4>
-          </div>
-          <div class="copyAsset">
-            <img
-              class="copyAssetIcon"
-              src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
-          </div>
-          <div class="menu">
-            <img
-              class="menuIcon"
-              src="assets/Icons/editIcons/ellipse.svg"
-              alt=""
-            />
-          </div>
-        </div>
-        <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
-          <p class="assetDescription">Image</p>
-        </div>
-      </div>
-      <div class="assetWrapper">
-        <div class="assetHeader">
-          <div class="assetName">
-            <h4 class="assetNameText">Asset Name</h4>
-          </div>
-          <div class="copyAsset">
-            <img
-              class="copyAssetIcon"
-              src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
-          </div>
-          <div class="menu">
-            <img
-              class="menuIcon"
-              src="assets/Icons/editIcons/ellipse.svg"
-              alt=""
-            />
-          </div>
-        </div>
-        <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
-          <p class="assetDescription">Image</p>
-        </div>
-      </div>
-      <div class="assetWrapper">
-        <div class="assetHeader">
-          <div class="assetName">
-            <h4 class="assetNameText">Asset Name</h4>
-          </div>
-          <div class="copyAsset">
-            <img
-              class="copyAssetIcon"
-              src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
-          </div>
-          <div class="menu">
-            <img
-              class="menuIcon"
-              src="assets/Icons/editIcons/ellipse.svg"
-              alt=""
-            />
-          </div>
-        </div>
-        <div class="assetContent">
-          <img class="assetImage" src="assets/MockData/doodle.jpg" alt="" />
-          <p class="assetDescription">Image</p>
-        </div>
-      </div>
+      <!-- Mock Data End  -->
     </div>
-    <div class="page">
-      <p-editor
-        #quillEditor
-        [(ngModel)]="text"
-        [style]="{ height: '1138px' }"
-        class="quill-editor"
-      >
-      </p-editor>
+
+    <!--    Below is the code that allows me to work with CKEditor    -->
+    <div class="center-page">
+      <div class="document-editor" style="overflow: hidden">
+        <div class="document-editor__toolbar"></div>
+        <div
+          class="document-editor__editable-container"
+          style="overflow: hidden"
+        >
+          <div
+            class="document-editor__editable"
+            id="editor-contents"
+            style="overflow: hidden"
+          ></div>
+        </div>
+      </div>
+      <br />
+      <br />
+      <br />
     </div>
   </div>
 </div>

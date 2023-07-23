@@ -1,10 +1,10 @@
 name: Build Codebase
 
 on:
-    push:
-        branches: ["*"] # All branches
-    pull_request:
-        branches: ["*"] # All branches
+  push:
+    branches: ["*"] # All branches
+  pull_request:
+    branches: ["*"] # All branches
 
 env:
     JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
@@ -28,22 +28,22 @@ env:
     AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v2
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v2
-              with:
-                  node-version: 16.x
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
 
-            - name: Build backend
-              working-directory: backend
-              run: npm install && npm run build
+      - name: Build backend
+        working-directory: backend
+        run: npm install && npm run build
 
-            - name: Build frontend
-              working-directory: frontend
-              run: npm install && npm run build
+      - name: Build frontend
+        working-directory: frontend
+        run: npm install && npm run build

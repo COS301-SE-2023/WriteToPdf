@@ -13,13 +13,14 @@ import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
-// import { ImportDTO } from './dto/import.dto';
-// import { ExportDTO } from './dto/export.dto';
+import { ExportDTO } from './dto/export.dto';
+import { ConversionService } from '../conversion/conversion.service';
 
 @Controller('file_manager')
 export class FileManagerController {
   constructor(
     private readonly fileManagerService: FileManagerService,
+    private readonly conversionService: ConversionService,
   ) {}
 
   // File operations #################################################
@@ -359,7 +360,6 @@ export class FileManagerController {
     );
   }
 
-  // Import & Export operations #################################################
   // @Post('import')
   // @HttpCode(HttpStatus.OK)
   // import(
