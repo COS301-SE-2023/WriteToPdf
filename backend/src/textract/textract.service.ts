@@ -7,6 +7,8 @@ import {
   GetDocumentTextDetectionCommand,
   JobStatus,
   GetDocumentAnalysisCommand,
+  AnalyzeDocumentCommand,
+  DetectDocumentTextCommand,
 } from '@aws-sdk/client-textract';
 import 'dotenv/config';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
@@ -167,37 +169,35 @@ export class TextractService {
     markdownFileDTO: MarkdownFileDTO,
     extractType: string,
   ) {
-    let textCommand: StartDocumentTextDetectionCommand;
-    let tableCommand: StartDocumentAnalysisCommand;
+    let textCommand: DetectDocumentTextCommand;
+    let tableCommand: AnalyzeDocumentCommand;
     if (extractType === 'text') {
-      textCommand =
-        new StartDocumentTextDetectionCommand({
-          DocumentLocation: {
+      textCommand = new DetectDocumentTextCommand(
+        {
+          Document: {
             S3Object: {
-              Bucket: this.awsS3BucketName,
-              Name: markdownFileDTO.MarkdownID,
+              Bucket:
+                'writetopdfs3stack-writetopdfappbucketfc6d0172-1rmwa22kdzix8',
+              // Bucket: this.awsS3BucketName,
+              Name: 'IMG_3601.jpeg',
+              // Name: markdownFileDTO.MarkdownID,
             },
           },
-          NotificationChannel: {
-            SNSTopicArn: this.snsTopicArn,
-            RoleArn: this.roleArn,
-          },
-        });
+        },
+      );
     } else {
-      tableCommand =
-        new StartDocumentAnalysisCommand({
-          DocumentLocation: {
-            S3Object: {
-              Bucket: this.awsS3BucketName,
-              Name: markdownFileDTO.MarkdownID,
-            },
+      tableCommand = new AnalyzeDocumentCommand({
+        Document: {
+          S3Object: {
+            Bucket:
+              'writetopdfs3stack-writetopdfappbucketfc6d0172-1rmwa22kdzix8',
+            // Bucket: this.awsS3BucketName,
+            Name: 'IMG_3601.jpeg',
+            // Name: markdownFileDTO.MarkdownID,
           },
-          NotificationChannel: {
-            SNSTopicArn: this.snsTopicArn,
-            RoleArn: this.roleArn,
-          },
-          FeatureTypes: [FeatureType.TABLES],
-        });
+        },
+        FeatureTypes: [FeatureType.TABLES],
+      });
     }
     const textractResponse =
       await this.textractClient.send(
@@ -211,7 +211,7 @@ export class TextractService {
       ExtractType: extractType,
       Children: textractResponse,
     };
-    console.log(textractResponse);
+    console.log(textractResponse['Blocks']);
 
     return textractResponse;
   }
