@@ -912,17 +912,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const folder = this.nodeService.getParentFolderByID(keyOfDropped);
 
     let path: string | undefined = folder.Path + `/${folder.FolderName}`;
+    let parentFolderID: string | undefined = folder.FolderID;
     if (folder.Path === '') {
       path = folder.FolderName;
+    }
+
+    if(!folder.ParentFolderID||!folder.Path){
+      path='';
+      parentFolderID='';
     }
 
     const type = this.nodeService.checkType(keyOfDragged);
     if (type === 'file') {
       const movingNode = this.nodeService.getFileDTOByID(keyOfDragged);
-      if (movingNode.ParentFolderID === folder.FolderID) return;
+      if (movingNode.ParentFolderID === parentFolderID) return;
       console.log('Folder:', folder);
       this.fileService
-        .moveDocument(movingNode.MarkdownID, path, folder.FolderID)
+        .moveDocument(movingNode.MarkdownID, path, parentFolderID)
         .then((data) => {
           this.nodeService.removeFile(movingNode.MarkdownID);
           data.Name = movingNode.Name;
@@ -932,7 +938,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         });
     } else if (type === 'folder') {
       const movingNode = this.nodeService.getFolderDTOByID(keyOfDragged);
-      if (movingNode.ParentFolderID === folder.FolderID) return;
+      if (movingNode.ParentFolderID === parentFolderID) return;
       //check if moving parent folder into some child folder
       if (this.nodeService.checkIfChildFolder(folder, movingNode)) {
         this.messageService.add({
@@ -943,7 +949,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         return;
       }
       this.folderService
-        .moveFolder(movingNode.FolderID, path, folder.FolderID)
+        .moveFolder(movingNode.FolderID, path, parentFolderID)
         .then((data) => {
           this.nodeService.removeFolder(movingNode.FolderID);
           data.FolderName = movingNode.FolderName;
