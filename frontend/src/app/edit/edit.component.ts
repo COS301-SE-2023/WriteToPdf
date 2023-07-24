@@ -226,9 +226,13 @@ export class EditComponent implements AfterViewInit, OnInit {
     const asset = await this.assetService.retrieveAsset(assetId, format);
     console.log(asset);
     if (asset) {
-      // this.clipboard.copy(asset.Content);
       console.log('asset', asset);
-      this.copyToClipboard(`<img src="${asset.Content}" alt="Image">`);
+      if(format==='text'){
+        this.clipboard.copy(asset.Content);
+      }
+      else if(format==='image'){
+        this.copyToClipboard(`<img src="${asset.Content}" alt="Image">`);
+      }
       this.messageService.add({
         severity: 'success',
         summary: 'Success',

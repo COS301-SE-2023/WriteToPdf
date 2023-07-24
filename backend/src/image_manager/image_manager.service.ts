@@ -35,7 +35,7 @@ export class ImageManagerService {
     const imageData = uploadImageDTO.Image;
     uploadImageDTO.Image = '';
     this.assetsService.saveAsset(uploadImageDTO);
-    uploadImageDTO.Image = imageData;
+    uploadImageDTO.Content = imageData;
 
     // Store in S3/local storage
     return this.s3Service.saveAsset(

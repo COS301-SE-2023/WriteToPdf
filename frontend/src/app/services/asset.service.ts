@@ -62,7 +62,7 @@ export class AssetService {
     const body = new AssetDTO();
 
     body.UserID = this.userService.getUserID();
-    body.Content = image;
+    body.Image = image;
     body.Path = path;
     if (fileName === '') {
       body.FileName = 'New Asset';
@@ -87,7 +87,6 @@ export class AssetService {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveAssetData(assetId, format).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
           if (response.status === 200) {
             console.log('Image retrieved successfully');
             resolve(response.body);
