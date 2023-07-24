@@ -13,7 +13,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
-import { AssetDTO } from 'src/assets/dto/asset.dto';
+import { AssetDTO } from '../assets/dto/asset.dto';
 
 describe('AssetManagerController', () => {
   let controller: AssetManagerController;
