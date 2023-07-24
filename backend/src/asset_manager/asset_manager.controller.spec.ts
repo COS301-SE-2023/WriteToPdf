@@ -13,9 +13,11 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { AssetDTO } from 'src/assets/dto/asset.dto';
 
 describe('AssetManagerController', () => {
   let controller: AssetManagerController;
+  let assetManagerService: AssetManagerService;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -40,9 +42,32 @@ describe('AssetManagerController', () => {
       module.get<AssetManagerController>(
         AssetManagerController,
       );
+    assetManagerService =
+      module.get<AssetManagerService>(
+        AssetManagerService,
+      );
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('upload_asset', () => {
+    it('should return an AssetDTO', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.UserID = 1;
+
+      jest
+        .spyOn(
+          assetManagerService,
+          'upload_asset',
+        )
+        .mockResolvedValue(assetDTO);
+
+      const response =
+        await controller.upload_asset(assetDTO);
+
+      expect(response).toBe(assetDTO);
+      expect(
+        assetManagerService.upload_asset,
+      ).toHaveBeenCalledWith(assetDTO);
+    });
   });
 });
