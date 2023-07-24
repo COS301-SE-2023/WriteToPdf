@@ -99,4 +99,28 @@ describe('AssetManagerController', () => {
       ).toHaveBeenCalledWith(retrieveAllDTO);
     });
   });
+
+  describe('retrieve_one', () => {
+    it('should return an AssetDTO', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.UserID = 1;
+
+      jest
+        .spyOn(
+          assetManagerService,
+          'retrieve_one',
+        )
+        .mockResolvedValue(assetDTO);
+
+      const response =
+        await controller.retrieve_one(assetDTO);
+
+      expect(response).toBe(assetDTO);
+      expect(
+        assetManagerService.retrieve_one,
+      ).toHaveBeenCalledWith(assetDTO);
+    });
+  });
+
 });
