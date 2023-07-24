@@ -20,7 +20,8 @@ export class TextractController {
     ExtractType: string,
   ) {
     const retVal =
-      await this.textractService._extractDocumentAsynchronous(
+      await this.textractService.extractDocument(
+        'sync',
         fileDTO,
         ExtractType,
       );

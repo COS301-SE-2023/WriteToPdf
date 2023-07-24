@@ -287,4 +287,32 @@ export class TextractService {
       }),
     );
   }
+
+  async extractDocument(
+    syncType: string,
+    markdownFileDTO: MarkdownFileDTO,
+    extractType: string,
+  ) {
+    let retVal;
+    try {
+      if (syncType === 'sync') {
+        retVal =
+          await this._extractDocumentSynchronous(
+            markdownFileDTO,
+            extractType,
+          );
+      } else {
+        retVal =
+          await this._extractDocumentAsynchronous(
+            markdownFileDTO,
+            extractType,
+          );
+      }
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      console.log('Finally');
+      return retVal;
+    }
+  }
 }
