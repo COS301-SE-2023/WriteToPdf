@@ -10,8 +10,6 @@ import { MarkdownFilesModule } from './markdown_files/markdown_files.module';
 import { FoldersModule } from './folders/folders.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
-import { EditController } from './edit/edit.controller';
-import { EditModule } from './edit/edit.module';
 import { UsersModule } from './users/users.module';
 import { S3Controller } from './s3/s3.controller';
 import { S3Module } from './s3/s3.module';
@@ -31,7 +29,6 @@ import { ConversionService } from './conversion/conversion.service';
 @Module({
   imports: [
     AuthModule,
-    EditModule,
     UsersModule,
     TypeOrmModule.forRoot(dataSourceOptions),
     // TypeOrmModule.forRoot(testDBOptions),
@@ -47,7 +44,6 @@ import { ConversionService } from './conversion/conversion.service';
   controllers: [
     AppController,
     AuthController,
-    EditController,
     S3Controller,
     FileManagerController,
   ],
