@@ -62,7 +62,7 @@ export class AssetService {
     const body = new AssetDTO();
 
     body.UserID = this.userService.getUserID();
-    body.Image = image;
+    body.Content = image;
     body.Path = path;
     if (fileName === '') {
       body.FileName = 'New Asset';
