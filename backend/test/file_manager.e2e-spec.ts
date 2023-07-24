@@ -1251,7 +1251,7 @@ describe('FileManagerController (integration)', () => {
         expect(response.body).toHaveProperty(
           'UserID',
         );
-        expect(response.body.Name).toEqual(
+        expect(response.body.FolderName).toEqual(
           'Test Name',
         );
         expect(response.body.Path).toEqual(
