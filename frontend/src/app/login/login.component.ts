@@ -4,6 +4,8 @@ import { UserService } from '../services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Inject } from '@angular/core';
+import { environment } from 'src/environments/environment';
+
 
 @Component({
   selector: 'app-login',
@@ -57,7 +59,9 @@ export class LoginComponent {
   }
 
   async autoLogin(): Promise<void> {
-    this.email = 'Dev@Dev.com';
-    this.password = 'QWEqwe123';
+    
+    this.email = environment.DEV_USER_EMAIL;
+    this.password = environment.DEV_USER_PASSWORD;
+    this.login();
   }
 }

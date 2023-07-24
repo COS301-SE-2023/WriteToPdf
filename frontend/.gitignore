@@ -47,3 +47,6 @@ Thumbs.db
 # Cypress
 cypress/screenshots
 cypress/videos
+
+# Environment variables
+/src/environments
