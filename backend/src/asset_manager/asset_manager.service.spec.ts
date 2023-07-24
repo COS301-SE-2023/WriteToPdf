@@ -12,9 +12,12 @@ import { Asset } from '../assets/entities/asset.entity';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { AssetDTO } from '../assets/dto/asset.dto';
 
 describe('AssetManagerService', () => {
   let service: AssetManagerService;
+  let textManagerService: TextManagerService;
+  let imageManagerService: ImageManagerService;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -37,9 +40,55 @@ describe('AssetManagerService', () => {
     service = module.get<AssetManagerService>(
       AssetManagerService,
     );
+    textManagerService =
+      module.get<TextManagerService>(
+        TextManagerService,
+      );
+    imageManagerService =
+      module.get<ImageManagerService>(
+        ImageManagerService,
+      );
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('upload_asset', () => {
+    it('should use the text manager service to upload a text asset', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.UserID = 1;
+      assetDTO.Format = 'text';
+
+      jest
+        .spyOn(textManagerService, 'upload')
+        .mockResolvedValue(assetDTO);
+
+      const response = await service.upload_asset(
+        assetDTO,
+      );
+
+      expect(response).toEqual(assetDTO);
+      expect(
+        textManagerService.upload,
+      ).toBeCalledWith(assetDTO);
+    });
+
+    it('should use the image manager service to upload an image asset', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.UserID = 1;
+      assetDTO.Format = 'image';
+
+      jest
+        .spyOn(imageManagerService, 'upload')
+        .mockResolvedValue(assetDTO);
+
+      const response = await service.upload_asset(
+        assetDTO,
+      );
+
+      expect(response).toEqual(assetDTO);
+      expect(
+        imageManagerService.upload,
+      ).toBeCalledWith(assetDTO);
+    });
   });
 });
