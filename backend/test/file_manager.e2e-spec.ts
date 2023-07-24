@@ -1455,7 +1455,37 @@ describe('FileManagerController (integration)', () => {
         );
       });
 
-      //TODO add test for valid request
+      it('/file-manager/rename_folder/ (POST) - valid request', async () => {
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.FolderID = folderID;
+        requestFolder.FolderName = 'New Name';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestFolder);
+
+        expect(response.body).toHaveProperty(
+          'FolderID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'FolderName',
+        );
+        expect(response.body.FolderName).toEqual(
+          'New Name',
+        );
+      });
     });
 
     describe('move_folder', () => {
@@ -1597,7 +1627,48 @@ describe('FileManagerController (integration)', () => {
         );
       });
 
-      //TODO add test for valid request
+      it('/file-manager/move_folder/ (POST) - valid request', async () => {
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.FolderID = folderID;
+        requestFolder.ParentFolderID =
+          'New ParentFolderID';
+        requestFolder.Path = 'New Path';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/move_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestFolder);
+
+        expect(response.body).toHaveProperty(
+          'FolderID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'FolderName',
+        );
+        expect(response.body).toHaveProperty(
+          'Path',
+        );
+        expect(response.body).toHaveProperty(
+          'ParentFolderID',
+        );
+        expect(response.body.Path).toEqual(
+          'New Path',
+        );
+        expect(
+          response.body.ParentFolderID,
+        ).toEqual('New ParentFolderID');
+      });
     });
 
     describe('retrieve_all_folders', () => {
@@ -1634,7 +1705,46 @@ describe('FileManagerController (integration)', () => {
         );
       });
 
-      //TODO add test case for valid request
+      it('file-manager/retrieve_all_folders/ (POST) - valid request', async () => {
+        const requestDirectoryFoldersDTO =
+          new DirectoryFoldersDTO();
+        requestDirectoryFoldersDTO.UserID =
+          parseInt(process.env.TEST_USERID);
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post(
+            '/file_manager/retrieve_all_folders/',
+          )
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestDirectoryFoldersDTO);
+
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'Folders',
+        );
+        expect(response.body.UserID).toEqual(
+          parseInt(process.env.TEST_USERID),
+        );
+        expect(response.body.Folders).not.toEqual(
+          [],
+        );
+        expect(
+          response.body.Folders,
+        ).toHaveLength(1);
+        expect(
+          response.body.Folders[0],
+        ).toHaveProperty('FolderID');
+      });
     });
   });
 });
