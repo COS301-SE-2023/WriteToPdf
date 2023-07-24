@@ -460,6 +460,60 @@ describe('FileManagerController', () => {
       }
     });
 
+    it('should not throw an exception if ParentFolderID is empty', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = 'abc123';
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.ParentFolderID = '';
+      markdownFileDTO.Path = 'test';
+
+      jest
+        .spyOn(fileManagerService, 'moveFile')
+        .mockResolvedValue(markdownFileDTO);
+
+      const controllerMethod = async () =>
+        await controller.moveFile(
+          markdownFileDTO,
+          request as any,
+        );
+
+      expect(controllerMethod).not.toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should not throw an exception if Path is empty', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = 'abc123';
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.ParentFolderID = '123';
+      markdownFileDTO.Path = '';
+
+      jest
+        .spyOn(fileManagerService, 'moveFile')
+        .mockResolvedValue(markdownFileDTO);
+
+      const controllerMethod = async () =>
+        await controller.moveFile(
+          markdownFileDTO,
+          request as any,
+        );
+
+      expect(controllerMethod).not.toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
     it('should throw an exception if ParentFolderID is undefined', async () => {
       const request = { method: 'POST' };
       const markdownFileDTO =
@@ -1345,6 +1399,57 @@ describe('FileManagerController', () => {
           HttpStatus.BAD_REQUEST,
         );
       }
+    });
+    it('should not throw an exception if ParentFolderID is empty', async () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderID = 'abc123';
+      folderDTO.UserID = 123;
+      folderDTO.ParentFolderID = '';
+      folderDTO.Path = 'test';
+
+      jest
+        .spyOn(fileManagerService, 'moveFolder')
+        .mockResolvedValue(folderDTO);
+
+      const controllerMethod = async () =>
+        await controller.moveFolder(
+          folderDTO,
+          request as any,
+        );
+
+      expect(controllerMethod).not.toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should not throw an exception if Path is empty', async () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderID = 'abc123';
+      folderDTO.UserID = 123;
+      folderDTO.ParentFolderID = '123';
+      folderDTO.Path = '';
+
+      jest
+        .spyOn(fileManagerService, 'moveFolder')
+        .mockResolvedValue(folderDTO);
+
+      const controllerMethod = async () =>
+        await controller.moveFolder(
+          folderDTO,
+          request as any,
+        );
+
+      expect(controllerMethod).not.toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
     });
 
     it('should return a FolderDTO', async () => {
