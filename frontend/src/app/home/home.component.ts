@@ -917,7 +917,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       path = folder.FolderName;
     }
 
-    if(!folder.ParentFolderID||!folder.Path){
+    if (!folder.FolderID){
       path='';
       parentFolderID='';
     }
@@ -940,6 +940,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const movingNode = this.nodeService.getFolderDTOByID(keyOfDragged);
       if (movingNode.ParentFolderID === parentFolderID) return;
       //check if moving parent folder into some child folder
+      console.log('Folder:', folder);
+      console.log('Moving node:', movingNode);
       if (this.nodeService.checkIfChildFolder(folder, movingNode)) {
         this.messageService.add({
           severity: 'warn',

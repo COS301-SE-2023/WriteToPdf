@@ -324,12 +324,13 @@ export class NodeService {
 
   checkIfChildFolder(destinationDirectory: FolderDTO, movingDirectory: FolderDTO):boolean {
     if (destinationDirectory.ParentFolderID === '') return false;
-    let parentFolder = this.getParentFolderByID(destinationDirectory.FolderID);
-    while (parentFolder.FolderID !== destinationDirectory.FolderID) {
-      if (parentFolder.FolderID === '') {
+    let parentFolder = this.getFolderDTOByID(destinationDirectory.ParentFolderID);
+    while (parentFolder.FolderID !== movingDirectory.FolderID) {
+      if (!parentFolder.FolderID) {
         return false;
       }
-      parentFolder = this.getParentFolderByID(parentFolder.FolderID);
+      console.log('pFolder', parentFolder);
+      parentFolder = this.getFolderDTOByID(parentFolder.ParentFolderID);
     }
 
     return true;
