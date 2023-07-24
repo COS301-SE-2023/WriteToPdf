@@ -1063,7 +1063,46 @@ describe('FileManagerController (integration)', () => {
         );
       });
 
-      //TODO add test case for valid request
+      it('file-manager/retrieve_all_files/ (POST) - valid request', async () => {
+        const requestDirectoryFilesDTO =
+          new DirectoryFilesDTO();
+        requestDirectoryFilesDTO.UserID =
+          parseInt(process.env.TEST_USERID);
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post(
+            '/file_manager/retrieve_all_files/',
+          )
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestDirectoryFilesDTO);
+
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'Files',
+        );
+        expect(response.body.UserID).toEqual(
+          parseInt(process.env.TEST_USERID),
+        );
+        expect(response.body.Files).not.toEqual(
+          [],
+        );
+        expect(response.body.Files).toHaveLength(
+          1,
+        );
+        expect(
+          response.body.Files[0],
+        ).toHaveProperty('MarkdownID');
+      });
     });
 
     describe('create_folder', () => {
