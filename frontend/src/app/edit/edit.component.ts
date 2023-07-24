@@ -226,7 +226,9 @@ export class EditComponent implements AfterViewInit, OnInit {
     const asset = await this.assetService.retrieveAsset(assetId, format);
     console.log(asset);
     if (asset) {
-      this.clipboard.copy(asset.Content);
+      // this.clipboard.copy(asset.Content);
+      console.log('asset', asset);
+      this.copyToClipboard(`<img src="${asset.Content}" alt="Image">`);
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
@@ -234,6 +236,23 @@ export class EditComponent implements AfterViewInit, OnInit {
       });
     }
   }
+
+  copyToClipboard(html: string) {
+    // Use the Clipboard API to copy the data to the clipboard
+    navigator.clipboard.write([
+      new ClipboardItem({
+        'text/html': new Blob([html], { type: 'text/html' })
+      })
+    ]).then(
+      () => {
+        console.log('HTML data (image) copied to clipboard successfully!');
+      },
+      (error) => {
+        console.error('Could not copy HTML data (image) to clipboard: ', error);
+      }
+    );
+  }
+
 
   async deleteAsset(assetId: string) {
     if (await this.assetService.deleteAsset(assetId)) {
