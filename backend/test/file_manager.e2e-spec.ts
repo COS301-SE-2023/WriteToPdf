@@ -1298,7 +1298,7 @@ describe('FileManagerController (integration)', () => {
         );
       });
 
-      it('/file-manager/delete_folder/ (POST) - missing FolderName', async () => {
+      it('/file-manager/delete_folder/ (POST) - missing FolderID', async () => {
         const requestFolder = new FolderDTO();
         requestFolder.UserID = parseInt(
           process.env.TEST_USERID,
@@ -1331,7 +1331,27 @@ describe('FileManagerController (integration)', () => {
         );
       });
 
-      //TODO add test for valid request
+      it('file-manager/delete_folder/ (POST) - valid request', async () => {
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.FolderID = folderID;
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/delete_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestFolder);
+
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+      });
     });
 
     describe('rename_folder', () => {
