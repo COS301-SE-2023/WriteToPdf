@@ -15,6 +15,10 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { RetrieveAllDTO } from './dto/retrieve_all.dto';
+import {
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 
 describe('AssetManagerController', () => {
   let controller: AssetManagerController;
@@ -50,10 +54,63 @@ describe('AssetManagerController', () => {
   });
 
   describe('upload_asset', () => {
+    it('should throw an error if UserID is missing', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.ParentFolderID = '';
+
+      jest
+        .spyOn(
+          assetManagerService,
+          'upload_asset',
+        )
+        .mockResolvedValue(assetDTO);
+
+      expect(() =>
+        controller.upload_asset(assetDTO),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data: UserID missing',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+
+      expect(
+        assetManagerService.upload_asset,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should throw an error if ParentFolderID is missing', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.UserID = 9;
+
+      jest
+        .spyOn(
+          assetManagerService,
+          'upload_asset',
+        )
+        .mockResolvedValue(assetDTO);
+
+      expect(() =>
+        controller.upload_asset(assetDTO),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data: ParentFolderID missing',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+
+      expect(
+        assetManagerService.upload_asset,
+      ).not.toHaveBeenCalled();
+    });
+
     it('should return an AssetDTO', async () => {
       const assetDTO = new AssetDTO();
       assetDTO.AssetID = 'test';
       assetDTO.UserID = 1;
+      assetDTO.ParentFolderID = '';
 
       jest
         .spyOn(

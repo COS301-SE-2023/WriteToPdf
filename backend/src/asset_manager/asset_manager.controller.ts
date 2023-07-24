@@ -4,6 +4,7 @@ import {
   Body,
   HttpStatus,
   HttpCode,
+  HttpException,
 } from '@nestjs/common';
 import { AssetManagerService } from './asset_manager.service';
 import { AssetDTO } from '../assets/dto/asset.dto';
@@ -20,6 +21,22 @@ export class AssetManagerController {
     @Body()
     uploadImageDTO: AssetDTO,
   ) {
+    if (!uploadImageDTO.UserID) {
+      throw new HttpException(
+        'Invalid request data: UserID missing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (
+      uploadImageDTO.ParentFolderID == undefined
+    ) {
+      throw new HttpException(
+        'Invalid request data: ParentFolderID missing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     return this.assetManagerService.upload_asset(
       uploadImageDTO,
     );
