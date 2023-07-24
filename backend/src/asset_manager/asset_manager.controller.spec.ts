@@ -145,4 +145,27 @@ describe('AssetManagerController', () => {
       ).toHaveBeenCalledWith(assetDTO);
     });
   });
+
+  describe('delete_asset', () => {
+    it('should return an AssetDTO', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.UserID = 1;
+
+      jest
+        .spyOn(
+          assetManagerService,
+          'delete_asset',
+        )
+        .mockResolvedValue(assetDTO);
+
+      const response =
+        await controller.delete_asset(assetDTO);
+
+      expect(response).toBe(assetDTO);
+      expect(
+        assetManagerService.delete_asset,
+      ).toHaveBeenCalledWith(assetDTO);
+    });
+  });
 });
