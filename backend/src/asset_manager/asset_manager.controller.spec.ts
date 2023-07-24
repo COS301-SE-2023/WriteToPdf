@@ -123,4 +123,26 @@ describe('AssetManagerController', () => {
     });
   });
 
+  describe('rename_asset', () => {
+    it('should return an AssetDTO', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.UserID = 1;
+
+      jest
+        .spyOn(
+          assetManagerService,
+          'rename_asset',
+        )
+        .mockResolvedValue(assetDTO);
+
+      const response =
+        await controller.rename_asset(assetDTO);
+
+      expect(response).toBe(assetDTO);
+      expect(
+        assetManagerService.rename_asset,
+      ).toHaveBeenCalledWith(assetDTO);
+    });
+  });
 });
