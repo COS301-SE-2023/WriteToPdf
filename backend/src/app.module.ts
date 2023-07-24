@@ -25,6 +25,9 @@ import { S3Service } from './s3/s3.service';
 import { User } from './users/entities/user.entity';
 import { AssetManagerModule } from './asset_manager/asset_manager.module';
 import { ConversionService } from './conversion/conversion.service';
+import { TextractController } from './textract/textract.controller';
+import { TextractModule } from './textract/textract.module';
+import { TextractService } from './textract/textract.service';
 
 @Module({
   imports: [
@@ -40,12 +43,14 @@ import { ConversionService } from './conversion/conversion.service';
     S3Module,
     FileManagerModule,
     AssetManagerModule,
+    TextractModule,
   ],
   controllers: [
     AppController,
     AuthController,
     S3Controller,
     FileManagerController,
+    TextractController,
   ],
   providers: [
     AppService,
@@ -54,6 +59,7 @@ import { ConversionService } from './conversion/conversion.service';
     FoldersService,
     S3Service,
     ConversionService,
+    TextractService,
   ],
 })
 export class AppModule {}

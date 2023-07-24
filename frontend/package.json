@@ -8,6 +8,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "staging": "ng build --watch --configuration staging",
+    "prod": "ng build --configuration staging",
     "test": "cypress run",
     "test:unit": "jest",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.html\""
