@@ -1206,65 +1206,64 @@ describe('FileManagerController (integration)', () => {
         );
       });
 
-      // it('/file-manager/create_folder/ (POST) - valid request', async () => {
-      //   const requestFolder = new FolderDTO();
-      //   requestFolder.UserID = parseInt(
-      //     process.env.TEST_USERID,
-      //   );
-      //   requestFolder.FolderName = 'test';
-      //   requestFolder.Path = 'test';
-      //   requestFolder.ParentFolderID = 'test';
+      it('/file-manager/create_folder/ (POST) - valid request', async () => {
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.FolderName = 'Test Name';
+        requestFolder.Path = 'Test Path';
+        requestFolder.ParentFolderID =
+          'Test ParentFolderID';
 
-      //   const response = await request(
-      //     app.getHttpServer(),
-      //   )
-      //     .post('/file_manager/create_folder/')
-      //     .set(
-      //       'Authorization',
-      //       'Bearer ' + process.env.AUTH_BEARER,
-      //     )
-      //     .send(requestFolder);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/create_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestFolder);
 
-      //   expect(response.body).toHaveProperty(
-      //     'FolderID',
-      //   );
-      //   fileID = response.body.MarkdownID;
-      //   expect(response.status).toBe(
-      //     HttpStatus.OK,
-      //   );
-      //   expect(response.body).toHaveProperty(
-      //     'Name',
-      //   );
-      //   expect(response.body).toHaveProperty(
-      //     'Content',
-      //   );
-      //   expect(response.body).toHaveProperty(
-      //     'Path',
-      //   );
-      //   expect(response.body).toHaveProperty(
-      //     'DateCreated',
-      //   );
-      //   expect(response.body).toHaveProperty(
-      //     'LastModified',
-      //   );
-      //   expect(response.body).toHaveProperty(
-      //     'Size',
-      //   );
-      //   expect(response.body).toHaveProperty(
-      //     'ParentFolderID',
-      //   );
-      //   expect(response.body).toHaveProperty(
-      //     'UserID',
-      //   );
-      //   expect(response.body.Name).toEqual(
-      //     'New Document',
-      //   );
-      //   expect(response.body.Path).toEqual('');
-      //   expect(
-      //     response.body.ParentFolderID,
-      //   ).toEqual('');
-      //   //TODO change this to actual implementation
-      // });
+        expect(response.body).toHaveProperty(
+          'FolderID',
+        );
+        fileID = response.body.MarkdownID;
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'FolderName',
+        );
+        expect(response.body).toHaveProperty(
+          'Path',
+        );
+        expect(response.body).toHaveProperty(
+          'DateCreated',
+        );
+        expect(response.body).toHaveProperty(
+          'LastModified',
+        );
+        expect(response.body).toHaveProperty(
+          'ParentFolderID',
+        );
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.body.Name).toEqual(
+          'Test Name',
+        );
+        expect(response.body.Path).toEqual(
+          'Test Path',
+        );
+        expect(
+          response.body.ParentFolderID,
+        ).toEqual('Test ParentFolderID');
+        expect(response.body.UserID).toEqual(
+          parseInt(process.env.TEST_USERID),
+        );
+      });
     });
 
     describe('delete_folder', () => {
