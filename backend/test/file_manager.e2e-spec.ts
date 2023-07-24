@@ -85,8 +85,6 @@ describe('FileManagerController (integration)', () => {
         [process.env.TEST_USERID],
       );
 
-    // console.log('testUserFiles: ', testUserFiles);
-
     // Delete all the test user's files
     for (const file of testUserFiles) {
       const deleteFileDTO = new MarkdownFileDTO();
@@ -98,11 +96,14 @@ describe('FileManagerController (integration)', () => {
       await s3Service.deleteFile(deleteFileDTO);
     }
 
-    //TODO repeat the same for folders as well
     folderID = '';
     // Reset the db for the test user
     await markdownFileRepository.query(
       'DELETE FROM MARKDOWN_FILES WHERE UserID = ?',
+      [process.env.TEST_USERID],
+    );
+    await markdownFileRepository.query(
+      'DELETE FROM FOLDERS WHERE UserID = ?',
       [process.env.TEST_USERID],
     );
 
@@ -118,7 +119,11 @@ describe('FileManagerController (integration)', () => {
 
     const s3Response = await s3Service.createFile(
       createFileDTO,
-    ); //TODO add code to add 'test content' to the test file
+    );
+
+    s3Response.Content = 'Test content';
+
+    await s3Service.saveFile(s3Response);
 
     fileID = s3Response.MarkdownID;
     // console.log('Setting fileID to ', fileID);
@@ -133,6 +138,28 @@ describe('FileManagerController (integration)', () => {
         createFileDTO.Size,
         createFileDTO.ParentFolderID,
         createFileDTO.UserID,
+      ],
+    );
+
+    // Create a test folder
+    const createFolderDTO = new FolderDTO();
+    createFolderDTO.UserID = parseInt(
+      process.env.TEST_USERID,
+    );
+    createFolderDTO.FolderName = 'Test Folder';
+    createFolderDTO.ParentFolderID = '';
+    createFolderDTO.Path = '';
+    createFolderDTO.FolderID = '1';
+    folderID = createFolderDTO.FolderID;
+
+    await markdownFileRepository.query(
+      'INSERT INTO FOLDERS (FolderID, FolderName, Path, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?)',
+      [
+        createFolderDTO.FolderID,
+        createFolderDTO.FolderName,
+        createFolderDTO.Path,
+        createFolderDTO.ParentFolderID,
+        createFolderDTO.UserID,
       ],
     );
   }
