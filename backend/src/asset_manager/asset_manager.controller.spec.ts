@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { AssetDTO } from '../assets/dto/asset.dto';
+import { RetrieveAllDTO } from './dto/retrieve_all.dto';
 
 describe('AssetManagerController', () => {
   let controller: AssetManagerController;
@@ -68,6 +69,34 @@ describe('AssetManagerController', () => {
       expect(
         assetManagerService.upload_asset,
       ).toHaveBeenCalledWith(assetDTO);
+    });
+  });
+
+  describe('retrieve_all', () => {
+    it('should return an array of AssetDTOs', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.UserID = 1;
+
+      const retrieveAllDTO = new RetrieveAllDTO();
+      retrieveAllDTO.UserID = 1;
+
+      jest
+        .spyOn(
+          assetManagerService,
+          'retrieve_all',
+        )
+        .mockResolvedValue([assetDTO]);
+
+      const response =
+        await controller.retrieve_all(
+          retrieveAllDTO,
+        );
+
+      expect(response).toEqual([assetDTO]);
+      expect(
+        assetManagerService.retrieve_all,
+      ).toHaveBeenCalledWith(retrieveAllDTO);
     });
   });
 });
