@@ -987,7 +987,46 @@ describe('FileManagerController (integration)', () => {
           'Invalid request data',
         );
       });
-      //TODO add test case for valid request
+
+      it('/file-manager/retrieve_file/ (POST) - valid request', async () => {
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/retrieve_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestMarkdownFileDTO);
+
+        expect(response.body).toHaveProperty(
+          'MarkdownID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.body.MarkdownID).toEqual(
+          fileID,
+        );
+        expect(response.body.UserID).toEqual(
+          parseInt(process.env.TEST_USERID),
+        );
+        expect(response.body.Content).toEqual(
+          'Test content',
+        );
+        expect(response.body.Size).not.toEqual(0);
+      });
     });
 
     describe('retrieve_all_files', () => {
