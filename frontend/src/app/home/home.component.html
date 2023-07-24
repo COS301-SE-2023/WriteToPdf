@@ -209,6 +209,7 @@
         >
           <tr
             cdkDrag
+            [cdkDragDisabled]="editToggle"
             (cdkDragStarted)="onNodeDrag($event)"
             (cdkDragReleased)="onDragReleased($event)"
             [ttRow]="rowNode"
