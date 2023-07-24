@@ -141,7 +141,7 @@ describe('AssetManagerService', () => {
 
       jest
         .spyOn(imageManagerService, 'retrieveOne')
-        .mockResolvedValue(assetDTO);
+        .mockResolvedValue(newAssetDTO);
 
       jest
         .spyOn(
