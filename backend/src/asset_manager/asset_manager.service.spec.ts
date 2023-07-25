@@ -177,6 +177,44 @@ describe('AssetManagerService', () => {
       ).toBeCalledWith(retrieveAllDTO);
     });
 
+    describe('retrieve_one', () => {
+      it('should retrieve an image asset', async () => {
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = 'test';
+        assetDTO.Format = 'image';
+        assetDTO.UserID = 1;
+
+        jest.spyOn(
+          imageManagerService,
+          'retrieveOne',
+        ).mockResolvedValue(assetDTO);
+
+        await service.retrieve_one(assetDTO);
+
+        expect(
+          imageManagerService.retrieveOne,
+        ).toBeCalledWith(assetDTO);
+      });
+
+      it('should retrieve a text asset', async () => {
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = 'test';
+        assetDTO.Format = 'text';
+        assetDTO.UserID = 1;
+
+        jest.spyOn(
+          textManagerService,
+          'retrieveOne',
+        ).mockResolvedValue(assetDTO);
+
+        await service.retrieve_one(assetDTO);
+
+        expect(
+          textManagerService.retrieveOne,
+        ).toBeCalledWith(assetDTO);
+      });
+    });
+
     // it('should resize all image assets', async () => {
     //   const retrieveAllDTO = new RetrieveAllDTO();
     //   retrieveAllDTO.UserID = 1;
