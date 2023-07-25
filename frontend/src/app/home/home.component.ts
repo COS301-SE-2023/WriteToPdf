@@ -273,6 +273,12 @@ subMenu: HTMLElement | null = null;
       // Below is the function that initially populates the fileTree
       this.nodeService.getFilesAndFolders().then(() => {
         const data = this.nodeService.getTreeTableNodesData();
+        console.log(data);
+        for(let i=0;i<data.length;i++){
+
+          this.removeUniqueIDRecursive(data[i]);
+          // data[i].data.name=this.removeUniqueID(data[i].data.name);
+        }
         this.filesDirectoryTree = this.generateTreeNodes(data);
 
         // Below is the function that populates the treeTable
@@ -332,6 +338,15 @@ subMenu: HTMLElement | null = null;
       ];
       // Below are the functions that implement intelligent routing of the directory tree on the left side of the home page
       // it routes the relevant directory to the main window
+    }
+  }
+
+  removeUniqueIDRecursive(node: any){
+    node.data.name=this.removeUniqueID(node.data.name);
+    if(node.children){
+      for(let i=0;i<node.children.length;i++){
+        this.removeUniqueIDRecursive(node.children[i]);
+      }
     }
   }
 
