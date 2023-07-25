@@ -850,10 +850,10 @@ subMenu: HTMLElement | null = null;
 
   deleteSelectedEntity(event: any): void {
     if (this.currentDirectory != null) {
-      let message = `Are you sure that you want to delete '${this.currentDirectory.data.name}'?`;
+      let message = `Are you sure that you want to delete '${this.removeUniqueID(this.currentDirectory.data.name)}'?`;
       const type = this.currentDirectory.data.type;
       if (type === 'folder') {
-        message = `Are you sure that you want to delete '${this.currentDirectory.data.name}' and all of its contents?`;
+        message = `Are you sure that you want to delete '${this.removeUniqueID(this.currentDirectory.data.name)}' and all of its contents?`;
       }
       this.confirmationService.confirm({
         message: message,
@@ -887,6 +887,8 @@ subMenu: HTMLElement | null = null;
   }
 
   selectNode($event: any) {
+    console.log($event);
+
     this.currentNode = $event.node;
   }
 
@@ -1007,6 +1009,9 @@ subMenu: HTMLElement | null = null;
           this.refreshTree();
         });
     }
+  }
+  removeUniqueID(name: string): string {
+    return name.split('!#$')[0];
   }
 
   protected readonly focus = focus;

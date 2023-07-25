@@ -23,10 +23,11 @@ export class NodeService {
     private http: HttpClient,
     private fileService: FileService,
     private folderService: FolderService
-  ) {}
+  ) { }
 
   private files: MarkdownFileDTO[] = [];
   private folders: FolderDTO[] = [];
+  private nameNumber = 0;
 
   /**
    * @Backend, below is a function with data that showcases the
@@ -104,7 +105,7 @@ export class NodeService {
       directoryObject.push({
         key: file.MarkdownID,
         data: {
-          name: file.Name,
+          name: file.Name + '!#$' + (this.nameNumber++),
           size: file.Size,
           type: 'file',
           key: file.MarkdownID,
@@ -126,7 +127,7 @@ export class NodeService {
       return {
         key: folder.FolderID,
         data: {
-          name: folder.FolderName,
+          name: folder.FolderName + '!#$' + (this.nameNumber++),
           size: 0,
           type: 'folder',
           key: folder.FolderID,
@@ -136,7 +137,7 @@ export class NodeService {
       let folderObject = {
         key: folder.FolderID,
         data: {
-          name: folder.FolderName,
+          name: folder.FolderName + '!#$' + (this.nameNumber++),
           size: 0,
           type: 'folder',
           key: folder.FolderID,
@@ -150,7 +151,7 @@ export class NodeService {
         folderObject.children.push({
           key: file.MarkdownID,
           data: {
-            name: file.Name,
+            name: file.Name + '!#$' + (this.nameNumber++),
             size: file.Size,
             type: 'file',
             key: file.MarkdownID,
@@ -322,7 +323,7 @@ export class NodeService {
     return newName;
   }
 
-  checkIfChildFolder(destinationDirectory: FolderDTO, movingDirectory: FolderDTO):boolean {
+  checkIfChildFolder(destinationDirectory: FolderDTO, movingDirectory: FolderDTO): boolean {
     if (destinationDirectory.ParentFolderID === '') return false;
     let parentFolder = this.getFolderDTOByID(destinationDirectory.ParentFolderID);
     while (parentFolder.FolderID !== movingDirectory.FolderID) {
@@ -353,4 +354,6 @@ export class NodeService {
     }
     return false;
   }
+
+
 }
