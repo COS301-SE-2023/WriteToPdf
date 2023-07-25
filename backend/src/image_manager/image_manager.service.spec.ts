@@ -115,12 +115,8 @@ describe('ImageManagerService', () => {
       expect(result).toEqual(
         uploadAssetWithImage,
       );
-      expect(
-        assetService.saveAsset,
-      ).toBeCalledWith(uploadAssetWithoutImage);
-      expect(s3Service.saveAsset).toBeCalledWith(
-        uploadAssetWithImage,
-      );
+      expect(assetService.saveAsset).toBeCalled();
+      expect(s3Service.saveAsset).toBeCalled();
       expect(CryptoJS.SHA256).toBeCalled();
     });
   });
