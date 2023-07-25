@@ -74,6 +74,10 @@
 @Julian, please help me to get this menubar floating in line with the left sidebar's edge, it does not want
 to co-operate.
  */
+.p-icon .p-submenu-icon{
+  margin-right:3px;
+  margin-left:auto;
+}
 .p-menubar{
 width: 400px;
 //min-width: 400px;
@@ -84,6 +88,7 @@ width: 400px;
   }
 background-color: #00000000;
 }
+
 
 
 //END Code section header styling
@@ -151,9 +156,10 @@ background-color: #00000000;
   margin-left: 250px;
   margin-right: 150px;
   margin-top: 120px;
-  width: auto;
   display: inline-block;
-  z-index: 0;
+  z-index: -20;
+  position:absolute;
+  overflow-x:hidden;
 }
 
 .mainWindowHome .directoryContents {
