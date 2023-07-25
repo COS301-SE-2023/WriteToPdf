@@ -56,7 +56,7 @@ export class TextractController {
     const retVal =
       await this.textractService.test_msg();
 
-    console.log(retVal);
+    // console.log(retVal);
 
     return retVal;
   }
