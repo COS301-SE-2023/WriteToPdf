@@ -59,6 +59,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   //variables for dynamic resizing
 componentWidth: string = '';
 menubarElement: HTMLElement | null = null;
+subMenu: HTMLElement | null = null;
 
   //variables for double click and enter key to open doc
   public previousNode!: any;
@@ -484,6 +485,10 @@ menubarElement: HTMLElement | null = null;
 
   // this code updates the background layer to not be adjusted from the edit page after navigation.
   ngAfterViewInit() {
+    this.subMenu = this.elementRef.nativeElement.querySelector('.p-menubarsub');
+    if(this.subMenu){
+      this.subMenu.style.zIndex = "10000 !important";
+    }
     this.updateMenubarWidth();
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#FFFFFF';
