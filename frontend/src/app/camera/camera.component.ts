@@ -19,6 +19,7 @@ export class CameraComponent {
   parentFolderId: string = '';
   path: string = '';
   isAsset: boolean = false;
+  captured: boolean = false;
 
   constructor(
     private elementRef: ElementRef,
@@ -42,8 +43,10 @@ export class CameraComponent {
 
   ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
-      '#FFFFFF';
+      '#363232';
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
+    // this.elementRef.nativeElement.ownerDocument.body.style.width = '100vw';
+    // this.elementRef.nativeElement.ownerDocument.body.style.height = '100vh';
   }
 
   navigateToPage(pageName: string) {
@@ -59,6 +62,7 @@ export class CameraComponent {
       })
       .then((stream) => {
         this.videoRef.srcObject = stream;
+        (document.getElementsByClassName('container')[0] as HTMLElement).style.backgroundImage = `url(${this.videoRef.srcObject})`;
       });
   }
 
@@ -85,6 +89,7 @@ export class CameraComponent {
 
     this.sysImage = dataUrl;
     console.log(dataUrl);
+    this.captured = true;
   }
 
   async uploadImage() {
@@ -113,4 +118,6 @@ export class CameraComponent {
     this.disableCamera();
     this.location.back();
   }
+
+  
 }
