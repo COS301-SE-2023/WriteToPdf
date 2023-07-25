@@ -2,6 +2,7 @@
 
 .container {
   width: 100%;
+  z-index:-2000000;
   // overflow-x: auto;
   // white-space: nowrap;
 }
@@ -108,7 +109,7 @@ background-color: #00000000;
 
 .leftSideBarWrapper {
   //Positioning
-  z-index:0;
+  z-index:100;
   position: fixed;
   width: 245px;
   height: 110%;
@@ -127,6 +128,7 @@ background-color: #00000000;
 
 .directoryTree{
   overflow: auto;
+  z-index:100;
 }
 
 .cdk-drag {
@@ -157,7 +159,7 @@ background-color: #00000000;
   margin-right: 150px;
   margin-top: 120px;
   display: inline-block;
-  z-index: -20;
+  z-index: 0;
   position:absolute;
   overflow-x:hidden;
 }
