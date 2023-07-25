@@ -130,6 +130,31 @@ describe('AssetManagerController', () => {
   });
 
   describe('retrieve_all', () => {
+    it('should throw an error if ParentFolderID is missing', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.UserID = 1;
+
+      const retrieveAllDTO = new RetrieveAllDTO();
+      retrieveAllDTO.UserID = 1;
+
+      jest
+        .spyOn(
+          assetManagerService,
+          'retrieve_all',
+        )
+        .mockResolvedValue([assetDTO]);
+
+      expect(() =>
+        controller.retrieve_all(retrieveAllDTO),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data: ParentFolderID missing',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
     it('should return an array of AssetDTOs', async () => {
       const assetDTO = new AssetDTO();
       assetDTO.AssetID = 'test';
@@ -137,6 +162,7 @@ describe('AssetManagerController', () => {
 
       const retrieveAllDTO = new RetrieveAllDTO();
       retrieveAllDTO.UserID = 1;
+      retrieveAllDTO.ParentFolderID = '';
 
       jest
         .spyOn(

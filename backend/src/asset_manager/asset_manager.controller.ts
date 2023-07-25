@@ -48,6 +48,22 @@ export class AssetManagerController {
     @Body()
     retrieveAllDTO: RetrieveAllDTO,
   ) {
+    if (!retrieveAllDTO.UserID) {
+      throw new HttpException(
+        'Invalid request data: UserID missing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (
+      retrieveAllDTO.ParentFolderID == undefined
+    ) {
+      throw new HttpException(
+        'Invalid request data: ParentFolderID missing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     return this.assetManagerService.retrieve_all(
       retrieveAllDTO,
     );
