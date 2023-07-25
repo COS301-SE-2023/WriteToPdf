@@ -123,4 +123,73 @@ describe('AssetsService', () => {
       expect(createQueryBuilderSpy).toBeCalled();
     });
   });
+
+  describe('removeOne', () => {
+    it('should call delete', async () => {
+      const assetID = 'test';
+
+      const deleteSpy = jest
+        .spyOn(Repository.prototype, 'delete')
+        .mockResolvedValue(undefined);
+
+      await service.removeOne(assetID);
+
+      expect(deleteSpy).toBeCalledWith(assetID);
+    });
+  });
+
+  describe('renameAsset', () => {
+    it('should call findOne and save', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.FileName = 'New Name';
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(assetDTO);
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockResolvedValue(assetDTO);
+
+      await service.renameAsset(assetDTO);
+
+      expect(
+        Repository.prototype.findOneBy,
+      ).toBeCalledWith({
+        AssetID: assetDTO.AssetID,
+      });
+      expect(
+        Repository.prototype.save,
+      ).toBeCalledWith(assetDTO);
+    });
+
+    it('should update the name of the found asset', async () => {
+      const updatedAsset = new AssetDTO();
+      updatedAsset.AssetID = 'test';
+      updatedAsset.FileName = 'New Name';
+
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.FileName = 'Old Name';
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(assetDTO);
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockImplementation((asset) => {
+          return asset;
+        });
+
+      const result = await service.renameAsset(
+        updatedAsset,
+      );
+
+      expect(result.FileName).toBe(
+        updatedAsset.FileName,
+      );
+    });
+  });
 });
