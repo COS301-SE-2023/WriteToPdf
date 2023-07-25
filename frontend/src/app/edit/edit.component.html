@@ -21,6 +21,7 @@
             maxlength="50"
             (blur)="renameDocument()"
             [(ngModel)]="fileName"
+            title="Rename Document"
           />
         </div>
       </div>
@@ -132,7 +133,7 @@
               value="{{ obj.FileName }}"
               maxlength="50"
               (blur)="renameAsset(obj.AssetID, $event)"
-              title="ok"
+              title="Edit Name"
             />
           </div>
           <div class="deleteAsset">
