@@ -130,6 +130,19 @@ describe('AssetManagerController', () => {
   });
 
   describe('retrieve_all', () => {
+    it('should throw an error if UserID is missing', async () => {
+      const retrieveAllDTO = new RetrieveAllDTO();
+
+      expect(() =>
+        controller.retrieve_all(retrieveAllDTO),
+      ).toThrowError(
+        new HttpException(
+          'Invalid request data: UserID missing',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
     it('should throw an error if ParentFolderID is missing', async () => {
       const assetDTO = new AssetDTO();
       assetDTO.AssetID = 'test';
