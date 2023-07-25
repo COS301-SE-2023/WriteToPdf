@@ -14,6 +14,7 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { RetrieveAllDTO } from './dto/retrieve_all.dto';
+import { text } from 'stream/consumers';
 
 describe('AssetManagerService', () => {
   let service: AssetManagerService;
@@ -103,11 +104,17 @@ describe('AssetManagerService', () => {
       retrieveAllDTO.UserID = 1;
       retrieveAllDTO.ParentFolderID = 'test';
 
-      const assetDTO = new AssetDTO();
-      assetDTO.AssetID = 'test';
-      assetDTO.Format = 'image';
-      assetDTO.UserID = 1;
-      const assets = [assetDTO];
+      const imgAssetDTO = new AssetDTO();
+      imgAssetDTO.AssetID = 'test';
+      imgAssetDTO.Format = 'image';
+      imgAssetDTO.UserID = 1;
+
+      const textAssetDTO = new AssetDTO();
+      textAssetDTO.AssetID = 'test';
+      textAssetDTO.Format = 'image';
+      textAssetDTO.UserID = 1;
+
+      const assets = [imgAssetDTO, textAssetDTO];
 
       jest
         .spyOn(assetsService, 'retrieveAllAssets')
@@ -132,7 +139,7 @@ describe('AssetManagerService', () => {
           imageManagerService,
           'retrieveOne',
         )
-        .mockResolvedValue(assetDTO);
+        .mockResolvedValue(imgAssetDTO);
 
       jest
         .spyOn(
@@ -145,7 +152,7 @@ describe('AssetManagerService', () => {
           S3Service.prototype,
           'retrieveAsset',
         )
-        .mockResolvedValue(assetDTO);
+        .mockResolvedValue(imgAssetDTO);
 
       jest
         .spyOn(
@@ -154,6 +161,13 @@ describe('AssetManagerService', () => {
         )
         .mockResolvedValue('Compressed content');
 
+      jest
+        .spyOn(
+          textManagerService,
+          'retrieveOne',
+        )
+        .mockResolvedValue(textAssetDTO);
+
       await service.retrieve_all(
         retrieveAllDTO,
       );
@@ -161,14 +175,6 @@ describe('AssetManagerService', () => {
       expect(
         assetsService.retrieveAllAssets,
       ).toBeCalledWith(retrieveAllDTO);
-
-      // expect(
-      //   imageManagerService.retrieveOne,
-      // ).toBeCalledWith(assetDTO);
-
-      // expect(
-      //   imageManagerService.compressImage,
-      // ).toBeCalledWith(assetDTO.Content);
     });
 
     // it('should resize all image assets', async () => {
