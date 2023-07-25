@@ -111,7 +111,7 @@ describe('AssetManagerService', () => {
 
       const textAssetDTO = new AssetDTO();
       textAssetDTO.AssetID = 'test';
-      textAssetDTO.Format = 'image';
+      textAssetDTO.Format = 'text';
       textAssetDTO.UserID = 1;
 
       const assets = [imgAssetDTO, textAssetDTO];
