@@ -4,13 +4,19 @@ import {
   ElementRef,
   OnInit,
   Renderer2,
-  HostListener
+  HostListener,
 } from '@angular/core';
 // import {NgModule} from "@angular/core";
 import { Router } from '@angular/router';
 import { TreeTable } from 'primeng/treetable';
 
-import { MenuItem, MessageService, TreeNode, ConfirmationService, ConfirmEventType } from 'primeng/api';
+import {
+  MenuItem,
+  MessageService,
+  TreeNode,
+  ConfirmationService,
+  ConfirmEventType,
+} from 'primeng/api';
 import { NodeService } from '../services/home.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
@@ -49,8 +55,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public treeTableColumns!: Column[];
 
   public currentDirectory!: any;
-  //variable for dynamic resizing
-  componentWidth: string = ''; // Store the component's width as a string
+
+  //variables for dynamic resizing
+componentWidth: string = '';
+menubarElement: HTMLElement | null = null;
 
   //variables for double click and enter key to open doc
   public previousNode!: any;
@@ -92,7 +100,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private folderService: FolderService,
     private renderer: Renderer2,
     private coordinateService: CoordinateService,
-    private confirmationService: ConfirmationService,
+    private confirmationService: ConfirmationService
   ) {
     this.contextMenuItems = [
       {
@@ -117,30 +125,37 @@ export class HomeComponent implements OnInit, AfterViewInit {
       },
     ];
   }
+
   @HostListener('window:resize', ['$event'])
   onWindowResize(event: Event) {
-    this.updateComponentWidth(); // Call the function when the window is resized
+    this.updateMenubarWidth(); // Call the function when the window is resized
   }
 
-  updateComponentWidth() {
+  updateMenubarWidth() {
+    if (!this.menubarElement) return; // Ensure that the menubar element is available
+
     const viewportWidth = window.innerWidth;
 
     if (viewportWidth >= 960) {
-      // When viewport width is above 960px
       this.componentWidth = '400px';
     } else {
-      // When viewport width is below 960px
-      this.componentWidth = '180px';
+      this.componentWidth = '190px';
     }
+
+    // Update the style of the menubar element with the calculated width
+    this.menubarElement.style.minWidth = this.componentWidth;
   }
+
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
+
   // These functions serve to add intelligent routing and usage for directory management
 
   reloadMainFromRoot(): void {
     this.filterTable('', 3);
   }
+
   // The functions below serve to allow for editing and all other processes involved with editing
   // file names.
   onRowLabelEdit(event: any, rowNode: any): void {
@@ -225,12 +240,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const folder = this.nodeService.getFolderDTOByID(key);
       this.folderService
         .renameFolder(folder.FolderID, folder.Path, event)
-        .then((data) => { });
+        .then((data) => {});
     } else {
       const file = this.nodeService.getFileDTOByID(key);
       this.fileService
         .renameDocument(file.MarkdownID, event, file.Path)
-        .then((data) => { });
+        .then((data) => {});
     }
   }
 
@@ -249,7 +264,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     {
-      this.updateComponentWidth();
+      // Get a reference to the menubar element with the specific class
+      this.menubarElement = this.elementRef.nativeElement.querySelector('.p-menubar.custom-menubar');
+
+      // Call the function to set the component width initially
+      this.updateMenubarWidth();
       // Below is the function that initially populates the fileTree
       this.nodeService.getFilesAndFolders().then(() => {
         const data = this.nodeService.getTreeTableNodesData();
@@ -448,6 +467,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
       header: 'Upload Files',
@@ -464,6 +484,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   // this code updates the background layer to not be adjusted from the edit page after navigation.
   ngAfterViewInit() {
+    this.updateMenubarWidth();
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#FFFFFF';
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
@@ -539,7 +560,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.fileService.deleteDocument(file.MarkdownID);
       this.deleteEntryByKey(this.filesDirectoryTree, file.MarkdownID);
       this.deleteEntryByKey(this.filesDirectoryTreeTable, file.MarkdownID);
-      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, file.MarkdownID);
+      this.deleteEntryByKey(
+        this.filteredFilesDirectoryTreeTable,
+        file.MarkdownID
+      );
       this.filterTable('', 3);
       this.nodeService.removeFile(file.MarkdownID);
     }
@@ -548,7 +572,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.folderService.deleteFolder(folder.FolderID);
       this.deleteEntryByKey(this.filesDirectoryTree, folder.FolderID);
       this.deleteEntryByKey(this.filesDirectoryTreeTable, folder.FolderID);
-      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, folder.FolderID);
+      this.deleteEntryByKey(
+        this.filteredFilesDirectoryTreeTable,
+        folder.FolderID
+      );
       this.filterTable('', 3);
       this.nodeService.removeFolder(folder.FolderID);
     }
@@ -841,9 +868,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
               summary: 'File deleted successfully',
             });
         },
-        reject: () => {
-
-        }
+        reject: () => {},
       });
     }
   }
@@ -935,9 +960,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
       path = folder.FolderName;
     }
 
-    if (!folder.FolderID){
-      path='';
-      parentFolderID='';
+    if (!folder.FolderID) {
+      path = '';
+      parentFolderID = '';
     }
 
     const type = this.nodeService.checkType(keyOfDragged);
@@ -981,6 +1006,4 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   protected readonly focus = focus;
-
 }
-

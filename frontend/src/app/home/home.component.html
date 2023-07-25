@@ -9,8 +9,8 @@
       />
     </div>
     <div class="headerNavigation">
-      <div class="menuBar">
-        <p-menubar [autoZIndex]="false" [model]="menuBarItems" [style]="{backgroundColor: '#00000000', border: 'none', minWidth: '200px'}"></p-menubar>
+      <div class="p-menubar custom-menubar">
+          <p-menubar [autoZIndex]="false"  [style.min-width]="componentWidth" [model]="menuBarItems" [style]="{backgroundColor: '#00000000', border: 'none', minWidth: '200px'}"></p-menubar>
       </div>
     </div>
     <!--    TODO FileManagerPopup below-->
