@@ -925,7 +925,6 @@ subMenu: HTMLElement | null = null;
       )?.getAttribute('data-key');
       console.log('Key of dragged: ', keyOfDragged);
       console.log('Key of dropped: ', keyOfDropped);
-
       this.moveByKey(keyOfDragged, keyOfDropped);
     }, 10);
     if (this.currentlyDraggedNode) {
