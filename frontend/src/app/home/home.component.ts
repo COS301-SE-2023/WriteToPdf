@@ -28,6 +28,7 @@ import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
 import { Inject } from '@angular/core';
 import { CoordinateService } from '../services/coordinate-service.service';
+import {NgxSpinnerService} from "ngx-spinner";
 
 interface Column {
   field: string;
@@ -95,6 +96,7 @@ subMenu: HTMLElement | null = null;
     private elementRef: ElementRef,
     private messageService: MessageService,
     private dialogService: DialogService,
+    private loadingSpinnerService: NgxSpinnerService,
     private fileService: FileService,
     private userService: UserService,
     private editService: EditService,
