@@ -26,7 +26,7 @@ export class TextractController {
         ExtractType,
       );
 
-    console.log(retVal);
+    // console.log(retVal);
 
     return retVal;
   }
@@ -42,7 +42,7 @@ export class TextractController {
         ExtractType,
       );
 
-    console.log(retVal);
+    // console.log(retVal);
 
     return retVal;
   }
@@ -70,7 +70,7 @@ export class TextractController {
     const retVal =
       await this.textractService.test_del();
 
-    console.log(retVal);
+    // console.log(retVal);
 
     return retVal;
   }
