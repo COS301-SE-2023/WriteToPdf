@@ -9,7 +9,7 @@ import { S3Service } from '../s3/s3.service';
 import { TextManagerService } from '../text_manager/text_manager.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Asset } from '../assets/entities/asset.entity';
-import { Repository } from 'typeorm';
+import { Repository } from 'typeorm/repository/Repository';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { AssetDTO } from '../assets/dto/asset.dto';
@@ -135,17 +135,10 @@ describe('AssetManagerService', () => {
         } as any);
 
       jest
-        .spyOn(
-          imageManagerService,
-          'retrieveOne',
-        )
+        .spyOn(imageManagerService, 'retrieveOne')
         .mockResolvedValue(imgAssetDTO);
 
-      jest
-        .spyOn(
-          assetsService,
-          'retrieveOne',
-        )
+      jest.spyOn(assetsService, 'retrieveOne');
 
       jest
         .spyOn(
@@ -162,15 +155,10 @@ describe('AssetManagerService', () => {
         .mockResolvedValue('Compressed content');
 
       jest
-        .spyOn(
-          textManagerService,
-          'retrieveOne',
-        )
+        .spyOn(textManagerService, 'retrieveOne')
         .mockResolvedValue(textAssetDTO);
 
-      await service.retrieve_all(
-        retrieveAllDTO,
-      );
+      await service.retrieve_all(retrieveAllDTO);
 
       expect(
         assetsService.retrieveAllAssets,
@@ -184,10 +172,12 @@ describe('AssetManagerService', () => {
         assetDTO.Format = 'image';
         assetDTO.UserID = 1;
 
-        jest.spyOn(
-          imageManagerService,
-          'retrieveOne',
-        ).mockResolvedValue(assetDTO);
+        jest
+          .spyOn(
+            imageManagerService,
+            'retrieveOne',
+          )
+          .mockResolvedValue(assetDTO);
 
         await service.retrieve_one(assetDTO);
 
@@ -202,10 +192,12 @@ describe('AssetManagerService', () => {
         assetDTO.Format = 'text';
         assetDTO.UserID = 1;
 
-        jest.spyOn(
-          textManagerService,
-          'retrieveOne',
-        ).mockResolvedValue(assetDTO);
+        jest
+          .spyOn(
+            textManagerService,
+            'retrieveOne',
+          )
+          .mockResolvedValue(assetDTO);
 
         await service.retrieve_one(assetDTO);
 
@@ -215,6 +207,56 @@ describe('AssetManagerService', () => {
       });
     });
 
+    describe('rename_asset', () => {
+      it('should rename an image asset', async () => {
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = 'test';
+        assetDTO.Format = 'image';
+        assetDTO.UserID = 1;
+
+        jest
+          .spyOn(assetsService, 'renameAsset')
+          .mockResolvedValue(assetDTO);
+
+        await service.rename_asset(assetDTO);
+
+        expect(
+          assetsService.renameAsset,
+        ).toBeCalledWith(assetDTO);
+      });
+    });
+
+    describe('delete_asset', () => {
+      it('should delete an asset', async () => {
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = 'test';
+        assetDTO.Format = 'image';
+        assetDTO.UserID = 1;
+
+        jest.spyOn(assetsService, 'removeOne');
+
+        jest
+        .spyOn(Repository.prototype, 'delete')
+        .mockResolvedValue(assetDTO as any);
+
+        jest
+          .spyOn(
+            S3Service.prototype,
+            'deleteAsset',
+          )
+          .mockResolvedValue(assetDTO as any);
+
+        await service.delete_asset(assetDTO);
+
+        expect(
+          assetsService.removeOne,
+        ).toBeCalledWith(assetDTO.AssetID);
+
+        expect(
+          S3Service.prototype.deleteAsset,
+        ).toBeCalledWith(assetDTO);
+      });
+    });
     // it('should resize all image assets', async () => {
     //   const retrieveAllDTO = new RetrieveAllDTO();
     //   retrieveAllDTO.UserID = 1;
