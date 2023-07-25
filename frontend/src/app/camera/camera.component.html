@@ -1,59 +1,28 @@
 <div class="container">
+
+
+
   <div class="header">
-    <p-button
-      class="backButton"
-      icon="pi pi-arrow-left"
-      label="Back"
-      styleClass="p-button-rounded"
-      (click)="goBack()"
-    ></p-button>
-  </div>
-  <div class="webcamWrapper">
-    <video
-      class="camera"
-      id="camera"
-      autoplay
-      width="1000px"
-      height="800px"
-    ></video>
+    <p-button class="backButton" icon="pi pi-arrow-left" label="Back" styleClass="p-button-rounded"
+      (click)="goBack()"></p-button>
   </div>
 
-  <p-sidebar [(visible)]="sidebarVisible" [fullScreen]="true">
-    <p-button
-      class="backButton"
-      icon="pi pi-arrow-left"
-      label="Back"
-      styleClass="p-button-rounded"
-      (click)="goBack()"
-    ></p-button>
-    <div class="imageWrapper">
-      <img class="previewImg" [src]="sysImage" alt="" />
-    </div>
-    <div class="buttonWrapper">
-      <p-checkbox
-        [(ngModel)]="isAsset"
-        [binary]="true"
-        label="Extract Text"
-      ></p-checkbox>
-      <input
-        pInputText
-        type="text"
-        label="hi"
-        title="hi"
-        [(ngModel)]="assetName"
-        placeholder="Enter Asset Name"
-        style="margin-right: 10px"
-      />
-      <p-button class="uploadImage" title="Upload Image" (click)="uploadImage()"
-        >Upload Image</p-button
-      >
-    </div>
-  </p-sidebar>
-  <div class="footer">
-    <div
-      (click)="sidebarVisible = true"
-      (click)="getSnapshot()"
-      class="capture"
-    ></div>
+  <div class="webcamWrapper" [ngClass]="{ 'notVisible': captured}">
+    <video class="camera" id="camera" autoplay width="1000px" height="800px"></video>
   </div>
+
+  <div class="footer" [ngClass]="{ 'notVisible': captured}">
+    <div (click)="sidebarVisible = true" (click)="getSnapshot()" class="capture" title="Capture Image (ctr+r)"></div>
+  </div>
+
+  <div class="imageWrapper" [ngClass]="{ 'notVisible': !captured }">
+    <img class="previewImg" [src]="sysImage" alt="" />
+  </div>
+
+  <div class="footer" [ngClass]="{ 'notVisible': !captured }">
+      <p-checkbox class="checkbox" [(ngModel)]="isAsset" [binary]="true" label="Extract Text"></p-checkbox>
+      <input class="assetName" pInputText type="text" label="hi" title="Enter Asset Name" [(ngModel)]="assetName" placeholder="Enter Asset Name"/>
+      <p-button class="uploadImage" title="Upload Image" (click)="uploadImage()">Upload Image</p-button>
+  </div>
+
 </div>
