@@ -97,70 +97,124 @@ describe('AssetManagerService', () => {
     });
   });
 
-  // describe('retrieve_all', () => {
-  //   it('should retrieve all assets from the db', async () => {
-  //     const retrieveAllDTO = new RetrieveAllDTO();
-  //     retrieveAllDTO.UserID = 1;
+  describe('retrieve_all', (/** TDD FTW */) => {
+    it('should retrieve all assets from the db', async () => {
+      const retrieveAllDTO = new RetrieveAllDTO();
+      retrieveAllDTO.UserID = 1;
+      retrieveAllDTO.ParentFolderID = 'test';
 
-  //     const assetDTO = new AssetDTO();
-  //     assetDTO.AssetID = 'test';
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.Format = 'image';
+      assetDTO.UserID = 1;
+      const assets = [assetDTO];
 
-  //     jest.spyOn(
-  //       assetsService,
-  //       'retrieveAllAssets',
-  //     );
+      jest
+        .spyOn(assetsService, 'retrieveAllAssets')
+        .mockResolvedValue(assets);
 
-  //     await service.retrieve_all(retrieveAllDTO);
+      jest
+        .spyOn(
+          Repository.prototype,
+          'createQueryBuilder',
+        )
+        .mockReturnValue({
+          where: jest.fn().mockReturnThis(),
+          andWhere: jest.fn().mockReturnThis(),
+          orderBy: jest.fn().mockReturnThis(),
+          getMany: jest
+            .fn()
+            .mockResolvedValue([]),
+        } as any);
 
-  //     expect(
-  //       assetsService.retrieveAllAssets,
-  //     ).toBeCalledWith(retrieveAllDTO);
-  //   });
+      jest
+        .spyOn(
+          imageManagerService,
+          'retrieveOne',
+        )
+        .mockResolvedValue(assetDTO);
 
-  //   it('should resize all image assets', async () => {
-  //     const retrieveAllDTO = new RetrieveAllDTO();
-  //     retrieveAllDTO.UserID = 1;
+      jest
+        .spyOn(
+          assetsService,
+          'retrieveOne',
+        )
 
-  //     const assetDTO = new AssetDTO();
-  //     assetDTO.AssetID = 'test';
-  //     assetDTO.Format = 'image';
-  //     assetDTO.UserID = 1;
-  //     assetDTO.Content = 'Uncompressed content';
+      jest
+        .spyOn(
+          S3Service.prototype,
+          'retrieveAsset',
+        )
+        .mockResolvedValue(assetDTO);
 
-  //     const newAssetDTO = new AssetDTO();
-  //     newAssetDTO.AssetID = 'test';
-  //     newAssetDTO.UserID = 1;
-  //     newAssetDTO.ConvertedElement = '';
-  //     newAssetDTO.Image = 'Compressed content';
+      jest
+        .spyOn(
+          imageManagerService,
+          'compressImage',
+        )
+        .mockResolvedValue('Compressed content');
 
-  //     const assets = [assetDTO];
+      await service.retrieve_all(
+        retrieveAllDTO,
+      );
 
-  //     jest
-  //       .spyOn(assetsService, 'retrieveAllAssets')
-  //       .mockResolvedValue(assets);
+      expect(
+        assetsService.retrieveAllAssets,
+      ).toBeCalledWith(retrieveAllDTO);
 
-  //     jest
-  //       .spyOn(imageManagerService, 'retrieveOne')
-  //       .mockResolvedValue(newAssetDTO);
+      // expect(
+      //   imageManagerService.retrieveOne,
+      // ).toBeCalledWith(assetDTO);
 
-  //     jest
-  //       .spyOn(
-  //         imageManagerService,
-  //         'compressImage',
-  //       )
-  //       .mockResolvedValue('Compressed content');
+      // expect(
+      //   imageManagerService.compressImage,
+      // ).toBeCalledWith(assetDTO.Content);
+    });
 
-  //     const response = await service.retrieve_all(
-  //       retrieveAllDTO,
-  //     );
+    // it('should resize all image assets', async () => {
+    //   const retrieveAllDTO = new RetrieveAllDTO();
+    //   retrieveAllDTO.UserID = 1;
 
-  //     expect(response).toEqual([newAssetDTO]);
-  //     expect(
-  //       imageManagerService.retrieveOne,
-  //     ).toBeCalledWith(assetDTO);
-  //     expect(
-  //       imageManagerService.compressImage,
-  //     ).toBeCalledWith(assetDTO.Content);
-  //   });
-  // });
+    //   const assetDTO = new AssetDTO();
+    //   assetDTO.AssetID = 'test';
+    //   assetDTO.Format = 'image';
+    //   assetDTO.UserID = 1;
+    //   assetDTO.Content = 'Uncompressed content';
+
+    //   const newAssetDTO = new AssetDTO();
+    //   newAssetDTO.AssetID = 'test';
+    //   newAssetDTO.UserID = 1;
+    //   newAssetDTO.ConvertedElement = '';
+    //   newAssetDTO.Image = 'Compressed content';
+
+    //   const assets = [assetDTO];
+
+    //   jest
+    //     .spyOn(assetsService, 'retrieveAllAssets')
+    //     .mockResolvedValue(assets);
+
+    //   jest
+    //     .spyOn(imageManagerService, 'retrieveOne')
+    //     .mockResolvedValue(newAssetDTO);
+
+    //   jest
+    //     .spyOn(
+    //       imageManagerService,
+    //       'compressImage',
+    //     )
+    //     .mockResolvedValue('Compressed content');
+
+    //   const response = await service.retrieve_all(
+    //     retrieveAllDTO,
+    //   );
+
+    //   expect(response).toEqual([newAssetDTO]);
+    //   expect(
+    //     imageManagerService.retrieveOne,
+    //   ).toBeCalledWith(assetDTO);
+    //   expect(
+    //     imageManagerService.compressImage,
+    //   ).toBeCalledWith(assetDTO.Content);
+    // });
+  });
 });
