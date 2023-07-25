@@ -4,6 +4,7 @@ import {
   ElementRef,
   OnInit,
   Renderer2,
+  HostListener
 } from '@angular/core';
 // import {NgModule} from "@angular/core";
 import { Router } from '@angular/router';
@@ -48,6 +49,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public treeTableColumns!: Column[];
 
   public currentDirectory!: any;
+  //variable for dynamic resizing
+  componentWidth: string = ''; // Store the component's width as a string
 
   //variables for double click and enter key to open doc
   public previousNode!: any;
@@ -79,7 +82,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   constructor(
     @Inject(Router) private router: Router,
-
     private nodeService: NodeService,
     private elementRef: ElementRef,
     private messageService: MessageService,
@@ -115,7 +117,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
       },
     ];
   }
+  @HostListener('window:resize', ['$event'])
+  onWindowResize(event: Event) {
+    this.updateComponentWidth(); // Call the function when the window is resized
+  }
 
+  updateComponentWidth() {
+    const viewportWidth = window.innerWidth;
+
+    if (viewportWidth >= 960) {
+      // When viewport width is above 960px
+      this.componentWidth = '400px';
+    } else {
+      // When viewport width is below 960px
+      this.componentWidth = '180px';
+    }
+  }
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
@@ -232,6 +249,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     {
+      this.updateComponentWidth();
       // Below is the function that initially populates the fileTree
       this.nodeService.getFilesAndFolders().then(() => {
         const data = this.nodeService.getTreeTableNodesData();
@@ -963,4 +981,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   protected readonly focus = focus;
+
 }
+
