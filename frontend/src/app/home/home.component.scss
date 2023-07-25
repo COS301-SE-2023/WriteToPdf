@@ -74,15 +74,15 @@
 @Julian, please help me to get this menubar floating in line with the left sidebar's edge, it does not want
 to co-operate.
  */
-.menuBar {
+.p-menubar{
 width: 400px;
-min-width: 400px;
-  // margin-left: 550px;
+//min-width: 400px;
   position:relative;
+  border: 0;
   .p-menuitem-link{
     z-index:9999999999;
   }
-
+background-color: #00000000;
 }
 
 
