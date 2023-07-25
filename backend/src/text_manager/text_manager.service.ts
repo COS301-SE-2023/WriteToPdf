@@ -6,7 +6,7 @@ import {
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { S3Service } from '../s3/s3.service';
 import { AssetsService } from '../assets/assets.service';
-import { SHA256 } from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable()
 export class TextManagerService {
@@ -17,7 +17,7 @@ export class TextManagerService {
 
   upload(uploadTextDTO: AssetDTO) {
     // Generate AssetID
-    uploadTextDTO.AssetID = SHA256(
+    uploadTextDTO.AssetID = CryptoJS.SHA256(
       uploadTextDTO.UserID.toString() +
         new Date().getTime().toString(),
     ).toString();

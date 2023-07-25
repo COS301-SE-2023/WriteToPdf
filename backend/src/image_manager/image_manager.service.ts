@@ -6,7 +6,7 @@ import {
 import { S3Service } from '../s3/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import { AssetDTO } from '../assets/dto/asset.dto';
-import { SHA256 } from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 import * as sharp from 'sharp';
 import { RetrieveAllDTO } from '../asset_manager/dto/retrieve_all.dto';
 
@@ -18,7 +18,7 @@ export class ImageManagerService {
   ) {}
 
   upload(uploadImageDTO: AssetDTO) {
-    uploadImageDTO.AssetID = SHA256(
+    uploadImageDTO.AssetID = CryptoJS.SHA256(
       uploadImageDTO.UserID.toString() +
         new Date().getTime().toString(),
     ).toString();
