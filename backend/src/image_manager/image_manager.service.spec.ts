@@ -10,9 +10,24 @@ import { Asset } from '../assets/entities/asset.entity';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { AssetDTO } from '../assets/dto/asset.dto';
+import * as CryptoJS from 'crypto-js';
 
+jest.mock('crypto-js', () => {
+  const mockedHash = jest.fn(
+    () => 'hashed string',
+  );
+
+  return {
+    SHA256: jest.fn().mockReturnValue({
+      toString: mockedHash,
+    }),
+  };
+});
 describe('ImageManagerService', () => {
   let service: ImageManagerService;
+  let assetService: AssetsService;
+  let s3Service: S3Service;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -33,9 +48,80 @@ describe('ImageManagerService', () => {
     service = module.get<ImageManagerService>(
       ImageManagerService,
     );
+    assetService = module.get<AssetsService>(
+      AssetsService,
+    );
+    s3Service = module.get<S3Service>(S3Service);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('upload', () => {
+    it('should set undefined values to empty strings', async () => {
+      const uploadImage = new AssetDTO();
+      uploadImage.Image = 'test';
+      uploadImage.UserID = 1;
+
+      jest
+        .spyOn(assetService, 'saveAsset')
+        .mockResolvedValue(uploadImage);
+
+      jest
+        .spyOn(s3Service, 'saveAsset')
+        .mockImplementation((assetDTO) =>
+          Promise.resolve(assetDTO),
+        );
+
+      expect(
+        uploadImage.ConvertedElement,
+      ).toBeUndefined();
+      expect(uploadImage.Content).toBeUndefined();
+
+      const result = await service.upload(
+        uploadImage,
+      );
+
+      expect(result.ConvertedElement).toEqual('');
+      expect(result.Content).toEqual('test');
+    });
+
+    it('should store the image in the db and s3', async () => {
+      const uploadAssetWithImage = new AssetDTO();
+      uploadAssetWithImage.Image = 'test';
+      uploadAssetWithImage.UserID = 1;
+      uploadAssetWithImage.AssetID = 'test';
+
+      const uploadAssetWithoutImage =
+        new AssetDTO();
+      uploadAssetWithoutImage.UserID = 1;
+
+      const expectedAsset = new AssetDTO();
+      expectedAsset.Image = 'test';
+      expectedAsset.UserID = 1;
+      expectedAsset.AssetID = 'hashed string';
+
+      jest
+        .spyOn(assetService, 'saveAsset')
+        .mockResolvedValue(uploadAssetWithImage);
+
+      jest
+        .spyOn(s3Service, 'saveAsset')
+        .mockImplementation((assetDTO) =>
+          Promise.resolve(assetDTO),
+        );
+
+      const result = await service.upload(
+        uploadAssetWithImage,
+      );
+
+      expect(result).toEqual(
+        uploadAssetWithImage,
+      );
+      expect(
+        assetService.saveAsset,
+      ).toBeCalledWith(uploadAssetWithoutImage);
+      expect(s3Service.saveAsset).toBeCalledWith(
+        uploadAssetWithImage,
+      );
+      expect(CryptoJS.SHA256).toBeCalled();
+    });
   });
 });
