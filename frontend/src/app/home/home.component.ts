@@ -236,7 +236,6 @@ subMenu: HTMLElement | null = null;
   }
 
   sendEditedRowLabel(event: any, key: string, type: string): void {
-    console.log(event, key, type);
     if (type === 'folder') {
       const folder = this.nodeService.getFolderDTOByID(key);
       this.folderService
@@ -273,12 +272,6 @@ subMenu: HTMLElement | null = null;
       // Below is the function that initially populates the fileTree
       this.nodeService.getFilesAndFolders().then(() => {
         const data = this.nodeService.getTreeTableNodesData();
-        console.log(data);
-        for(let i=0;i<data.length;i++){
-
-          this.removeUniqueIDRecursive(data[i]);
-          // data[i].data.name=this.removeUniqueID(data[i].data.name);
-        }
         this.filesDirectoryTree = this.generateTreeNodes(data);
 
         // Below is the function that populates the treeTable
@@ -341,8 +334,19 @@ subMenu: HTMLElement | null = null;
     }
   }
 
+  iterateNodeIDRemoval(node: any[]) {
+    if(!node){
+      return node;
+    }
+    for(let i=0;i<node.length;i++){
+      this.removeUniqueIDRecursive(node[i]);
+    }
+    return node;
+  }
+
   removeUniqueIDRecursive(node: any){
     node.data.name=this.removeUniqueID(node.data.name);
+    node.label=this.removeUniqueID(node.label);
     if(node.children){
       for(let i=0;i<node.children.length;i++){
         this.removeUniqueIDRecursive(node.children[i]);
@@ -387,7 +391,6 @@ subMenu: HTMLElement | null = null;
     if (2 == searchCollapseExpandRoot) {
       explodeOrCollapse = true;
       filterValue = filterEvent.node.label;
-      console.log(filterValue);
     }
     if (0 == searchCollapseExpandRoot) {
       explodeOrCollapse = false;
@@ -397,7 +400,6 @@ subMenu: HTMLElement | null = null;
       filterValue = filterEvent;
       explodeOrCollapse = false;
     }
-    console.log(filterValue);
     // Perform filtering based on the first column
     this.filteredFilesDirectoryTreeTable = this.filesDirectoryTreeTable.filter(
       (node) => {
@@ -512,15 +514,12 @@ subMenu: HTMLElement | null = null;
 
   onOpenFileSelect(event: any): void {
     const file = this.nodeService.getFileDTOByID(event.key);
-    console.log('FILE: ' + JSON.stringify(file));
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
-        console.log('Data retrieved on file open: ' + data);
         this.editService.setContent(data);
         this.editService.setName(file.Name);
         this.editService.setMarkdownID(file.MarkdownID);
-        console.log('Parent Folder ID: ' + file.ParentFolderID);
         this.editService.setParentFolderID(file.ParentFolderID);
         this.editService.setPath(file.Path);
         this.navigateToPage('edit');
@@ -532,12 +531,10 @@ subMenu: HTMLElement | null = null;
     newPath: string,
     newParentFolderID: string
   ): void {
-    console.log(event);
     const file = this.nodeService.getFileDTOByID(event.key);
     this.entityToMove = event;
     this.showFileManagerPopup('move');
     this.moveDialogVisible = true;
-    console.log(file);
   }
 
   //TODO - implement the move folder function
@@ -546,16 +543,12 @@ subMenu: HTMLElement | null = null;
     newPath: string,
     newParentFolderID: string
   ): void {
-    console.log(event);
     const folder = this.nodeService.getFolderDTOByID(event.key);
     this.entityToMove = event;
     this.moveDialogVisible = true;
-    console.log(folder);
   }
 
   delete(event: any) {
-    console.log('delete');
-    console.log(event);
     if (event.data.type == 'folder') {
       this.deleteAllChildren(this.nodeService.getFolderDTOByID(event.key));
 
@@ -894,7 +887,6 @@ subMenu: HTMLElement | null = null;
   }
 
   openFileDoubleClick() {
-    console.log('UNIQUE: ' + this.currentDirectory);
     if (this.currentNode == this.previousNode && this.previousNode != null)
       this.onOpenFileSelect(this.previousNode);
     else {
@@ -902,8 +894,6 @@ subMenu: HTMLElement | null = null;
   }
 
   selectNode($event: any) {
-    console.log($event);
-
     this.currentNode = $event.node;
   }
 
@@ -913,9 +903,7 @@ subMenu: HTMLElement | null = null;
 
   onNodeDrag($event: any) {
     this.isDraggingNode = true;
-    console.log('Drag start: ', $event);
     const key = $event.source.element.nativeElement?.getAttribute('data-key');
-    console.log('Key: ', JSON.stringify(key));
     this.originalPosition = {
       x: $event.source._dragRef._passiveTransform.x,
       y: $event.source._dragRef._passiveTransform.y,
@@ -940,8 +928,6 @@ subMenu: HTMLElement | null = null;
       const keyOfDropped = this.getParentElement(
         this.coordinateService.getElementAtCoordinate()
       )?.getAttribute('data-key');
-      console.log('Key of dragged: ', keyOfDragged);
-      console.log('Key of dropped: ', keyOfDropped);
       this.moveByKey(keyOfDragged, keyOfDropped);
     }, 10);
     if (this.currentlyDraggedNode) {
@@ -990,7 +976,6 @@ subMenu: HTMLElement | null = null;
     if (type === 'file') {
       const movingNode = this.nodeService.getFileDTOByID(keyOfDragged);
       if (movingNode.ParentFolderID === parentFolderID) return;
-      console.log('Folder:', folder);
       this.fileService
         .moveDocument(movingNode.MarkdownID, path, parentFolderID)
         .then((data) => {
@@ -1004,8 +989,6 @@ subMenu: HTMLElement | null = null;
       const movingNode = this.nodeService.getFolderDTOByID(keyOfDragged);
       if (movingNode.ParentFolderID === parentFolderID) return;
       //check if moving parent folder into some child folder
-      console.log('Folder:', folder);
-      console.log('Moving node:', movingNode);
       if (this.nodeService.checkIfChildFolder(folder, movingNode)) {
         this.messageService.add({
           severity: 'warn',

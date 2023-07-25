@@ -69,7 +69,7 @@
         src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" />
     </div>
     <div class="directoryTree">
-      <p-tree (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile" [value]="filesDirectoryTree"
+      <p-tree (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile" [value]="iterateNodeIDRemoval(filesDirectoryTree)"
         class="w-full md:w-30rem" selectionMode="single"></p-tree>
     </div>
   </div>
