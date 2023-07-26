@@ -141,4 +141,16 @@ describe('TextManagerService', () => {
       }
     });
   });
+
+  describe('parseS3Content', () => {
+    it('should parse s3 content', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.Content = '1\na<base64 string>';
+      const response = await service.parseS3Content(
+        assetDTO,
+      );
+      expect(response.Image).toBe('<base64 string>');
+      expect(response.Content).toBe('a');
+    });
+  });
 });
