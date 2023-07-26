@@ -896,6 +896,7 @@ subMenu: HTMLElement | null = null;
   }
 
   selectNode($event: any) {
+    console.log($event);
     this.currentNode = $event.node;
   }
 
