@@ -14,7 +14,7 @@
 [![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml)  
 ![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf)
 [![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2023/WriteToPdf?color=blue)](https://github.com/COS301-SE-2023/WriteToPdf/issues?q=is%3Aissue+is%3Aclosed)
-[![Commits](https://img.shields.io/github/commit-activity/w/COS301-SE-2023/WriteToPdf)](https://github.com/COS301-SE-2023/WriteToPdf/issues)
+<!-- [![Commits](https://img.shields.io/github/commit-activity/w/COS301-SE-2023/WriteToPdf)](https://github.com/COS301-SE-2023/WriteToPdf/issues) -->
 <!-- [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2023_WriteToPdf&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2023_WriteToPdf) -->
 <!-- [![Requirements Status](https://requires.io/github/COS301-SE-2023/WriteToPdf/requirements.svg?branch=main)](https://requires.io/github/COS301-SE-2023/WriteToPdf/requirements/?branch=main) -->
 <!-- [![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml) -->
@@ -95,7 +95,7 @@ By structuring the repository in this manner, we maintain a clear separation of 
 <details>
 <summary>Janco Spies - u21434159</summary>
 <br>
-<p>Project Leader, Tester</p>
+<p>Project Leader, Tester, Integration Engineer</p>
 <p>
 Janco has experience working as a tutor for the module Data Structures and Algorithms at the University of Pretoria, where he enjoys problem-solving and collaborating with others. Janco has excelled academically during his time at the university and has a strong background in statistics. He is skilled in several programming languages and frameworks, including Java, NodeJS, C++, Angular, and Python.
 </p>
@@ -155,7 +155,7 @@ Dylan is a highly motivated individual with a solid academic background, finishi
 <details>
 <summary>Conrad Strasheim - u04483716</summary>
 <br/>
-<p>Business Analyst, Services Engineer</p>
+<p>Business Analyst, UI Engineer</p>
 <p>
 Conrad is an avid programmer, yogi and musician. He has experience in Python, R, MATLAB, C++, Java, Angular, React, Google Cloud and Docker. He has programmed an algorithmic music generator, whose music functions as accompaniment for musical improvisation, with Python as part of a master’s project collaboration at Tuks. His speciality is reading up on domain specific knowledge and implementing innovative solutions within that domain, as with the music application.
 </p>
