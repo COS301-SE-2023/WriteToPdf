@@ -11,7 +11,7 @@ export class ConversionService {
     this.turndownService = new TurndownService();
   }
   async generatePdf(html: string) {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({headless: "new"});
     const page = await browser.newPage();
 
     // Emulate a screen to apply CSS styles correctly
