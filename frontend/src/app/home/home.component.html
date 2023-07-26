@@ -69,7 +69,7 @@
         src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" />
     </div>
     <div class="directoryTree">
-      <p-tree (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile" [value]="iterateNodeIDRemoval(filesDirectoryTree)"
+      <p-tree class="leftTree" (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile" [value]="iterateNodeIDRemoval(filesDirectoryTree)"
         class="w-full md:w-30rem" selectionMode="single"></p-tree>
     </div>
   </div>
@@ -147,7 +147,7 @@
               <!-- <ng-container *ngIf="i === 0 && !editToggle">{{
                 rowData[col.field]
                 }}</ng-container> -->
-              <ng-container *ngIf="i > 1">{{
+              <ng-container *ngIf="i >= 1">{{
                 rowData[col.field]
                 }}</ng-container>
             </td>

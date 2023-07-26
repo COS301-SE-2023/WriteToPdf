@@ -33,12 +33,10 @@
   display: flex;
   grid-auto-flow: column;
   //overflow-x: auto;
-  background-image: linear-gradient(to left, #ffffff, #e7e7e7);
+  background-image: linear-gradient(to left, #ffffff, #f7f9fc);
   //border-bottom: 1px solid #ccc;
   //box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  border-image:linear-gradient(to left, #ffffff, $dark-grey) ;
-  border-image-width: 0 0 1px;
-  border-image-slice:1;
+
   width: 100%;
   height: 112px;
   //justify-content: space-between;
@@ -112,15 +110,18 @@ background-color: #00000000;
   top: 112px;
   // Colour
   overflow:auto;
-  background-color: white;
   opacity: 100%;
+  box-shadow: 3px 0px 5px rgba(0, 0, 0, 0.1);
   /* Main Colours/Dark Gray */
-  border-width: 0px 1px 1px 0px;
-  border-style: solid;
-  border-color: #6F6F6F;
+
 }
 
+.p-tree{
+    background: #00000000!important;
+      border: none!important;
+}
 .directoryTree{
+
   overflow: auto;
   z-index:100;
 }
