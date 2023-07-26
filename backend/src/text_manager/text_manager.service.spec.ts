@@ -12,6 +12,10 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import * as CryptoJS from 'crypto-js';
 import { AssetDTO } from '../assets/dto/asset.dto';
+import {
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 
 describe('TextManagerService', () => {
   let service: TextManagerService;
@@ -104,6 +108,37 @@ describe('TextManagerService', () => {
       );
 
       expect(response).toBe(assetDTO);
+    });
+
+    it('should throw error if asset not found', async () => {
+      const retrieveTextDTO = new AssetDTO();
+      retrieveTextDTO.AssetID = 'mock asset id';
+      retrieveTextDTO.Format = 'text';
+      retrieveTextDTO.Content = 'mock content';
+      jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockReturnValue(null);
+
+      jest
+        .spyOn(assetsService, 'retrieveOne')
+        .mockReturnValue(null);
+      try {
+        const response =
+          await service.retrieveOne(
+            retrieveTextDTO,
+          );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Asset not found, check AssetID and Format',
+        );
+        expect(error.status).toBe(
+          HttpStatus.NOT_FOUND,
+        );
+      }
     });
   });
 });
