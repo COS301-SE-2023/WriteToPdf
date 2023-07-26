@@ -6,6 +6,7 @@ import { ConversionService } from './conversion.service';
 import puppeteer from 'puppeteer'; //PDF converter
 import * as cheerio from 'cheerio'; //Plain text converter
 import * as TurndownService from 'turndown'; //Markdown converter
+import * as sharp from 'sharp';
 
 describe('ConversionService', () => {
   let service: ConversionService;
@@ -80,6 +81,56 @@ describe('ConversionService', () => {
       const markdown =
         conversionService.generateMarkdown(html);
       expect(markdown).toEqual('Hello, World!');
+    });
+  });
+
+  describe('generateJpeg', () => {
+    it('should convert HTML to Jpeg format', async () => {
+      const mockBuffer: Buffer = await sharp({
+        create: {
+          width: 100,
+          height: 100,
+          channels: 4, // 4 channels for RGBA
+          background: {
+            r: 255,
+            g: 255,
+            b: 255,
+            alpha: 1,
+          }, // White background
+        },
+      })
+        .png()
+        .toBuffer();
+      const mockPage = {
+        setViewport: jest.fn(),
+        setContent: jest.fn(),
+        close: jest.fn(),
+        screenshot: jest
+          .fn()
+          .mockReturnValue(mockBuffer),
+      };
+
+      const mockBrowser = {
+        newPage: jest.fn(() => mockPage),
+        close: jest.fn(),
+      };
+
+      jest
+        .spyOn(puppeteer, 'launch')
+        .mockResolvedValue(mockBrowser as any);
+
+      const html = '<p>Hello, World!</p>';
+
+      const response = await service.generateJpeg(
+        html,
+      );
+
+      const expectedJpegImage = await sharp(
+        mockBuffer,
+      )
+        .toFormat('jpeg')
+        .toBuffer();
+      expect(response).toEqual(expectedJpegImage);
     });
   });
 });
