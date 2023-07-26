@@ -77,4 +77,33 @@ describe('TextManagerService', () => {
       expect(response).toBe(uploadTextDTO);
     });
   });
+
+  describe('retrieveOne', () => {
+    it('should retrieve asset', async () => {
+      const retrieveTextDTO = new AssetDTO();
+      retrieveTextDTO.AssetID = 'mock asset id';
+      retrieveTextDTO.Format = 'text';
+      retrieveTextDTO.Content = 'mock content';
+
+      const assetDTO = new AssetDTO();
+
+      jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockReturnValue(assetDTO as any);
+
+      jest
+        .spyOn(assetsService, 'retrieveOne')
+        .mockReturnValue(assetDTO as any);
+
+      jest
+        .spyOn(service, 'parseS3Content')
+        .mockReturnValue(assetDTO as any);
+
+      const response = await service.retrieveOne(
+        retrieveTextDTO,
+      );
+
+      expect(response).toBe(assetDTO);
+    });
+  });
 });
