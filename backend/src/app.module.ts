@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   dataSourceOptions,
@@ -46,14 +44,12 @@ import { TextractService } from './textract/textract.service';
     TextractModule,
   ],
   controllers: [
-    AppController,
     AuthController,
     S3Controller,
     FileManagerController,
     TextractController,
   ],
   providers: [
-    AppService,
     FileManagerService,
     MarkdownFilesService,
     FoldersService,
