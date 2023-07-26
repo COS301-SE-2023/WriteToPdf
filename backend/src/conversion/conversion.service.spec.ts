@@ -4,6 +4,7 @@ import {
 } from '@nestjs/testing';
 import { ConversionService } from './conversion.service';
 import puppeteer from 'puppeteer'; //PDF converter
+import * as cheerio from 'cheerio'; //Plain text converter
 
 describe('ConversionService', () => {
   let service: ConversionService;
@@ -32,7 +33,7 @@ describe('ConversionService', () => {
         setContent: jest.fn(),
         pdf: jest
           .fn()
-          .mockResolvedValue('fake_pdf_data'), // Mock the pdf function to return a fake PDF data
+          .mockResolvedValue('fake_pdf_data'),
         close: jest.fn(),
       };
 
@@ -52,6 +53,21 @@ describe('ConversionService', () => {
       expect(
         puppeteer.launch,
       ).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('generateTxt', () => {
+    it('should generate plain text', () => {
+      const html =
+        '<html><body><h1>Hello, World!</h1></body></html>';
+
+      jest.spyOn(cheerio, 'load');
+
+      const txt = service.generateTxt(html);
+
+      expect(cheerio.load).toHaveBeenCalledTimes(
+        1,
+      );
     });
   });
 });
