@@ -132,5 +132,48 @@ describe('ConversionService', () => {
         .toBuffer();
       expect(response).toEqual(expectedJpegImage);
     });
+
+    it('generatePng', async () => {
+      const mockBuffer: Buffer = await sharp({
+        create: {
+          width: 100,
+          height: 100,
+          channels: 4, // 4 channels for RGBA
+          background: {
+            r: 255,
+            g: 255,
+            b: 255,
+            alpha: 1,
+          }, // White background
+        },
+      })
+        .png()
+        .toBuffer();
+
+      const mockBrowser = {
+        newPage: jest.fn(() => mockPage),
+        close: jest.fn(),
+      };
+
+      jest
+        .spyOn(puppeteer, 'launch')
+        .mockResolvedValue(mockBrowser as any);
+
+      const mockPage = {
+        setContent: jest.fn(),
+        close: jest.fn(),
+        screenshot: jest
+          .fn()
+          .mockReturnValue(mockBuffer),
+      };
+
+      const html = '<p>Hello, World!</p>';
+
+      const response = await service.generatePng(
+        html,
+      );
+
+      expect(response).toEqual(mockBuffer);
+    });
   });
 });
