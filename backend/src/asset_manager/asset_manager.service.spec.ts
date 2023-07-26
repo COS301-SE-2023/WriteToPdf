@@ -98,7 +98,7 @@ describe('AssetManagerService', () => {
     });
   });
 
-  describe('retrieve_all', (/** TDD FTW */) => {
+  describe('retrieve_all', () => {
     it('should retrieve all assets from the db', async () => {
       const retrieveAllDTO = new RetrieveAllDTO();
       retrieveAllDTO.UserID = 1;
