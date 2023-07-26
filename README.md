@@ -29,17 +29,24 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 ## Demos
 - [Demo 1](https://drive.google.com/drive/folders/1D8awdHGBDuI7PGQYF_jtX9iGq_9PWY3x?usp=sharing)
 - [Demo 2](https://drive.google.com/drive/folders/1QVIrOEi5PJAhG8DMwNrwjIcF7Gocu8LK?usp=sharing)
+- [Demo 3](https://drive.google.com/drive/folders/1cW53_1X3Y5Wp2fSbiyTv9ax8rGFM-JwM?usp=sharing)
 
 ## Documentation
 ### Software requirements specification
 - [SRS v1](https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing)
 - [SRS v2](https://docs.google.com/document/d/196IHwe8rBytZlJOIvh8gGMJUIhs1joQ91NA5TIrqbV4/edit?usp=sharing)
+- [SRS v3](https://docs.google.com/document/d/1TKv0xJzYFy35HWXMa736Qu16aRPZn0SIqjJhXzTakWA/edit?usp=sharing)
 
 ### Architecture
 - [Architecture v1](https://docs.google.com/document/d/1skoEPk1VvtO8P9fyWIVFyUuf0ssU1aI8G-wrYYNbeyg/edit?usp=sharing)
+- [Architecture v2](https://docs.google.com/document/d/1FTGkhilcBonjeJdZc6e2ykf3x_l8cgZlwjZvC8O_KZ8/edit?usp=sharing)
 
 ### User Manual
 - [User manual v1](https://docs.google.com/document/d/1zUkgP6SMe9ti3cEWSjjO4yTOUCb1NZnV1_J4SeadA7A/edit?usp=sharing)
+- [User manual v2](https://docs.google.com/document/d/1zs5NqddSAby1zNL-tTCPOdJPDTYQJnAWIyChKixjNN4/edit?usp=sharing)
+
+### Technical installation document
+- [Technical insallation v1](https://docs.google.com/document/d/1HG9QVSEh2NsHbrRTlXPBjiq3keQMapmmiDbTFK07tNU/edit?usp=sharing)
 
 ### Coding standards
 - [Coding standards](https://github.com/COS301-SE-2023/WriteToPdf/wiki/Coding-Standards)
