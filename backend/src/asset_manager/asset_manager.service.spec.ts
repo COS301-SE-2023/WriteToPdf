@@ -236,8 +236,8 @@ describe('AssetManagerService', () => {
         jest.spyOn(assetsService, 'removeOne');
 
         jest
-        .spyOn(Repository.prototype, 'delete')
-        .mockResolvedValue(assetDTO as any);
+          .spyOn(Repository.prototype, 'delete')
+          .mockResolvedValue(assetDTO as any);
 
         jest
           .spyOn(
