@@ -8,6 +8,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserService } from './user.service';
 import { MessageService } from 'primeng/api';
 import { environment } from '../../environments/environment';
+import { MarkdownFileDTO } from './dto/markdown_file.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -33,8 +34,9 @@ export class AssetService {
         fileName,
         parentFolderId,
         format
-      ).subscribe({
-        next: (response: HttpResponse<any>) => {
+        ).subscribe({
+          next: (response: HttpResponse<any>) => {
+          console.log('RES: ',response);
           if (response.status === 201) {
             console.log('Image uploaded successfully');
             this.messageService.add({
@@ -58,23 +60,28 @@ export class AssetService {
     format: string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}asset_manager/upload_asset`;
-    const body = new AssetDTO();
+    const url = `${environmentURL}textract/extract_image`;
+    // const body = new AssetDTO();
 
+    // body.UserID = this.userService.getUserID();
+    // body.Image = image;
+    // body.Path = path;
+    // if (fileName === '') {
+    //   body.FileName = 'New Asset';
+    // } else {
+    //   body.FileName = fileName;
+    // }
+    // if (parentFolderId) {
+    //   body.ParentFolderID = parentFolderId;
+    // } else {
+    //   body.ParentFolderID = '';
+    // }
+    // body.Format = format;
+
+    const body = new MarkdownFileDTO();
     body.UserID = this.userService.getUserID();
-    body.Image = image;
-    body.Path = path;
-    if (fileName === '') {
-      body.FileName = 'New Asset';
-    } else {
-      body.FileName = fileName;
-    }
-    if (parentFolderId) {
-      body.ParentFolderID = parentFolderId;
-    } else {
-      body.ParentFolderID = '';
-    }
-    body.Format = format;
+    body.MarkdownID = 'IMG_3600.jpeg';
+
 
     const headers = new HttpHeaders().set(
       'Authorization',
