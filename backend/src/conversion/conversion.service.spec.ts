@@ -5,6 +5,7 @@ import {
 import { ConversionService } from './conversion.service';
 import puppeteer from 'puppeteer'; //PDF converter
 import * as cheerio from 'cheerio'; //Plain text converter
+import * as TurndownService from 'turndown'; //Markdown converter
 
 describe('ConversionService', () => {
   let service: ConversionService;
@@ -68,6 +69,17 @@ describe('ConversionService', () => {
       expect(cheerio.load).toHaveBeenCalledTimes(
         1,
       );
+    });
+  });
+
+  describe('generateMarkdown', () => {
+    it('should convert HTML to Markdown', () => {
+      const html = '<p>Hello, World!</p>';
+      const conversionService =
+        new ConversionService();
+      const markdown =
+        conversionService.generateMarkdown(html);
+      expect(markdown).toEqual('Hello, World!');
     });
   });
 });
