@@ -12,6 +12,10 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import * as CryptoJS from 'crypto-js';
+import {
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -118,6 +122,36 @@ describe('ImageManagerService', () => {
       expect(assetService.saveAsset).toBeCalled();
       expect(s3Service.saveAsset).toBeCalled();
       expect(CryptoJS.SHA256).toBeCalled();
+    });
+  });
+
+  describe('retrieveOne', () => {
+    it('should throw error if asset not in db', async () => {
+      const retrieveAssetDTO: AssetDTO =
+        new AssetDTO();
+
+      retrieveAssetDTO.AssetID = '1';
+      retrieveAssetDTO.Format = 'text';
+
+      jest
+        .spyOn(assetService, 'retrieveOne')
+        .mockResolvedValue(null);
+
+      try {
+        await service.retrieveOne(
+          retrieveAssetDTO,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Asset not found, check AssetID and Format',
+        );
+        expect(error.status).toBe(
+          HttpStatus.NOT_FOUND,
+        );
+      }
     });
   });
 });
