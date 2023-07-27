@@ -74,8 +74,10 @@ export class ConversionService {
     return screenshot;
   }
 
-  convertPdfToHtml(pdf: Buffer): string {
-    return pdf2html.html(pdf);
+  async convertPdfToHtml(
+    pdf: Buffer,
+  ): Promise<string> {
+    return await pdf2html.html(pdf);
   }
 
   convertTxtToHtml(txt: string): string {

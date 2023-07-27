@@ -378,7 +378,7 @@ export class FileManagerService {
     let convertedHtml: string | undefined;
     if (importDTO.Type === 'pdf') {
       convertedHtml =
-        this.conversionService.convertPdfToHtml(
+        await this.conversionService.convertPdfToHtml(
           importDTO.Content,
         );
     } else if (importDTO.Type === 'txt') {
