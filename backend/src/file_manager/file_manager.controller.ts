@@ -383,7 +383,7 @@ export class FileManagerController {
         importDTO.ParentFolderID !== '') ||
       (!importDTO.Path &&
         importDTO.Path !== '') ||
-      !importDTO.FileName
+      !importDTO.Name
     )
       throw new HttpException(
         'Invalid request data',

@@ -1,7 +1,7 @@
 export class ImportDTO {
   UserID: number;
   Type: string;
-  FileName: string;
+  Name: string;
   Content: any;
   ParentFolderID: string;
   Path: string;
@@ -9,7 +9,7 @@ export class ImportDTO {
   constructor() {
     this.UserID = undefined;
     this.Type = undefined;
-    this.FileName = undefined;
+    this.Name = undefined;
     this.Content = undefined;
     this.ParentFolderID = undefined;
     this.Path = undefined;
