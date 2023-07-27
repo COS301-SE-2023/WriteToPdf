@@ -4,6 +4,7 @@ import * as cheerio from 'cheerio'; // HTML-> Plain text converter
 import * as TurndownService from 'turndown'; // HTML -> Markdown converter
 import * as sharp from 'sharp'; // HTML -> jpeg converter
 import * as pdf2html from 'pdf2html'; // PDF -> HTML converter
+import * as fs from 'fs/promises'; // Import the fs.promises module
 
 @Injectable()
 export class ConversionService {
@@ -77,7 +78,21 @@ export class ConversionService {
   async convertPdfToHtml(
     pdf: Buffer,
   ): Promise<string> {
-    return await pdf2html.html(pdf);
+    // const tempPdfPath = `./temp_file.pdf`;
+    // await fs.writeFile(
+    //   tempPdfPath,
+    //   pdf,
+    //   'binary',
+    // );
+
+    // // Use the file path as the argument for pdf2html.html()
+    // const html = await pdf2html.html(tempPdfPath);
+
+    // // Delete the temporary file
+    // await fs.unlink(tempPdfPath);
+
+    // return html;
+    return '';
   }
 
   convertTxtToHtml(txt: string): string {
