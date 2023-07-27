@@ -201,7 +201,7 @@ describe('S3Service', () => {
     });
 
     describe('retrieveAssetByID', () => {
-      it('should return undefined if directory cannot be read', async () => {
+      it('should return asset', async () => {
         const assetDTO = new AssetDTO();
         assetDTO.AssetID = '1';
         assetDTO.UserID = 1;
@@ -221,7 +221,6 @@ describe('S3Service', () => {
           );
 
         console.log('result', result);
-
         expect(result).toBeDefined();
         expect(result.Content).toBe('abc123');
         expect(result.Size).toBe('abc123'.length);
