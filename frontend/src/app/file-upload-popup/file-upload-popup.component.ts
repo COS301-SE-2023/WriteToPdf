@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { FileService } from '../services/file.service';
 import { NodeService } from '../services/home.service';
@@ -20,6 +20,7 @@ interface UploadEvent {
 })
 export class FileUploadPopupComponent {
   uploadedFiles: any[] = [];
+  @Input() acceptedTypes = '.pdf,.txt,.md';
 
   constructor(
     private dialogRef: DynamicDialogRef,

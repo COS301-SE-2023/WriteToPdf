@@ -65,7 +65,7 @@ describe('ConversionService', () => {
 
       jest.spyOn(cheerio, 'load');
 
-      const txt = service.generateTxt(html);
+      const txt = service.convertHtmlToTxt(html);
 
       expect(cheerio.load).toHaveBeenCalledTimes(
         1,
@@ -79,7 +79,9 @@ describe('ConversionService', () => {
       const conversionService =
         new ConversionService();
       const markdown =
-        conversionService.generateMarkdown(html);
+        conversionService.convertHtmlToMarkdown(
+          html,
+        );
       expect(markdown).toEqual('Hello, World!');
     });
   });
@@ -121,9 +123,8 @@ describe('ConversionService', () => {
 
       const html = '<p>Hello, World!</p>';
 
-      const response = await service.generateJpeg(
-        html,
-      );
+      const response =
+        await service.convertHtmlToJpeg(html);
 
       const expectedJpegImage = await sharp(
         mockBuffer,
@@ -169,9 +170,8 @@ describe('ConversionService', () => {
 
       const html = '<p>Hello, World!</p>';
 
-      const response = await service.generatePng(
-        html,
-      );
+      const response =
+        await service.convertHtmlToPng(html);
 
       expect(response).toEqual(mockBuffer);
     });
