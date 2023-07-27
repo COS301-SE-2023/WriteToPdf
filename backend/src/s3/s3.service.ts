@@ -112,14 +112,7 @@ export class S3Service {
       return undefined;
     }
 
-    const fileStats = await fs.stat(
-      `./storage/${filePath}`,
-    );
     markdownFileDTO.Content = '';
-    markdownFileDTO.DateCreated =
-      fileStats.birthtime;
-    markdownFileDTO.LastModified =
-      fileStats.mtime;
     markdownFileDTO.Size = 0;
 
     return markdownFileDTO;
@@ -225,15 +218,6 @@ export class S3Service {
       console.log('Read File Error:' + err);
       return undefined;
     }
-
-    const fileStats = await fs.stat(
-      `./storage/${filePath}`,
-    );
-
-    markdownFileDTO.DateCreated =
-      fileStats.birthtime;
-    markdownFileDTO.LastModified =
-      fileStats.mtime;
 
     return markdownFileDTO;
   }
