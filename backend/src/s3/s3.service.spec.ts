@@ -8,7 +8,6 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import * as fs from 'fs/promises';
-import { buffer } from 'stream/consumers';
 
 jest.mock('@aws-sdk/client-s3');
 // jest.mock('fs/promises');
@@ -50,6 +49,14 @@ describe('S3Service', () => {
       markdownFileDTO.Path = 'mock_path';
       markdownFileDTO.UserID = 1;
 
+      jest
+        .spyOn(fs, 'access')
+        .mockResolvedValue();
+
+      jest
+        .spyOn(fs, 'unlink')
+        .mockResolvedValue();
+
       const result = await s3Service.deleteFile(
         markdownFileDTO,
       );
@@ -65,6 +72,14 @@ describe('S3Service', () => {
       markdownFileDTO.MarkdownID = 'mock_id';
       markdownFileDTO.Path = 'mock_path';
       markdownFileDTO.UserID = 1;
+
+      jest
+        .spyOn(fs, 'mkdir')
+        .mockResolvedValue('success');
+
+      jest
+        .spyOn(fs, 'writeFile')
+        .mockResolvedValue();
 
       const result = await s3Service.createFile(
         markdownFileDTO,
@@ -83,6 +98,14 @@ describe('S3Service', () => {
       markdownFileDTO.UserID = 1;
       markdownFileDTO.Content = '';
 
+      jest
+        .spyOn(fs, 'access')
+        .mockResolvedValue();
+
+      jest
+        .spyOn(fs, 'writeFile')
+        .mockResolvedValue();
+
       const result = await s3Service.saveFile(
         markdownFileDTO,
       );
@@ -98,6 +121,10 @@ describe('S3Service', () => {
       markdownFileDTO.MarkdownID = 'mock_id';
       markdownFileDTO.Path = 'mock_path';
       markdownFileDTO.UserID = 1;
+
+      jest
+        .spyOn(fs, 'access')
+        .mockResolvedValue();
 
       const result = await s3Service.retrieveFile(
         markdownFileDTO,
