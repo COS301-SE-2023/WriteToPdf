@@ -155,10 +155,14 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   navigateToPage(pageName: string) {
+    this.editService.setContent(this.editor.getData());
+    this.saveDocumentContents();
     this.router.navigate([`/${pageName}`]);
   }
 
   navigateToCameraPage() {
+    this.editService.setContent(this.editor.getData());
+    this.saveDocumentContents();
     const data = {
       ParentFolderId: this.editService.getParentFolderID(),
       Path: this.editService.getPath(),
