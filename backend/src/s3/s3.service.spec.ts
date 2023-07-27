@@ -5,12 +5,13 @@ import {
 import { S3Service } from './s3.service';
 import { FileDTO } from './dto/file.dto';
 import { S3Client } from '@aws-sdk/client-s3';
+import { sdkStreamMixin } from '@aws-sdk/util-stream-node';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import * as fs from 'fs/promises';
+import { Readable } from 'stream';
 
 jest.mock('@aws-sdk/client-s3');
-// jest.mock('fs/promises');
 
 describe('S3Service', () => {
   let s3Service: S3Service;
@@ -25,8 +26,17 @@ describe('S3Service', () => {
     s3Service = module.get<S3Service>(S3Service);
     mockS3Client =
       S3Client as unknown as jest.Mocked<S3Client>;
-    mockS3Client.send = jest.fn();
-    // s3Service.s3Client = mockS3Client;
+    mockS3Client.send = jest
+      .fn()
+      .mockResolvedValueOnce({
+        Body: sdkStreamMixin(
+          Readable.from(['abc123'], {
+            objectMode: false,
+          }),
+        ),
+        ContentLength: 'abc123'.length,
+      });
+    s3Service.s3Client = mockS3Client;
   });
 
   describe('FileDTO', () => {
@@ -51,11 +61,11 @@ describe('S3Service', () => {
 
       jest
         .spyOn(fs, 'access')
-        .mockResolvedValue();
+        .mockResolvedValueOnce();
 
       jest
         .spyOn(fs, 'unlink')
-        .mockResolvedValue();
+        .mockResolvedValueOnce();
 
       const result = await s3Service.deleteFile(
         markdownFileDTO,
@@ -75,11 +85,11 @@ describe('S3Service', () => {
 
       jest
         .spyOn(fs, 'mkdir')
-        .mockResolvedValue('success');
+        .mockResolvedValueOnce('success');
 
       jest
         .spyOn(fs, 'writeFile')
-        .mockResolvedValue();
+        .mockResolvedValueOnce();
 
       const result = await s3Service.createFile(
         markdownFileDTO,
@@ -100,11 +110,11 @@ describe('S3Service', () => {
 
       jest
         .spyOn(fs, 'access')
-        .mockResolvedValue();
+        .mockResolvedValueOnce();
 
       jest
         .spyOn(fs, 'writeFile')
-        .mockResolvedValue();
+        .mockResolvedValueOnce();
 
       const result = await s3Service.saveFile(
         markdownFileDTO,
@@ -124,7 +134,7 @@ describe('S3Service', () => {
 
       jest
         .spyOn(fs, 'access')
-        .mockResolvedValue();
+        .mockResolvedValueOnce();
 
       const result = await s3Service.retrieveFile(
         markdownFileDTO,
@@ -160,7 +170,7 @@ describe('S3Service', () => {
       // Spy on fs/promises mkdir to return success
       jest
         .spyOn(fs, 'mkdir')
-        .mockResolvedValue('success');
+        .mockResolvedValueOnce('success');
 
       // Spy on Uint8Array to return success
       // jest
@@ -199,10 +209,10 @@ describe('S3Service', () => {
         // Spy on fs/promises readFile to throw error
         jest
           .spyOn(fs, 'access')
-          .mockResolvedValue();
+          .mockResolvedValueOnce();
         jest
           .spyOn(fs, 'readFile')
-          .mockResolvedValue('abc123');
+          .mockResolvedValueOnce('abc123');
 
         const result =
           await s3Service.retrieveAssetByID(
