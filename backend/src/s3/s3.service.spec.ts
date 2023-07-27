@@ -116,6 +116,18 @@ describe('S3Service', () => {
         .spyOn(fs, 'writeFile')
         .mockResolvedValueOnce();
 
+      const stream = new Readable();
+      stream.push('hello world');
+      stream.push(null); // end of stream
+      stream.pipe(process.stdout);
+      const sdkStream = sdkStreamMixin(stream);
+
+      jest
+        .spyOn(mockS3Client, 'send')
+        .mockResolvedValue({
+          Body: sdkStream,
+        } as any);
+
       const result = await s3Service.saveFile(
         markdownFileDTO,
       );
