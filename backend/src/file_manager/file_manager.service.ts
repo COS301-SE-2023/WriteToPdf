@@ -375,12 +375,13 @@ export class FileManagerService {
     );
 
     let convertedHtml: string | undefined;
-    if (importDTO.Type === 'pdf') {
-      convertedHtml =
-        await this.conversionService.convertPdfToHtml(
-          importDTO.Content,
-        );
-    } else if (importDTO.Type === 'txt') {
+    // if (importDTO.Type === 'pdf') {
+    //   convertedHtml =
+    //     await this.conversionService.convertPdfToHtml(
+    //       importDTO.Content,
+    //     );
+    // } else
+    if (importDTO.Type === 'txt') {
       convertedHtml =
         this.conversionService.convertTxtToHtml(
           importDTO.Content,
