@@ -26,6 +26,11 @@
 
 WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritten notes into structured documents that can be edited and shared with others.
 
+## Demo 3 Important Links
+[Link to automated integration tests](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-integration.yml)  
+[Link to Architecture Document](https://docs.google.com/document/d/1FTGkhilcBonjeJdZc6e2ykf3x_l8cgZlwjZvC8O_KZ8/edit?usp=drive_link)  
+Any other documentation can be found in the readme of our repository.
+
 ## Demos
 - [Demo 1](https://drive.google.com/drive/folders/1D8awdHGBDuI7PGQYF_jtX9iGq_9PWY3x?usp=sharing)
 - [Demo 2](https://drive.google.com/drive/folders/1QVIrOEi5PJAhG8DMwNrwjIcF7Gocu8LK?usp=sharing)
@@ -42,7 +47,7 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 - [User manual v1](https://docs.google.com/document/d/1zUkgP6SMe9ti3cEWSjjO4yTOUCb1NZnV1_J4SeadA7A/edit?usp=sharing)
 
 ### Coding standards
-- [Coding standards](https://github.com/COS301-SE-2023/WriteToPdf/wiki/Coding-Standards)
+- [Coding standards v1](https://docs.google.com/document/d/1Cr68PKEo6_hPQoYYXzmPtlQXInFmrAkXNnmFUIf08tE/edit?usp=sharing)
 
 ### Member contributions
 - [Member contributions](https://docs.google.com/document/d/14n7aEG_Lwh3dXSq6ltJ8XE_rzAREMGsH-3B-crGn2fM/edit?usp=sharing)
