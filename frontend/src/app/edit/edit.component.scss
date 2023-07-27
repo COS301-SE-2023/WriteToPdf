@@ -319,6 +319,13 @@ div[contenteditable="true"]:focus {
     user-select: auto;
 }
 
+.buttonsWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 100px auto;
+    grid-gap: 10px;
+}
+
 .assetDescription {
     margin-left: 5px;
 }
