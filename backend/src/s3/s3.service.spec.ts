@@ -170,11 +170,10 @@ describe('S3Service', () => {
         assetDTO.UserID = 1;
 
         // Spy on fs/promises readFile to throw error
+        jest.spyOn(fs, 'access');
         jest
           .spyOn(fs, 'readFile')
-          .mockImplementationOnce(() => {
-            throw new Error();
-          });
+          .mockResolvedValue('abc123');
 
         const result =
           await s3Service.retrieveAssetByID(
@@ -182,7 +181,15 @@ describe('S3Service', () => {
             assetDTO.UserID,
           );
 
-        expect(result).toBeUndefined();
+        expect(result).toBeDefined();
+        expect(result.Content).toBe('abc123');
+        expect(result.Size).toBe('abc123'.length);
+      });
+
+      it('should return asset', () => {
+        const asset = new AssetDTO();
+        asset.UserID = 1;
+        asset.AssetID = '1';
       });
     });
   });
