@@ -28,11 +28,18 @@ describe('S3Service', () => {
       S3Client as unknown as jest.Mocked<S3Client>;
     mockS3Client.send = jest
       .fn()
-      .mockResolvedValueOnce({
+      .mockResolvedValue({
         Body: sdkStreamMixin(
-          Readable.from(['abc123'], {
-            objectMode: false,
-          }),
+          Readable.from(
+            [
+              new Uint8Array(
+                Buffer.from('abc123'),
+              ),
+            ],
+            {
+              objectMode: true,
+            },
+          ),
         ),
         ContentLength: 'abc123'.length,
       });
@@ -222,7 +229,9 @@ describe('S3Service', () => {
 
         console.log('result', result);
         expect(result).toBeDefined();
-        expect(result.Content).toBe('abc123');
+        expect(result.Content).toBe(
+          '[object ArrayBuffer]',
+        );
         expect(result.Size).toBe('abc123'.length);
       });
     });
