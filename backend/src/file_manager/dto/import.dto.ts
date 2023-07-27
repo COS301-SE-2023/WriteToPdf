@@ -1,8 +1,8 @@
 export class ImportDTO {
   UserID: number;
   Type: string;
-  FileName: number;
-  Content: string;
+  FileName: string;
+  Content: any;
   ParentFolderID: string;
   Path: string;
 
