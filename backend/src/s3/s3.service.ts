@@ -9,7 +9,6 @@ import {
 } from '@aws-sdk/client-s3';
 import * as fs from 'fs/promises';
 import * as CryptoJS from 'crypto-js';
-import { SHA256 } from 'crypto-js';
 import { AssetDTO } from '../assets/dto/asset.dto';
 
 @Injectable()
