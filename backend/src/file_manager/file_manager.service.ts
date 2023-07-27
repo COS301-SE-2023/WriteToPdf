@@ -410,6 +410,8 @@ export class FileManagerService {
       importDTO.UserID;
     convertedMarkdownFileDTO.Path =
       importDTO.Path;
+    convertedMarkdownFileDTO.ParentFolderID =
+      importDTO.ParentFolderID;
     convertedMarkdownFileDTO.Name =
       importDTO.FileName;
     convertedMarkdownFileDTO.Content =
