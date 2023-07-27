@@ -199,4 +199,30 @@ describe('ImageManagerService', () => {
       ).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('deleteAsset', () => {
+    it('should remove specified asset', () => {
+      const assetDTO = new AssetDTO();
+      jest
+        .spyOn(assetsService, 'removeOne')
+        .mockResolvedValue(assetDTO as any);
+      jest
+        .spyOn(Repository.prototype, 'create')
+        .mockReturnValue(assetDTO);
+      jest
+        .spyOn(s3Service, 'deleteAsset')
+        .mockResolvedValue(assetDTO);
+
+      const response =
+        service.deleteAsset(assetDTO);
+
+      expect(
+        assetsService.removeOne,
+      ).toHaveBeenCalled();
+
+      expect(
+        s3Service.deleteAsset,
+      ).toHaveBeenCalled();
+    });
+  });
 });
