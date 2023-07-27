@@ -17,6 +17,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { RetrieveAllDTO } from '../asset_manager/dto/retrieve_all.dto';
+import * as sharp from 'sharp';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -232,13 +233,59 @@ describe('ImageManagerService', () => {
         .spyOn(assetsService, 'renameAsset')
         .mockResolvedValue(new AssetDTO());
 
-      const response = assetsService.renameAsset(
+      const response = service.renameAsset(
         new AssetDTO(),
       );
 
       expect(
         assetsService.renameAsset,
       ).toHaveBeenCalled();
+    });
+  });
+
+  describe('compressImage', () => {
+    it('should compress an image given a base64 string', async () => {
+      jest.mock('sharp', () => ({
+        __esModule: true,
+        default: jest.fn((imageBuffer) => ({
+          resize: jest.fn().mockReturnThis(),
+          toFormat: jest.fn().mockReturnThis(),
+          toBuffer: jest
+            .fn()
+            .mockResolvedValue(imageBuffer), // Mock the sharp function to return the input buffer as-is
+        })),
+      }));
+
+      const base64Buffer = await sharp({
+        create: {
+          width: 100,
+          height: 100,
+          channels: 4, // 4 channels for RGBA
+          background: {
+            r: 253,
+            g: 201,
+            b: 123,
+            alpha: 1,
+          }, // White background
+        },
+      })
+        .jpeg()
+        .toBuffer();
+
+      const base64String =
+        base64Buffer.toString('base64');
+
+      jest.spyOn;
+
+      const thumbnail =
+        await service.compressImage(base64String);
+
+      expect(typeof thumbnail).toBe('string');
+
+      // Assert that the return value is a valid base64 string
+      expect(thumbnail).toMatch(
+        /^data:image\/jpeg;base64,[A-Za-z0-9+/]+=*$/,
+      );
     });
   });
 });
