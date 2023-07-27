@@ -3,8 +3,8 @@ import puppeteer from 'puppeteer'; // HTML -> PDF converter
 import * as cheerio from 'cheerio'; // HTML-> Plain text converter
 import * as TurndownService from 'turndown'; // HTML -> Markdown converter
 import * as sharp from 'sharp'; // HTML -> jpeg converter
-import * as pdf2html from 'pdf2html'; // PDF -> HTML converter
-import * as fs from 'fs/promises'; // Import the fs.promises module
+// import * as pdf2html from 'pdf2html'; // PDF -> HTML converter
+// import * as fs from 'fs/promises'; // Import the fs.promises module
 import * as markdownIt from 'markdown-it'; // Markdown -> HTML converter
 
 @Injectable()
