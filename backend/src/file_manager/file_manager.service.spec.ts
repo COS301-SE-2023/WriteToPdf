@@ -14,7 +14,6 @@ import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { testingModule } from '../test-utils/testingModule';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
-// import { ImportDTO } from './dto/import.dto';
 import { ConversionService } from '../conversion/conversion.service';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
@@ -25,6 +24,7 @@ import {
 } from '@nestjs/common';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ExportDTO } from './dto/export.dto';
+import { ImportDTO } from './dto/import.dto';
 import { UsersService } from '../users/users.service';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
@@ -53,7 +53,7 @@ describe('FileManagerService', () => {
   let foldersService: FoldersService;
   let markdownFilesService: MarkdownFilesService;
   let s3Service: S3Service;
-  // let conversionService: ConversionService;
+  let conversionService: ConversionService;
   let usersService: UsersService;
 
   beforeEach(async () => {
@@ -151,10 +151,10 @@ describe('FileManagerService', () => {
         MarkdownFilesService,
       );
     s3Service = module.get<S3Service>(S3Service);
-    // conversionService =
-    //   module.get<ConversionService>(
-    //     ConversionService,
-    //   );
+    conversionService =
+      module.get<ConversionService>(
+        ConversionService,
+      );
     usersService =
       module.get<UsersService>(UsersService);
     module.close();
@@ -1308,188 +1308,233 @@ describe('FileManagerService', () => {
     });
   });
 
-  // describe('importFile', () => {
-  //   it('should throw an error if Path is undefined', async () => {
-  //     const importDTO = new ImportDTO();
-  //     importDTO.UserID = 0;
-  //     importDTO.ParentFolderID = '1';
-  //     importDTO.Name = 'test';
-  //     importDTO.Content = 'test';
+  describe('importFile', () => {
+    it('should throw an exception for invalid types', async () => {
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 0;
+      importDTO.ParentFolderID = '1';
+      importDTO.Path = 'test/path';
+      importDTO.Name = 'test';
+      importDTO.Content = 'test';
+      importDTO.Type = 'invalid';
 
-  //     try {
-  //       await service.importFile(importDTO);
-  //       expect(true).toBe(false);
-  //     } catch (error) {
-  //       expect(error).toBeInstanceOf(
-  //         HttpException,
-  //       );
-  //       expect(error.message).toBe(
-  //         'Path cannot be undefined',
-  //       );
-  //       expect(error.status).toBe(
-  //         HttpStatus.BAD_REQUEST,
-  //       );
-  //     }
-  //   });
+      jest
+        .spyOn(service, 'encryptContent')
+        .mockResolvedValue('encrypted');
 
-  //   it('should throw an error if Name is undefined', async () => {
-  //     const importDTO = new ImportDTO();
-  //     importDTO.UserID = 0;
-  //     importDTO.ParentFolderID = '1';
-  //     importDTO.Path = 'test/path';
-  //     importDTO.Content = 'test';
+      jest
+        .spyOn(service, 'decryptContent')
+        .mockResolvedValue('decrypted');
 
-  //     try {
-  //       await service.importFile(importDTO);
-  //       expect(true).toBe(false);
-  //     } catch (error) {
-  //       expect(error).toBeInstanceOf(
-  //         HttpException,
-  //       );
-  //       expect(error.message).toBe(
-  //         'Name cannot be undefined',
-  //       );
-  //       expect(error.status).toBe(
-  //         HttpStatus.BAD_REQUEST,
-  //       );
-  //     }
-  //   });
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('key');
 
-  //   it('should throw an error if Content is undefined', async () => {
-  //     const importDTO = new ImportDTO();
-  //     importDTO.UserID = 0;
-  //     importDTO.ParentFolderID = '1';
-  //     importDTO.Path = 'test/path';
-  //     importDTO.Name = 'test';
+      try {
+        const response = await service.importFile(
+          importDTO,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid file type',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+    it('should call convertTxtToHtml method for txt types', async () => {
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 0;
+      importDTO.ParentFolderID = '1';
+      importDTO.Path = 'test/path';
+      importDTO.Name = 'test';
+      importDTO.Content = 'test';
+      importDTO.Type = 'txt';
 
-  //     try {
-  //       await service.importFile(importDTO);
-  //       expect(true).toBe(false);
-  //     } catch (error) {
-  //       expect(error).toBeInstanceOf(
-  //         HttpException,
-  //       );
-  //       expect(error.message).toBe(
-  //         'Content cannot be undefined',
-  //       );
-  //       expect(error.status).toBe(
-  //         HttpStatus.BAD_REQUEST,
-  //       );
-  //     }
-  //   });
+      (
+        jest.spyOn(
+          conversionService,
+          'convertTxtToHtml',
+        ) as any
+      ).mockResolvedValue('html');
 
-  //   it('should call convertFrom method', async () => {
-  //     const importDTO = new ImportDTO();
-  //     importDTO.UserID = 0;
-  //     importDTO.ParentFolderID = '1';
-  //     importDTO.Path = 'test/path';
-  //     importDTO.Name = 'test';
-  //     importDTO.Content = 'test';
+      jest
+        .spyOn(service, 'createFile')
+        .mockResolvedValue(new MarkdownFileDTO());
 
-  //     (
-  //       jest.spyOn(
-  //         conversionService,
-  //         'convertFrom',
-  //       ) as any
-  //     ).mockResolvedValue(new MarkdownFileDTO());
+      jest
+        .spyOn(service, 'saveFile')
+        .mockResolvedValue(new MarkdownFile());
 
-  //     jest
-  //       .spyOn(service, 'createFile')
-  //       .mockResolvedValue(new MarkdownFileDTO());
+      jest
+        .spyOn(service, 'encryptContent')
+        .mockResolvedValue('encrypted');
 
-  //     jest
-  //       .spyOn(service, 'saveFile')
-  //       .mockResolvedValue(new MarkdownFile());
+      jest
+        .spyOn(service, 'decryptContent')
+        .mockResolvedValue('decrypted');
 
-  //     jest
-  //       .spyOn(usersService, 'findOne')
-  //       .mockResolvedValue(new UserDTO());
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('key');
 
-  //     const response = await service.importFile(
-  //       importDTO,
-  //     );
-  //     expect(response).toBeInstanceOf(
-  //       MarkdownFileDTO,
-  //     );
-  //     expect(
-  //       conversionService.convertFrom,
-  //     ).toHaveBeenCalledWith(importDTO);
-  //   });
+      const response = await service.importFile(
+        importDTO,
+      );
 
-  //   it('should call createFile method', async () => {
-  //     const importDTO = new ImportDTO();
-  //     importDTO.UserID = 0;
-  //     importDTO.ParentFolderID = '1';
-  //     importDTO.Path = 'test/path';
-  //     importDTO.Name = 'test';
-  //     importDTO.Content = 'test';
+      expect(
+        conversionService.convertTxtToHtml,
+      ).toHaveBeenCalledWith('decrypted');
+    });
 
-  //     (
-  //       jest.spyOn(
-  //         conversionService,
-  //         'convertFrom',
-  //       ) as any
-  //     ).mockResolvedValue(new MarkdownFileDTO());
+    it('should call convertMdToHtml method for md types', async () => {
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 0;
+      importDTO.ParentFolderID = '1';
+      importDTO.Path = 'test/path';
+      importDTO.Name = 'test';
+      importDTO.Content = 'test';
+      importDTO.Type = 'md';
 
-  //     jest
-  //       .spyOn(service, 'createFile')
-  //       .mockResolvedValue(new MarkdownFileDTO());
+      (
+        jest.spyOn(
+          conversionService,
+          'convertMdToHtml',
+        ) as any
+      ).mockResolvedValue('md');
 
-  //     jest
-  //       .spyOn(service, 'saveFile')
-  //       .mockResolvedValue(new MarkdownFile());
+      jest
+        .spyOn(service, 'createFile')
+        .mockResolvedValue(new MarkdownFileDTO());
 
-  //     jest
-  //       .spyOn(usersService, 'findOne')
-  //       .mockResolvedValue(new UserDTO());
+      jest
+        .spyOn(service, 'saveFile')
+        .mockResolvedValue(new MarkdownFile());
 
-  //     const response = await service.importFile(
-  //       importDTO,
-  //     );
-  //     expect(response).toBeInstanceOf(
-  //       MarkdownFileDTO,
-  //     );
-  //     expect(
-  //       service.createFile,
-  //     ).toHaveBeenCalled();
-  //   });
+      jest
+        .spyOn(service, 'encryptContent')
+        .mockResolvedValue('encrypted');
 
-  //   it('should call saveFile method', async () => {
-  //     const importDTO = new ImportDTO();
-  //     importDTO.UserID = 0;
-  //     importDTO.ParentFolderID = '1';
-  //     importDTO.Path = 'test/path';
-  //     importDTO.Name = 'test';
-  //     importDTO.Content = 'test';
+      jest
+        .spyOn(service, 'decryptContent')
+        .mockResolvedValue('decrypted');
 
-  //     (
-  //       jest.spyOn(
-  //         conversionService,
-  //         'convertFrom',
-  //       ) as any
-  //     ).mockResolvedValue(new MarkdownFileDTO());
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('key');
 
-  //     jest
-  //       .spyOn(usersService, 'findOne')
-  //       .mockResolvedValue(new UserDTO());
+      const response = await service.importFile(
+        importDTO,
+      );
 
-  //     jest
-  //       .spyOn(service, 'createFile')
-  //       .mockResolvedValue(new MarkdownFileDTO());
+      expect(
+        conversionService.convertMdToHtml,
+      ).toHaveBeenCalledWith('decrypted');
+    });
 
-  //     jest
-  //       .spyOn(service, 'saveFile')
-  //       .mockResolvedValue(new MarkdownFile());
+    it('should call relevant db methods', async () => {
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 0;
+      importDTO.ParentFolderID = '1';
+      importDTO.Path = 'test/path';
+      importDTO.Name = 'test';
+      importDTO.Content = 'test';
+      importDTO.Type = 'txt';
 
-  //     const response = await service.importFile(
-  //       importDTO,
-  //     );
-  //     expect(response).toBeInstanceOf(
-  //       MarkdownFileDTO,
-  //     );
-  //     expect(service.saveFile).toHaveBeenCalled();
-  //   });
-  // });
+      (
+        jest.spyOn(
+          conversionService,
+          'convertTxtToHtml',
+        ) as any
+      ).mockResolvedValue('txt');
+
+      jest
+        .spyOn(service, 'createFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(service, 'saveFile')
+        .mockResolvedValue(new MarkdownFile());
+
+      jest
+        .spyOn(service, 'encryptContent')
+        .mockResolvedValue('encrypted');
+
+      jest
+        .spyOn(service, 'decryptContent')
+        .mockResolvedValue('decrypted');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('key');
+
+      const response = await service.importFile(
+        importDTO,
+      );
+
+      expect(
+        service.createFile,
+      ).toHaveBeenCalled();
+      expect(service.saveFile).toHaveBeenCalled();
+    });
+
+    it('should encrypt and decrypt the contents', async () => {
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 0;
+      importDTO.ParentFolderID = '1';
+      importDTO.Path = 'test/path';
+      importDTO.Name = 'test';
+      importDTO.Content = 'test';
+      importDTO.Type = 'txt';
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertTxtToHtml',
+        ) as any
+      ).mockResolvedValue('txt');
+
+      jest
+        .spyOn(service, 'createFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(service, 'saveFile')
+        .mockResolvedValue(new MarkdownFile());
+
+      jest
+        .spyOn(service, 'encryptContent')
+        .mockResolvedValue('encrypted');
+
+      jest
+        .spyOn(service, 'decryptContent')
+        .mockResolvedValue('decrypted');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('key');
+
+      const response = await service.importFile(
+        importDTO,
+      );
+
+      expect(response.Content).toBe('encrypted');
+      expect(
+        service.encryptContent,
+      ).toHaveBeenCalled();
+      expect(
+        service.decryptContent,
+      ).toHaveBeenCalled();
+      expect(
+        service.getEncryptionKey,
+      ).toHaveBeenCalled();
+    });
+  });
 
   // describe('exportFile', () => {
   //   it('should throw an error if MarkdownID is undefined', async () => {
