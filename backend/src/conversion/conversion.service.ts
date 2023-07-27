@@ -5,12 +5,16 @@ import * as TurndownService from 'turndown'; // HTML -> Markdown converter
 import * as sharp from 'sharp'; // HTML -> jpeg converter
 import * as pdf2html from 'pdf2html'; // PDF -> HTML converter
 import * as fs from 'fs/promises'; // Import the fs.promises module
+import * as markdownIt from 'markdown-it'; // Markdown -> HTML converter
 
 @Injectable()
 export class ConversionService {
   private turndownService: TurndownService;
+  private markdownIt: markdownIt.MarkdownIt;
+
   constructor() {
     this.turndownService = new TurndownService();
+    this.markdownIt = new markdownIt();
   }
   async generatePdf(html: string) {
     const browser = await puppeteer.launch({
@@ -101,7 +105,7 @@ export class ConversionService {
   }
 
   convertMdToHtml(markdown: string): string {
-    return '';
+    return this.markdownIt.render(markdown);
   }
 
   // convertJpegToHtml(jpeg: Buffer): string {
