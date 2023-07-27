@@ -520,27 +520,27 @@ export class FileManagerService {
       return pdfBuffer;
     } else if (exportDTO.Type === 'txt') {
       const txt =
-        this.conversionService.generateTxt(
+        this.conversionService.convertHtmlToTxt(
           exportDTO.Content,
         );
       const txtBuffer = Buffer.from(txt);
       return txtBuffer;
     } else if (exportDTO.Type === 'md') {
       const md =
-        this.conversionService.generateMarkdown(
+        this.conversionService.convertHtmlToMarkdown(
           exportDTO.Content,
         );
       const mdBuffer = Buffer.from(md);
       return mdBuffer;
     } else if (exportDTO.Type === 'jpeg') {
       const jpegBuffer =
-        await this.conversionService.generateJpeg(
+        await this.conversionService.convertHtmlToJpeg(
           exportDTO.Content,
         );
       return jpegBuffer;
     } else if (exportDTO.Type === 'png') {
       const pngBuffer =
-        await this.conversionService.generatePng(
+        await this.conversionService.convertHtmlToPng(
           exportDTO.Content,
         );
       return pngBuffer;
