@@ -2,14 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import 'dotenv/config';
 import { S3Client } from '@aws-sdk/client-s3';
-import {
-  writeFile,
-  mkdir,
-  access,
-  unlink,
-  readFile,
-  stat,
-} from 'fs/promises';
+// import {
+//   writeFile,
+//   mkdir,
+//   access,
+//   unlink,
+//   readFile,
+//   stat,
+// } from 'fs/promises';
+import * as fs from 'fs/promises';
 import * as CryptoJS from 'crypto-js';
 import { SHA256 } from 'crypto-js';
 import { AssetDTO } from '../assets/dto/asset.dto';
@@ -103,14 +104,14 @@ export class S3Service {
     // console.log(`./storage/${filePath}`);
 
     try {
-      await access(`./storage/${filePath}`);
+      await fs.access(`./storage/${filePath}`);
     } catch (err) {
       console.log('Access Error --> ' + err);
       return undefined;
     }
 
     try {
-      await unlink(`./storage/${filePath}`);
+      await fs.unlink(`./storage/${filePath}`);
       // /*const response = */ await this.s3Client.send(
       //   new DeleteObjectCommand({
       //     Bucket: this.awsS3BucketName,
@@ -151,7 +152,7 @@ export class S3Service {
     // console.log(markdownFileDTO);
 
     try {
-      await mkdir(`./storage/${filePath}`, {
+      await fs.mkdir(`./storage/${filePath}`, {
         recursive: true,
       });
     } catch (err) {
@@ -162,7 +163,7 @@ export class S3Service {
     }
 
     try {
-      await writeFile(
+      await fs.writeFile(
         `./storage/${filePath}/${markdownFileDTO.MarkdownID}`,
         '',
         'utf-8',
@@ -179,7 +180,7 @@ export class S3Service {
       return undefined;
     }
 
-    const fileStats = await stat(
+    const fileStats = await fs.stat(
       `./storage/${filePath}`,
     );
     // console.log(fileStats);
@@ -213,7 +214,7 @@ export class S3Service {
     // console.log(`./storage/${filePath}`);
 
     try {
-      await access(`./storage/${filePath}`);
+      await fs.access(`./storage/${filePath}`);
     } catch (err) {
       console.log('Access Error --> ' + err);
       return undefined;
@@ -224,7 +225,7 @@ export class S3Service {
     );
 
     try {
-      await writeFile(
+      await fs.writeFile(
         `./storage/${filePath}`,
         fileData,
         'utf-8',
@@ -241,7 +242,7 @@ export class S3Service {
       return undefined;
     }
 
-    const fileStats = await stat(
+    const fileStats = await fs.stat(
       `./storage/${filePath}`,
     );
     // console.log(fileStats);
@@ -269,14 +270,14 @@ export class S3Service {
     // console.log(markdownFileDTO);
 
     try {
-      await access(`./storage/${filePath}`);
+      await fs.access(`./storage/${filePath}`);
     } catch (err) {
       console.log('Access Error --> ' + err);
       return undefined;
     }
 
     try {
-      markdownFileDTO.Content = await readFile(
+      markdownFileDTO.Content = await fs.readFile(
         `./storage/${filePath}`,
         {
           encoding: 'utf-8',
@@ -303,7 +304,7 @@ export class S3Service {
       return undefined;
     }
 
-    const fileStats = await stat(
+    const fileStats = await fs.stat(
       `./storage/${filePath}`,
     );
     // console.log(fileStats);
@@ -320,7 +321,7 @@ export class S3Service {
     let filePath = `${saveAssetDTO.UserID}`;
 
     try {
-      await mkdir(`./storage/${filePath}`, {
+      await fs.mkdir(`./storage/${filePath}`, {
         recursive: true,
       });
     } catch (err) {
@@ -337,7 +338,7 @@ export class S3Service {
     filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.AssetID}`;
 
     try {
-      await writeFile(
+      await fs.writeFile(
         `./storage/${filePath}`,
         fileData,
         'utf-8',
@@ -354,7 +355,7 @@ export class S3Service {
       return undefined;
     }
 
-    const fileStats = await stat(
+    const fileStats = await fs.stat(
       `./storage/${filePath}`,
     );
     console.log(fileStats);
@@ -374,7 +375,7 @@ export class S3Service {
     let filePath = `${userID}`;
 
     try {
-      await access(`./storage/${filePath}`);
+      await fs.access(`./storage/${filePath}`);
     } catch (err) {
       console.log('Access Error --> ' + err);
       return undefined;
@@ -383,12 +384,13 @@ export class S3Service {
     filePath += `/${assetID}`;
 
     try {
-      retrieveAssetDTO.Content = await readFile(
-        `./storage/${filePath}`,
-        {
-          encoding: 'utf-8',
-        },
-      );
+      retrieveAssetDTO.Content =
+        await fs.readFile(
+          `./storage/${filePath}`,
+          {
+            encoding: 'utf-8',
+          },
+        );
       retrieveAssetDTO.Size =
         retrieveAssetDTO.Content.length;
 
@@ -429,7 +431,7 @@ export class S3Service {
     let filePath = `${retrieveAssetDTO.UserID}`;
 
     try {
-      await access(`./storage/${filePath}`);
+      await fs.access(`./storage/${filePath}`);
     } catch (err) {
       console.log('Access Error --> ' + err);
       return undefined;
@@ -438,12 +440,13 @@ export class S3Service {
     filePath += `/${retrieveAssetDTO.AssetID}`;
 
     try {
-      retrieveAssetDTO.Content = await readFile(
-        `./storage/${filePath}`,
-        {
-          encoding: 'utf-8',
-        },
-      );
+      retrieveAssetDTO.Content =
+        await fs.readFile(
+          `./storage/${filePath}`,
+          {
+            encoding: 'utf-8',
+          },
+        );
       retrieveAssetDTO.Size =
         retrieveAssetDTO.Content.length;
 
@@ -482,7 +485,7 @@ export class S3Service {
     let filePath = `${assetDTO.UserID}`;
 
     try {
-      await access(`./storage/${filePath}`);
+      await fs.access(`./storage/${filePath}`);
     } catch (err) {
       console.log('Access Error --> ' + err);
       return undefined;
@@ -491,7 +494,7 @@ export class S3Service {
     filePath += `/${assetDTO.AssetID}`;
 
     try {
-      await unlink(`./storage/${filePath}`);
+      await fs.unlink(`./storage/${filePath}`);
       // /*const response = */ await this.s3Client.send(
       //   new DeleteObjectCommand({
       //     Bucket: this.awsS3BucketName,
