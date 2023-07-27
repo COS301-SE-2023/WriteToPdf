@@ -16,6 +16,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { RetrieveAllDTO } from '../asset_manager/dto/retrieve_all.dto';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -30,7 +31,7 @@ jest.mock('crypto-js', () => {
 });
 describe('ImageManagerService', () => {
   let service: ImageManagerService;
-  let assetService: AssetsService;
+  let assetsService: AssetsService;
   let s3Service: S3Service;
 
   beforeEach(async () => {
@@ -52,7 +53,7 @@ describe('ImageManagerService', () => {
     service = module.get<ImageManagerService>(
       ImageManagerService,
     );
-    assetService = module.get<AssetsService>(
+    assetsService = module.get<AssetsService>(
       AssetsService,
     );
     s3Service = module.get<S3Service>(S3Service);
@@ -65,7 +66,7 @@ describe('ImageManagerService', () => {
       uploadImage.UserID = 1;
 
       jest
-        .spyOn(assetService, 'saveAsset')
+        .spyOn(assetsService, 'saveAsset')
         .mockResolvedValue(uploadImage);
 
       jest
@@ -103,7 +104,7 @@ describe('ImageManagerService', () => {
       expectedAsset.AssetID = 'hashed string';
 
       jest
-        .spyOn(assetService, 'saveAsset')
+        .spyOn(assetsService, 'saveAsset')
         .mockResolvedValue(uploadAssetWithImage);
 
       jest
@@ -119,9 +120,31 @@ describe('ImageManagerService', () => {
       expect(result).toEqual(
         uploadAssetWithImage,
       );
-      expect(assetService.saveAsset).toBeCalled();
+      expect(
+        assetsService.saveAsset,
+      ).toBeCalled();
       expect(s3Service.saveAsset).toBeCalled();
       expect(CryptoJS.SHA256).toBeCalled();
+    });
+  });
+
+  describe('retrieveAll', () => {
+    it('should retrieve all assets', () => {
+      const retrieveAllDTO = new RetrieveAllDTO();
+
+      const asset = new AssetDTO();
+
+      jest
+        .spyOn(assetsService, 'retrieveAllAssets')
+        .mockResolvedValue([asset]);
+
+      const response = service.retrieveAll(
+        retrieveAllDTO,
+      );
+
+      expect(
+        assetsService.retrieveAllAssets,
+      ).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -134,7 +157,7 @@ describe('ImageManagerService', () => {
       retrieveAssetDTO.Format = 'text';
 
       jest
-        .spyOn(assetService, 'retrieveOne')
+        .spyOn(assetsService, 'retrieveOne')
         .mockResolvedValue(null);
 
       try {
