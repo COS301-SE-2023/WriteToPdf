@@ -6,7 +6,8 @@ import { ConversionService } from './conversion.service';
 import puppeteer from 'puppeteer'; //PDF converter
 import * as cheerio from 'cheerio'; //Plain text converter
 import * as TurndownService from 'turndown'; //Markdown converter
-import * as sharp from 'sharp';
+import * as sharp from 'sharp'; //jpeg converter
+import * as markdownIt from 'markdown-it'; //Markdown converter
 
 describe('ConversionService', () => {
   let service: ConversionService;
@@ -20,12 +21,6 @@ describe('ConversionService', () => {
     service = module.get<ConversionService>(
       ConversionService,
     );
-  });
-
-  describe('root/config', () => {
-    it('should be defined', () => {
-      expect(service).toBeDefined();
-    });
   });
 
   describe('generatePdf', () => {
@@ -58,7 +53,7 @@ describe('ConversionService', () => {
     });
   });
 
-  describe('generateTxt', () => {
+  describe('convertHtmlToTxt', () => {
     it('should generate plain text', () => {
       const html =
         '<html><body><h1>Hello, World!</h1></body></html>';
@@ -73,20 +68,17 @@ describe('ConversionService', () => {
     });
   });
 
-  describe('generateMarkdown', () => {
+  describe('convertHtmlToMarkdown', () => {
     it('should convert HTML to Markdown', () => {
       const html = '<p>Hello, World!</p>';
-      const conversionService =
-        new ConversionService();
+
       const markdown =
-        conversionService.convertHtmlToMarkdown(
-          html,
-        );
+        service.convertHtmlToMarkdown(html);
       expect(markdown).toEqual('Hello, World!');
     });
   });
 
-  describe('generateJpeg', () => {
+  describe('convertHtmlToJpeg', () => {
     it('should convert HTML to Jpeg format', async () => {
       const mockBuffer: Buffer = await sharp({
         create: {
@@ -133,47 +125,77 @@ describe('ConversionService', () => {
         .toBuffer();
       expect(response).toEqual(expectedJpegImage);
     });
+  });
 
-    it('generatePng', async () => {
-      const mockBuffer: Buffer = await sharp({
-        create: {
-          width: 100,
-          height: 100,
-          channels: 4, // 4 channels for RGBA
-          background: {
-            r: 255,
-            g: 255,
-            b: 255,
-            alpha: 1,
-          }, // White background
-        },
-      })
-        .png()
-        .toBuffer();
+  it('convertHtmlToPng', async () => {
+    const mockBuffer: Buffer = await sharp({
+      create: {
+        width: 100,
+        height: 100,
+        channels: 4, // 4 channels for RGBA
+        background: {
+          r: 255,
+          g: 255,
+          b: 255,
+          alpha: 1,
+        }, // White background
+      },
+    })
+      .png()
+      .toBuffer();
 
-      const mockBrowser = {
-        newPage: jest.fn(() => mockPage),
-        close: jest.fn(),
-      };
+    const mockBrowser = {
+      newPage: jest.fn(() => mockPage),
+      close: jest.fn(),
+    };
+
+    jest
+      .spyOn(puppeteer, 'launch')
+      .mockResolvedValue(mockBrowser as any);
+
+    const mockPage = {
+      setContent: jest.fn(),
+      close: jest.fn(),
+      screenshot: jest
+        .fn()
+        .mockReturnValue(mockBuffer),
+    };
+
+    const html = '<p>Hello, World!</p>';
+
+    const response =
+      await service.convertHtmlToPng(html);
+
+    expect(response).toEqual(mockBuffer);
+  });
+
+  describe('convertTxtToHtml', () => {
+    it('should convert plain text to HTML', () => {
+      const txt = 'Hello\n World!';
+
+      const html = service.convertTxtToHtml(txt);
+      expect(html).toEqual(
+        '<p>Hello<br> World!</p>',
+      );
+    });
+  });
+
+  describe('convertMdToHtml', () => {
+    it('should convert Markdown to HTML', () => {
+      const markdown = 'Hello\\n World!';
+      const html = '<p>Hello<br> World!</p>';
 
       jest
-        .spyOn(puppeteer, 'launch')
-        .mockResolvedValue(mockBrowser as any);
-
-      const mockPage = {
-        setContent: jest.fn(),
-        close: jest.fn(),
-        screenshot: jest
-          .fn()
-          .mockReturnValue(mockBuffer),
-      };
-
-      const html = '<p>Hello, World!</p>';
+        .spyOn(markdownIt.prototype, 'render')
+        .mockReturnValue(html);
 
       const response =
-        await service.convertHtmlToPng(html);
+        service.convertMdToHtml(markdown);
 
-      expect(response).toEqual(mockBuffer);
+      expect(response).toEqual(html);
+      expect(
+        markdownIt.prototype.render,
+      ).toHaveBeenCalledWith(markdown);
     });
   });
 });
