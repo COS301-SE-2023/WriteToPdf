@@ -415,7 +415,7 @@ export class FileManagerService {
     convertedMarkdownFileDTO.ParentFolderID =
       importDTO.ParentFolderID;
     convertedMarkdownFileDTO.Name =
-      importDTO.FileName;
+      importDTO.Name;
     convertedMarkdownFileDTO.Content =
       convertedHtml;
 
