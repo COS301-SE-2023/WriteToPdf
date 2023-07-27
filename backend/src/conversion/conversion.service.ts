@@ -96,7 +96,8 @@ export class ConversionService {
   }
 
   convertTxtToHtml(txt: string): string {
-    return '';
+    const response = '<p>' + txt + '</p>';
+    return response.replace(/\n/g, '<br>');
   }
 
   convertMdToHtml(markdown: string): string {
