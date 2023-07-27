@@ -5,7 +5,8 @@
     url="https://www.primefaces.org/cdn/api/upload.php"
     (onUpload)="onUpload($event)"
     (onUpload)="closeDialog()"
-    [multiple]="true"
+    [multiple]="false"
+    [accept]="acceptedTypes"
   >
     <ng-template pTemplate="content">
       <ul *ngIf="uploadedFiles.length">
