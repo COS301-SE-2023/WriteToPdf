@@ -39,16 +39,16 @@ export class ConversionService {
     return pdf;
   }
 
-  generateTxt(html: string) {
+  convertHtmlToTxt(html: string) {
     const $ = cheerio.load(html);
     return $.text();
   }
 
-  generateMarkdown(html: string): string {
+  convertHtmlToMarkdown(html: string): string {
     return this.turndownService.turndown(html);
   }
 
-  async generateJpeg(
+  async convertHtmlToJpeg(
     html: string,
   ): Promise<Buffer> {
     const browser = await puppeteer.launch();
@@ -63,7 +63,7 @@ export class ConversionService {
     return jpegImage;
   }
 
-  async generatePng(
+  async convertHtmlToPng(
     html: string,
   ): Promise<Buffer> {
     const browser = await puppeteer.launch();
