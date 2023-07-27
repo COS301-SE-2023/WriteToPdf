@@ -381,25 +381,15 @@ export class S3Service {
         }),
       );
 
-      markdownFileDTO.Content =
+      retrieveAssetDTO.Content =
         await response.Body.transformToString();
-      markdownFileDTO.Size =
+      retrieveAssetDTO.Size =
         response.ContentLength;
     } catch (err) {
       console.log('Read File Error:' + err);
       return undefined;
     }
 
-    const fileStats = await stat(
-      `./storage/${filePath}`,
-    );
-    console.log(fileStats);
-    markdownFileDTO.DateCreated =
-      fileStats.birthtime;
-    markdownFileDTO.LastModified =
-      fileStats.mtime;
-
-    console.log(markdownFileDTO);
     return retrieveAssetDTO;
   }
 
@@ -437,25 +427,15 @@ export class S3Service {
 
       console.log(response);
 
-      markdownFileDTO.Content =
+      retrieveAssetDTO.Content =
         await response.Body.transformToString();
-      markdownFileDTO.Size =
+      retrieveAssetDTO.Size =
         response.ContentLength;
     } catch (err) {
       console.log('Read File Error:' + err);
       return undefined;
     }
 
-    const fileStats = await stat(
-      `./storage/${filePath}`,
-    );
-    console.log(fileStats);
-    markdownFileDTO.DateCreated =
-      fileStats.birthtime;
-    markdownFileDTO.LastModified =
-      fileStats.mtime;
-
-    console.log(markdownFileDTO);
     return retrieveAssetDTO;
   }
 

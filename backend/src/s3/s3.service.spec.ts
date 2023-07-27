@@ -15,7 +15,7 @@ jest.mock('@aws-sdk/client-s3');
 
 describe('S3Service', () => {
   let s3Service: S3Service;
-  // let mockS3Client: jest.Mocked<S3Client>;
+  let mockS3Client: jest.Mocked<S3Client>;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -24,9 +24,9 @@ describe('S3Service', () => {
       }).compile();
 
     s3Service = module.get<S3Service>(S3Service);
-    // mockS3Client =
-    //   S3Client as unknown as jest.Mocked<S3Client>;
-    // mockS3Client.send = jest.fn();
+    mockS3Client =
+      S3Client as unknown as jest.Mocked<S3Client>;
+    mockS3Client.send = jest.fn();
     // s3Service.s3Client = mockS3Client;
   });
 
@@ -42,70 +42,70 @@ describe('S3Service', () => {
     });
   });
 
-  // describe('deleteFile', () => {
-  //   it('should delete file', async () => {
-  //     const markdownFileDTO =
-  //       new MarkdownFileDTO();
-  //     markdownFileDTO.MarkdownID = 'mock_id';
-  //     markdownFileDTO.Path = 'mock_path';
-  //     markdownFileDTO.UserID = 1;
+  describe('deleteFile', () => {
+    it('should delete file', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = 'mock_id';
+      markdownFileDTO.Path = 'mock_path';
+      markdownFileDTO.UserID = 1;
 
-  //     const result = await s3Service.deleteFile(
-  //       markdownFileDTO,
-  //     );
+      const result = await s3Service.deleteFile(
+        markdownFileDTO,
+      );
 
-  //     expect(result).toBeDefined();
-  //   });
-  // });
+      expect(result).toBeDefined();
+    });
+  });
 
-  // describe('createFile', () => {
-  //   it('should create file', async () => {
-  //     const markdownFileDTO =
-  //       new MarkdownFileDTO();
-  //     markdownFileDTO.MarkdownID = 'mock_id';
-  //     markdownFileDTO.Path = 'mock_path';
-  //     markdownFileDTO.UserID = 1;
+  describe('createFile', () => {
+    it('should create file', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = 'mock_id';
+      markdownFileDTO.Path = 'mock_path';
+      markdownFileDTO.UserID = 1;
 
-  //     const result = await s3Service.createFile(
-  //       markdownFileDTO,
-  //     );
+      const result = await s3Service.createFile(
+        markdownFileDTO,
+      );
 
-  //     expect(result).toBeDefined();
-  //   });
-  // });
+      expect(result).toBeDefined();
+    });
+  });
 
-  // describe('saveFile', () => {
-  //   it('should save file', async () => {
-  //     const markdownFileDTO =
-  //       new MarkdownFileDTO();
-  //     markdownFileDTO.MarkdownID = 'mock_id';
-  //     markdownFileDTO.Path = 'mock_path';
-  //     markdownFileDTO.UserID = 1;
-  //     markdownFileDTO.Content = '';
+  describe('saveFile', () => {
+    it('should save file', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = 'mock_id';
+      markdownFileDTO.Path = 'mock_path';
+      markdownFileDTO.UserID = 1;
+      markdownFileDTO.Content = '';
 
-  //     const result = await s3Service.saveFile(
-  //       markdownFileDTO,
-  //     );
+      const result = await s3Service.saveFile(
+        markdownFileDTO,
+      );
 
-  //     expect(result).toBeDefined();
-  //   });
-  // });
+      expect(result).toBeDefined();
+    });
+  });
 
-  // describe('retrieveFile', () => {
-  //   it('should retrieve file', async () => {
-  //     const markdownFileDTO =
-  //       new MarkdownFileDTO();
-  //     markdownFileDTO.MarkdownID = 'mock_id';
-  //     markdownFileDTO.Path = 'mock_path';
-  //     markdownFileDTO.UserID = 1;
+  describe('retrieveFile', () => {
+    it('should retrieve file', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = 'mock_id';
+      markdownFileDTO.Path = 'mock_path';
+      markdownFileDTO.UserID = 1;
 
-  //     const result = await s3Service.retrieveFile(
-  //       markdownFileDTO,
-  //     );
+      const result = await s3Service.retrieveFile(
+        markdownFileDTO,
+      );
 
-  //     expect(result).not.toBeDefined();
-  //   });
-  // });
+      expect(result).not.toBeDefined();
+    });
+  });
 
   describe('saveAsset', () => {
     it('should return undefined if directory cannot be created', async () => {
