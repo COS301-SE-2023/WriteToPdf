@@ -42,6 +42,29 @@ describe('S3Service', () => {
     });
   });
 
+  describe('retrieveAssetByID', () => {
+    it('should return undefined if directory cannot be read', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = '1';
+      assetDTO.UserID = 1;
+
+      // Spy on fs/promises readFile to throw error
+      jest
+        .spyOn(fs, 'readFile')
+        .mockImplementationOnce(() => {
+          throw new Error();
+        });
+
+      const result =
+        await s3Service.retrieveAssetByID(
+          assetDTO.AssetID,
+          assetDTO.UserID,
+        );
+
+      expect(result).toBeUndefined();
+    });
+  });
+
   // describe('deleteFile', () => {
   //   it('should delete file', async () => {
   //     const markdownFileDTO =
@@ -67,23 +90,6 @@ describe('S3Service', () => {
   //     markdownFileDTO.UserID = 1;
 
   //     const result = await s3Service.createFile(
-  //       markdownFileDTO,
-  //     );
-
-  //     expect(result).toBeDefined();
-  //   });
-  // });
-
-  // describe('saveFile', () => {
-  //   it('should save file', async () => {
-  //     const markdownFileDTO =
-  //       new MarkdownFileDTO();
-  //     markdownFileDTO.MarkdownID = 'mock_id';
-  //     markdownFileDTO.Path = 'mock_path';
-  //     markdownFileDTO.UserID = 1;
-  //     markdownFileDTO.Content = '';
-
-  //     const result = await s3Service.saveFile(
   //       markdownFileDTO,
   //     );
 
