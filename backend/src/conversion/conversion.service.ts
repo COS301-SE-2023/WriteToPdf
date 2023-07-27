@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import puppeteer from 'puppeteer'; //PDF converter
-import * as cheerio from 'cheerio'; //Plain text converter
-import * as TurndownService from 'turndown'; //Markdown converter
-import * as sharp from 'sharp'; //jpeg converter
+import puppeteer from 'puppeteer'; // HTML -> PDF converter
+import * as cheerio from 'cheerio'; // HTML-> Plain text converter
+import * as TurndownService from 'turndown'; // HTML -> Markdown converter
+import * as sharp from 'sharp'; // HTML -> jpeg converter
+import * as pdf2html from 'pdf2html'; // PDF -> HTML converter
 
 @Injectable()
 export class ConversionService {
@@ -74,7 +75,7 @@ export class ConversionService {
   }
 
   convertPdfToHtml(pdf: Buffer): string {
-    return '';
+    return pdf2html.html(pdf);
   }
 
   convertTxtToHtml(txt: string): string {
