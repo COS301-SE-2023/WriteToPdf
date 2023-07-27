@@ -225,4 +225,20 @@ describe('ImageManagerService', () => {
       ).toHaveBeenCalled();
     });
   });
+
+  describe('renameAsset', () => {
+    it('should rename specified asset', () => {
+      jest
+        .spyOn(assetsService, 'renameAsset')
+        .mockResolvedValue(new AssetDTO());
+
+      const response = assetsService.renameAsset(
+        new AssetDTO(),
+      );
+
+      expect(
+        assetsService.renameAsset,
+      ).toHaveBeenCalled();
+    });
+  });
 });
