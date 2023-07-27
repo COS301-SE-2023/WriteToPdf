@@ -1,7 +1,7 @@
 export class ExportDTO {
   UserID: number;
   Type: string;
-  MarkdownID: number;
+  MarkdownID: string;
   Content: any;
 
   constructor() {
