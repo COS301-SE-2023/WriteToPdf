@@ -72,4 +72,24 @@ export class ConversionService {
 
     return screenshot;
   }
+
+  convertPdfToHtml(pdf: Buffer): string {
+    return '';
+  }
+
+  convertTxtToHtml(txt: string): string {
+    return '';
+  }
+
+  convertMdToHtml(markdown: string): string {
+    return '';
+  }
+
+  // convertJpegToHtml(jpeg: Buffer): string {
+  //   return '';
+  // }
+
+  // convertPngToHtml(png: Buffer): string {
+  //   return '';
+  // }
 }
