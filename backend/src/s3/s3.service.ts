@@ -22,7 +22,7 @@ export class S3Service {
   awsS3SecretAccessKey =
     process.env.AWS_S3_SECRET_ACCESS_KEY;
 
-  private readonly s3Client = new S3Client({
+  s3Client = new S3Client({
     credentials: {
       accessKeyId: this.awsS3AccessKeyId,
       secretAccessKey: this.awsS3SecretAccessKey,
