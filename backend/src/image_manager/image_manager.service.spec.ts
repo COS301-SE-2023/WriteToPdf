@@ -176,5 +176,27 @@ describe('ImageManagerService', () => {
         );
       }
     });
+
+    it('should return content of specified asset', async () => {
+      const retrieveAssetDTO: AssetDTO =
+        new AssetDTO();
+
+      retrieveAssetDTO.AssetID = '1';
+      retrieveAssetDTO.Format = 'text';
+
+      jest
+        .spyOn(assetsService, 'retrieveOne')
+        .mockResolvedValue(retrieveAssetDTO);
+
+      jest
+        .spyOn(s3Service, 'retrieveAsset')
+        .mockResolvedValue(retrieveAssetDTO);
+
+      await service.retrieveOne(retrieveAssetDTO);
+
+      expect(
+        s3Service.retrieveAsset,
+      ).toHaveBeenCalledTimes(1);
+    });
   });
 });
