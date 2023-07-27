@@ -6,9 +6,12 @@ import { S3Service } from './s3.service';
 import { FileDTO } from './dto/file.dto';
 import { S3Client } from '@aws-sdk/client-s3';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
+import { AssetDTO } from '../assets/dto/asset.dto';
+import * as fs from 'fs/promises';
+import { buffer } from 'stream/consumers';
 
 jest.mock('@aws-sdk/client-s3');
-jest.mock('fs/promises');
+// jest.mock('fs/promises');
 
 describe('S3Service', () => {
   let s3Service: S3Service;
@@ -39,7 +42,7 @@ describe('S3Service', () => {
     });
   });
 
-  // describe('S3Service.deleteFile', () => {
+  // describe('deleteFile', () => {
   //   it('should delete file', async () => {
   //     const markdownFileDTO =
   //       new MarkdownFileDTO();
@@ -55,7 +58,7 @@ describe('S3Service', () => {
   //   });
   // });
 
-  // describe('S3Service.createFile', () => {
+  // describe('createFile', () => {
   //   it('should create file', async () => {
   //     const markdownFileDTO =
   //       new MarkdownFileDTO();
@@ -71,7 +74,7 @@ describe('S3Service', () => {
   //   });
   // });
 
-  // describe('S3Service.saveFile', () => {
+  // describe('saveFile', () => {
   //   it('should save file', async () => {
   //     const markdownFileDTO =
   //       new MarkdownFileDTO();
@@ -88,7 +91,7 @@ describe('S3Service', () => {
   //   });
   // });
 
-  // describe('S3Service.retrieveFile', () => {
+  // describe('retrieveFile', () => {
   //   it('should retrieve file', async () => {
   //     const markdownFileDTO =
   //       new MarkdownFileDTO();
@@ -103,4 +106,61 @@ describe('S3Service', () => {
   //     expect(result).not.toBeDefined();
   //   });
   // });
+
+  describe('saveAsset', () => {
+    it('should return undefined if directory cannot be created', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.UserID = 1;
+
+      // Spy on fs/promises mkdir to throw error
+      jest
+        .spyOn(fs, 'mkdir')
+        .mockImplementationOnce(() => {
+          throw new Error();
+        });
+
+      const result = await s3Service.saveAsset(
+        assetDTO,
+      );
+
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined if file cannot be created', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.UserID = 1;
+
+      // Spy on fs/promises mkdir to return success
+      jest
+        .spyOn(fs, 'mkdir')
+        .mockResolvedValue('success');
+
+      // Spy on Uint8Array to return success
+      // jest
+      //   .spyOn(Uint8Array.prototype, 'slice')
+      //   .mockImplementation(() => {
+      //     return new Uint8Array();
+      //   });
+
+      // Spy on Buffer from to return success
+      jest
+        .spyOn(Buffer, 'from')
+        .mockImplementation((buffer) => {
+          return buffer as any;
+        });
+
+      // Spy on fs/promises writeFile to throw error
+      jest
+        .spyOn(fs, 'writeFile')
+        .mockImplementationOnce(() => {
+          throw new Error();
+        });
+
+      const result = await s3Service.saveAsset(
+        assetDTO,
+      );
+
+      expect(result).toBeUndefined();
+    });
+  });
 });
