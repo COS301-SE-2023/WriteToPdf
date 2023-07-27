@@ -161,15 +161,6 @@ export class S3Service {
       return undefined;
     }
 
-    const fileStats = await fs.stat(
-      `./storage/${filePath}`,
-    );
-
-    markdownFileDTO.LastModified =
-      fileStats.mtime;
-    markdownFileDTO.Size =
-      fileData.buffer.byteLength;
-
     return markdownFileDTO;
   }
 
