@@ -177,22 +177,22 @@ export class S3Service {
     else
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
 
-    try {
-      await fs.access(`./storage/${filePath}`);
-    } catch (err) {
-      console.log('Access Error --> ' + err);
-      return undefined;
-    }
+    // try {
+    //   await fs.access(`./storage/${filePath}`);
+    // } catch (err) {
+    //   console.log('Access Error --> ' + err);
+    //   return undefined;
+    // }
 
     try {
-      markdownFileDTO.Content = await fs.readFile(
-        `./storage/${filePath}`,
-        {
-          encoding: 'utf-8',
-        },
-      );
-      markdownFileDTO.Size =
-        markdownFileDTO.Content.length;
+      // markdownFileDTO.Content = await fs.readFile(
+      //   `./storage/${filePath}`,
+      //   {
+      //     encoding: 'utf-8',
+      //   },
+      // );
+      // markdownFileDTO.Size =
+      //   markdownFileDTO.Content.length;
 
       const response = await this.s3Client.send(
         new GetObjectCommand({
