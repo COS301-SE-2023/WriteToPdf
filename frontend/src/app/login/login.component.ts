@@ -79,7 +79,7 @@ export class LoginComponent {
     // const mouseYpercentage = Math.round(event.pageY / windowHeight * 100);
 
     // (document.getElementsByClassName('backgroundImage')[0] as HTMLElement).style.backgroundImage= 'radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, #3498db, #9b59b6)';
-    (document.getElementsByClassName('backgroundImage')[0] as HTMLElement).style.backgroundImage = 'radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, rgb(100 100 100 / 90%), rgb(0 0 0 / 90%), rgb(0 0 0 / 90%)), url(/assets/MockData/BGI.jpg), url(/assets/MockData/Grain.jpg)';
+    (document.getElementsByClassName('backgroundImage')[0] as HTMLElement).style.backgroundImage = 'radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, rgb(100 100 100 / 90%), rgb(0 0 0 / 90%), rgb(0 0 0 / 90%)), url(/assets/MockData/BGI.jpg)';
 
   }
 }
