@@ -398,6 +398,8 @@ export class FileManagerService {
       );
     }
 
+    console.log('convertedHtml: ', convertedHtml);
+
     const encryptedContent =
       await this.encryptContent(
         convertedHtml,
