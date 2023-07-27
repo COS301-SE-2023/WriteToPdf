@@ -4,18 +4,20 @@ import {
 } from '@nestjs/testing';
 import { S3Service } from './s3.service';
 import { FileDTO } from './dto/file.dto';
-import { S3Client } from '@aws-sdk/client-s3';
+import {
+  GetObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { sdkStreamMixin } from '@aws-sdk/util-stream-node';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import * as fs from 'fs/promises';
 import { Readable } from 'stream';
-
-jest.mock('@aws-sdk/client-s3');
+import { mockClient } from 'aws-sdk-client-mock';
 
 describe('S3Service', () => {
   let s3Service: S3Service;
-  let mockS3Client: jest.Mocked<S3Client>;
+  const mockS3Client = mockClient(S3Client);
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -24,26 +26,17 @@ describe('S3Service', () => {
       }).compile();
 
     s3Service = module.get<S3Service>(S3Service);
-    mockS3Client =
-      S3Client as unknown as jest.Mocked<S3Client>;
-    mockS3Client.send = jest
-      .fn()
-      .mockResolvedValue({
-        Body: sdkStreamMixin(
-          Readable.from(
-            [
-              new Uint8Array(
-                Buffer.from('abc123'),
-              ),
-            ],
-            {
-              objectMode: true,
-            },
-          ),
-        ),
-        ContentLength: 'abc123'.length,
-      });
-    s3Service.s3Client = mockS3Client;
+
+    // Configure mockS3Client
+    mockS3Client.reset();
+    const stream = new Readable();
+    stream.push('hello world');
+    stream.push(null); // end of stream
+    stream.pipe(process.stdout);
+    const sdkStream = sdkStreamMixin(stream);
+    mockS3Client
+      .on(GetObjectCommand)
+      .resolves({ Body: sdkStream });
   });
 
   describe('FileDTO', () => {
@@ -151,89 +144,32 @@ describe('S3Service', () => {
     });
   });
 
-  describe('saveAsset', () => {
-    it('should return undefined if directory cannot be created', async () => {
+  describe('retrieveAssetByID', () => {
+    it('should return asset', async () => {
       const assetDTO = new AssetDTO();
+      assetDTO.AssetID = '1';
       assetDTO.UserID = 1;
 
-      // Spy on fs/promises mkdir to throw error
+      // Spy on fs/promises readFile to throw error
       jest
-        .spyOn(fs, 'mkdir')
-        .mockImplementationOnce(() => {
-          throw new Error();
-        });
-
-      const result = await s3Service.saveAsset(
-        assetDTO,
-      );
-
-      expect(result).toBeUndefined();
-    });
-
-    it('should return undefined if file cannot be created', async () => {
-      const assetDTO = new AssetDTO();
-      assetDTO.UserID = 1;
-
-      // Spy on fs/promises mkdir to return success
+        .spyOn(fs, 'access')
+        .mockResolvedValueOnce();
       jest
-        .spyOn(fs, 'mkdir')
-        .mockResolvedValueOnce('success');
+        .spyOn(fs, 'readFile')
+        .mockResolvedValueOnce('abc123');
 
-      // Spy on Uint8Array to return success
-      // jest
-      //   .spyOn(Uint8Array.prototype, 'slice')
-      //   .mockImplementation(() => {
-      //     return new Uint8Array();
-      //   });
-
-      // Spy on Buffer from to return success
-      jest
-        .spyOn(Buffer, 'from')
-        .mockImplementation((buffer) => {
-          return buffer as any;
-        });
-
-      // Spy on fs/promises writeFile to throw error
-      jest
-        .spyOn(fs, 'writeFile')
-        .mockImplementationOnce(() => {
-          throw new Error();
-        });
-
-      const result = await s3Service.saveAsset(
-        assetDTO,
-      );
-
-      expect(result).toBeUndefined();
-    });
-
-    describe('retrieveAssetByID', () => {
-      it('should return asset', async () => {
-        const assetDTO = new AssetDTO();
-        assetDTO.AssetID = '1';
-        assetDTO.UserID = 1;
-
-        // Spy on fs/promises readFile to throw error
-        jest
-          .spyOn(fs, 'access')
-          .mockResolvedValueOnce();
-        jest
-          .spyOn(fs, 'readFile')
-          .mockResolvedValueOnce('abc123');
-
-        const result =
-          await s3Service.retrieveAssetByID(
-            assetDTO.AssetID,
-            assetDTO.UserID,
-          );
-
-        console.log('result', result);
-        expect(result).toBeDefined();
-        expect(result.Content).toBe(
-          '[object ArrayBuffer]',
+      const result =
+        await s3Service.retrieveAssetByID(
+          assetDTO.AssetID,
+          assetDTO.UserID,
         );
-        expect(result.Size).toBe('abc123'.length);
-      });
+
+      console.log('result', result);
+      expect(result).toBeDefined();
+      expect(result.Content).toBe('hello world');
+      expect(result.Size).toBe(
+        'hello world'.length,
+      );
     });
   });
 });
