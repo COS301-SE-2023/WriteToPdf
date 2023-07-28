@@ -310,6 +310,11 @@ export class EditComponent implements AfterViewInit, OnInit {
     const inputValue = inputElement.value;
     const asset = await this.assetService.renameAsset(assetId, inputValue);
     console.log(asset);
+    for(let i = 0; i < this.assets.length; i++){
+      if(this.assets[i].Id === assetId){
+        this.assets[i].FileName = inputValue;
+      }
+    }
   }
 
   async refreshSidebar() {

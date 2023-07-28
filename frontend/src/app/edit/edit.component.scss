@@ -569,7 +569,7 @@ Preserve the relative scale, though. */
 .copyText {
     width: max-content;
     max-width: 70%;
-    height: 1rem;
+    min-height: 1rem;
     margin-right: auto;
 }
 

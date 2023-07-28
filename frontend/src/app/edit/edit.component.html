@@ -9,7 +9,7 @@
         <div class="docTitleWrapper">
           <label for="editHeading" class="displayNone">a</label>
           <input type="text" editable="true" id="editHeading" class="documentTitle" value="New Document" maxlength="50"
-            (blur)="renameDocument()" [(ngModel)]="fileName" />
+            (blur)="renameDocument()" [(ngModel)]="fileName" [title]="fileName"/>
         </div>
       </div>
       <div class="toolsWrapper">
@@ -90,7 +90,7 @@
             <!-- <h4 class="assetNameText"></h4> -->
             <label for="editAsset" class="displayNone">b</label>
             <input type="text" editable="true" id="editAssetMock" class="assetNameText" value="{{ obj.FileName }}"
-              maxlength="50" (blur)="renameAsset(obj.AssetID, $event)" title="ok" />
+              maxlength="50" (blur)="renameAsset(obj.AssetID, $event)" title="{{ obj.FileName }}" />
           </div>
           <div class="deleteAsset">
             <img class="deleteAssetIcon" src="assets/Icons/editIcons/delete.png" alt=""
@@ -129,7 +129,7 @@
 </div>
 
 <p-dialog class="extractedTextDialog" header="Extracted Text:" [(visible)]="textCopyDialog" [modal]="true"
-  [style]="{width: '50vw', minWidth: '200px'}" [focusOnShow]="true">
+  [style]="{width: '30vw', minWidth: '300px'}" [focusOnShow]="true">
   <div *ngFor="let text of textFromAsset" class="copyTextWrapper">
     <p class="copyText">{{text}}</p>
     <div class="copyTextIconWrapper">
