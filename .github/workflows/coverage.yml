@@ -4,7 +4,7 @@ on:
     push:
         branches: [main, test, codecov]
     pull_request:
-        branches: [main, test, codecov]
+        branches: [main, test]
 
 env:
     JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
