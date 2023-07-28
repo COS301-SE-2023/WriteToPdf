@@ -20,7 +20,7 @@ interface UploadEvent {
 })
 export class FileUploadPopupComponent {
   uploadedFiles: any[] = [];
-  @Input() acceptedTypes = '.txt,.md';
+  @Input() acceptedTypes = '*';
 
   constructor(
     private dialogRef: DynamicDialogRef,
