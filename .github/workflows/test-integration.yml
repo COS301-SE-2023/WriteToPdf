@@ -1,10 +1,8 @@
 name: Test Integration
 
 on:
-    push:
-        branches: ["test", "integration/*", "codecov"]
     pull_request:
-        branches: ["test", "integration/*", "codecov"]
+        branches: ["test"]
 
 env:
     JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
