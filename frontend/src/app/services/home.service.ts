@@ -75,7 +75,7 @@ export class NodeService {
       key: string | undefined;
       data: {
         name: string | undefined;
-        size: number | undefined;
+        size: string | undefined;
         type: string | undefined;
         key: string | undefined;
       };
@@ -127,7 +127,7 @@ export class NodeService {
         key: folder.FolderID,
         data: {
           name: folder.FolderName,
-          size: 0,
+          size: '',
           type: 'folder',
           key: folder.FolderID,
         },
@@ -137,7 +137,7 @@ export class NodeService {
         key: folder.FolderID,
         data: {
           name: folder.FolderName,
-          size: 0,
+          size: '',
           type: 'folder',
           key: folder.FolderID,
         },
