@@ -336,12 +336,10 @@ export class S3Service {
         }),
       );
 
-      console.log(response);
-
       retrieveAssetDTO.Content =
         await response.Body.transformToString();
       retrieveAssetDTO.Size =
-        response.ContentLength;
+        retrieveAssetDTO.Content.length;
     } catch (err) {
       console.log('Read File Error: ' + err);
       return undefined;
