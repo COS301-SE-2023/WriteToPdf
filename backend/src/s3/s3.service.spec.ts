@@ -128,6 +128,30 @@ describe('S3Service', () => {
 
       expect(result).toBeUndefined();
     });
+
+    it('should return undefined when delete fails', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = 'mock_id';
+      markdownFileDTO.Path = 'mock_path';
+      markdownFileDTO.UserID = 1;
+
+      jest
+        .spyOn(fs, 'access')
+        .mockResolvedValue(undefined);
+
+      jest
+        .spyOn(fs, 'unlink')
+        .mockImplementation(() => {
+          throw new Error('Directory Test Error');
+        });
+
+      const result = await s3Service.deleteFile(
+        markdownFileDTO,
+      );
+
+      expect(result).toBeUndefined();
+    });
   });
 
   describe('createFile', () => {
