@@ -46,7 +46,7 @@ export class S3Service {
     try {
       await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error --> ' + err);
+      console.log('Access Error: ' + err);
       return undefined;
     }
 
@@ -59,7 +59,7 @@ export class S3Service {
         }),
       );
     } catch (err) {
-      console.log('Delete Error --> ' + err);
+      console.log('Delete Error: ' + err);
       return undefined;
     }
 
@@ -89,7 +89,7 @@ export class S3Service {
       });
     } catch (err) {
       console.log(
-        'Directory Creation Error:' + err,
+        'Directory Creation Error: ' + err,
       );
       return undefined;
     }
@@ -108,7 +108,7 @@ export class S3Service {
         }),
       );
     } catch (err) {
-      console.log('Write File Error:' + err);
+      console.log('Write File Error: ' + err);
       return undefined;
     }
 
@@ -135,7 +135,7 @@ export class S3Service {
     try {
       await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error --> ' + err);
+      console.log('Access Error: ' + err);
       return undefined;
     }
 
@@ -157,7 +157,7 @@ export class S3Service {
         }),
       );
     } catch (err) {
-      console.log('Write File Error:' + err);
+      console.log('Write File Error: ' + err);
       return undefined;
     }
 
@@ -180,7 +180,7 @@ export class S3Service {
     try {
       await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error --> ' + err);
+      console.log('Access Error: ' + err);
       return undefined;
     }
 
@@ -206,7 +206,7 @@ export class S3Service {
       markdownFileDTO.Size =
         response.ContentLength;
     } catch (err) {
-      console.log('Read File Error:' + err);
+      console.log('Read File Error: ' + err);
       return undefined;
     }
 
@@ -270,7 +270,7 @@ export class S3Service {
       });
     } catch (err) {
       console.log(
-        'Directory Creation Error:' + err,
+        'Directory Creation Error: ' + err,
       );
       return undefined;
     }
@@ -306,7 +306,7 @@ export class S3Service {
         'S3 Save Asset Response: ' + response,
       );
     } catch (err) {
-      console.log('Write File Error:' + err);
+      console.log('Write File Error: ' + err);
       return undefined;
     }
 
@@ -332,7 +332,7 @@ export class S3Service {
     try {
       await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error --> ' + err);
+      console.log('Access Error: ' + err);
       return undefined;
     }
 
@@ -361,7 +361,7 @@ export class S3Service {
       retrieveAssetDTO.Size =
         retrieveAssetDTO.Content.length;
     } catch (err) {
-      console.log('Read File Error:' + err);
+      console.log('Read File Error: ' + err);
       return undefined;
     }
 
@@ -376,7 +376,7 @@ export class S3Service {
     try {
       await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error --> ' + err);
+      console.log('Access Error: ' + err);
       return undefined;
     }
 
@@ -407,7 +407,7 @@ export class S3Service {
       retrieveAssetDTO.Size =
         response.ContentLength;
     } catch (err) {
-      console.log('Read File Error:' + err);
+      console.log('Read File Error: ' + err);
       return undefined;
     }
 
@@ -420,7 +420,7 @@ export class S3Service {
     try {
       await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error --> ' + err);
+      console.log('Access Error: ' + err);
       return undefined;
     }
 
@@ -435,7 +435,7 @@ export class S3Service {
         }),
       );
     } catch (err) {
-      console.log('Delete Error --> ' + err);
+      console.log('Delete Error: ' + err);
       return undefined;
     }
     return assetDTO;
