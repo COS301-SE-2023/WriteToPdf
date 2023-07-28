@@ -107,9 +107,10 @@ $page-height: 29.7cm;
     display: none;
     position: fixed;
     background-color: $light-grey;
-    min-width: 160px;
+    min-width: 100px;
+    margin-left: 15px;
+    margin-top:-15px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    padding: 12px 16px;
     z-index: 1;
 
     border-radius: 5px;
@@ -120,7 +121,12 @@ $page-height: 29.7cm;
     background-color: darken($light-grey, 10%);
 }
 
-.dropdownWrapper:hover .dropdownContent {
+.dropdownOptions{
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+}
+.uploadAssetIcon:hover .dropdownContent {
     display: block;
     cursor: pointer;
 }
