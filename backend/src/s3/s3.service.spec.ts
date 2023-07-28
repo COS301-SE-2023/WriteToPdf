@@ -3,14 +3,12 @@ import {
   TestingModule,
 } from '@nestjs/testing';
 import { S3Service } from './s3.service';
-import { FileDTO } from './dto/file.dto';
 import {
   GetObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
 import { sdkStreamMixin } from '@aws-sdk/util-stream-node';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
-import { AssetDTO } from '../assets/dto/asset.dto';
 import * as fs from 'fs/promises';
 import { Readable } from 'stream';
 import { mockClient } from 'aws-sdk-client-mock';
@@ -18,7 +16,6 @@ import { mockClient } from 'aws-sdk-client-mock';
 describe('S3Service', () => {
   let s3Service: S3Service;
   const mockS3Client = mockClient(S3Client);
-  let s3Client: S3Client;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -26,7 +23,6 @@ describe('S3Service', () => {
         providers: [S3Service],
       }).compile();
 
-    s3Client = new S3Client({});
     s3Service = module.get<S3Service>(S3Service);
     // Configure mockS3Client
     mockS3Client.reset();
@@ -138,6 +134,10 @@ describe('S3Service', () => {
       jest
         .spyOn(fs, 'access')
         .mockResolvedValue();
+
+      jest
+        .spyOn(fs, 'readFile')
+        .mockResolvedValue('hello world');
 
       const stream = new Readable();
       stream.push('hello world');
