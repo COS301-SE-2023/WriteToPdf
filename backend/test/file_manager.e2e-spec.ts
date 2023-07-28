@@ -164,1590 +164,1536 @@ describe('FileManagerController (integration)', () => {
     );
   }
 
-  // async function cleanUp() {
-  //   console.log(
-  //     'expect.getState().currentTestName: ',
-  //     expect.getState().currentTestName,
-  //   );
-  //   switch (expect.getState().currentTestName) {
-  //     case 'FileManagerController (integration) file-manager endpoint create_file /file-manager/create_file/ (POST) - valid request':
-  //       await markdownFileRepository.query(
-  //         'DELETE FROM MARKDOWN_FILES WHERE MarkdownID = ? AND UserID = ?',
-  //         [fileID, process.env.TEST_USERID],
-  //       );
-  //       const createFileDTO =
-  //         new MarkdownFileDTO();
-  //       createFileDTO.UserID = parseInt(
-  //         process.env.TEST_USERID,
-  //       );
-  //       createFileDTO.Path = '';
-  //       createFileDTO.MarkdownID = fileID;
-  //       await s3Service.deleteFile(createFileDTO);
-  //       break;
-
-  //     case 'FileManagerController (integration) file-manager endpoint /file-manager/delete_file/ (POST) - valid request':
-  //       const deleteFileDTO =
-  //         new MarkdownFileDTO();
-  //       deleteFileDTO.UserID = parseInt(
-  //         process.env.TEST_USERID,
-  //       );
-  //       deleteFileDTO.Path = '';
-  //       deleteFileDTO.Name = 'Test File';
-  //       deleteFileDTO.Size = 0;
-  //       deleteFileDTO.ParentFolderID = '';
-
-  //       const s3Response =
-  //         await s3Service.createFile(
-  //           deleteFileDTO,
-  //         );
-
-  //       fileID = s3Response.MarkdownID;
-
-  //       await markdownFileRepository.query(
-  //         'INSERT INTO MARKDOWN_FILES (MarkdownID, Name, Path, Size, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?, ?)',
-  //         [
-  //           s3Response.MarkdownID,
-  //           deleteFileDTO.Name,
-  //           deleteFileDTO.Path,
-  //           deleteFileDTO.Size,
-  //           deleteFileDTO.ParentFolderID,
-  //           deleteFileDTO.UserID,
-  //         ],
-  //       );
-  //       break;
-  //   }
-  // }
-
   describe('file-manager endpoint', () => {
+    it('should be mocked out', () => {
+      expect(true).toBe(true);
+    });
     // describe('create_file', () => {
-    // it('/file-manager/create_file/ (POST) - missing UserID', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
+    //   it('/file-manager/create_file/ (POST) - missing UserID', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/create_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/create_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/create_file/ (POST) - valid request', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
+    //   it('/file-manager/create_file/ (POST) - valid request', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/create_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/create_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.body).toHaveProperty(
-    // 'MarkdownID',
-    // );
-    // fileID = response.body.MarkdownID;
-    // expect(response.status).toBe(
-    // HttpStatus.OK,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Name',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Content',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Path',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'DateCreated',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'LastModified',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Size',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'ParentFolderID',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'UserID',
-    // );
-    // expect(response.body.Name).toEqual(
-    // 'New Document',
-    // );
-    // expect(response.body.Path).toEqual('');
-    // expect(
-    // response.body.ParentFolderID,
-    // ).toEqual('');
-    // });
+    //     expect(response.body).toHaveProperty(
+    //       'MarkdownID',
+    //     );
+    //     fileID = response.body.MarkdownID;
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Name',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Content',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Path',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'DateCreated',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'LastModified',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Size',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'ParentFolderID',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'UserID',
+    //     );
+    //     expect(response.body.Name).toEqual(
+    //       'New Document',
+    //     );
+    //     expect(response.body.Path).toEqual('');
+    //     expect(
+    //       response.body.ParentFolderID,
+    //     ).toEqual('');
+    //   });
     // });
 
     // describe('delete_file', () => {
-    // it('/file-manager/delete_file/ (POST) - missing UserID', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
+    //   it('/file-manager/delete_file/ (POST) - missing UserID', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/delete_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/delete_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/delete_file/ (POST) - missing MarkdownID', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
+    //   it('/file-manager/delete_file/ (POST) - missing MarkdownID', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/delete_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/delete_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/delete_file/ (POST) - valid request', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
+    //   it('/file-manager/delete_file/ (POST) - valid request', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
 
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/delete_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/delete_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.OK,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'affected',
-    // );
-    // expect(response.body.affected).toEqual(1);
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'affected',
+    //     );
+    //     expect(response.body.affected).toEqual(1);
+    //   });
     // });
 
     // describe('rename_file', () => {
-    // it('/file-manager/rename_file/ (POST) - missing UserID', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
-    // requestMarkdownFileDTO.Name = 'New Name';
+    //   it('/file-manager/rename_file/ (POST) - missing UserID', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
+    //     requestMarkdownFileDTO.Name = 'New Name';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/rename_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/rename_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/rename_file/ (POST) - missing MarkdownID', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestMarkdownFileDTO.Name = 'New Name';
+    //   it('/file-manager/rename_file/ (POST) - missing MarkdownID', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestMarkdownFileDTO.Name = 'New Name';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/rename_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/rename_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/rename_file/ (POST) - missing Name', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
+    //   it('/file-manager/rename_file/ (POST) - missing Name', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/rename_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/rename_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/rename_file/ (POST) - valid request', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
-    // requestMarkdownFileDTO.Name = 'New Name';
+    //   it('/file-manager/rename_file/ (POST) - valid request', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
+    //     requestMarkdownFileDTO.Name = 'New Name';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/rename_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/rename_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    //console.log('response.body: ', response.body);
-    // expect(response.body).toHaveProperty(
-    // 'MarkdownID',
-    // );
-    // expect(response.status).toBe(
-    // HttpStatus.OK,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Name',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'UserID',
-    // );
-    // expect(response.body.MarkdownID).toEqual(
-    // fileID,
-    // );
-    // expect(response.body.Name).toEqual(
-    // 'New Name',
-    // );
-    // expect(response.body.UserID).toEqual(
-    // parseInt(process.env.TEST_USERID),
-    // );
-    // });
+    //     // console.log('response.body: ', response.body);
+    //     expect(response.body).toHaveProperty(
+    //       'MarkdownID',
+    //     );
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Name',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'UserID',
+    //     );
+    //     expect(response.body.MarkdownID).toEqual(
+    //       fileID,
+    //     );
+    //     expect(response.body.Name).toEqual(
+    //       'New Name',
+    //     );
+    //     expect(response.body.UserID).toEqual(
+    //       parseInt(process.env.TEST_USERID),
+    //     );
+    //   });
     // });
 
     // describe('move_file', () => {
-    // it('/file-manager/move_file/ (POST) - missing UserID', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
-    // requestMarkdownFileDTO.ParentFolderID =
-    // 'test';
-    // requestMarkdownFileDTO.Path = 'test';
+    //   it('/file-manager/move_file/ (POST) - missing UserID', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
+    //     requestMarkdownFileDTO.ParentFolderID =
+    //       'test';
+    //     requestMarkdownFileDTO.Path = 'test';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/move_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/move_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/move_file/ (POST) - missing MarkdownID', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestMarkdownFileDTO.ParentFolderID =
-    // 'test';
-    // requestMarkdownFileDTO.Path = 'test';
+    //   it('/file-manager/move_file/ (POST) - missing MarkdownID', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestMarkdownFileDTO.ParentFolderID =
+    //       'test';
+    //     requestMarkdownFileDTO.Path = 'test';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/move_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/move_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/move_file/ (POST) - missing ParentFolderID', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
-    // requestMarkdownFileDTO.Path = 'test';
+    //   it('/file-manager/move_file/ (POST) - missing ParentFolderID', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
+    //     requestMarkdownFileDTO.Path = 'test';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/move_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/move_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/move_file/ (POST) - missing Path', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
-    // requestMarkdownFileDTO.ParentFolderID =
-    // 'test';
+    //   it('/file-manager/move_file/ (POST) - missing Path', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
+    //     requestMarkdownFileDTO.ParentFolderID =
+    //       'test';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/move_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/move_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/move_file/ (POST) - valid request', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
-    // requestMarkdownFileDTO.ParentFolderID =
-    // 'test';
-    // requestMarkdownFileDTO.Path = 'test';
+    //   it('/file-manager/move_file/ (POST) - valid request', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
+    //     requestMarkdownFileDTO.ParentFolderID =
+    //       'test';
+    //     requestMarkdownFileDTO.Path = 'test';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/move_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/move_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.body).toHaveProperty(
-    // 'MarkdownID',
-    // );
-    // expect(response.status).toBe(
-    // HttpStatus.OK,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Name',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'UserID',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Path',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'ParentFolderID',
-    // );
-    // expect(response.body.MarkdownID).toEqual(
-    // fileID,
-    // );
-    // expect(response.body.Path).toEqual(
-    // 'test',
-    // );
-    // expect(
-    // response.body.ParentFolderID,
-    // ).toEqual('test');
-    // expect(response.body.UserID).toEqual(
-    // parseInt(process.env.TEST_USERID),
-    // );
-    // });
+    //     expect(response.body).toHaveProperty(
+    //       'MarkdownID',
+    //     );
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Name',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'UserID',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Path',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'ParentFolderID',
+    //     );
+    //     expect(response.body.MarkdownID).toEqual(
+    //       fileID,
+    //     );
+    //     expect(response.body.Path).toEqual(
+    //       'test',
+    //     );
+    //     expect(
+    //       response.body.ParentFolderID,
+    //     ).toEqual('test');
+    //     expect(response.body.UserID).toEqual(
+    //       parseInt(process.env.TEST_USERID),
+    //     );
+    //   });
     // });
 
     // describe('save_file', () => {
-    // it('/file-manager/save_file/ (POST) - missing UserID', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
-    // requestMarkdownFileDTO.Content = 'test';
+    //   it('/file-manager/save_file/ (POST) - missing UserID', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
+    //     requestMarkdownFileDTO.Content = 'test';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/save_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/save_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/save_file/ (POST) - missing MarkdownID', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestMarkdownFileDTO.Content = 'test';
+    //   it('/file-manager/save_file/ (POST) - missing MarkdownID', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestMarkdownFileDTO.Content = 'test';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/save_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/save_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/save_file/ (POST) - missing Content', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
+    //   it('/file-manager/save_file/ (POST) - missing Content', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/save_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/save_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/save_file/ (POST) - valid request', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
-    // requestMarkdownFileDTO.Content = 'test';
+    //   it('/file-manager/save_file/ (POST) - valid request', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
+    //     requestMarkdownFileDTO.Content = 'test';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/save_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/save_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.body).toHaveProperty(
-    // 'MarkdownID',
-    // );
-    // expect(response.status).toBe(
-    // HttpStatus.OK,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Name',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'UserID',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Path',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'ParentFolderID',
-    // );
-    // expect(response.body.MarkdownID).toEqual(
-    // fileID,
-    // );
-    // expect(response.body.Path).toEqual('');
-    // expect(
-    // response.body.ParentFolderID,
-    // ).toEqual('');
-    // expect(response.body.UserID).toEqual(
-    // parseInt(process.env.TEST_USERID),
-    // );
-    // TODO expand test to check the s3 bucket
-    // });
+    //     expect(response.body).toHaveProperty(
+    //       'MarkdownID',
+    //     );
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Name',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'UserID',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Path',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'ParentFolderID',
+    //     );
+    //     expect(response.body.MarkdownID).toEqual(
+    //       fileID,
+    //     );
+    //     expect(response.body.Path).toEqual('');
+    //     expect(
+    //       response.body.ParentFolderID,
+    //     ).toEqual('');
+    //     expect(response.body.UserID).toEqual(
+    //       parseInt(process.env.TEST_USERID),
+    //     );
+    //     //TODO expand test to check the s3 bucket
+    //   });
     // });
 
     // describe('retrieve_file', () => {
-    // it('/file-manager/retrieve_file/ (POST) - missing UserID', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
+    //   it('/file-manager/retrieve_file/ (POST) - missing UserID', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/retrieve_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/retrieve_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/retrieve_file/ (POST) - missing MarkdownID', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
+    //   it('/file-manager/retrieve_file/ (POST) - missing MarkdownID', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/retrieve_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/retrieve_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/retrieve_file/ (POST) - valid request', async () => {
-    // const requestMarkdownFileDTO =
-    // new MarkdownFileDTO();
-    // requestMarkdownFileDTO.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestMarkdownFileDTO.MarkdownID =
-    // fileID;
+    //   it('/file-manager/retrieve_file/ (POST) - valid request', async () => {
+    //     const requestMarkdownFileDTO =
+    //       new MarkdownFileDTO();
+    //     requestMarkdownFileDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestMarkdownFileDTO.MarkdownID =
+    //       fileID;
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/retrieve_file/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestMarkdownFileDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/retrieve_file/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestMarkdownFileDTO);
 
-    // expect(response.body).toHaveProperty(
-    // 'MarkdownID',
-    // );
-    // expect(response.status).toBe(
-    // HttpStatus.OK,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'UserID',
-    // );
-    // expect(response.body.MarkdownID).toEqual(
-    // fileID,
-    // );
-    // expect(response.body.UserID).toEqual(
-    // parseInt(process.env.TEST_USERID),
-    // );
-    // expect(response.body.Content).toEqual(
-    // 'Test content',
-    // );
-    // expect(response.body.Size).not.toEqual(0);
-    // });
+    //     expect(response.body).toHaveProperty(
+    //       'MarkdownID',
+    //     );
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'UserID',
+    //     );
+    //     expect(response.body.MarkdownID).toEqual(
+    //       fileID,
+    //     );
+    //     expect(response.body.UserID).toEqual(
+    //       parseInt(process.env.TEST_USERID),
+    //     );
+    //     expect(response.body.Content).toEqual(
+    //       'Test content',
+    //     );
+    //     expect(response.body.Size).not.toEqual(0);
+    //   });
     // });
 
     // describe('retrieve_all_files', () => {
-    // it('/file-manager/retrieve_all_files/ (POST) - missing UserID', async () => {
-    // const requestDirectoryFilesDTO =
-    // new DirectoryFilesDTO();
+    //   it('/file-manager/retrieve_all_files/ (POST) - missing UserID', async () => {
+    //     const requestDirectoryFilesDTO =
+    //       new DirectoryFilesDTO();
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post(
-    // '/file_manager/retrieve_all_files/',
-    // )
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestDirectoryFilesDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post(
+    //         '/file_manager/retrieve_all_files/',
+    //       )
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestDirectoryFilesDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('file-manager/retrieve_all_files/ (POST) - valid request', async () => {
-    // const requestDirectoryFilesDTO =
-    // new DirectoryFilesDTO();
-    // requestDirectoryFilesDTO.UserID =
-    // parseInt(process.env.TEST_USERID);
+    //   it('file-manager/retrieve_all_files/ (POST) - valid request', async () => {
+    //     const requestDirectoryFilesDTO =
+    //       new DirectoryFilesDTO();
+    //     requestDirectoryFilesDTO.UserID =
+    //       parseInt(process.env.TEST_USERID);
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post(
-    // '/file_manager/retrieve_all_files/',
-    // )
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestDirectoryFilesDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post(
+    //         '/file_manager/retrieve_all_files/',
+    //       )
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestDirectoryFilesDTO);
 
-    // expect(response.body).toHaveProperty(
-    // 'UserID',
-    // );
-    // expect(response.status).toBe(
-    // HttpStatus.OK,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Files',
-    // );
-    // expect(response.body.UserID).toEqual(
-    // parseInt(process.env.TEST_USERID),
-    // );
-    // expect(response.body.Files).not.toEqual(
-    // [],
-    // );
-    // expect(response.body.Files).toHaveLength(
-    // 1,
-    // );
-    // expect(
-    // response.body.Files[0],
-    // ).toHaveProperty('MarkdownID');
-    // });
+    //     expect(response.body).toHaveProperty(
+    //       'UserID',
+    //     );
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Files',
+    //     );
+    //     expect(response.body.UserID).toEqual(
+    //       parseInt(process.env.TEST_USERID),
+    //     );
+    //     expect(response.body.Files).not.toEqual(
+    //       [],
+    //     );
+    //     expect(response.body.Files).toHaveLength(
+    //       1,
+    //     );
+    //     expect(
+    //       response.body.Files[0],
+    //     ).toHaveProperty('MarkdownID');
+    //   });
     // });
 
     // describe('create_folder', () => {
-    // it('/file-manager/create_folder/ (POST) - missing UserID', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.FolderName = 'test';
-    // requestFolder.Path = 'test';
+    //   it('/file-manager/create_folder/ (POST) - missing UserID', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.FolderName = 'test';
+    //     requestFolder.Path = 'test';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/create_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/create_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/create_folder/ (POST) - missing FolderName', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestFolder.Path = 'test';
+    //   it('/file-manager/create_folder/ (POST) - missing FolderName', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestFolder.Path = 'test';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/create_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/create_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/create_folder/ (POST) - missing Path', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.FolderName = 'test';
-    // requestFolder.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
+    //   it('/file-manager/create_folder/ (POST) - missing Path', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.FolderName = 'test';
+    //     requestFolder.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/create_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/create_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/create_folder/ (POST) - valid request', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestFolder.FolderName = 'Test Name';
-    // requestFolder.Path = 'Test Path';
-    // requestFolder.ParentFolderID =
-    // 'Test ParentFolderID';
+    //   it('/file-manager/create_folder/ (POST) - valid request', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestFolder.FolderName = 'Test Name';
+    //     requestFolder.Path = 'Test Path';
+    //     requestFolder.ParentFolderID =
+    //       'Test ParentFolderID';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/create_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/create_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.body).toHaveProperty(
-    // 'FolderID',
-    // );
-    // fileID = response.body.MarkdownID;
-    // expect(response.status).toBe(
-    // HttpStatus.OK,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'FolderName',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Path',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'DateCreated',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'LastModified',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'ParentFolderID',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'UserID',
-    // );
-    // expect(response.body.FolderName).toEqual(
-    // 'Test Name',
-    // );
-    // expect(response.body.Path).toEqual(
-    // 'Test Path',
-    // );
-    // expect(
-    // response.body.ParentFolderID,
-    // ).toEqual('Test ParentFolderID');
-    // expect(response.body.UserID).toEqual(
-    // parseInt(process.env.TEST_USERID),
-    // );
-    // });
+    //     expect(response.body).toHaveProperty(
+    //       'FolderID',
+    //     );
+    //     fileID = response.body.MarkdownID;
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'FolderName',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Path',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'DateCreated',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'LastModified',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'ParentFolderID',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'UserID',
+    //     );
+    //     expect(response.body.FolderName).toEqual(
+    //       'Test Name',
+    //     );
+    //     expect(response.body.Path).toEqual(
+    //       'Test Path',
+    //     );
+    //     expect(
+    //       response.body.ParentFolderID,
+    //     ).toEqual('Test ParentFolderID');
+    //     expect(response.body.UserID).toEqual(
+    //       parseInt(process.env.TEST_USERID),
+    //     );
+    //   });
     // });
 
     // describe('delete_folder', () => {
-    // it('/file-manager/delete_folder/ (POST) - missing UserID', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.FolderID = folderID;
+    //   it('/file-manager/delete_folder/ (POST) - missing UserID', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.FolderID = folderID;
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/delete_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/delete_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/delete_folder/ (POST) - missing FolderID', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
+    //   it('/file-manager/delete_folder/ (POST) - missing FolderID', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/delete_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/delete_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('file-manager/delete_folder/ (POST) - valid request', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestFolder.FolderID = folderID;
+    //   it('file-manager/delete_folder/ (POST) - valid request', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestFolder.FolderID = folderID;
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/delete_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/delete_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.OK,
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
+    //     );
+    //   });
     // });
 
     // describe('rename_folder', () => {
-    // it('/file-manager/rename_folder/ (POST) - missing UserID', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.FolderID = folderID;
-    // requestFolder.FolderName = 'New Name';
+    //   it('/file-manager/rename_folder/ (POST) - missing UserID', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.FolderID = folderID;
+    //     requestFolder.FolderName = 'New Name';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/rename_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/rename_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/rename_folder/ (POST) - missing FolderName', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestFolder.FolderID = folderID;
+    //   it('/file-manager/rename_folder/ (POST) - missing FolderName', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestFolder.FolderID = folderID;
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/rename_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/rename_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/rename_folder/ (POST) - missing FolderID', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestFolder.FolderName = 'New Name';
+    //   it('/file-manager/rename_folder/ (POST) - missing FolderID', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestFolder.FolderName = 'New Name';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/rename_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/rename_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/rename_folder/ (POST) - valid request', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestFolder.FolderID = folderID;
-    // requestFolder.FolderName = 'New Name';
+    //   it('/file-manager/rename_folder/ (POST) - valid request', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestFolder.FolderID = folderID;
+    //     requestFolder.FolderName = 'New Name';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/rename_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/rename_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.body).toHaveProperty(
-    // 'FolderID',
-    // );
-    // expect(response.status).toBe(
-    // HttpStatus.OK,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'FolderName',
-    // );
-    // expect(response.body.FolderName).toEqual(
-    // 'New Name',
-    // );
-    // });
+    //     expect(response.body).toHaveProperty(
+    //       'FolderID',
+    //     );
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'FolderName',
+    //     );
+    //     expect(response.body.FolderName).toEqual(
+    //       'New Name',
+    //     );
+    //   });
     // });
 
     // describe('move_folder', () => {
-    // it('/file-manager/move_folder/ (POST) - missing UserID', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.FolderID = folderID;
-    // requestFolder.ParentFolderID = '';
-    // requestFolder.Path = '';
+    //   it('/file-manager/move_folder/ (POST) - missing UserID', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.FolderID = folderID;
+    //     requestFolder.ParentFolderID = '';
+    //     requestFolder.Path = '';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/move_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/move_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/move_folder/ (POST) - missing ParentFolderID', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestFolder.FolderID = folderID;
-    // requestFolder.Path = '';
+    //   it('/file-manager/move_folder/ (POST) - missing ParentFolderID', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestFolder.FolderID = folderID;
+    //     requestFolder.Path = '';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/move_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/move_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/move_folder/ (POST) - missing FolderID', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestFolder.Path = '';
-    // requestFolder.ParentFolderID = '';
+    //   it('/file-manager/move_folder/ (POST) - missing FolderID', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestFolder.Path = '';
+    //     requestFolder.ParentFolderID = '';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/move_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/move_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/move_folder/ (POST) - missing Path', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestFolder.FolderID = folderID;
-    // requestFolder.ParentFolderID = '';
+    //   it('/file-manager/move_folder/ (POST) - missing Path', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestFolder.FolderID = folderID;
+    //     requestFolder.ParentFolderID = '';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/move_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/move_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
-    // });
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
 
-    // it('/file-manager/move_folder/ (POST) - valid request', async () => {
-    // const requestFolder = new FolderDTO();
-    // requestFolder.UserID = parseInt(
-    // process.env.TEST_USERID,
-    // );
-    // requestFolder.FolderID = folderID;
-    // requestFolder.ParentFolderID =
-    // 'New ParentFolderID';
-    // requestFolder.Path = 'New Path';
+    //   it('/file-manager/move_folder/ (POST) - valid request', async () => {
+    //     const requestFolder = new FolderDTO();
+    //     requestFolder.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestFolder.FolderID = folderID;
+    //     requestFolder.ParentFolderID =
+    //       'New ParentFolderID';
+    //     requestFolder.Path = 'New Path';
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post('/file_manager/move_folder/')
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestFolder);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/file_manager/move_folder/')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestFolder);
 
-    // expect(response.body).toHaveProperty(
-    // 'FolderID',
-    // );
-    // expect(response.status).toBe(
-    // HttpStatus.OK,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'FolderName',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Path',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'ParentFolderID',
-    // );
-    // expect(response.body.Path).toEqual(
-    // 'New Path',
-    // );
-    // expect(
-    // response.body.ParentFolderID,
-    // ).toEqual('New ParentFolderID');
-    // });
+    //     expect(response.body).toHaveProperty(
+    //       'FolderID',
+    //     );
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'FolderName',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Path',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'ParentFolderID',
+    //     );
+    //     expect(response.body.Path).toEqual(
+    //       'New Path',
+    //     );
+    //     expect(
+    //       response.body.ParentFolderID,
+    //     ).toEqual('New ParentFolderID');
+    //   });
     // });
 
     // describe('retrieve_all_folders', () => {
-    // it('/file-manager/retrieve_all_folders/ (POST) - missing UserID', async () => {
-    // const requestDirectoryFoldersDTO =
-    // new DirectoryFoldersDTO();
+    //   it('/file-manager/retrieve_all_folders/ (POST) - missing UserID', async () => {
+    //     const requestDirectoryFoldersDTO =
+    //       new DirectoryFoldersDTO();
 
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post(
-    // '/file_manager/retrieve_all_folders/',
-    // )
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestDirectoryFoldersDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post(
+    //         '/file_manager/retrieve_all_folders/',
+    //       )
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestDirectoryFoldersDTO);
 
-    // expect(response.status).toBe(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'statusCode',
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'message',
-    // );
-    // expect(response.body.statusCode).toEqual(
-    // HttpStatus.BAD_REQUEST,
-    // );
-    // expect(response.body.message).toEqual(
-    // 'Invalid request data',
-    // );
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+    //   it('file-manager/retrieve_all_folders/ (POST) - valid request', async () => {
+    //     const requestDirectoryFoldersDTO =
+    //       new DirectoryFoldersDTO();
+    //     requestDirectoryFoldersDTO.UserID =
+    //       parseInt(process.env.TEST_USERID);
+
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post(
+    //         '/file_manager/retrieve_all_folders/',
+    //       )
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .send(requestDirectoryFoldersDTO);
+
+    //     expect(response.body).toHaveProperty(
+    //       'UserID',
+    //     );
+    //     expect(response.status).toBe(
+    //       HttpStatus.OK,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Folders',
+    //     );
+    //     expect(response.body.UserID).toEqual(
+    //       parseInt(process.env.TEST_USERID),
+    //     );
+    //     expect(response.body.Folders).not.toEqual(
+    //       [],
+    //     );
+    //     expect(
+    //       response.body.Folders,
+    //     ).toHaveLength(1);
+    //     expect(
+    //       response.body.Folders[0],
+    //     ).toHaveProperty('FolderID');
+    //   });
     // });
-
-    // it('file-manager/retrieve_all_folders/ (POST) - valid request', async () => {
-    // const requestDirectoryFoldersDTO =
-    // new DirectoryFoldersDTO();
-    // requestDirectoryFoldersDTO.UserID =
-    // parseInt(process.env.TEST_USERID);
-
-    // const response = await request(
-    // app.getHttpServer(),
-    // )
-    // .post(
-    // '/file_manager/retrieve_all_folders/',
-    // )
-    // .set(
-    // 'Authorization',
-    // 'Bearer ' + process.env.AUTH_BEARER,
-    // )
-    // .send(requestDirectoryFoldersDTO);
-
-    // expect(response.body).toHaveProperty(
-    // 'UserID',
-    // );
-    // expect(response.status).toBe(
-    // HttpStatus.OK,
-    // );
-    // expect(response.body).toHaveProperty(
-    // 'Folders',
-    // );
-    // expect(response.body.UserID).toEqual(
-    // parseInt(process.env.TEST_USERID),
-    // );
-    // expect(response.body.Folders).not.toEqual(
-    // [],
-    // );
-    // expect(
-    // response.body.Folders,
-    // ).toHaveLength(1);
-    // expect(
-    // response.body.Folders[0],
-    // ).toHaveProperty('FolderID');
-    // });
-    // });
-    it('Should be mocked out', () => {
-      expect(true).toEqual(true);
-    });
   });
 });
