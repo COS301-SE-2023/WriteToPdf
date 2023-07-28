@@ -251,11 +251,6 @@ export class S3Service {
       return undefined;
     }
 
-    const fileStats = await fs.stat(
-      `./storage/${filePath}`,
-    );
-    console.log(fileStats);
-    saveAssetDTO.DateCreated = fileStats.mtime;
     saveAssetDTO.Size =
       fileData.buffer.byteLength;
     saveAssetDTO.Content = '';
