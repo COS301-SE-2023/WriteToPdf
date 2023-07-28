@@ -1,12 +1,13 @@
-import { MarkdownFileDTO } from 'src/markdown_files/dto/markdown_file.dto';
+import { MarkdownFileDTO } from '../../markdown_files/dto/markdown_file.dto';
 import * as fs from 'fs/promises';
 import * as CryptoJS from 'crypto-js';
-import { AssetDTO } from 'src/assets/dto/asset.dto';
+import { AssetDTO } from '../../assets/dto/asset.dto';
 
 export class S3ServiceMock {
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    console.log('Delete File (mock)');
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
@@ -33,6 +34,7 @@ export class S3ServiceMock {
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    console.log('Create File (mock)');
     const markdownID = CryptoJS.SHA256(
       markdownFileDTO.UserID.toString() +
         new Date().getTime().toString(),
@@ -77,6 +79,7 @@ export class S3ServiceMock {
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    console.log('Save File (mock)');
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
@@ -113,6 +116,7 @@ export class S3ServiceMock {
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    console.log('Retrieve File (mock)');
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
