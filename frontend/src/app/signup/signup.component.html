@@ -1,129 +1,84 @@
-<div class="signupWrapper">
-  <form action="" class="signupForm">
-    <div (click)="outputForm()" class="logoWrapper">
-      <hr />
-      <img src="assets/Logos/WriteToPdf_Logo_white.svg" alt="" class="logo" />
-      <hr />
-    </div>
+<div class="backgroundImage" (mousemove)="movemouse($event)">
+  <div class="signupWrapper">
+    <form action="" class="signupForm">
+      <div (click)="outputForm()" class="logoWrapper">
+        <hr />
+        <img src="assets/Logos/WriteToPdf_Logo_white.svg" alt="" class="logo" />
+        <hr />
+      </div>
 
-    <div>
-      <h3 class="heading">Signup</h3>
-    </div>
+      <div>
+        <h3 class="heading">Signup</h3>
+      </div>
 
-    <div class="labelElement">
-      <label for="firstName">First Name</label>
-    </div>
-    <div class="formElement">
-      <input
-        pInputText
-        type="text"
-        name="firstName"
-        id="firstName"
-        placeholder=""
-        class="textBox"
-        [(ngModel)]="firstName"
-      />
-    </div>
-    <div class="labelElement">
-      <label for="lastName">Last Name</label>
-    </div>
-    <div class="formElement">
-      <input
-        pInputText
-        type="text"
-        name="lastName"
-        id="lastName"
-        placeholder=""
-        class="textBox"
-        [(ngModel)]="lastName"
-      />
-    </div>
-    <div class="labelElement">
-      <label for="email">Email</label>
-    </div>
-    <div class="formElement">
-      <input
-        pInputText
-        type="email"
-        name="email"
-        id="email"
-        placeholder=""
-        class="textBox"
-        [(ngModel)]="email"
-      />
-    </div>
-
-    <div class="labelElement">
-      <label for="password">Password</label>
-    </div>
-    <div class="formElement">
-      <!-- <input type="password" name="password" id="password" placeholder="" class="textBox" [(ngModel)]="password"> -->
-      <p-password
-        name="password"
-        id="password"
-        placeholder=""
-        class="password w-full"
-        [(ngModel)]="password"
-        [toggleMask]="true"
-        styleClass="p-password p-component p-inputwrapper p-input-icon-right"
-        [style]="{ width: '100%' }"
-        [inputStyle]="{ width: '100%' }"
-      ></p-password>
-    </div>
-
-    <div class="labelElement">
-      <label for="confirmPassword">Confirm Password</label>
-    </div>
-    <div class="formElement">
-      <!-- <input type="password" name="confirmPassword" id="confirmPassword" placeholder="" class="textBox" [(ngModel)]="confirmPassword"> -->
-      <p-password
-        name="confirmPassword"
-        id="confirmPassword"
-        placeholder=""
-        class="password w-full"
-        [(ngModel)]="confirmPassword"
-        [(ngModel)]="confirmPassword"
-        [toggleMask]="true"
-        styleClass="p-password p-component p-inputwrapper p-input-icon-right"
-        [style]="{ width: '100%' }"
-        [inputStyle]="{ width: '100%' }"
-        [feedback]="false"
-      ></p-password>
-    </div>
-
-    <div *ngIf="isFormValid(); else formInvalid" class="formElement">
-      <button (click)="signup()" type="button" class="signupButton">
-        Signup
-      </button>
-    </div>
-
-    <ng-template #formInvalid>
+      <div class="labelElement">
+        <label for="firstName">First Name</label>
+      </div>
       <div class="formElement">
-        <button type="button" class="signupButtonDisabled" disabled>
+        <input pInputText type="text" name="firstName" id="firstName" placeholder="" class="textBox"
+          [(ngModel)]="firstName" />
+      </div>
+      <div class="labelElement">
+        <label for="lastName">Last Name</label>
+      </div>
+      <div class="formElement">
+        <input pInputText type="text" name="lastName" id="lastName" placeholder="" class="textBox"
+          [(ngModel)]="lastName" />
+      </div>
+      <div class="labelElement">
+        <label for="email">Email</label>
+      </div>
+      <div class="formElement">
+        <input pInputText type="email" name="email" id="email" placeholder="" class="textBox" [(ngModel)]="email" />
+      </div>
+
+      <div class="labelElement">
+        <label for="password">Password</label>
+      </div>
+      <div class="formElement">
+        <!-- <input type="password" name="password" id="password" placeholder="" class="textBox" [(ngModel)]="password"> -->
+        <p-password name="password" id="password" placeholder="" class="password w-full" [(ngModel)]="password"
+          [toggleMask]="true" styleClass="p-password p-component p-inputwrapper p-input-icon-right"
+          [style]="{ width: '100%' }" [inputStyle]="{ width: '100%' }"></p-password>
+      </div>
+
+      <div class="labelElement">
+        <label for="confirmPassword">Confirm Password</label>
+      </div>
+      <div class="formElement">
+        <!-- <input type="password" name="confirmPassword" id="confirmPassword" placeholder="" class="textBox" [(ngModel)]="confirmPassword"> -->
+        <p-password name="confirmPassword" id="confirmPassword" placeholder="" class="password w-full"
+          [(ngModel)]="confirmPassword" [(ngModel)]="confirmPassword" [toggleMask]="true"
+          styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{ width: '100%' }"
+          [inputStyle]="{ width: '100%' }" [feedback]="false"></p-password>
+      </div>
+
+      <div *ngIf="isFormValid(); else formInvalid" class="formElement">
+        <button (click)="signup()" type="button" class="signupButton">
           Signup
         </button>
       </div>
-    </ng-template>
 
-    <div class="formElement">
-      <button
-        (click)="navigateToPage('home')"
-        type="button"
-        class="googleButton"
-      >
-        <img
-          src="assets/Icons/loginIcons/google.png"
-          alt=""
-          class="googleIcon"
-        />
-        Signup With Google
-      </button>
-    </div>
+      <ng-template #formInvalid>
+        <div class="formElement">
+          <button type="button" class="signupButtonDisabled" disabled>
+            Signup
+          </button>
+        </div>
+      </ng-template>
 
-    <div class="formElement noAccount">
-      <p (click)="navigateToPage('login')" class="noAccountText">
-        Already have an Account?
-      </p>
-    </div>
-  </form>
+      <div class="formElement">
+        <button (click)="navigateToPage('home')" type="button" class="googleButton">
+          <img src="assets/Icons/loginIcons/google.png" alt="" class="googleIcon" />
+          Signup With Google
+        </button>
+      </div>
+
+      <div class="formElement noAccount">
+        <p (click)="navigateToPage('login')" class="noAccountText">
+          Already have an Account?
+        </p>
+      </div>
+    </form>
+  </div>
 </div>
