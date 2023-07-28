@@ -17,7 +17,8 @@
           <!-- Download -->
           <img src="assets/Icons/editIcons/download.svg" alt="" />
         </div>
-        <p-dialog header="Export File" [(visible)]="exportDialogVisible" [focusOnShow]="true" [modal]="true" [style]="{ width: '50vw' }">
+        <p-dialog header="Export File" [(visible)]="exportDialogVisible" [focusOnShow]="true" [modal]="true"
+          [style]="{ width: '50vw' }">
           <div class="flex py-2 justify-content-center"></div>
           <!-- <input type="text" pInputText [(ngModel)]="fileType" /> -->
           <div class="buttonsWrapper">
@@ -72,10 +73,19 @@
           <div class="sidebarHeaderTextWrapper">
             <h4 class="sidebarHeaderText">Assets</h4>
           </div>
+          <div class="uploadAssetIcon">
+            <div class="sidebarHeaderIconWrapper">
+              <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/addAsset.png" alt="" />
+            </div>
 
-          <div class="sidebarHeaderIconWrapper">
-            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/addAsset.png" alt=""
-              (click)="navigateToCameraPage()" />
+            <div class="dropdownContent">
+              <div class="dropdownInput">
+                <p class="dropdownOptions" (click)="navigateToPage('camera')">Camera</p>
+              </div>
+              <div class="dropdownInput">
+                <p class="dropdownOptions" (click)="showFileUploadPopup()">File System</p>
+              </div>
+            </div>
           </div>
 
           <div class="sidebarHeaderIconWrapper" (click)="refreshSidebar()">
