@@ -23,7 +23,7 @@ export class NodeService {
     private http: HttpClient,
     private fileService: FileService,
     private folderService: FolderService
-  ) {}
+  ) { }
 
   private files: MarkdownFileDTO[] = [];
   private folders: FolderDTO[] = [];
@@ -105,7 +105,7 @@ export class NodeService {
         key: file.MarkdownID,
         data: {
           name: file.Name,
-          size: file.Size,
+          size: this.getSize(file.Size),
           type: 'file',
           key: file.MarkdownID,
         },
@@ -127,7 +127,7 @@ export class NodeService {
         key: folder.FolderID,
         data: {
           name: folder.FolderName,
-          size: '',
+          size: '-',
           type: 'folder',
           key: folder.FolderID,
         },
@@ -137,7 +137,7 @@ export class NodeService {
         key: folder.FolderID,
         data: {
           name: folder.FolderName,
-          size: '',
+          size: '-',
           type: 'folder',
           key: folder.FolderID,
         },
@@ -151,7 +151,7 @@ export class NodeService {
           key: file.MarkdownID,
           data: {
             name: file.Name,
-            size: file.Size,
+            size: this.getSize(file.Size),
             type: 'file',
             key: file.MarkdownID,
           },
@@ -165,6 +165,20 @@ export class NodeService {
       }
 
       return folderObject;
+    }
+  }
+
+  private getSize(size: number) {
+    if (size > 1000000000) {
+      return (size / 1000000000).toFixed(2) + ' GB';
+    } else if (size > 1000000) {
+      return (size / 1000000).toFixed(2) + ' MB';
+    }
+    else if (size > 1000) {
+      return (size / 1000).toFixed(2) + ' KB';
+    }
+    else {
+      return size + ' B';
     }
   }
 
@@ -322,7 +336,7 @@ export class NodeService {
     return newName;
   }
 
-  checkIfChildFolder(destinationDirectory: FolderDTO, movingDirectory: FolderDTO):boolean {
+  checkIfChildFolder(destinationDirectory: FolderDTO, movingDirectory: FolderDTO): boolean {
     if (destinationDirectory.ParentFolderID === '') return false;
     let parentFolder = this.getFolderDTOByID(destinationDirectory.ParentFolderID);
     while (parentFolder.FolderID !== movingDirectory.FolderID) {
