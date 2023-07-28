@@ -14,8 +14,8 @@ $page-height: 29.7cm;
     display: flex;
     width: 100%;
     justify-content: space-between;
-    z-index: 10;
     margin: 0;
+    z-index: 0;
     background-image: linear-gradient(to right, #ffffff, #e7e7e7);
     border-bottom: 1px solid #ccc;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -39,7 +39,7 @@ $page-height: 29.7cm;
 }
 
 .speedDialEditMenu {
-    z-index: 20;
+    z-index: 9;
     margin-right: 100px;
     margin-top: 24px;
 
@@ -50,7 +50,7 @@ $page-height: 29.7cm;
     padding-bottom: 0;
     margin-top: 71px;
     margin-left: 10px;
-    width:100vw;
+    width: 100vw;
 }
 
 .documentTitle {
@@ -282,7 +282,8 @@ div[contenteditable="true"]:focus {
 }
 
 .deleteAsset:hover,
-.copyAsset:hover {
+.copyAsset:hover,
+.copyTextIconWrapper:hover {
     cursor: pointer;
     background-color: darken($light-grey, 10%);
 }
@@ -384,7 +385,7 @@ div[contenteditable="true"]:focus {
     min-height: $page-height ;
     padding: 0;
     background: #00000000;
-    margin:auto;
+    margin: auto;
 }
 
 .document-editor__toolbar {
@@ -545,10 +546,46 @@ Preserve the relative scale, though. */
     margin-right: calc(2 * var(--ck-spacing-large));
 }
 
-.currentZoom{
+.currentZoom {
     width: 30px;
     text-align: center;
 }
 
 
 // Above are all the stylings for the document editor
+
+.extractedTextDialog {
+    z-index: 11 !important;
+}
+
+.copyTextWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.copyText {
+    width: max-content;
+    max-width: 70%;
+    height: 1rem;
+    margin-right: auto;
+}
+
+.copyTextIcon {
+    margin: auto;
+    width: 20px;
+    height: 20px;
+}
+
+.copyTextIconWrapper {
+    margin: auto;
+    margin-right: 20px;
+    padding: 20px;
+
+    border-radius: 5px;
+    width: 30px;
+    height: 30px;
+    padding: 5px;
+}

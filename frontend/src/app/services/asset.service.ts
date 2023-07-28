@@ -18,7 +18,7 @@ export class AssetService {
     private http: HttpClient,
     private userService: UserService,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   uploadImage(
     image: string | undefined,
@@ -26,24 +26,25 @@ export class AssetService {
     fileName: string,
     parentFolderId: string | undefined,
     format: string
-  ): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+  ): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
       this.sendUploadImageData(
         image,
         path,
         fileName,
         parentFolderId,
         format
-        ).subscribe({
-          next: (response: HttpResponse<any>) => {
-          console.log('RES: ',response);
+      ).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log('RES: ', response.body.Blocks);
+
           if (response.status === 201) {
             console.log('Image uploaded successfully');
             this.messageService.add({
               severity: 'success',
               summary: 'Image uploaded successfully',
             });
-            resolve(true);
+            resolve(response.body.Blocks);
           } else {
             resolve(false);
           }
@@ -60,27 +61,27 @@ export class AssetService {
     format: string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}textract/extract_image`;
-    // const body = new AssetDTO();
+    const url = `${environmentURL}asset_manager/upload_asset`;
+    const body = new AssetDTO();
 
-    // body.UserID = this.userService.getUserID();
-    // body.Image = image;
-    // body.Path = path;
-    // if (fileName === '') {
-    //   body.FileName = 'New Asset';
-    // } else {
-    //   body.FileName = fileName;
-    // }
-    // if (parentFolderId) {
-    //   body.ParentFolderID = parentFolderId;
-    // } else {
-    //   body.ParentFolderID = '';
-    // }
-    // body.Format = format;
-
-    const body = new MarkdownFileDTO();
     body.UserID = this.userService.getUserID();
-    body.MarkdownID = 'IMG_3600.jpeg';
+    body.Image = image;
+    body.Path = path;
+    if (fileName === '') {
+      body.FileName = 'New Asset';
+    } else {
+      body.FileName = fileName;
+    }
+    if (parentFolderId) {
+      body.ParentFolderID = parentFolderId;
+    } else {
+      body.ParentFolderID = '';
+    }
+    body.Format = format;
+
+    // const body = new MarkdownFileDTO();
+    // body.UserID = this.userService.getUserID();
+    // body.MarkdownID = 'IMG_3600.jpeg';
 
 
     const headers = new HttpHeaders().set(
@@ -92,16 +93,28 @@ export class AssetService {
 
   retrieveAsset(assetId: string, format: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      this.sendRetrieveAssetData(assetId, format).subscribe({
-        next: (response: HttpResponse<any>) => {
-          if (response.status === 200) {
-            console.log('Image retrieved successfully');
-            resolve(response.body);
-          } else {
-            resolve(null);
-          }
-        },
-      });
+      if (format === 'image')
+        this.sendRetrieveAssetData(assetId, format).subscribe({
+          next: (response: HttpResponse<any>) => {
+            if (response.status === 200) {
+              console.log('Image retrieved successfully');
+              resolve(response.body);
+            } else {
+              resolve(null);
+            }
+          },
+        });
+      else if (format === 'text')
+        this.sendRetrieveTextData(assetId, format).subscribe({
+          next: (response: HttpResponse<any>) => {
+            if (response.status === 201) {
+              console.log('Text retrieved successfully');
+              resolve(response.body);
+            } else {
+              resolve(null);
+            }
+          },
+        });
     });
   }
 
@@ -118,6 +131,25 @@ export class AssetService {
     body.Format = format;
 
     console.log('BODY', body);
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  sendRetrieveTextData(
+    assetId: string,
+    format: string
+  ): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}textract/extract_image`;
+
+    const body = new MarkdownFileDTO();
+    body.UserID = this.userService.getUserID();
+    body.MarkdownID = 'IMG_3600.jpeg';
+
+
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()

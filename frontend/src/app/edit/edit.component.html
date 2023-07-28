@@ -4,24 +4,12 @@
     <div class="toolbarWrapper">
       <div class="titleWrapper">
         <div class="logoWrapper" (click)="navigateToPage('home')">
-          <img
-            class="logo"
-            src="assets/Logos/WriteToPdf_Logo_white.png"
-            alt=""
-          />
+          <img class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="" />
         </div>
         <div class="docTitleWrapper">
           <label for="editHeading" class="displayNone">a</label>
-          <input
-            type="text"
-            editable="true"
-            id="editHeading"
-            class="documentTitle"
-            value="New Document"
-            maxlength="50"
-            (blur)="renameDocument()"
-            [(ngModel)]="fileName"
-          />
+          <input type="text" editable="true" id="editHeading" class="documentTitle" value="New Document" maxlength="50"
+            (blur)="renameDocument()" [(ngModel)]="fileName" />
         </div>
       </div>
       <div class="toolsWrapper">
@@ -29,11 +17,7 @@
           <!-- Download -->
           <img src="assets/Icons/editIcons/download.svg" alt="" />
         </div>
-        <p-dialog
-          header="Export File"
-          [(visible)]="exportDialogVisible"
-          [style]="{ width: '50vw' }"
-        >
+        <p-dialog header="Export File" [(visible)]="exportDialogVisible" [style]="{ width: '50vw' }">
           <div class="flex py-2 justify-content-center"></div>
           <!-- <input type="text" pInputText [(ngModel)]="fileType" /> -->
           <p-button label="Export to pdf" (click)="convertToFileType('pdf')"></p-button>
@@ -74,23 +58,12 @@
   </div>
 
   <div class="editor">
-    <p-button
-      class="showAssetSidebar"
-      icon="pi pi-arrow-right"
-      (click)="hideSideBar()"
-    ></p-button>
+    <p-button class="showAssetSidebar" icon="pi pi-arrow-right" (click)="hideSideBar()"></p-button>
     <div class="assetSidebar">
       <div class="sidebarHeaderWrapper">
         <div class="sidebarHeader">
-          <div
-            class="sidebarHeaderIconWrapper backWrapper"
-            (click)="hideSideBar()"
-          >
-            <img
-              class="sidebarHeaderIcon"
-              src="assets/Icons/editIcons/back.svg"
-              alt=""
-            />
+          <div class="sidebarHeaderIconWrapper backWrapper" (click)="hideSideBar()">
+            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="" />
           </div>
 
           <div class="sidebarHeaderTextWrapper">
@@ -98,20 +71,12 @@
           </div>
 
           <div class="sidebarHeaderIconWrapper">
-            <img
-              class="sidebarHeaderIcon"
-              src="assets/Icons/editIcons/addAsset.png"
-              alt=""
-              (click)="navigateToCameraPage()"
-            />
+            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/addAsset.png" alt=""
+              (click)="navigateToCameraPage()" />
           </div>
 
           <div class="sidebarHeaderIconWrapper" (click)="refreshSidebar()">
-            <img
-              class="sidebarHeaderIcon"
-              src="assets/Icons/editIcons/refresh.svg"
-              alt=""
-            />
+            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/refresh.svg" alt="" />
           </div>
         </div>
         <hr />
@@ -124,32 +89,18 @@
           <div class="assetName">
             <!-- <h4 class="assetNameText"></h4> -->
             <label for="editAsset" class="displayNone">b</label>
-            <input
-              type="text"
-              editable="true"
-              id="editAssetMock"
-              class="assetNameText"
-              value="{{ obj.FileName }}"
-              maxlength="50"
-              (blur)="renameAsset(obj.AssetID, $event)"
-              title="ok"
-            />
+            <input type="text" editable="true" id="editAssetMock" class="assetNameText" value="{{ obj.FileName }}"
+              maxlength="50" (blur)="renameAsset(obj.AssetID, $event)" title="ok" />
           </div>
           <div class="deleteAsset">
-            <img
-              class="deleteAssetIcon"
-              src="assets/Icons/editIcons/delete.png"
-              alt=""
-              (click)="deleteAsset(obj.AssetID)"
-            />
+            <img class="deleteAssetIcon" src="assets/Icons/editIcons/delete.png" alt=""
+              (click)="deleteAsset(obj.AssetID)" />
           </div>
           <div class="copyAsset">
-            <img
-              class="copyAssetIcon"
-              (click)="retrieveAsset(obj.AssetID, obj.Format)"
-              src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
+            <img *ngIf="obj.Format==='image'" class="copyAssetIcon" (click)="retrieveAsset(obj.AssetID, obj.Format)"
+              src="assets/Icons/editIcons/copy.svg" alt="" />
+            <img *ngIf="obj.Format==='text'" class="copyAssetIcon" (click)="retrieveAsset(obj.AssetID, obj.Format)"
+              src="assets/Icons/editIcons/view.png" alt="" />
           </div>
         </div>
         <div class="assetContent">
@@ -158,22 +109,16 @@
         </div>
       </div>
 
-  
+
     </div>
+
 
     <!--    Below is the code that allows me to work with CKEditor    -->
     <div class="center-page">
       <div class="document-editor" style="overflow: hidden">
         <div class="document-editor__toolbar"></div>
-        <div
-          class="document-editor__editable-container"
-          style="overflow: hidden"
-        >
-          <div
-            class="document-editor__editable"
-            id="editor-contents"
-            style="overflow: hidden"
-          ></div>
+        <div class="document-editor__editable-container" style="overflow: hidden">
+          <div class="document-editor__editable" id="editor-contents" style="overflow: hidden"></div>
         </div>
       </div>
       <br />
@@ -182,3 +127,13 @@
     </div>
   </div>
 </div>
+
+<p-dialog class="extractedTextDialog" header="Extracted Text:" [(visible)]="textCopyDialog" [modal]="true"
+  [style]="{width: '50vw', minWidth: '200px'}" [focusOnShow]="true">
+  <div *ngFor="let text of textFromAsset" class="copyTextWrapper">
+    <p class="copyText">{{text}}</p>
+    <div class="copyTextIconWrapper">
+      <img class="copyTextIcon" (click)="copyTextToClipboard(text)"  src="assets/Icons/editIcons/copy.svg" alt="" />
+    </div>
+  </div>
+</p-dialog>
