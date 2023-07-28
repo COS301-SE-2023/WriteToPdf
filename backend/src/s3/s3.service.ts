@@ -37,6 +37,7 @@ export class S3Service {
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    console.log('Delete File (s3)');
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
@@ -72,6 +73,7 @@ export class S3Service {
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    console.log('Create File (s3)');
     const markdownID = CryptoJS.SHA256(
       markdownFileDTO.UserID.toString() +
         new Date().getTime().toString(),
@@ -126,6 +128,7 @@ export class S3Service {
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    console.log('Save File (s3)');
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
@@ -171,6 +174,7 @@ export class S3Service {
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    console.log('Retrieve File (s3)');
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
@@ -214,6 +218,7 @@ export class S3Service {
   }
 
   async saveAsset(saveAssetDTO: AssetDTO) {
+    console.log('Save Asset (s3)');
     let filePath = `${saveAssetDTO.UserID}`;
 
     try {
@@ -261,6 +266,7 @@ export class S3Service {
     assetID: string,
     userID: number,
   ) {
+    console.log('Retrieve Asset By ID (s3)');
     const retrieveAssetDTO = new AssetDTO();
 
     let filePath = `${userID}`;
