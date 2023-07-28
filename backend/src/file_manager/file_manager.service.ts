@@ -194,12 +194,13 @@ export class FileManagerService {
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    markdownFileDTO.Size =
+      markdownFileDTO.Content.length;
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
         'MarkdownID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
-
     await this.s3service.saveFile(
       markdownFileDTO,
     );
