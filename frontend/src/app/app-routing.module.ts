@@ -12,11 +12,11 @@ const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'login', component: LoginComponent },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'edit', component: EditComponent /*,canActivate: [AuthGuard]*/ },
-  { path: 'camera', component: CameraComponent /*,canActivate: [AuthGuard]*/ },
+  { path: 'edit', component: EditComponent, canActivate: [AuthGuard] },
+  { path: 'camera', component: CameraComponent, canActivate: [AuthGuard] },
   {
     path: 'edit-asset',
-    component: EditAssetComponent /*,canActivate: [AuthGuard]*/,
+    component: EditAssetComponent, canActivate: [AuthGuard],
   },
   { path: 'signup', component: SignupComponent },
   { path: '**', redirectTo: '' },
@@ -26,4 +26,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
