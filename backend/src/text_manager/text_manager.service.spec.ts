@@ -20,6 +20,7 @@ import {
 describe('TextManagerService', () => {
   let service: TextManagerService;
   let assetsService: AssetsService;
+  let s3Service: S3Service;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -43,6 +44,7 @@ describe('TextManagerService', () => {
     assetsService = module.get<AssetsService>(
       AssetsService,
     );
+    s3Service = module.get<S3Service>(S3Service);
   });
 
   it('should be defined', () => {
@@ -74,6 +76,14 @@ describe('TextManagerService', () => {
 
       jest.spyOn(assetsService, 'saveAsset');
 
+      jest
+        .spyOn(service, 'packageTextForS3')
+        .mockReturnValue('mock packaged text');
+
+      jest
+        .spyOn(s3Service, 'saveAsset')
+        .mockReturnValue(uploadTextDTO as any);
+
       const response = await service.upload(
         uploadTextDTO,
       );
@@ -102,6 +112,14 @@ describe('TextManagerService', () => {
       jest
         .spyOn(service, 'parseS3Content')
         .mockReturnValue(assetDTO as any);
+
+      jest
+        .spyOn(service, 'packageTextForS3')
+        .mockReturnValue('mock packaged text');
+
+      jest
+        .spyOn(s3Service, 'retrieveAssetByID')
+        .mockReturnValue(retrieveTextDTO as any);
 
       const response = await service.retrieveOne(
         retrieveTextDTO,
