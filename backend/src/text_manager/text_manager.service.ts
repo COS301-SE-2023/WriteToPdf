@@ -24,11 +24,21 @@ export class TextManagerService {
         uploadTextDTO,
       );
 
+    console.log(
+      'Text image data file ID: ' +
+        imageDataFile.AssetID,
+    );
+
     // Create S3 text data file
     const textDataFile =
       await this.s3Service.createAsset(
         uploadTextDTO,
       );
+
+    console.log(
+      'Text OCR data file ID: ' +
+        textDataFile.AssetID,
+    );
 
     // Save text asset in database
     uploadTextDTO.AssetID = imageDataFile.AssetID;
@@ -56,14 +66,19 @@ export class TextManagerService {
       );
 
     // Send textract to classify s3 image
-    const OCRResponse =
-      this.textractService.extractDocument(
+    const textractResponse =
+      await this.textractService.extractDocument(
         'sync',
         savedAssetDTO,
         'text',
       );
 
-    return OCRResponse;
+    this.s3Service.saveTextractResponse(
+      savedAssetDTO,
+      textractResponse,
+    );
+
+    return textractResponse;
   }
 
   async retrieveOne(retrieveTextDTO: AssetDTO) {
@@ -81,14 +96,28 @@ export class TextManagerService {
       );
     }
 
-    // Retrieve text asset from S3
-    const assetDTO =
+    // get text image
+    console.log(
+      'Looking for image file: ' + asset.AssetID,
+    );
+    const newAssetDTO =
       await this.s3Service.retrieveAssetByID(
         asset.AssetID,
         asset.UserID,
       );
 
-    return this.parseS3Content(assetDTO);
+    // get text ocr
+    console.log(
+      'Looking for OCR file: ' + asset.TextID,
+    );
+    newAssetDTO.Content = (
+      await this.s3Service.retrieveAssetByID(
+        asset.TextID,
+        asset.UserID,
+      )
+    ).Content;
+
+    return newAssetDTO;
   }
 
   /// HELPER FUNCTIONS
@@ -139,11 +168,9 @@ export class TextManagerService {
   }
 
   removeBase64Descriptor(base64String: string) {
-    console.log('base64String', base64String);
     const returnVal = base64String
       .split(';base64,')
       .pop();
-    console.log('returnVal', returnVal);
     return returnVal;
   }
 }
