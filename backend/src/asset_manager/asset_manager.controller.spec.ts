@@ -7,6 +7,7 @@ import { AssetManagerService } from './asset_manager.service';
 import { ImageManagerService } from '../image_manager/image_manager.service';
 import { AssetsService } from '../assets/assets.service';
 import { S3Service } from '../s3/s3.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { TextManagerService } from '../text_manager/text_manager.service';
 import { Asset } from '../assets/entities/asset.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -33,6 +34,7 @@ describe('AssetManagerController', () => {
           ImageManagerService,
           AssetsService,
           S3Service,
+          S3ServiceMock,
           TextManagerService,
           {
             provide: getRepositoryToken(Asset),
@@ -67,7 +69,7 @@ describe('AssetManagerController', () => {
         .mockResolvedValue(assetDTO);
 
       expect(() =>
-        controller.upload_asset(assetDTO),
+        controller.upload_asset(assetDTO, ''),
       ).toThrowError(
         new HttpException(
           'Invalid request data: UserID missing',
@@ -93,7 +95,7 @@ describe('AssetManagerController', () => {
         .mockResolvedValue(assetDTO);
 
       expect(() =>
-        controller.upload_asset(assetDTO),
+        controller.upload_asset(assetDTO, ''),
       ).toThrowError(
         new HttpException(
           'Invalid request data: ParentFolderID missing',
@@ -120,12 +122,15 @@ describe('AssetManagerController', () => {
         .mockResolvedValue(assetDTO);
 
       const response =
-        await controller.upload_asset(assetDTO);
+        await controller.upload_asset(
+          assetDTO,
+          '',
+        );
 
       expect(response).toBe(assetDTO);
       expect(
         assetManagerService.upload_asset,
-      ).toHaveBeenCalledWith(assetDTO);
+      ).toHaveBeenCalledWith(assetDTO, false);
     });
   });
 
@@ -134,7 +139,10 @@ describe('AssetManagerController', () => {
       const retrieveAllDTO = new RetrieveAllDTO();
 
       expect(() =>
-        controller.retrieve_all(retrieveAllDTO),
+        controller.retrieve_all(
+          retrieveAllDTO,
+          '',
+        ),
       ).toThrowError(
         new HttpException(
           'Invalid request data: UserID missing',
@@ -159,7 +167,10 @@ describe('AssetManagerController', () => {
         .mockResolvedValue([asset]);
 
       expect(() =>
-        controller.retrieve_all(retrieveAllDTO),
+        controller.retrieve_all(
+          retrieveAllDTO,
+          '',
+        ),
       ).toThrowError(
         new HttpException(
           'Invalid request data: ParentFolderID missing',
@@ -187,12 +198,16 @@ describe('AssetManagerController', () => {
       const response =
         await controller.retrieve_all(
           retrieveAllDTO,
+          '',
         );
 
       expect(response).toEqual([asset]);
       expect(
         assetManagerService.retrieve_all,
-      ).toHaveBeenCalledWith(retrieveAllDTO);
+      ).toHaveBeenCalledWith(
+        retrieveAllDTO,
+        false,
+      );
     });
   });
 
@@ -210,12 +225,15 @@ describe('AssetManagerController', () => {
         .mockResolvedValue(assetDTO);
 
       const response =
-        await controller.retrieve_one(assetDTO);
+        await controller.retrieve_one(
+          assetDTO,
+          '',
+        );
 
       expect(response).toBe(assetDTO);
       expect(
         assetManagerService.retrieve_one,
-      ).toHaveBeenCalledWith(assetDTO);
+      ).toHaveBeenCalledWith(assetDTO, false);
     });
   });
 
@@ -260,12 +278,15 @@ describe('AssetManagerController', () => {
         .mockResolvedValue(assetDTO);
 
       const response =
-        await controller.delete_asset(assetDTO);
+        await controller.delete_asset(
+          assetDTO,
+          '',
+        );
 
       expect(response).toBe(assetDTO);
       expect(
         assetManagerService.delete_asset,
-      ).toHaveBeenCalledWith(assetDTO);
+      ).toHaveBeenCalledWith(assetDTO, false);
     });
   });
 });

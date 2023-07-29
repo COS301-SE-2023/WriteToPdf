@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Body,
+  Headers,
   HttpStatus,
   HttpCode,
   HttpException,
@@ -20,6 +21,7 @@ export class AssetManagerController {
   upload_asset(
     @Body()
     uploadImageDTO: AssetDTO,
+    @Headers('isTest') isTest: string, // For using mocked out services
   ) {
     if (!uploadImageDTO.UserID) {
       throw new HttpException(
@@ -39,6 +41,7 @@ export class AssetManagerController {
 
     return this.assetManagerService.upload_asset(
       uploadImageDTO,
+      isTest && isTest === 'true' ? true : false,
     );
   }
 
@@ -47,6 +50,7 @@ export class AssetManagerController {
   retrieve_all(
     @Body()
     retrieveAllDTO: RetrieveAllDTO,
+    @Headers('isTest') isTest: string, // For using mocked out services
   ) {
     if (!retrieveAllDTO.UserID) {
       throw new HttpException(
@@ -66,6 +70,7 @@ export class AssetManagerController {
 
     return this.assetManagerService.retrieve_all(
       retrieveAllDTO,
+      isTest && isTest === 'true' ? true : false,
     );
   }
 
@@ -75,9 +80,11 @@ export class AssetManagerController {
   retrieve_one(
     @Body()
     retrieveOneDTO: AssetDTO,
+    @Headers('isTest') isTest: string, // For using mocked out services
   ) {
     return this.assetManagerService.retrieve_one(
       retrieveOneDTO,
+      isTest && isTest === 'true' ? true : false,
     );
   }
 
@@ -97,9 +104,11 @@ export class AssetManagerController {
   delete_asset(
     @Body()
     deleteAssetDTO: AssetDTO,
+    @Headers('isTest') isTest: string, // For using mocked out services
   ) {
     return this.assetManagerService.delete_asset(
       deleteAssetDTO,
+      isTest && isTest === 'true' ? true : false,
     );
   }
 }
