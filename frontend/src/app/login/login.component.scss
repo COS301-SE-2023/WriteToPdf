@@ -1,8 +1,46 @@
 @import '../../styles.scss';
 
+// .backgroundImage {
+//     /* Set the background image */
+//     /* Set the background image */
+//         padding: 0;
+//         margin: 0;
+//         background-repeat: no-repeat;
+//         background-size: cover;
+//         width: 100vw;
+//         height: 100vh;
+//         background-image: radial-gradient(rgb(255 255 255 / 69%), rgb(0 0 0 / 75%), rgb(0 0 0)), url(/assets/MockData/BGI.jpg);
+//         -webkit-background-size: cover;
+//         -moz-background-size: cover;
+//         -o-background-size: cover;
+//         background-size: cover;
+        
+// }
+.backgroundImage {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    /* Uncomment the following line if you want to use a linear gradient fallback */
+    /* background: radial-gradient(at center, #3498db, #9b59b6); */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /* Center the background image */
+    background-image: radial-gradient(
+            /* Use a fixed center for the radial gradient */
+            at mouseXpercentage mouseYpercentage,
+            rgb(100 100 100 / 90%),
+            rgb(0 0 0 / 90%),
+            rgb(0 0 0 / 90%)),
+        url(/assets/MockData/BGIW.jpg);
+}
+
 .loginWrapper {
 
     position: absolute;
+
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -17,7 +55,7 @@
     max-height: 99vh;
     overflow-y: auto;
     margin: auto;
-    background-color: $light-grey;
+    background-color: rgba($light-grey,0.6);
 
     border-radius: 33px;
 
@@ -118,7 +156,7 @@
     border: none;
     border-radius: 90px;
 
-    background-color: #ffffff;
+    background-color: $text-box-color;
 
     height: 4vh;
     max-height: 40px;
@@ -148,7 +186,7 @@
     border: none;
     border-radius: 90px;
 
-    background-color: #ffffff;
+    background-color: $text-box-color;
 
     height: 4vh;
     max-height: 40px;

@@ -8,8 +8,17 @@
         </div>
         <div class="docTitleWrapper">
           <label for="editHeading" class="displayNone">a</label>
-          <input type="text" editable="true" id="editHeading" class="documentTitle" value="New Document" maxlength="50"
-            (blur)="renameDocument()" [(ngModel)]="fileName" />
+          <input
+            type="text"
+            editable="true"
+            id="editHeading"
+            class="documentTitle"
+            value="New Document"
+            maxlength="50"
+            (blur)="renameDocument()"
+            [(ngModel)]="fileName"
+            title="Rename Document"
+          />
         </div>
       </div>
       <div class="toolsWrapper">
@@ -102,8 +111,16 @@
           <div class="assetName">
             <!-- <h4 class="assetNameText"></h4> -->
             <label for="editAsset" class="displayNone">b</label>
-            <input type="text" editable="true" id="editAssetMock" class="assetNameText" value="{{ obj.FileName }}"
-              maxlength="50" (blur)="renameAsset(obj.AssetID, $event)" title="ok" />
+            <input
+              type="text"
+              editable="true"
+              id="editAssetMock"
+              class="assetNameText"
+              value="{{ obj.FileName }}"
+              maxlength="50"
+              (blur)="renameAsset(obj.AssetID, $event)"
+              title="Edit Name"
+            />
           </div>
           <div class="deleteAsset">
             <img class="deleteAssetIcon" src="assets/Icons/editIcons/delete.png" alt=""

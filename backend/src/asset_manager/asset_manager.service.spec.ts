@@ -104,6 +104,16 @@ describe('AssetManagerService', () => {
       retrieveAllDTO.UserID = 1;
       retrieveAllDTO.ParentFolderID = 'test';
 
+      const imgAsset = new Asset();
+      imgAsset.AssetID = 'test';
+      imgAsset.Format = 'image';
+      imgAsset.UserID = 1;
+
+      const textAsset = new Asset();
+      textAsset.AssetID = 'test';
+      textAsset.Format = 'text';
+      textAsset.UserID = 1;
+
       const imgAssetDTO = new AssetDTO();
       imgAssetDTO.AssetID = 'test';
       imgAssetDTO.Format = 'image';
@@ -114,7 +124,7 @@ describe('AssetManagerService', () => {
       textAssetDTO.Format = 'text';
       textAssetDTO.UserID = 1;
 
-      const assets = [imgAssetDTO, textAssetDTO];
+      const assets = [imgAsset, textAsset];
 
       jest
         .spyOn(assetsService, 'retrieveAllAssets')
@@ -214,9 +224,14 @@ describe('AssetManagerService', () => {
         assetDTO.Format = 'image';
         assetDTO.UserID = 1;
 
+        const asset = new Asset();
+        asset.AssetID = 'test';
+        asset.Format = 'image';
+        asset.UserID = 1;
+
         jest
           .spyOn(assetsService, 'renameAsset')
-          .mockResolvedValue(assetDTO);
+          .mockResolvedValue(asset);
 
         await service.rename_asset(assetDTO);
 

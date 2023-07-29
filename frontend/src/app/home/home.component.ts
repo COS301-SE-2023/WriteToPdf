@@ -4,12 +4,19 @@ import {
   ElementRef,
   OnInit,
   Renderer2,
+  HostListener,
 } from '@angular/core';
 // import {NgModule} from "@angular/core";
 import { Router } from '@angular/router';
 import { TreeTable } from 'primeng/treetable';
 
-import { MenuItem, MessageService, TreeNode, ConfirmationService, ConfirmEventType } from 'primeng/api';
+import {
+  MenuItem,
+  MessageService,
+  TreeNode,
+  ConfirmationService,
+  ConfirmEventType,
+} from 'primeng/api';
 import { NodeService } from '../services/home.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
@@ -21,6 +28,7 @@ import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
 import { Inject } from '@angular/core';
 import { CoordinateService } from '../services/coordinate-service.service';
+import {NgxSpinnerService} from "ngx-spinner";
 
 interface Column {
   field: string;
@@ -48,6 +56,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public treeTableColumns!: Column[];
 
   public currentDirectory!: any;
+
+  //variables for dynamic resizing
+componentWidth: string = '';
+menubarElement: HTMLElement | null = null;
+subMenu: HTMLElement | null = null;
 
   //variables for double click and enter key to open doc
   public previousNode!: any;
@@ -79,18 +92,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   constructor(
     @Inject(Router) private router: Router,
-
     private nodeService: NodeService,
     private elementRef: ElementRef,
     private messageService: MessageService,
     private dialogService: DialogService,
+    private loadingSpinnerService: NgxSpinnerService,
     private fileService: FileService,
     private userService: UserService,
     private editService: EditService,
     private folderService: FolderService,
     private renderer: Renderer2,
     private coordinateService: CoordinateService,
-    private confirmationService: ConfirmationService,
+    private confirmationService: ConfirmationService
   ) {
     this.contextMenuItems = [
       {
@@ -116,14 +129,36 @@ export class HomeComponent implements OnInit, AfterViewInit {
     ];
   }
 
+  @HostListener('window:resize', ['$event'])
+  onWindowResize(event: Event) {
+    this.updateMenubarWidth(); // Call the function when the window is resized
+  }
+
+  updateMenubarWidth() {
+    if (!this.menubarElement) return; // Ensure that the menubar element is available
+
+    const viewportWidth = window.innerWidth;
+
+    if (viewportWidth >= 960) {
+      this.componentWidth = '400px';
+    } else {
+      this.componentWidth = '190px';
+    }
+
+    // Update the style of the menubar element with the calculated width
+    this.menubarElement.style.minWidth = this.componentWidth;
+  }
+
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
+
   // These functions serve to add intelligent routing and usage for directory management
 
   reloadMainFromRoot(): void {
     this.filterTable('', 3);
   }
+
   // The functions below serve to allow for editing and all other processes involved with editing
   // file names.
   onRowLabelEdit(event: any, rowNode: any): void {
@@ -203,17 +238,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   sendEditedRowLabel(event: any, key: string, type: string): void {
-    console.log(event, key, type);
     if (type === 'folder') {
       const folder = this.nodeService.getFolderDTOByID(key);
       this.folderService
         .renameFolder(folder.FolderID, folder.Path, event)
-        .then((data) => { });
+        .then((data) => {});
     } else {
       const file = this.nodeService.getFileDTOByID(key);
       this.fileService
         .renameDocument(file.MarkdownID, event, file.Path)
-        .then((data) => { });
+        .then((data) => {});
     }
   }
 
@@ -232,6 +266,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     {
+      // Get a reference to the menubar element with the specific class
+      this.menubarElement = this.elementRef.nativeElement.querySelector('.p-menubar.custom-menubar');
+
+      // Call the function to set the component width initially
+      this.updateMenubarWidth();
       // Below is the function that initially populates the fileTree
       this.nodeService.getFilesAndFolders().then(() => {
         const data = this.nodeService.getTreeTableNodesData();
@@ -297,6 +336,26 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
+  iterateNodeIDRemoval(node: any[]) {
+    if(!node){
+      return node;
+    }
+    for(let i=0;i<node.length;i++){
+      this.removeUniqueIDRecursive(node[i]);
+    }
+    return node;
+  }
+
+  removeUniqueIDRecursive(node: any){
+    node.data.name=this.removeUniqueID(node.data.name);
+    node.label=this.removeUniqueID(node.label);
+    if(node.children){
+      for(let i=0;i<node.children.length;i++){
+        this.removeUniqueIDRecursive(node.children[i]);
+      }
+    }
+  }
+
   onNodeSelect(event: any): void {
     this.filterTable(event, 2);
   }
@@ -334,7 +393,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (2 == searchCollapseExpandRoot) {
       explodeOrCollapse = true;
       filterValue = filterEvent.node.label;
-      console.log(filterValue);
     }
     if (0 == searchCollapseExpandRoot) {
       explodeOrCollapse = false;
@@ -344,7 +402,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       filterValue = filterEvent;
       explodeOrCollapse = false;
     }
-    console.log(filterValue);
     // Perform filtering based on the first column
     this.filteredFilesDirectoryTreeTable = this.filesDirectoryTreeTable.filter(
       (node) => {
@@ -430,6 +487,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
       header: 'Upload Files',
@@ -446,6 +504,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   // this code updates the background layer to not be adjusted from the edit page after navigation.
   ngAfterViewInit() {
+    this.subMenu = this.elementRef.nativeElement.querySelector('.p-menubarsub');
+    if(this.subMenu){
+      this.subMenu.style.zIndex = "10000 !important";
+    }
+    this.updateMenubarWidth();
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#FFFFFF';
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
@@ -453,15 +516,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onOpenFileSelect(event: any): void {
     const file = this.nodeService.getFileDTOByID(event.key);
-    console.log('FILE: ' + JSON.stringify(file));
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
-        console.log('Data retrieved on file open: ' + data);
         this.editService.setContent(data);
         this.editService.setName(file.Name);
         this.editService.setMarkdownID(file.MarkdownID);
-        console.log('Parent Folder ID: ' + file.ParentFolderID);
         this.editService.setParentFolderID(file.ParentFolderID);
         this.editService.setPath(file.Path);
         this.navigateToPage('edit');
@@ -473,12 +533,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     newPath: string,
     newParentFolderID: string
   ): void {
-    console.log(event);
     const file = this.nodeService.getFileDTOByID(event.key);
     this.entityToMove = event;
     this.showFileManagerPopup('move');
     this.moveDialogVisible = true;
-    console.log(file);
   }
 
   //TODO - implement the move folder function
@@ -487,16 +545,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     newPath: string,
     newParentFolderID: string
   ): void {
-    console.log(event);
     const folder = this.nodeService.getFolderDTOByID(event.key);
     this.entityToMove = event;
     this.moveDialogVisible = true;
-    console.log(folder);
   }
 
   delete(event: any) {
-    console.log('delete');
-    console.log(event);
     if (event.data.type == 'folder') {
       this.deleteAllChildren(this.nodeService.getFolderDTOByID(event.key));
 
@@ -521,7 +575,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.fileService.deleteDocument(file.MarkdownID);
       this.deleteEntryByKey(this.filesDirectoryTree, file.MarkdownID);
       this.deleteEntryByKey(this.filesDirectoryTreeTable, file.MarkdownID);
-      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, file.MarkdownID);
+      this.deleteEntryByKey(
+        this.filteredFilesDirectoryTreeTable,
+        file.MarkdownID
+      );
       this.filterTable('', 3);
       this.nodeService.removeFile(file.MarkdownID);
     }
@@ -530,7 +587,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.folderService.deleteFolder(folder.FolderID);
       this.deleteEntryByKey(this.filesDirectoryTree, folder.FolderID);
       this.deleteEntryByKey(this.filesDirectoryTreeTable, folder.FolderID);
-      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, folder.FolderID);
+      this.deleteEntryByKey(
+        this.filteredFilesDirectoryTreeTable,
+        folder.FolderID
+      );
       this.filterTable('', 3);
       this.nodeService.removeFolder(folder.FolderID);
     }
@@ -800,10 +860,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   deleteSelectedEntity(event: any): void {
     if (this.currentDirectory != null) {
-      let message = `Are you sure that you want to delete '${this.currentDirectory.data.name}'?`;
+      let message = `Are you sure that you want to delete '${this.removeUniqueID(this.currentDirectory.data.name)}'?`;
       const type = this.currentDirectory.data.type;
       if (type === 'folder') {
-        message = `Are you sure that you want to delete '${this.currentDirectory.data.name}' and all of its contents?`;
+        message = `Are you sure that you want to delete '${this.removeUniqueID(this.currentDirectory.data.name)}' and all of its contents?`;
       }
       this.confirmationService.confirm({
         message: message,
@@ -823,15 +883,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
               summary: 'File deleted successfully',
             });
         },
-        reject: () => {
-
-        }
+        reject: () => {},
       });
     }
   }
 
   openFileDoubleClick() {
-    console.log('UNIQUE: ' + this.currentDirectory);
     if (this.currentNode == this.previousNode && this.previousNode != null)
       this.onOpenFileSelect(this.previousNode);
     else {
@@ -839,6 +896,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   selectNode($event: any) {
+    console.log($event);
     this.currentNode = $event.node;
   }
 
@@ -848,9 +906,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onNodeDrag($event: any) {
     this.isDraggingNode = true;
-    console.log('Drag start: ', $event);
     const key = $event.source.element.nativeElement?.getAttribute('data-key');
-    console.log('Key: ', JSON.stringify(key));
     this.originalPosition = {
       x: $event.source._dragRef._passiveTransform.x,
       y: $event.source._dragRef._passiveTransform.y,
@@ -875,9 +931,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const keyOfDropped = this.getParentElement(
         this.coordinateService.getElementAtCoordinate()
       )?.getAttribute('data-key');
-      console.log('Key of dragged: ', keyOfDragged);
-      console.log('Key of dropped: ', keyOfDropped);
-
       this.moveByKey(keyOfDragged, keyOfDropped);
     }, 10);
     if (this.currentlyDraggedNode) {
@@ -917,16 +970,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
       path = folder.FolderName;
     }
 
-    if (!folder.FolderID){
-      path='';
-      parentFolderID='';
+    if (!folder.FolderID) {
+      path = '';
+      parentFolderID = '';
     }
 
     const type = this.nodeService.checkType(keyOfDragged);
     if (type === 'file') {
       const movingNode = this.nodeService.getFileDTOByID(keyOfDragged);
       if (movingNode.ParentFolderID === parentFolderID) return;
-      console.log('Folder:', folder);
       this.fileService
         .moveDocument(movingNode.MarkdownID, path, parentFolderID)
         .then((data) => {
@@ -940,8 +992,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const movingNode = this.nodeService.getFolderDTOByID(keyOfDragged);
       if (movingNode.ParentFolderID === parentFolderID) return;
       //check if moving parent folder into some child folder
-      console.log('Folder:', folder);
-      console.log('Moving node:', movingNode);
       if (this.nodeService.checkIfChildFolder(folder, movingNode)) {
         this.messageService.add({
           severity: 'warn',
@@ -960,6 +1010,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
           this.refreshTree();
         });
     }
+  }
+  removeUniqueID(name: string): string {
+    return name.split('!#$')[0];
   }
 
   protected readonly focus = focus;

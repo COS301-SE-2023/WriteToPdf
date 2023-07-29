@@ -47,6 +47,7 @@ import ImageUploadPlugin from '@ckeditor/ckeditor5-image/src/imageupload';
 import { ClickAtCoordinateDirective } from './click-at-coordinate.directive';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   declarations: [

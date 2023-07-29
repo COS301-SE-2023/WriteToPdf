@@ -144,9 +144,9 @@ describe('AssetManagerController', () => {
     });
 
     it('should throw an error if ParentFolderID is missing', async () => {
-      const assetDTO = new AssetDTO();
-      assetDTO.AssetID = 'test';
-      assetDTO.UserID = 1;
+      const asset = new Asset();
+      asset.AssetID = 'test';
+      asset.UserID = 1;
 
       const retrieveAllDTO = new RetrieveAllDTO();
       retrieveAllDTO.UserID = 1;
@@ -156,7 +156,7 @@ describe('AssetManagerController', () => {
           assetManagerService,
           'retrieve_all',
         )
-        .mockResolvedValue([assetDTO]);
+        .mockResolvedValue([asset]);
 
       expect(() =>
         controller.retrieve_all(retrieveAllDTO),
@@ -169,9 +169,9 @@ describe('AssetManagerController', () => {
     });
 
     it('should return an array of AssetDTOs', async () => {
-      const assetDTO = new AssetDTO();
-      assetDTO.AssetID = 'test';
-      assetDTO.UserID = 1;
+      const asset = new Asset();
+      asset.AssetID = 'test';
+      asset.UserID = 1;
 
       const retrieveAllDTO = new RetrieveAllDTO();
       retrieveAllDTO.UserID = 1;
@@ -182,14 +182,14 @@ describe('AssetManagerController', () => {
           assetManagerService,
           'retrieve_all',
         )
-        .mockResolvedValue([assetDTO]);
+        .mockResolvedValue([asset]);
 
       const response =
         await controller.retrieve_all(
           retrieveAllDTO,
         );
 
-      expect(response).toEqual([assetDTO]);
+      expect(response).toEqual([asset]);
       expect(
         assetManagerService.retrieve_all,
       ).toHaveBeenCalledWith(retrieveAllDTO);
@@ -221,6 +221,10 @@ describe('AssetManagerController', () => {
 
   describe('rename_asset', () => {
     it('should return an AssetDTO', async () => {
+      const asset = new Asset();
+      asset.AssetID = 'test';
+      asset.UserID = 1;
+
       const assetDTO = new AssetDTO();
       assetDTO.AssetID = 'test';
       assetDTO.UserID = 1;
@@ -230,15 +234,15 @@ describe('AssetManagerController', () => {
           assetManagerService,
           'rename_asset',
         )
-        .mockResolvedValue(assetDTO);
+        .mockResolvedValue(asset);
 
       const response =
         await controller.rename_asset(assetDTO);
 
-      expect(response).toBe(assetDTO);
+      expect(response).toBe(asset);
       expect(
         assetManagerService.rename_asset,
-      ).toHaveBeenCalledWith(assetDTO);
+      ).toHaveBeenCalledWith(asset);
     });
   });
 
