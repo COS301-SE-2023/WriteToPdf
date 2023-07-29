@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import 'dotenv/config';
 import {
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import {
   DeleteObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
