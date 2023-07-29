@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { S3Service } from '../s3/s3.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import * as CryptoJS from 'crypto-js';
 
@@ -13,9 +14,13 @@ export class TextManagerService {
   constructor(
     private readonly assetsService: AssetsService,
     private readonly s3Service: S3Service,
+    private readonly s3ServiceMock: S3ServiceMock,
   ) {}
 
-  upload(uploadTextDTO: AssetDTO) {
+  upload(
+    uploadTextDTO: AssetDTO,
+    isTest = false,
+  ) {
     // Generate AssetID
     uploadTextDTO.AssetID = CryptoJS.SHA256(
       uploadTextDTO.UserID.toString() +
@@ -43,10 +48,16 @@ export class TextManagerService {
       uploadTextDTO,
     );
 
-    // Save asset in the S3/local storage
-    return this.s3Service.saveAsset(
-      uploadTextDTO,
-    );
+    if (isTest) {
+      // Save asset in the S3/local storage
+      return this.s3ServiceMock.saveAsset(
+        uploadTextDTO,
+      );
+    } else {
+      return this.s3Service.saveAsset(
+        uploadTextDTO,
+      );
+    }
   }
 
   async retrieveOne(retrieveTextDTO: AssetDTO) {
