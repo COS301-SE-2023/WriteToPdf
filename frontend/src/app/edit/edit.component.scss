@@ -31,7 +31,7 @@ $page-height: 29.7cm;
     margin: 10px;
     margin-left: 20px;
     height: 52px;
-    width:100%;
+    width: 100%;
 }
 
 .docTitleWrapper {
@@ -93,8 +93,10 @@ $page-height: 29.7cm;
 }
 
 .dropdownInput {
+    display: flex;
+    transition: 0.5s;
     margin: 0;
-    background-color: #d9d9d9;
+    background-color: lighten($light-grey, 10%);
     padding: 5px;
     border-radius: 5px;
 }
@@ -106,8 +108,9 @@ $page-height: 29.7cm;
 
 .dropdownContent {
     display: none;
+    transition: 0.5s;
     position: fixed;
-    background-color: $light-grey;
+    background-color: lighten($light-grey, 10%);
     min-width: 100px;
     margin-left: 15px;
     margin-top: -15px;
@@ -123,9 +126,23 @@ $page-height: 29.7cm;
 }
 
 .dropdownOptions {
-    margin: 5px;
-    padding: 5px;
+    margin: 0;
+    padding: 0;
     border-radius: 5px;
+    vertical-align: middle;
+}
+
+.dropdownIcon1 {
+    margin: auto;
+    height: 20px;
+    margin-left: 0;
+    margin-right: 5px;
+}
+.dropdownIcon2 {
+    margin: auto;
+    height: 20px;
+    margin-left: 2px;
+    margin-right: 7px;
 }
 
 .uploadAssetIcon:hover .dropdownContent {
@@ -145,9 +162,9 @@ $page-height: 29.7cm;
     width: 50px;
 }
 
-.exitEditPage{
-    margin:auto;
-    margin-right:50px;
+.exitEditPage {
+    margin: auto;
+    margin-right: 50px;
 }
 
 .editor {
@@ -345,7 +362,7 @@ div[contenteditable="true"]:focus {
 
 .assetDescription {
     margin-left: 5px;
-    height:1rem;
+    height: 1rem;
 }
 
 .displayNone {
@@ -622,6 +639,6 @@ Preserve the relative scale, though. */
 }
 
 .spinnerWrapper {
-    display:flex;
+    display: flex;
     margin: auto;
 }
