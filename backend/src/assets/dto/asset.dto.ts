@@ -3,7 +3,6 @@ export class AssetDTO {
   TextID: string;
   Format: string;
   FileName: string;
-  ConvertedElement: string;
   Image: string;
   DateCreated: Date;
   Size: number;
@@ -11,13 +10,13 @@ export class AssetDTO {
   UserID: number;
   Content: string;
   Type: string;
+  ImageBuffer: Buffer;
 
   constructor() {
     this.AssetID = undefined;
     this.TextID = undefined;
     this.Format = undefined;
     this.FileName = undefined;
-    this.ConvertedElement = undefined;
     this.Image = undefined;
     this.DateCreated = undefined;
     this.Size = undefined;
@@ -25,5 +24,6 @@ export class AssetDTO {
     this.UserID = undefined;
     this.Content = undefined;
     this.Type = undefined;
+    this.ImageBuffer = undefined;
   }
 }
