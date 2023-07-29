@@ -64,7 +64,7 @@ export class AssetManagerService {
         const assetDTO = new AssetDTO();
         assetDTO.AssetID = assets[i].AssetID;
         assetDTO.UserID = assets[i].UserID;
-        assetDTO.ConvertedElement = '';
+        // assetDTO.ConvertedElement = '';
 
         // Retrieve the image from s3
         const asset =
@@ -86,7 +86,7 @@ export class AssetManagerService {
         const assetDTO = new AssetDTO();
         assetDTO.AssetID = assets[j].AssetID;
         assetDTO.UserID = assets[j].UserID;
-        assetDTO.ConvertedElement = '';
+        // assetDTO.ConvertedElement = '';
 
         // Retrieve the delineated data from S3
         const tempAssetDTO =

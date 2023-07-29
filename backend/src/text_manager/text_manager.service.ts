@@ -27,9 +27,9 @@ export class TextManagerService {
         new Date().getTime().toString(),
     ).toString();
 
-    if (!uploadTextDTO.ConvertedElement) {
-      uploadTextDTO.ConvertedElement = '';
-    }
+    // if (!uploadTextDTO.ConvertedElement) {
+    //   uploadTextDTO.ConvertedElement = '';
+    // }
 
     // Simulate OCR-generated text
     if (!uploadTextDTO.Content) {
