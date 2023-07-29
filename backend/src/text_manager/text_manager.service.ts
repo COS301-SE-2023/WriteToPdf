@@ -7,46 +7,41 @@ import { AssetDTO } from '../assets/dto/asset.dto';
 import { S3Service } from '../s3/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import * as CryptoJS from 'crypto-js';
+import { TextractService } from '../textract/textract.service';
 
 @Injectable()
 export class TextManagerService {
   constructor(
     private readonly assetsService: AssetsService,
     private readonly s3Service: S3Service,
+    private readonly textractService: TextractService,
   ) {}
 
-  upload(uploadTextDTO: AssetDTO) {
-    // Generate AssetID
-    uploadTextDTO.AssetID = CryptoJS.SHA256(
-      uploadTextDTO.UserID.toString() +
-        new Date().getTime().toString(),
-    ).toString();
-
-    if (!uploadTextDTO.ConvertedElement) {
-      uploadTextDTO.ConvertedElement = '';
-    }
-
-    // Simulate OCR-generated text
-    if (!uploadTextDTO.Content) {
-      uploadTextDTO.Content =
-        'The quick brown fox, jumped over the hill. From there it obtained a degree. After that it took over the world.';
-    }
-
+  async upload(uploadTextDTO: AssetDTO) {
     // Save text asset in database
     const imageData = uploadTextDTO.Image;
     uploadTextDTO.Image = '';
     this.assetsService.saveAsset(uploadTextDTO);
-    uploadTextDTO.Image = imageData;
+    uploadTextDTO.Content = imageData;
 
-    // Preprocess text for storage in the S3
-    uploadTextDTO.Content = this.packageTextForS3(
-      uploadTextDTO,
-    );
+    // Create S3 image data file
+    this.s3Service.createAsset(uploadTextDTO);
 
-    // Save asset in the S3/local storage
-    return this.s3Service.saveAsset(
-      uploadTextDTO,
-    );
+    // Save image data in the S3
+    const savedAssetDTO =
+      await this.s3Service.saveAsset(
+        uploadTextDTO,
+      );
+
+    // Send textract to classify s3 image
+    const OCRResponse =
+      this.textractService.extractDocument(
+        'sync',
+        savedAssetDTO,
+        'text',
+      );
+
+    return OCRResponse;
   }
 
   async retrieveOne(retrieveTextDTO: AssetDTO) {
