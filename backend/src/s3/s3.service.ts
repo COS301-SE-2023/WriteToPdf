@@ -262,6 +262,70 @@ export class S3Service {
     return newAssetDTO;
   }
 
+  async saveTextractResponse(
+    saveAssetDTO: AssetDTO,
+    textractResponse: any,
+  ) {
+    let filePath = `${saveAssetDTO.UserID}`;
+
+    try {
+      await fs.mkdir(`./storage/${filePath}`, {
+        recursive: true,
+      });
+    } catch (err) {
+      // console.log(
+      //   'Directory Creation Error: ' + err,
+      // );
+      return undefined;
+    }
+
+    const fileData = JSON.stringify(
+      textractResponse,
+    );
+
+    filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.TextID}`;
+
+    try {
+      await fs.writeFile(
+        `./storage/${filePath}`,
+        fileData,
+        'utf-8',
+      );
+      // console.log(
+      //   'S3.saveAsset.filePath',
+      //   filePath,
+      // );
+      const response = await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: filePath,
+          Body: fileData,
+        }),
+      );
+
+      // console.log(
+      //   'S3 Save Asset Response: ',
+      //   response,
+      // );
+    } catch (err) {
+      console.log('Write File Error: ' + err);
+      return undefined;
+    }
+
+    // const fileStats = await stat(
+    //   `./storage/${filePath}`,
+    // );
+    // console.log(fileStats);
+    // saveAssetDTO.DateCreated = fileStats.mtime;
+    saveAssetDTO.DateCreated = new Date();
+    // saveAssetDTO.Size =
+    //   fileData.buffer.byteLength; // TODO: Change to s3 return object
+    saveAssetDTO.Size =
+      saveAssetDTO.Content.length;
+    saveAssetDTO.Content = '';
+    return saveAssetDTO;
+  }
+
   async saveImageAsset(saveAssetDTO: AssetDTO) {
     let filePath = `${saveAssetDTO.UserID}`;
 
