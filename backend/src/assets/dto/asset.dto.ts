@@ -1,14 +1,14 @@
 export class AssetDTO {
-  AssetID: string;
-  TextID: string;
+  AssetID: string; // for the image file/thumbnail
+  TextID: string; // for the OCR text data file
   Format: string;
   FileName: string;
-  Image: string;
+  Image: string; // used for storing image data
   DateCreated: Date;
   Size: number;
   ParentFolderID: string;
   UserID: number;
-  Content: string;
+  Content: string; // used for storing OCR text data
   Type: string;
   ImageBuffer: Buffer;
 
