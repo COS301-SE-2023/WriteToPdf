@@ -15,18 +15,6 @@ export class AssetManagerService {
     private readonly textManagerService: TextManagerService,
   ) {}
 
-  // upload_image(uploadImageDTO: AssetDTO) {
-  //   return this.imageManagerService.upload(
-  //     uploadImageDTO,
-  //   );
-  // }
-
-  // upload_text(uploadTextDTO: AssetDTO) {
-  //   return this.textManagerService.upload(
-  //     uploadTextDTO,
-  //   );
-  // }
-
   upload_asset(uploadAssetDTO: AssetDTO) {
     if (uploadAssetDTO.Format === 'text') {
       return this.textManagerService.upload(
@@ -85,8 +73,6 @@ export class AssetManagerService {
             assetDTO,
           );
 
-        assets[j].ConvertedElement =
-          tempAssetDTO.Content;
         assets[j].Image = tempAssetDTO.Image;
       }
     }
