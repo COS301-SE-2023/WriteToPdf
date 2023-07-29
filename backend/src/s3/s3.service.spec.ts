@@ -388,7 +388,7 @@ describe('S3Service', () => {
     it('should throw error if mkdir not possible', async () => {
       const assetDTO = new AssetDTO();
       assetDTO.UserID = 1;
-      assetDTO.Content = 'hello world';
+      assetDTO.Content = '';
 
       jest
         .spyOn(fs, 'mkdir')
@@ -457,7 +457,7 @@ describe('S3Service', () => {
         markdownFileDTO,
       );
 
-      console.log(result);
+      // console.log(result);
       expect(result).toBeDefined();
       expect(result).toBeInstanceOf(
         MarkdownFileDTO,
@@ -493,7 +493,7 @@ describe('S3Service', () => {
         markdownFileDTO,
       );
 
-      console.log(result);
+      // console.log(result);
       expect(result).toBeDefined();
       expect(result).toBeInstanceOf(
         MarkdownFileDTO,
@@ -531,7 +531,7 @@ describe('S3Service', () => {
         markdownFileDTO,
       );
 
-      console.log(result);
+      // console.log(result);
       expect(result).toBeUndefined();
     });
 
@@ -565,7 +565,7 @@ describe('S3Service', () => {
         markdownFileDTO,
       );
 
-      console.log(result);
+      // console.log(result);
       expect(result).toBeUndefined();
     });
   });
@@ -590,7 +590,7 @@ describe('S3Service', () => {
           assetDTO.UserID,
         );
 
-      console.log('result', result);
+      // console.log('result', result);
       expect(result).toBeDefined();
       expect(result.Content).toBe('hello world');
       expect(result.Size).toBe(
@@ -693,22 +693,22 @@ describe('S3Service', () => {
         .spyOn(fs, 'readFile')
         .mockResolvedValue('abc123');
 
-      console.log(
-        '-----before retrieveAsset()-----',
-      );
+      // console.log(
+      //   '-----before retrieveAsset()-----',
+      // );
       const result =
         await s3Service.retrieveAsset(assetDTO);
 
-      console.log('result', result);
+      // console.log('result', result);
       expect(result).toBeDefined();
       expect(result.Content).toBe('hello world');
       expect(result.Size).toBe(
         'hello world'.length,
       );
 
-      console.log(
-        '-----after retrieveAsset()-----',
-      );
+      // console.log(
+      //   '-----after retrieveAsset()-----',
+      // );
     });
 
     describe('deleteAsset', () => {
