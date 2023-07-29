@@ -12,6 +12,12 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import * as CryptoJS from 'crypto-js';
+import {
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import { RetrieveAllDTO } from '../asset_manager/dto/retrieve_all.dto';
+import * as sharp from 'sharp';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -26,7 +32,7 @@ jest.mock('crypto-js', () => {
 });
 describe('ImageManagerService', () => {
   let service: ImageManagerService;
-  let assetService: AssetsService;
+  let assetsService: AssetsService;
   let s3Service: S3Service;
 
   beforeEach(async () => {
@@ -48,7 +54,7 @@ describe('ImageManagerService', () => {
     service = module.get<ImageManagerService>(
       ImageManagerService,
     );
-    assetService = module.get<AssetsService>(
+    assetsService = module.get<AssetsService>(
       AssetsService,
     );
     s3Service = module.get<S3Service>(S3Service);
@@ -61,7 +67,7 @@ describe('ImageManagerService', () => {
       uploadImage.UserID = 1;
 
       jest
-        .spyOn(assetService, 'saveAsset')
+        .spyOn(assetsService, 'saveAsset')
         .mockResolvedValue(uploadImage);
 
       jest
@@ -99,7 +105,7 @@ describe('ImageManagerService', () => {
       expectedAsset.AssetID = 'hashed string';
 
       jest
-        .spyOn(assetService, 'saveAsset')
+        .spyOn(assetsService, 'saveAsset')
         .mockResolvedValue(uploadAssetWithImage);
 
       jest
@@ -115,9 +121,171 @@ describe('ImageManagerService', () => {
       expect(result).toEqual(
         uploadAssetWithImage,
       );
-      expect(assetService.saveAsset).toBeCalled();
+      expect(
+        assetsService.saveAsset,
+      ).toBeCalled();
       expect(s3Service.saveAsset).toBeCalled();
       expect(CryptoJS.SHA256).toBeCalled();
+    });
+  });
+
+  describe('retrieveAll', () => {
+    it('should retrieve all assets', () => {
+      const retrieveAllDTO = new RetrieveAllDTO();
+
+      const asset = new AssetDTO();
+
+      jest
+        .spyOn(assetsService, 'retrieveAllAssets')
+        .mockResolvedValue([asset]);
+
+      const response = service.retrieveAll(
+        retrieveAllDTO,
+      );
+
+      expect(
+        assetsService.retrieveAllAssets,
+      ).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('retrieveOne', () => {
+    it('should throw error if asset not in db', async () => {
+      const retrieveAssetDTO: AssetDTO =
+        new AssetDTO();
+
+      retrieveAssetDTO.AssetID = '1';
+      retrieveAssetDTO.Format = 'text';
+
+      jest
+        .spyOn(assetsService, 'retrieveOne')
+        .mockResolvedValue(null);
+
+      try {
+        await service.retrieveOne(
+          retrieveAssetDTO,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Asset not found, check AssetID and Format',
+        );
+        expect(error.status).toBe(
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    });
+
+    it('should return content of specified asset', async () => {
+      const retrieveAssetDTO: AssetDTO =
+        new AssetDTO();
+
+      retrieveAssetDTO.AssetID = '1';
+      retrieveAssetDTO.Format = 'text';
+
+      jest
+        .spyOn(assetsService, 'retrieveOne')
+        .mockResolvedValue(retrieveAssetDTO);
+
+      jest
+        .spyOn(s3Service, 'retrieveAsset')
+        .mockResolvedValue(retrieveAssetDTO);
+
+      await service.retrieveOne(retrieveAssetDTO);
+
+      expect(
+        s3Service.retrieveAsset,
+      ).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('deleteAsset', () => {
+    it('should remove specified asset', () => {
+      const assetDTO = new AssetDTO();
+      jest
+        .spyOn(assetsService, 'removeOne')
+        .mockResolvedValue(assetDTO as any);
+      jest
+        .spyOn(Repository.prototype, 'create')
+        .mockReturnValue(assetDTO);
+      jest
+        .spyOn(s3Service, 'deleteAsset')
+        .mockResolvedValue(assetDTO);
+
+      const response =
+        service.deleteAsset(assetDTO);
+
+      expect(
+        assetsService.removeOne,
+      ).toHaveBeenCalled();
+
+      expect(
+        s3Service.deleteAsset,
+      ).toHaveBeenCalled();
+    });
+  });
+
+  describe('renameAsset', () => {
+    it('should rename specified asset', () => {
+      jest
+        .spyOn(assetsService, 'renameAsset')
+        .mockResolvedValue(new AssetDTO());
+
+      const response = service.renameAsset(
+        new AssetDTO(),
+      );
+
+      expect(
+        assetsService.renameAsset,
+      ).toHaveBeenCalled();
+    });
+  });
+
+  describe('compressImage', () => {
+    it('should compress an image given a base64 string', async () => {
+      jest.mock('sharp', () => ({
+        __esModule: true,
+        default: jest.fn((imageBuffer) => ({
+          resize: jest.fn().mockReturnThis(),
+          toFormat: jest.fn().mockReturnThis(),
+          toBuffer: jest
+            .fn()
+            .mockResolvedValue(imageBuffer), // Mock the sharp function to return the input buffer as-is
+        })),
+      }));
+
+      const base64Buffer = await sharp({
+        create: {
+          width: 100,
+          height: 100,
+          channels: 4, // 4 channels for RGBA
+          background: {
+            r: 253,
+            g: 201,
+            b: 123,
+            alpha: 1,
+          }, // White background
+        },
+      })
+        .jpeg()
+        .toBuffer();
+
+      const base64String =
+        base64Buffer.toString('base64');
+
+      jest.spyOn;
+
+      const thumbnail =
+        await service.compressImage(base64String);
+
+      expect(typeof thumbnail).toBe('string');
+
+      // Assert that the return value is a valid base64 string
+      expect(thumbnail).toMatch(
+        /^data:image\/jpeg;base64,[A-Za-z0-9+/]+=*$/,
+      );
     });
   });
 });

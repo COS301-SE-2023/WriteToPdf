@@ -17,6 +17,7 @@ import { SHA256 } from 'crypto-js';
 import { ExportDTO } from './dto/export.dto';
 import * as CryptoJS from 'crypto-js';
 import { ConversionService } from '../conversion/conversion.service';
+import { ImportDTO } from './dto/import.dto';
 
 @Injectable()
 export class FileManagerService {
@@ -357,97 +358,109 @@ export class FileManagerService {
   }
 
   // Import & Export operations: #########################################################
-  // async importFile(importDTO: ImportDTO) {
-  //   if (importDTO.Path === undefined)
-  //     throw new HttpException(
-  //       'Path cannot be undefined',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
+  async importFile(importDTO: ImportDTO) {
+    if (importDTO.Path === undefined)
+      throw new HttpException(
+        'Path cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+    const encryptionKey =
+      await this.getEncryptionKey(
+        importDTO.UserID,
+      );
 
-  //   if (importDTO.Name === undefined)
-  //     throw new HttpException(
-  //       'Name cannot be undefined',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
+    importDTO.Content = await this.decryptContent(
+      importDTO.Content,
+      encryptionKey,
+    );
 
-  //   if (importDTO.Content === undefined)
-  //     throw new HttpException(
-  //       'Content cannot be undefined',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
+    let convertedHtml: string | undefined;
+    // if (importDTO.Type === 'pdf') {
+    //   convertedHtml =
+    //     await this.conversionService.convertPdfToHtml(
+    //       importDTO.Content,
+    //     );
+    // } else
+    if (importDTO.Type === 'txt') {
+      convertedHtml =
+        this.conversionService.convertTxtToHtml(
+          importDTO.Content,
+        );
+    } else if (importDTO.Type === 'md') {
+      convertedHtml =
+        this.conversionService.convertMdToHtml(
+          importDTO.Content,
+        );
+    } else {
+      throw new HttpException(
+        'Invalid file type',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-  //   const encryptionKey =
-  //     await this.getEncryptionKey(
-  //       importDTO.UserID,
-  //     );
+    console.log('convertedHtml: ', convertedHtml);
 
-  //   importDTO.Content = await this.decryptContent(
-  //     importDTO.Content,
-  //     encryptionKey,
-  //   );
-  //   const convertedMarkdownFileDTO =
-  //     this.conversionService.convertFrom(
-  //       importDTO,
-  //     );
+    const encryptedContent =
+      await this.encryptContent(
+        convertedHtml,
+        encryptionKey,
+      );
 
-  //   convertedMarkdownFileDTO.Content =
-  //     await this.encryptContent(
-  //       convertedMarkdownFileDTO.Content,
-  //       encryptionKey,
-  //     );
-  //   const deltaContent =
-  //     convertedMarkdownFileDTO.Content;
+    const convertedMarkdownFileDTO =
+      new MarkdownFileDTO();
 
-  //   const createdFile = await this.createFile(
-  //     convertedMarkdownFileDTO,
-  //   );
+    convertedMarkdownFileDTO.UserID =
+      importDTO.UserID;
+    convertedMarkdownFileDTO.Path =
+      importDTO.Path;
+    convertedMarkdownFileDTO.ParentFolderID =
+      importDTO.ParentFolderID;
+    convertedMarkdownFileDTO.Name =
+      importDTO.Name;
+    convertedMarkdownFileDTO.Content =
+      convertedHtml;
 
-  //   createdFile.Content = deltaContent;
+    const createdFile = await this.createFile(
+      convertedMarkdownFileDTO,
+    );
 
-  //   const savedFile = await this.saveFile(
-  //     createdFile,
-  //   );
+    createdFile.Content = encryptedContent;
 
-  //   const returnedDTO = new MarkdownFileDTO();
-  //   returnedDTO.MarkdownID = savedFile.MarkdownID;
-  //   returnedDTO.UserID = savedFile.UserID;
-  //   returnedDTO.DateCreated =
-  //     savedFile.DateCreated;
-  //   returnedDTO.LastModified =
-  //     savedFile.LastModified;
-  //   returnedDTO.Name = savedFile.Name;
-  //   returnedDTO.Path = savedFile.Path;
-  //   returnedDTO.Size = savedFile.Size;
-  //   returnedDTO.ParentFolderID =
-  //     savedFile.ParentFolderID;
-  //   returnedDTO.Content = deltaContent;
+    const savedFile = await this.saveFile(
+      createdFile,
+    );
 
-  //   return returnedDTO;
-  // }
+    const returnedDTO: MarkdownFileDTO = {
+      ...savedFile,
+      Content: encryptedContent,
+    };
 
-  // decryptContent(
-  //   content: string | undefined,
-  //   encryptionKey: string,
-  // ): Promise<string> {
-  //   const decryptedMessage = CryptoJS.AES.decrypt(
-  //     content,
-  //     encryptionKey,
-  //   )
-  //     .toString(CryptoJS.enc.Utf8)
-  //     .replace(/^"(.*)"$/, '$1');
-  //   return decryptedMessage;
-  // }
+    return returnedDTO;
+  }
 
-  // encryptContent(
-  //   content: string,
-  //   encryptionKey: string,
-  // ) {
-  //   const encryptedMessage = CryptoJS.AES.encrypt(
-  //     content,
-  //     encryptionKey,
-  //   ).toString();
-  //   return encryptedMessage;
-  // }
+  decryptContent(
+    content: string | undefined,
+    encryptionKey: string,
+  ): Promise<string> {
+    const decryptedMessage = CryptoJS.AES.decrypt(
+      content,
+      encryptionKey,
+    )
+      .toString(CryptoJS.enc.Utf8)
+      .replace(/^"(.*)"$/, '$1');
+    return decryptedMessage;
+  }
+
+  encryptContent(
+    content: string,
+    encryptionKey: string,
+  ) {
+    const encryptedMessage = CryptoJS.AES.encrypt(
+      content,
+      encryptionKey,
+    ).toString();
+    return encryptedMessage;
+  }
 
   async getEncryptionKey(
     UserID: number,
@@ -507,27 +520,27 @@ export class FileManagerService {
       return pdfBuffer;
     } else if (exportDTO.Type === 'txt') {
       const txt =
-        this.conversionService.generateTxt(
+        this.conversionService.convertHtmlToTxt(
           exportDTO.Content,
         );
       const txtBuffer = Buffer.from(txt);
       return txtBuffer;
     } else if (exportDTO.Type === 'md') {
       const md =
-        this.conversionService.generateMarkdown(
+        this.conversionService.convertHtmlToMarkdown(
           exportDTO.Content,
         );
       const mdBuffer = Buffer.from(md);
       return mdBuffer;
     } else if (exportDTO.Type === 'jpeg') {
       const jpegBuffer =
-        await this.conversionService.generateJpeg(
+        await this.conversionService.convertHtmlToJpeg(
           exportDTO.Content,
         );
       return jpegBuffer;
     } else if (exportDTO.Type === 'png') {
       const pngBuffer =
-        await this.conversionService.generatePng(
+        await this.conversionService.convertHtmlToPng(
           exportDTO.Content,
         );
       return pngBuffer;

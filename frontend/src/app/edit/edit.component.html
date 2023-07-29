@@ -4,11 +4,7 @@
     <div class="toolbarWrapper">
       <div class="titleWrapper">
         <div class="logoWrapper" (click)="navigateToPage('home')">
-          <img
-            class="logo"
-            src="assets/Logos/WriteToPdf_Logo_white.png"
-            alt=""
-          />
+          <img class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="" />
         </div>
         <div class="docTitleWrapper">
           <label for="editHeading" class="displayNone">a</label>
@@ -30,19 +26,19 @@
           <!-- Download -->
           <img src="assets/Icons/editIcons/download.svg" alt="" />
         </div>
-        <p-dialog
-          header="Export File"
-          [(visible)]="exportDialogVisible"
-          [style]="{ width: '50vw' }"
-        >
+        <p-dialog header="Export File" [(visible)]="exportDialogVisible" [focusOnShow]="true" [modal]="true"
+          [style]="{ width: '50vw' }">
           <div class="flex py-2 justify-content-center"></div>
           <!-- <input type="text" pInputText [(ngModel)]="fileType" /> -->
-          <p-button label="Export to pdf" (click)="convertToFileType('pdf')"></p-button>
-          <p-button label="Export to txt" (click)="convertToFileType('txt')"></p-button>
-          <p-button label="Export to html" (click)="convertToFileType('html')"></p-button>
-          <p-button label="Export to md" (click)="convertToFileType('md')"></p-button>
-          <p-button label="Export to jpeg" (click)="convertToFileType('jpeg')"></p-button>
-          <p-button label="Export to png" (click)="convertToFileType('png')"></p-button>
+          <div class="buttonsWrapper">
+
+            <p-button label="Export to pdf" (click)="convertToFileType('pdf')" [style]="{width:'150px'}"></p-button>
+            <p-button label="Export to txt" (click)="convertToFileType('txt')" [style]="{width:'150px'}"></p-button>
+            <p-button label="Export to html" (click)="convertToFileType('html')" [style]="{width:'150px'}"></p-button>
+            <p-button label="Export to md" (click)="convertToFileType('md')" [style]="{width:'150px'}"></p-button>
+            <p-button label="Export to jpeg" (click)="convertToFileType('jpeg')" [style]="{width:'150px'}"></p-button>
+            <p-button label="Export to png" (click)="convertToFileType('png')" [style]="{width:'150px'}"></p-button>
+          </div>
         </p-dialog>
 
         <div class="tool" (click)="saveDocumentContents()">
@@ -75,44 +71,34 @@
   </div>
 
   <div class="editor">
-    <p-button
-      class="showAssetSidebar"
-      icon="pi pi-arrow-right"
-      (click)="hideSideBar()"
-    ></p-button>
+    <p-button class="showAssetSidebar" icon="pi pi-arrow-right" (click)="hideSideBar()"></p-button>
     <div class="assetSidebar">
       <div class="sidebarHeaderWrapper">
         <div class="sidebarHeader">
-          <div
-            class="sidebarHeaderIconWrapper backWrapper"
-            (click)="hideSideBar()"
-          >
-            <img
-              class="sidebarHeaderIcon"
-              src="assets/Icons/editIcons/back.svg"
-              alt=""
-            />
+          <div class="sidebarHeaderIconWrapper backWrapper" (click)="hideSideBar()">
+            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="" />
           </div>
 
           <div class="sidebarHeaderTextWrapper">
             <h4 class="sidebarHeaderText">Assets</h4>
           </div>
+          <div class="uploadAssetIcon">
+            <div class="sidebarHeaderIconWrapper">
+              <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/addAsset.png" alt="" />
+            </div>
 
-          <div class="sidebarHeaderIconWrapper">
-            <img
-              class="sidebarHeaderIcon"
-              src="assets/Icons/editIcons/addAsset.png"
-              alt=""
-              (click)="navigateToCameraPage()"
-            />
+            <div class="dropdownContent">
+              <div class="dropdownInput">
+                <p class="dropdownOptions" (click)="navigateToPage('camera')">Camera</p>
+              </div>
+              <div class="dropdownInput">
+                <p class="dropdownOptions" (click)="showFileUploadPopup()">File System</p>
+              </div>
+            </div>
           </div>
 
           <div class="sidebarHeaderIconWrapper" (click)="refreshSidebar()">
-            <img
-              class="sidebarHeaderIcon"
-              src="assets/Icons/editIcons/refresh.svg"
-              alt=""
-            />
+            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/refresh.svg" alt="" />
           </div>
         </div>
         <hr />
@@ -137,20 +123,12 @@
             />
           </div>
           <div class="deleteAsset">
-            <img
-              class="deleteAssetIcon"
-              src="assets/Icons/editIcons/delete.png"
-              alt=""
-              (click)="deleteAsset(obj.AssetID)"
-            />
+            <img class="deleteAssetIcon" src="assets/Icons/editIcons/delete.png" alt=""
+              (click)="deleteAsset(obj.AssetID)" />
           </div>
           <div class="copyAsset">
-            <img
-              class="copyAssetIcon"
-              (click)="retrieveAsset(obj.AssetID, obj.Format)"
-              src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
+            <img class="copyAssetIcon" (click)="retrieveAsset(obj.AssetID, obj.Format)"
+              src="assets/Icons/editIcons/copy.svg" alt="" />
           </div>
         </div>
         <div class="assetContent">
@@ -159,22 +137,15 @@
         </div>
       </div>
 
-  
+
     </div>
 
     <!--    Below is the code that allows me to work with CKEditor    -->
     <div class="center-page">
       <div class="document-editor" style="overflow: hidden">
         <div class="document-editor__toolbar"></div>
-        <div
-          class="document-editor__editable-container"
-          style="overflow: hidden"
-        >
-          <div
-            class="document-editor__editable"
-            id="editor-contents"
-            style="overflow: hidden"
-          ></div>
+        <div class="document-editor__editable-container" style="overflow: hidden">
+          <div class="document-editor__editable" id="editor-contents" style="overflow: hidden"></div>
         </div>
       </div>
       <br />

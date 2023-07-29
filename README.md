@@ -14,7 +14,7 @@
 [![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml)  
 ![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf)
 [![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2023/WriteToPdf?color=blue)](https://github.com/COS301-SE-2023/WriteToPdf/issues?q=is%3Aissue+is%3Aclosed)
-[![Commits](https://img.shields.io/github/commit-activity/w/COS301-SE-2023/WriteToPdf)](https://github.com/COS301-SE-2023/WriteToPdf/issues)
+<!-- [![Commits](https://img.shields.io/github/commit-activity/w/COS301-SE-2023/WriteToPdf)](https://github.com/COS301-SE-2023/WriteToPdf/issues) -->
 <!-- [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2023_WriteToPdf&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2023_WriteToPdf) -->
 <!-- [![Requirements Status](https://requires.io/github/COS301-SE-2023/WriteToPdf/requirements.svg?branch=main)](https://requires.io/github/COS301-SE-2023/WriteToPdf/requirements/?branch=main) -->
 <!-- [![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml) -->
@@ -26,23 +26,37 @@
 
 WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritten notes into structured documents that can be edited and shared with others.
 
+## Demo 3 Important Links
+
+[Link to automated integration tests](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-integration.yml)  
+[Link to Architecture Document](https://docs.google.com/document/d/1FTGkhilcBonjeJdZc6e2ykf3x_l8cgZlwjZvC8O_KZ8/edit?usp=drive_link)  
+Any other documentation can be found in the readme of our repository.
+
 ## Demos
 - [Demo 1](https://drive.google.com/drive/folders/1D8awdHGBDuI7PGQYF_jtX9iGq_9PWY3x?usp=sharing)
 - [Demo 2](https://drive.google.com/drive/folders/1QVIrOEi5PJAhG8DMwNrwjIcF7Gocu8LK?usp=sharing)
+- [Demo 3](https://drive.google.com/drive/folders/1cW53_1X3Y5Wp2fSbiyTv9ax8rGFM-JwM?usp=sharing)
 
 ## Documentation
 ### Software requirements specification
 - [SRS v1](https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing)
 - [SRS v2](https://docs.google.com/document/d/196IHwe8rBytZlJOIvh8gGMJUIhs1joQ91NA5TIrqbV4/edit?usp=sharing)
+- [SRS v3](https://docs.google.com/document/d/1TKv0xJzYFy35HWXMa736Qu16aRPZn0SIqjJhXzTakWA/edit?usp=sharing)
 
 ### Architecture
 - [Architecture v1](https://docs.google.com/document/d/1skoEPk1VvtO8P9fyWIVFyUuf0ssU1aI8G-wrYYNbeyg/edit?usp=sharing)
+- [Architecture v2](https://docs.google.com/document/d/1FTGkhilcBonjeJdZc6e2ykf3x_l8cgZlwjZvC8O_KZ8/edit?usp=sharing)
 
 ### User Manual
 - [User manual v1](https://docs.google.com/document/d/1zUkgP6SMe9ti3cEWSjjO4yTOUCb1NZnV1_J4SeadA7A/edit?usp=sharing)
+- [User manual v2](https://docs.google.com/document/d/1zs5NqddSAby1zNL-tTCPOdJPDTYQJnAWIyChKixjNN4/edit?usp=sharing)
+
+### Technical installation document
+- [Technical insallation v1](https://docs.google.com/document/d/1HG9QVSEh2NsHbrRTlXPBjiq3keQMapmmiDbTFK07tNU/edit?usp=sharing)
 
 ### Coding standards
-- [Coding standards](https://github.com/COS301-SE-2023/WriteToPdf/wiki/Coding-Standards)
+
+- [Coding standards v1](https://docs.google.com/document/d/1Cr68PKEo6_hPQoYYXzmPtlQXInFmrAkXNnmFUIf08tE/edit?usp=sharing)
 
 ### Member contributions
 - [Member contributions](https://docs.google.com/document/d/14n7aEG_Lwh3dXSq6ltJ8XE_rzAREMGsH-3B-crGn2fM/edit?usp=sharing)
@@ -95,7 +109,7 @@ By structuring the repository in this manner, we maintain a clear separation of 
 <details>
 <summary>Janco Spies - u21434159</summary>
 <br>
-<p>Project Leader, Tester</p>
+<p>Project Leader, Tester, Integration Engineer</p>
 <p>
 Janco has experience working as a tutor for the module Data Structures and Algorithms at the University of Pretoria, where he enjoys problem-solving and collaborating with others. Janco has excelled academically during his time at the university and has a strong background in statistics. He is skilled in several programming languages and frameworks, including Java, NodeJS, C++, Angular, and Python.
 </p>
@@ -155,7 +169,7 @@ Dylan is a highly motivated individual with a solid academic background, finishi
 <details>
 <summary>Conrad Strasheim - u04483716</summary>
 <br/>
-<p>Business Analyst, Services Engineer</p>
+<p>Business Analyst, UI Engineer</p>
 <p>
 Conrad is an avid programmer, yogi and musician. He has experience in Python, R, MATLAB, C++, Java, Angular, React, Google Cloud and Docker. He has programmed an algorithmic music generator, whose music functions as accompaniment for musical improvisation, with Python as part of a master’s project collaboration at Tuks. His speciality is reading up on domain specific knowledge and implementing innovative solutions within that domain, as with the music application.
 </p>

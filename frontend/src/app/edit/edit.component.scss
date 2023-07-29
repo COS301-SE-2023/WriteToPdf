@@ -50,7 +50,7 @@ $page-height: 29.7cm;
     padding-bottom: 0;
     margin-top: 71px;
     margin-left: 10px;
-    width:100vw;
+    width: 100vw;
 }
 
 .documentTitle {
@@ -108,9 +108,10 @@ $page-height: 29.7cm;
     display: none;
     position: fixed;
     background-color: $light-grey;
-    min-width: 160px;
+    min-width: 100px;
+    margin-left: 15px;
+    margin-top:-15px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    padding: 12px 16px;
     z-index: 1;
 
     border-radius: 5px;
@@ -121,7 +122,12 @@ $page-height: 29.7cm;
     background-color: darken($light-grey, 10%);
 }
 
-.dropdownWrapper:hover .dropdownContent {
+.dropdownOptions{
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+}
+.uploadAssetIcon:hover .dropdownContent {
     display: block;
     cursor: pointer;
 }
@@ -325,6 +331,13 @@ div[contenteditable="true"]:focus {
     user-select: auto;
 }
 
+.buttonsWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 100px auto;
+    grid-gap: 10px;
+}
+
 .assetDescription {
     margin-left: 5px;
 }
@@ -391,7 +404,7 @@ div[contenteditable="true"]:focus {
     min-height: $page-height ;
     padding: 0;
     background: #00000000;
-    margin:auto;
+    margin: auto;
 }
 
 .document-editor__toolbar {
@@ -552,7 +565,7 @@ Preserve the relative scale, though. */
     margin-right: calc(2 * var(--ck-spacing-large));
 }
 
-.currentZoom{
+.currentZoom {
     width: 30px;
     text-align: center;
 }

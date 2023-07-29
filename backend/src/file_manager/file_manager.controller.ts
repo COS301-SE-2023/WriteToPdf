@@ -14,6 +14,7 @@ import { FolderDTO } from '../folders/dto/folder.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ExportDTO } from './dto/export.dto';
+import { ImportDTO } from './dto/import.dto';
 import { ConversionService } from '../conversion/conversion.service';
 
 @Controller('file_manager')
@@ -360,39 +361,39 @@ export class FileManagerController {
     );
   }
 
-  // @Post('import')
-  // @HttpCode(HttpStatus.OK)
-  // import(
-  //   @Body()
-  //   importDTO: ImportDTO,
-  //   @Req() request: Request,
-  // ) {
-  //   if (request.method !== 'POST') {
-  //     throw new HttpException(
-  //       'Method Not Allowed',
-  //       HttpStatus.METHOD_NOT_ALLOWED,
-  //     );
-  //   }
+  @Post('import')
+  @HttpCode(HttpStatus.OK)
+  import(
+    @Body()
+    importDTO: ImportDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
 
-  //   if (
-  //     !importDTO.UserID ||
-  //     !importDTO.Type ||
-  //     !importDTO.Content ||
-  //     (!importDTO.ParentFolderID &&
-  //       importDTO.ParentFolderID !== '') ||
-  //     (!importDTO.Path &&
-  //       importDTO.Path !== '') ||
-  //     !importDTO.Name
-  //   )
-  //     throw new HttpException(
-  //       'Invalid request data',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
+    if (
+      !importDTO.UserID ||
+      !importDTO.Type ||
+      !importDTO.Content ||
+      (!importDTO.ParentFolderID &&
+        importDTO.ParentFolderID !== '') ||
+      (!importDTO.Path &&
+        importDTO.Path !== '') ||
+      !importDTO.Name
+    )
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
 
-  //   return this.fileManagerService.importFile(
-  //     importDTO,
-  //   );
-  // }
+    return this.fileManagerService.importFile(
+      importDTO,
+    );
+  }
 
   @Post('export')
   @HttpCode(HttpStatus.OK)

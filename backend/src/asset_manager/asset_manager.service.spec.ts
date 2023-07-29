@@ -9,11 +9,12 @@ import { S3Service } from '../s3/s3.service';
 import { TextManagerService } from '../text_manager/text_manager.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Asset } from '../assets/entities/asset.entity';
-import { Repository } from 'typeorm';
+import { Repository } from 'typeorm/repository/Repository';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { RetrieveAllDTO } from './dto/retrieve_all.dto';
+import { text } from 'stream/consumers';
 
 describe('AssetManagerService', () => {
   let service: AssetManagerService;
@@ -97,70 +98,209 @@ describe('AssetManagerService', () => {
     });
   });
 
-  // describe('retrieve_all', () => {
-  //   it('should retrieve all assets from the db', async () => {
-  //     const retrieveAllDTO = new RetrieveAllDTO();
-  //     retrieveAllDTO.UserID = 1;
+  describe('retrieve_all', () => {
+    it('should retrieve all assets from the db', async () => {
+      const retrieveAllDTO = new RetrieveAllDTO();
+      retrieveAllDTO.UserID = 1;
+      retrieveAllDTO.ParentFolderID = 'test';
 
-  //     const assetDTO = new AssetDTO();
-  //     assetDTO.AssetID = 'test';
+      const imgAssetDTO = new AssetDTO();
+      imgAssetDTO.AssetID = 'test';
+      imgAssetDTO.Format = 'image';
+      imgAssetDTO.UserID = 1;
 
-  //     jest.spyOn(
-  //       assetsService,
-  //       'retrieveAllAssets',
-  //     );
+      const textAssetDTO = new AssetDTO();
+      textAssetDTO.AssetID = 'test';
+      textAssetDTO.Format = 'text';
+      textAssetDTO.UserID = 1;
 
-  //     await service.retrieve_all(retrieveAllDTO);
+      const assets = [imgAssetDTO, textAssetDTO];
 
-  //     expect(
-  //       assetsService.retrieveAllAssets,
-  //     ).toBeCalledWith(retrieveAllDTO);
-  //   });
+      jest
+        .spyOn(assetsService, 'retrieveAllAssets')
+        .mockResolvedValue(assets);
 
-  //   it('should resize all image assets', async () => {
-  //     const retrieveAllDTO = new RetrieveAllDTO();
-  //     retrieveAllDTO.UserID = 1;
+      jest
+        .spyOn(
+          Repository.prototype,
+          'createQueryBuilder',
+        )
+        .mockReturnValue({
+          where: jest.fn().mockReturnThis(),
+          andWhere: jest.fn().mockReturnThis(),
+          orderBy: jest.fn().mockReturnThis(),
+          getMany: jest
+            .fn()
+            .mockResolvedValue([]),
+        } as any);
 
-  //     const assetDTO = new AssetDTO();
-  //     assetDTO.AssetID = 'test';
-  //     assetDTO.Format = 'image';
-  //     assetDTO.UserID = 1;
-  //     assetDTO.Content = 'Uncompressed content';
+      jest
+        .spyOn(imageManagerService, 'retrieveOne')
+        .mockResolvedValue(imgAssetDTO);
 
-  //     const newAssetDTO = new AssetDTO();
-  //     newAssetDTO.AssetID = 'test';
-  //     newAssetDTO.UserID = 1;
-  //     newAssetDTO.ConvertedElement = '';
-  //     newAssetDTO.Image = 'Compressed content';
+      jest.spyOn(assetsService, 'retrieveOne');
 
-  //     const assets = [assetDTO];
+      jest
+        .spyOn(
+          S3Service.prototype,
+          'retrieveAsset',
+        )
+        .mockResolvedValue(imgAssetDTO);
 
-  //     jest
-  //       .spyOn(assetsService, 'retrieveAllAssets')
-  //       .mockResolvedValue(assets);
+      jest
+        .spyOn(
+          imageManagerService,
+          'compressImage',
+        )
+        .mockResolvedValue('Compressed content');
 
-  //     jest
-  //       .spyOn(imageManagerService, 'retrieveOne')
-  //       .mockResolvedValue(newAssetDTO);
+      jest
+        .spyOn(textManagerService, 'retrieveOne')
+        .mockResolvedValue(textAssetDTO);
 
-  //     jest
-  //       .spyOn(
-  //         imageManagerService,
-  //         'compressImage',
-  //       )
-  //       .mockResolvedValue('Compressed content');
+      await service.retrieve_all(retrieveAllDTO);
 
-  //     const response = await service.retrieve_all(
-  //       retrieveAllDTO,
-  //     );
+      expect(
+        assetsService.retrieveAllAssets,
+      ).toBeCalledWith(retrieveAllDTO);
+    });
 
-  //     expect(response).toEqual([newAssetDTO]);
-  //     expect(
-  //       imageManagerService.retrieveOne,
-  //     ).toBeCalledWith(assetDTO);
-  //     expect(
-  //       imageManagerService.compressImage,
-  //     ).toBeCalledWith(assetDTO.Content);
-  //   });
-  // });
+    describe('retrieve_one', () => {
+      it('should retrieve an image asset', async () => {
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = 'test';
+        assetDTO.Format = 'image';
+        assetDTO.UserID = 1;
+
+        jest
+          .spyOn(
+            imageManagerService,
+            'retrieveOne',
+          )
+          .mockResolvedValue(assetDTO);
+
+        await service.retrieve_one(assetDTO);
+
+        expect(
+          imageManagerService.retrieveOne,
+        ).toBeCalledWith(assetDTO);
+      });
+
+      it('should retrieve a text asset', async () => {
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = 'test';
+        assetDTO.Format = 'text';
+        assetDTO.UserID = 1;
+
+        jest
+          .spyOn(
+            textManagerService,
+            'retrieveOne',
+          )
+          .mockResolvedValue(assetDTO);
+
+        await service.retrieve_one(assetDTO);
+
+        expect(
+          textManagerService.retrieveOne,
+        ).toBeCalledWith(assetDTO);
+      });
+    });
+
+    describe('rename_asset', () => {
+      it('should rename an image asset', async () => {
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = 'test';
+        assetDTO.Format = 'image';
+        assetDTO.UserID = 1;
+
+        jest
+          .spyOn(assetsService, 'renameAsset')
+          .mockResolvedValue(assetDTO);
+
+        await service.rename_asset(assetDTO);
+
+        expect(
+          assetsService.renameAsset,
+        ).toBeCalledWith(assetDTO);
+      });
+    });
+
+    describe('delete_asset', () => {
+      it('should delete an asset', async () => {
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = 'test';
+        assetDTO.Format = 'image';
+        assetDTO.UserID = 1;
+
+        jest.spyOn(assetsService, 'removeOne');
+
+        jest
+          .spyOn(Repository.prototype, 'delete')
+          .mockResolvedValue(assetDTO as any);
+
+        jest
+          .spyOn(
+            S3Service.prototype,
+            'deleteAsset',
+          )
+          .mockResolvedValue(assetDTO as any);
+
+        await service.delete_asset(assetDTO);
+
+        expect(
+          assetsService.removeOne,
+        ).toBeCalledWith(assetDTO.AssetID);
+
+        expect(
+          S3Service.prototype.deleteAsset,
+        ).toBeCalledWith(assetDTO);
+      });
+    });
+    // it('should resize all image assets', async () => {
+    //   const retrieveAllDTO = new RetrieveAllDTO();
+    //   retrieveAllDTO.UserID = 1;
+
+    //   const assetDTO = new AssetDTO();
+    //   assetDTO.AssetID = 'test';
+    //   assetDTO.Format = 'image';
+    //   assetDTO.UserID = 1;
+    //   assetDTO.Content = 'Uncompressed content';
+
+    //   const newAssetDTO = new AssetDTO();
+    //   newAssetDTO.AssetID = 'test';
+    //   newAssetDTO.UserID = 1;
+    //   newAssetDTO.ConvertedElement = '';
+    //   newAssetDTO.Image = 'Compressed content';
+
+    //   const assets = [assetDTO];
+
+    //   jest
+    //     .spyOn(assetsService, 'retrieveAllAssets')
+    //     .mockResolvedValue(assets);
+
+    //   jest
+    //     .spyOn(imageManagerService, 'retrieveOne')
+    //     .mockResolvedValue(newAssetDTO);
+
+    //   jest
+    //     .spyOn(
+    //       imageManagerService,
+    //       'compressImage',
+    //     )
+    //     .mockResolvedValue('Compressed content');
+
+    //   const response = await service.retrieve_all(
+    //     retrieveAllDTO,
+    //   );
+
+    //   expect(response).toEqual([newAssetDTO]);
+    //   expect(
+    //     imageManagerService.retrieveOne,
+    //   ).toBeCalledWith(assetDTO);
+    //   expect(
+    //     imageManagerService.compressImage,
+    //   ).toBeCalledWith(assetDTO.Content);
+    // });
+  });
 });
