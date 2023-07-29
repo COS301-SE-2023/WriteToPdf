@@ -6,6 +6,8 @@ import * as sharp from 'sharp'; // HTML -> jpeg converter
 // import * as pdf2html from 'pdf2html'; // PDF -> HTML converter
 // import * as fs from 'fs/promises'; // Import the fs.promises module
 import * as markdownIt from 'markdown-it'; // Markdown -> HTML converter
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class ConversionService {
@@ -16,11 +18,23 @@ export class ConversionService {
     this.turndownService = new TurndownService();
     this.markdownIt = new markdownIt();
   }
-  async generatePdf(html: string) {
+  async generatePdf(htmlContent: string) {
+    const tempHtmlFilePath = path.join(
+      __dirname,
+      'temp.html',
+    );
+    fs.writeFileSync(tempHtmlFilePath, ''); // Create a blank HTML file
+    fs.appendFileSync(
+      tempHtmlFilePath,
+      htmlContent,
+      'utf-8',
+    ); // Append the HTML content to the file
+
     const browser = await puppeteer.launch({
       headless: 'new',
     });
     const page = await browser.newPage();
+    const dataUri = `file://${tempHtmlFilePath}`;
 
     // Emulate a screen to apply CSS styles correctly
     await page.setViewport({
@@ -28,19 +42,23 @@ export class ConversionService {
       height: 1080,
     });
 
-    await page.setContent(html, {
+    await page.goto(dataUri, {
       waitUntil: 'networkidle0',
     });
 
+    //    await page.setContent(html, {
+    //      waitUntil: 'networkidle0',
+    //    });
+
     // Set a higher scale to improve quality (e.g., 2 for Retina displays)
-    const pdf = await page.pdf({
+    const pdfFile = await page.pdf({
       format: 'A4',
       scale: 1,
       printBackground: true,
     });
-
     await browser.close();
-    return pdf;
+    fs.unlinkSync(tempHtmlFilePath);
+    return pdfFile;
   }
 
   convertHtmlToTxt(html: string) {
