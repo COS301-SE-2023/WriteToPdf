@@ -13,7 +13,7 @@ export class Asset {
   TextID: string; // S3 Text File ID
 
   @Column()
-  TextID: string;
+  TextID: string; // S3 Text File ID
 
   @Column()
   Format: string;
