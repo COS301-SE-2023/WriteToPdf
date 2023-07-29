@@ -8,6 +8,7 @@ import { AssetsService } from '../assets/assets.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from '../auth/auth.service';
 import { TextManagerService } from '../text_manager/text_manager.service';
+import { TextractService } from 'src/textract/textract.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Asset])],
@@ -19,6 +20,7 @@ import { TextManagerService } from '../text_manager/text_manager.service';
     AssetsService,
     AuthService,
     TextManagerService,
+    TextractService,
   ],
 })
 export class AssetManagerModule {}
