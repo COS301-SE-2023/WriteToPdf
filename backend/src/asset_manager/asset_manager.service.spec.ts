@@ -270,7 +270,6 @@ describe('AssetManagerService', () => {
     //   const newAssetDTO = new AssetDTO();
     //   newAssetDTO.AssetID = 'test';
     //   newAssetDTO.UserID = 1;
-    //   newAssetDTO.ConvertedElement = '';
     //   newAssetDTO.Image = 'Compressed content';
 
     //   const assets = [assetDTO];
