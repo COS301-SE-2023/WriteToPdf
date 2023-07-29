@@ -215,7 +215,8 @@ export class S3Service {
 
   async createAsset(assetDTO: AssetDTO) {
     // Generate new AssetID
-    assetDTO.AssetID = CryptoJS.SHA256(
+    const newAssetDTO = new AssetDTO();
+    newAssetDTO.AssetID = CryptoJS.SHA256(
       assetDTO.UserID.toString() +
         new Date().getTime().toString(),
     ).toString();
@@ -243,7 +244,7 @@ export class S3Service {
       await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
-          Key: `${filePath}/${assetDTO.AssetID}`,
+          Key: `${filePath}/${newAssetDTO.AssetID}`,
           Body: new Uint8Array(Buffer.from('')),
         }),
       );
@@ -255,10 +256,10 @@ export class S3Service {
     // const fileStats = await stat(
     //   `./storage/${filePath}`,
     // );
-    assetDTO.Content = '';
-    assetDTO.DateCreated = new Date();
-    assetDTO.Size = 0;
-    return assetDTO;
+    newAssetDTO.Content = '';
+    newAssetDTO.DateCreated = new Date();
+    newAssetDTO.Size = 0;
+    return newAssetDTO;
   }
 
   async saveAsset(saveAssetDTO: AssetDTO) {
@@ -276,7 +277,7 @@ export class S3Service {
     }
 
     const fileData = new Uint8Array(
-      Buffer.from(saveAssetDTO.Content),
+      saveAssetDTO.ImageBuffer,
     );
 
     filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.AssetID}`;
@@ -287,13 +288,10 @@ export class S3Service {
         fileData,
         'utf-8',
       );
-      // /*const response = */ await this.s3Client.send(
-      //   new PutObjectCommand({
-      //     Bucket: this.awsS3BucketName,
-      //     Key: filePath,
-      //     Body: fileData,
-      //   }),
-      // );
+      console.log(
+        'S3.saveAsset.filePath',
+        filePath,
+      );
       const response = await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
@@ -303,7 +301,8 @@ export class S3Service {
       );
 
       console.log(
-        'S3 Save Asset Response: ' + response,
+        'S3 Save Asset Response: ',
+        response,
       );
     } catch (err) {
       console.log('Write File Error: ' + err);
