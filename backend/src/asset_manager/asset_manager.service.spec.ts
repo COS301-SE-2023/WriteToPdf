@@ -14,7 +14,6 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { RetrieveAllDTO } from './dto/retrieve_all.dto';
-import { text } from 'stream/consumers';
 
 describe('AssetManagerService', () => {
   let service: AssetManagerService;

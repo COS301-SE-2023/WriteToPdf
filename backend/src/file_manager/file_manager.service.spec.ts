@@ -14,6 +14,7 @@ import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { testingModule } from '../test-utils/testingModule';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { ConversionService } from '../conversion/conversion.service';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
@@ -32,6 +33,7 @@ import { User } from '../users/entities/user.entity';
 import { testDBOptions } from '../../db/data-source';
 import { UserDTO } from '../users/dto/user.dto';
 import * as CryptoJS from 'crypto-js';
+import { S3 } from '@aws-sdk/client-s3';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -64,6 +66,7 @@ describe('FileManagerService', () => {
           FoldersService,
           MarkdownFilesService,
           S3Service,
+          S3ServiceMock,
           ConversionService,
           UsersService,
           AuthService,

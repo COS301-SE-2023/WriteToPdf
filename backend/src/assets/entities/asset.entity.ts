@@ -7,7 +7,10 @@ import {
 @Entity('ASSETS')
 export class Asset {
   @PrimaryColumn()
-  AssetID: string;
+  AssetID: string; // S3 Image File ID
+
+  @Column()
+  TextID: string; // S3 Text File ID
 
   @Column()
   TextID: string;

@@ -3,32 +3,29 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { FoldersService } from '../folders/folders.service';
-import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
-import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
-import { FolderDTO } from '../folders/dto/folder.dto';
-import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
-import { DirectoryFilesDTO } from './dto/directory_files.dto';
-import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
-import { Folder } from '../folders/entities/folder.entity';
-import { S3Service } from '../s3/s3.service';
-import { S3ServiceMock } from '../s3/__mocks__/s3.service';
-import { UsersService } from '../users/users.service';
-import { ExportDTO } from './dto/export.dto';
+import { FoldersService } from '../../folders/folders.service';
+import { MarkdownFileDTO } from '../../markdown_files/dto/markdown_file.dto';
+import { MarkdownFilesService } from '../../markdown_files/markdown_files.service';
+import { FolderDTO } from '../../folders/dto/folder.dto';
+import { DirectoryFoldersDTO } from '../dto/directory_folders.dto';
+import { DirectoryFilesDTO } from '../dto/directory_files.dto';
+import { MarkdownFile } from '../../markdown_files/entities/markdown_file.entity';
+import { Folder } from '../../folders/entities/folder.entity';
+import { S3Service } from '../../s3/s3.service';
+import { UsersService } from '../../users/users.service';
+import { ExportDTO } from '../dto/export.dto';
 import * as CryptoJS from 'crypto-js';
-import { ConversionService } from '../conversion/conversion.service';
-import { ImportDTO } from './dto/import.dto';
-import { is } from 'cheerio/lib/api/traversing';
+import { ConversionService } from '../../conversion/conversion.service';
+import { ImportDTO } from '../dto/import.dto';
 
 @Injectable()
-export class FileManagerService {
+export class FileManagerServiceMock {
   constructor(
     private markdownFilesService: MarkdownFilesService,
     private folderService: FoldersService,
     private s3service: S3Service,
     private conversionService: ConversionService,
     private userService: UsersService,
-    private s3ServiceMock: S3ServiceMock,
   ) {}
 
   // File operations: ###########################################################
@@ -39,7 +36,6 @@ export class FileManagerService {
   // Size: number; .. THE SIZE OF THE FILE IN MEGABYTES
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
-    isTest = false,
   ) {
     if (markdownFileDTO.UserID === undefined)
       throw new HttpException(
@@ -61,15 +57,9 @@ export class FileManagerService {
     if (markdownFileDTO.Size === undefined)
       markdownFileDTO.Size = 0;
 
-    if (isTest) {
-      await this.s3ServiceMock.createFile(
-        markdownFileDTO,
-      );
-    } else {
-      await this.s3service.createFile(
-        markdownFileDTO,
-      );
-    }
+    await this.s3service.createFile(
+      markdownFileDTO,
+    );
 
     return this.markdownFilesService.create(
       markdownFileDTO,
@@ -79,7 +69,6 @@ export class FileManagerService {
   // DB Requires the following fields to be initialised in the DTO:
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
-    isTest = false,
   ) {
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
@@ -87,15 +76,9 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (isTest) {
-      await this.s3ServiceMock.retrieveFile(
-        markdownFileDTO,
-      );
-    } else {
-      await this.s3service.retrieveFile(
-        markdownFileDTO,
-      );
-    }
+    await this.s3service.retrieveFile(
+      markdownFileDTO,
+    );
     return markdownFileDTO; // return the file
   }
 
@@ -210,7 +193,6 @@ export class FileManagerService {
   // DB Requires the following fields to be initialised in the DTO:
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
-    isTest = false,
   ) {
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
@@ -218,15 +200,9 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (isTest) {
-      await this.s3ServiceMock.saveFile(
-        markdownFileDTO,
-      );
-    } else {
-      await this.s3service.saveFile(
-        markdownFileDTO,
-      );
-    }
+    await this.s3service.saveFile(
+      markdownFileDTO,
+    );
 
     return this.markdownFilesService.updateLastModified(
       markdownFileDTO,
@@ -238,7 +214,6 @@ export class FileManagerService {
   // Name: string; .. TO IDENTIFY THE FILE
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
-    isTest = false,
   ) {
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
@@ -246,15 +221,9 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (isTest) {
-      await this.s3ServiceMock.deleteFile(
-        markdownFileDTO,
-      );
-    } else {
-      await this.s3service.deleteFile(
-        markdownFileDTO,
-      );
-    }
+    await this.s3service.deleteFile(
+      markdownFileDTO,
+    );
 
     return this.markdownFilesService.remove(
       markdownFileDTO,
@@ -388,10 +357,7 @@ export class FileManagerService {
   }
 
   // Import & Export operations: #########################################################
-  async importFile(
-    importDTO: ImportDTO,
-    isTest = false,
-  ) {
+  async importFile(importDTO: ImportDTO) {
     if (importDTO.Path === undefined)
       throw new HttpException(
         'Path cannot be undefined',
@@ -431,7 +397,7 @@ export class FileManagerService {
       );
     }
 
-    // console.log('convertedHtml: ', convertedHtml);
+    console.log('convertedHtml: ', convertedHtml);
 
     const encryptedContent =
       await this.encryptContent(
@@ -455,14 +421,12 @@ export class FileManagerService {
 
     const createdFile = await this.createFile(
       convertedMarkdownFileDTO,
-      isTest,
     );
 
     createdFile.Content = encryptedContent;
 
     const savedFile = await this.saveFile(
       createdFile,
-      isTest,
     );
 
     const returnedDTO: MarkdownFileDTO = {
