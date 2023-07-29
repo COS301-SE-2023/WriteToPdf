@@ -406,4 +406,25 @@ export class EditComponent implements AfterViewInit, OnInit {
       );
     }
   }
+
+  capitalizeFirstLetter(inputString: string): string {
+    if (!inputString || inputString.length === 0) {
+      return inputString; // Return the input string as-is if it's empty or null.
+    }
+
+    return inputString.charAt(0).toUpperCase() + inputString.slice(1);
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString || dateString.length === 0) {
+      return dateString; // Return the input string as-is if it's empty or null.
+    }
+
+    const date = new Date(dateString);
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
 }

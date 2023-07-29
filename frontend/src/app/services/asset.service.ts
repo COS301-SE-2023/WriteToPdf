@@ -168,8 +168,6 @@ export class AssetService {
         next: (response: HttpResponse<any>) => {
           console.log('Retreive All: ', response);
           if (response.status === 200) {
-            console.log('Images retrieved successfully');
-            console.log(response.body.Content);
             resolve(response.body);
           } else {
             resolve([]);
