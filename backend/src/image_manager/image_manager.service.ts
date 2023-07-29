@@ -62,7 +62,10 @@ export class ImageManagerService {
     );
   }
 
-  async retrieveOne(retrieveAssetDto: AssetDTO) {
+  async retrieveOne(
+    retrieveAssetDto: AssetDTO,
+    isTest = false,
+  ) {
     const response =
       await this.assetsService.retrieveOne(
         retrieveAssetDto,
@@ -75,10 +78,16 @@ export class ImageManagerService {
         HttpStatus.NOT_FOUND,
       );
     }
-
-    return this.s3Service.retrieveAsset(
-      retrieveAssetDto,
-    );
+    if (isTest) {
+      // Retrieve asset from the S3/local storage
+      return this.s3ServiceMock.retrieveAsset(
+        retrieveAssetDto,
+      );
+    } else {
+      return this.s3Service.retrieveAsset(
+        retrieveAssetDto,
+      );
+    }
   }
 
   deleteAsset(
