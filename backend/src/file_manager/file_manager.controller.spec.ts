@@ -20,6 +20,7 @@ import { Repository } from 'typeorm';
 import { Folder } from '../folders/entities/folder.entity';
 import { ConversionService } from '../conversion/conversion.service';
 import { S3Service } from '../s3/s3.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { UsersService } from '../users/users.service';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
@@ -44,6 +45,7 @@ describe('FileManagerController', () => {
           FoldersService,
           ConversionService,
           S3Service,
+          S3ServiceMock,
           UsersService,
           AuthService,
           JwtService,
@@ -91,6 +93,7 @@ describe('FileManagerController', () => {
         await controller.createFile(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -117,6 +120,7 @@ describe('FileManagerController', () => {
         controller.createFile(
           markdownFileDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -141,6 +145,7 @@ describe('FileManagerController', () => {
       const result = await controller.createFile(
         markdownFileDTO,
         request as any,
+        '',
       );
 
       expect(result).toBeInstanceOf(
@@ -157,7 +162,7 @@ describe('FileManagerController', () => {
       );
       expect(
         fileManagerService.createFile,
-      ).toBeCalledWith(markdownFileDTO);
+      ).toBeCalledWith(markdownFileDTO, false);
     });
   });
 
@@ -288,6 +293,7 @@ describe('FileManagerController', () => {
         await controller.deleteFile(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -313,6 +319,7 @@ describe('FileManagerController', () => {
         await controller.deleteFile(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -338,6 +345,7 @@ describe('FileManagerController', () => {
         await controller.deleteFile(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -370,6 +378,7 @@ describe('FileManagerController', () => {
       const result = await controller.deleteFile(
         markdownFileDTO,
         request as any,
+        '',
       );
 
       expect(result).toBeInstanceOf(
@@ -377,7 +386,10 @@ describe('FileManagerController', () => {
       );
       expect(
         fileManagerService.deleteFile,
-      ).toHaveBeenCalledWith(markdownFileDTO);
+      ).toHaveBeenCalledWith(
+        markdownFileDTO,
+        false,
+      );
     });
   });
 
@@ -616,6 +628,7 @@ describe('FileManagerController', () => {
         await controller.retrieveFile(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -641,6 +654,7 @@ describe('FileManagerController', () => {
         controller.retrieveFile(
           markdownFileDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -660,6 +674,7 @@ describe('FileManagerController', () => {
         controller.retrieveFile(
           markdownFileDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -685,6 +700,7 @@ describe('FileManagerController', () => {
         await controller.retrieveFile(
           markdownFileDTO,
           request as any,
+          '',
         );
 
       expect(result).toBeInstanceOf(
@@ -698,7 +714,10 @@ describe('FileManagerController', () => {
       );
       expect(
         fileManagerService.retrieveFile,
-      ).toHaveBeenCalledWith(markdownFileDTO);
+      ).toHaveBeenCalledWith(
+        markdownFileDTO,
+        false,
+      );
     });
 
     it('should throw BadRequest exception if MarkdownID is undefined', async () => {
@@ -711,6 +730,7 @@ describe('FileManagerController', () => {
         await controller.retrieveFile(
           markdownFileDTO,
           request as any,
+          '',
         );
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -736,6 +756,7 @@ describe('FileManagerController', () => {
         await controller.save(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -762,6 +783,7 @@ describe('FileManagerController', () => {
         controller.save(
           markdownFileDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -782,6 +804,7 @@ describe('FileManagerController', () => {
         await controller.save(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -808,6 +831,7 @@ describe('FileManagerController', () => {
         await controller.save(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -839,6 +863,7 @@ describe('FileManagerController', () => {
       const result = await controller.save(
         markdownFileDTO,
         request as any,
+        '',
       );
 
       expect(result).toBeInstanceOf(
@@ -852,7 +877,10 @@ describe('FileManagerController', () => {
       );
       expect(
         fileManagerService.saveFile,
-      ).toHaveBeenCalledWith(markdownFileDTO);
+      ).toHaveBeenCalledWith(
+        markdownFileDTO,
+        false,
+      );
     });
   });
 
@@ -1570,6 +1598,7 @@ describe('FileManagerController', () => {
         await controller.import(
           importDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -1598,6 +1627,7 @@ describe('FileManagerController', () => {
         controller.import(
           importDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -1620,6 +1650,7 @@ describe('FileManagerController', () => {
         controller.import(
           importDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -1642,6 +1673,7 @@ describe('FileManagerController', () => {
         controller.import(
           importDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -1664,6 +1696,7 @@ describe('FileManagerController', () => {
         controller.import(
           importDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -1686,6 +1719,7 @@ describe('FileManagerController', () => {
         controller.import(
           importDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -1708,6 +1742,7 @@ describe('FileManagerController', () => {
         controller.import(
           importDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -1734,6 +1769,7 @@ describe('FileManagerController', () => {
       const result = await controller.import(
         importDTO,
         request as any,
+        '',
       );
 
       expect(result).toBeInstanceOf(
@@ -1741,7 +1777,7 @@ describe('FileManagerController', () => {
       );
       expect(
         fileManagerService.importFile,
-      ).toBeCalledWith(importDTO);
+      ).toBeCalledWith(importDTO, false);
     });
   });
 
