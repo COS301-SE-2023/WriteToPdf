@@ -37,6 +37,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   assets: any[] = [];
   textFromAsset: any[] = [];
   textCopyDialog: boolean = false;
+  noAssetsAvailable: boolean = false;
 
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
@@ -238,7 +239,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.exportDialogVisible = true;
   }
 
-  async retrieveAsset(assetId: string, format: string, textId:string) {
+  async retrieveAsset(assetId: string, format: string, textId: string) {
     const asset = await this.assetService.retrieveAsset(assetId, format, textId);
     // const asset = true;
     if (asset) {
@@ -331,6 +332,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.assets = await this.assetService.retrieveAll(
       this.editService.getParentFolderID()
     );
+    this.noAssetsAvailable = this.assets.length === 0;
+    this.assets.sort((a, b) => new Date(b.DateCreated).getTime() - new Date(a.DateCreated).getTime());
   }
 
   pageBreak() {
