@@ -31,6 +31,7 @@ $page-height: 29.7cm;
     margin: 10px;
     margin-left: 20px;
     height: 52px;
+    width:100%;
 }
 
 .docTitleWrapper {
@@ -136,8 +137,17 @@ $page-height: 29.7cm;
     height: 52px;
 }
 
+.logoWrapper:hover {
+    cursor: pointer;
+}
+
 .logo {
     width: 50px;
+}
+
+.exitEditPage{
+    margin:auto;
+    margin-right:50px;
 }
 
 .editor {

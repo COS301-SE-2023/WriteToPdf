@@ -3,7 +3,7 @@
   <div class="header">
     <div class="toolbarWrapper">
       <div class="titleWrapper">
-        <div class="logoWrapper" (click)="navigateToPage('home')">
+        <div class="logoWrapper" (click)="navigateToPage('home')" title="Return Home">
           <img
             class="logo"
             src="assets/Logos/WriteToPdf_Logo_white.png"
@@ -23,6 +23,10 @@
             [(ngModel)]="fileName"
             [title]="fileName"
           />
+        </div>
+        <div class="exitEditPage">
+              <p-button class="backButton" icon="pi pi-times" label="Exit" styleClass="p-button-rounded"
+                (click)="navigateToPage('home')"></p-button>
         </div>
       </div>
       <div class="toolsWrapper">
