@@ -9,6 +9,7 @@ import { UserService } from './user.service';
 import { MessageService } from 'primeng/api';
 import { environment } from '../../environments/environment';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
+import { text } from 'stream/consumers';
 
 @Injectable({
   providedIn: 'root',
@@ -91,7 +92,7 @@ export class AssetService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveAsset(assetId: string, format: string): Promise<any> {
+  retrieveAsset(assetId: string, format: string, textId:string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       if (format === 'image')
         this.sendRetrieveAssetData(assetId, format).subscribe({
@@ -105,11 +106,11 @@ export class AssetService {
           },
         });
       else if (format === 'text')
-        this.sendRetrieveTextData(assetId, format).subscribe({
+        this.sendRetrieveTextData(assetId, format, textId).subscribe({
           next: (response: HttpResponse<any>) => {
-            if (response.status === 201) {
+            if (response.status === 200) {
               console.log('Text retrieved successfully');
-              resolve(response.body);
+              resolve(JSON.parse(response.body.Content));
             } else {
               resolve(null);
             }
@@ -140,14 +141,17 @@ export class AssetService {
 
   sendRetrieveTextData(
     assetId: string,
-    format: string
+    format: string,
+    textID: string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
-    const url = `${environmentURL}textract/extract_image`;
+    const url = `${environmentURL}asset_manager/retrieve_one`;
 
-    const body = new MarkdownFileDTO();
+    const body = new AssetDTO();
     body.UserID = this.userService.getUserID();
-    body.MarkdownID = 'IMG_3600.jpeg';
+    body.AssetID = assetId;
+    body.Format = format;
+    body.TextID = textID;
 
 
     const headers = new HttpHeaders().set(
