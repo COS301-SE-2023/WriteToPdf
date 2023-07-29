@@ -476,7 +476,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     console.log(event);
     const file = this.nodeService.getFileDTOByID(event.key);
     this.entityToMove = event;
-    this.showFileManagerPopup('move');
+    // this.showFileManagerPopup('move');
     this.moveDialogVisible = true;
     console.log(file);
   }
@@ -569,7 +569,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 label: 'Folder',
                 icon: 'pi pi-fw pi-folder',
                 command: () => {
-                  this.showFileManagerPopup('folder');
+                  // this.showFileManagerPopup('folder');
                   this.createNewFolderDialogueVisible = true;
                 },
               },
@@ -577,7 +577,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 label: 'Document',
                 icon: 'pi pi-fw pi-file',
                 command: () => {
-                  this.showFileManagerPopup('document');
+                  // this.showFileManagerPopup('document');
                   this.createNewDocumentDialogueVisible = true;
                 },
               },
