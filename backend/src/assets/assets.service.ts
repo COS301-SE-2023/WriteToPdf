@@ -17,7 +17,7 @@ export class AssetsService {
   saveAsset(uploadAssetDTO: AssetDTO) {
     uploadAssetDTO.DateCreated = new Date();
     uploadAssetDTO.Size =
-      uploadAssetDTO.Content.length;
+      uploadAssetDTO.Image.length;
     const newAsset = this.assetsRepository.create(
       uploadAssetDTO,
     );
