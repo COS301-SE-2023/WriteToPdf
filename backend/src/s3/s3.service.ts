@@ -314,6 +314,14 @@ export class S3Service {
       return undefined;
     }
 
+    // const fileStats = await stat(
+    //   `./storage/${filePath}`,
+    // );
+    // console.log(fileStats);
+    // saveAssetDTO.DateCreated = fileStats.mtime;
+    saveAssetDTO.DateCreated = new Date();
+    // saveAssetDTO.Size =
+    //   fileData.buffer.byteLength; // TODO: Change to s3 return object
     saveAssetDTO.Size =
       saveAssetDTO.Content.length;
     saveAssetDTO.Content = '';
