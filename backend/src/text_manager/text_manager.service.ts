@@ -18,14 +18,18 @@ export class TextManagerService {
   ) {}
 
   async upload(uploadTextDTO: AssetDTO) {
+    // Create S3 image data file
+    const asset =
+      await this.s3Service.createAsset(
+        uploadTextDTO,
+      );
+
     // Save text asset in database
+    uploadTextDTO.AssetID = asset.AssetID;
     const imageData = uploadTextDTO.Image;
     uploadTextDTO.Image = '';
     this.assetsService.saveAsset(uploadTextDTO);
     uploadTextDTO.Content = imageData;
-
-    // Create S3 image data file
-    this.s3Service.createAsset(uploadTextDTO);
 
     // Save image data in the S3
     const savedAssetDTO =
