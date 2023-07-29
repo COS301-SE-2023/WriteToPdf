@@ -18,9 +18,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { MarkdownFile } from '../src/markdown_files/entities/markdown_file.entity';
 import { S3Service } from '../src/s3/s3.service';
 import { S3ServiceMock } from '../src/s3/__mocks__/s3.service';
-import { FileDTO } from '../src/s3/dto/file.dto';
+// import { FileDTO } from '../src/s3/dto/file.dto';
 
-let startTime: string;
+// let startTime: string;
 let fileID = '';
 let folderID = '';
 
@@ -70,18 +70,18 @@ describe('FileManagerController (integration)', () => {
     await app.close();
   });
 
-  beforeEach(async () => {
-    const currentTime = new Date();
-    const twoHoursLater = new Date(
-      currentTime.getTime() + 2 * 60 * 60 * 1000,
-    );
-    startTime = twoHoursLater.toISOString();
-  });
+  // beforeEach(async () => {
+  //   const currentTime = new Date();
+  //   const twoHoursLater = new Date(
+  //     currentTime.getTime() + 2 * 60 * 60 * 1000,
+  //   );
+  //   startTime = twoHoursLater.toISOString();
+  // });
 
-  afterEach(async () => {
-    // await cleanUp();
-    // await resetUser();
-  });
+  // afterEach(async () => {
+  //   // await cleanUp();
+  //   // await resetUser();
+  // });
 
   // afterAll(async () => {
   // });
