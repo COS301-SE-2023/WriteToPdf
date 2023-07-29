@@ -262,7 +262,68 @@ export class S3Service {
     return newAssetDTO;
   }
 
-  async saveAsset(saveAssetDTO: AssetDTO) {
+  async saveImageAsset(saveAssetDTO: AssetDTO) {
+    let filePath = `${saveAssetDTO.UserID}`;
+
+    try {
+      await fs.mkdir(`./storage/${filePath}`, {
+        recursive: true,
+      });
+    } catch (err) {
+      // console.log(
+      //   'Directory Creation Error: ' + err,
+      // );
+      return undefined;
+    }
+
+    const fileData = new Uint8Array(
+      Buffer.from(saveAssetDTO.Content),
+    );
+
+    filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.AssetID}`;
+
+    try {
+      await fs.writeFile(
+        `./storage/${filePath}`,
+        fileData,
+        'utf-8',
+      );
+      // console.log(
+      //   'S3.saveAsset.filePath',
+      //   filePath,
+      // );
+      const response = await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: filePath,
+          Body: fileData,
+        }),
+      );
+
+      // console.log(
+      //   'S3 Save Asset Response: ',
+      //   response,
+      // );
+    } catch (err) {
+      console.log('Write File Error: ' + err);
+      return undefined;
+    }
+
+    // const fileStats = await stat(
+    //   `./storage/${filePath}`,
+    // );
+    // console.log(fileStats);
+    // saveAssetDTO.DateCreated = fileStats.mtime;
+    saveAssetDTO.DateCreated = new Date();
+    // saveAssetDTO.Size =
+    //   fileData.buffer.byteLength; // TODO: Change to s3 return object
+    saveAssetDTO.Size =
+      saveAssetDTO.Content.length;
+    saveAssetDTO.Content = '';
+    return saveAssetDTO;
+  }
+
+  async saveTextAsset(saveAssetDTO: AssetDTO) {
     let filePath = `${saveAssetDTO.UserID}`;
 
     try {
@@ -385,21 +446,26 @@ export class S3Service {
     filePath += `/${retrieveAssetDTO.AssetID}`;
 
     try {
-      retrieveAssetDTO.Content =
-        await fs.readFile(
-          `./storage/${filePath}`,
-          {
-            encoding: 'utf-8',
-          },
-        );
-      retrieveAssetDTO.Size =
-        retrieveAssetDTO.Content.length;
+      // retrieveAssetDTO.Content =
+      //   await fs.readFile(
+      //     `./storage/${filePath}`,
+      //     {
+      //       encoding: 'utf-8',
+      //     },
+      //   );
+      // retrieveAssetDTO.Size =
+      //   retrieveAssetDTO.Content.length;
 
       const response = await this.s3Client.send(
         new GetObjectCommand({
           Bucket: this.awsS3BucketName,
           Key: filePath,
         }),
+      );
+
+      console.log(
+        'S3.retrieveAsset.response',
+        response,
       );
 
       retrieveAssetDTO.Content =
