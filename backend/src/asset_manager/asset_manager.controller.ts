@@ -37,6 +37,11 @@ export class AssetManagerController {
       );
     }
 
+    console.log(
+      'Image data sent from frontend: ',
+      uploadImageDTO.Image,
+    );
+
     return this.assetManagerService.upload_asset(
       uploadImageDTO,
     );
