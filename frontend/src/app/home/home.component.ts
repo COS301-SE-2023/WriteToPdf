@@ -668,6 +668,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   async createNewFolder() {
+    this.createNewFolderDialogueVisible = false;
+
     let path: string | undefined = '';
     let parentFolderID: string | undefined = '';
     if (this.entityName == '') {
@@ -699,7 +701,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       path,
       'folder'
     );
-
     this.folderService
       .createFolder(path, this.entityName, parentFolderID)
       .then((data) => {
@@ -730,6 +731,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   async createNewDocument() {
+    this.createNewDocumentDialogueVisible = false;
     let path: string | undefined = '';
     let parentFolderID: string | undefined = '';
     if (this.entityName == '') {

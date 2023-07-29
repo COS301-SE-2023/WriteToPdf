@@ -64,10 +64,11 @@
             pInputText
             type="text"
             (keydown.enter)="createNewDocument()"
+            (keydown.enter)="createNewDocumentDialogueVisible = true"
           />
           <br />
           <br />
-          <p-button (click)="createNewDocument()" label="Create"></p-button>
+          <p-button (click)="createNewDocument()" (click)="createNewDocumentDialogueVisible = true" label="Create"></p-button>
         </div>
       </p-dialog>
     </div>
@@ -91,10 +92,11 @@
             pInputText
             type="text"
             (keydown.enter)="createNewFolder()"
+            (keydown.enter)="createNewFolderDialogueVisible = false"
           />
           <br />
           <br />
-          <p-button (click)="createNewFolder()" label="Create"></p-button>
+          <p-button (click)="createNewFolder()" (click)="createNewFolderDialogueVisible = false" label="Create"></p-button>
         </div>
       </p-dialog>
     </div>
