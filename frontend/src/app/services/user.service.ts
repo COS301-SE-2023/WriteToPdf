@@ -149,6 +149,15 @@ export class UserService {
     this.firstName = undefined;
     this.expiresAt = undefined;
     this.doExpirationCheck = false;
+
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userID');
+    localStorage.removeItem('expiresAt');
+    localStorage.removeItem('email');
+    localStorage.removeItem('firstName');
+    localStorage.removeItem('encryptionKey');
+    
     this.navigateToPage('/login');
     if (this.timer) {
       clearInterval(this.timer);
