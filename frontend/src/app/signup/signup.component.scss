@@ -37,13 +37,7 @@
     background-size: cover;
     background-position: center;
     /* Center the background image */
-    background-image: radial-gradient(
-            /* Use a fixed center for the radial gradient */
-            at mouseXpercentage mouseYpercentage,
-            rgb(100 100 100 / 90%),
-            rgb(0 0 0 / 90%),
-            rgb(0 0 0 / 90%)),
-        url(/assets/MockData/BGIW.jpg);
+    background-image: linear-gradient(rgba(100, 100, 100, 0.7), rgba(100, 100, 100, 0.7)), url(/assets/MockData/BGIW.jpg);
 }
 
 .signupForm {
