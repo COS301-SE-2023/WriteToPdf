@@ -240,8 +240,8 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async retrieveAsset(assetId: string, format: string) {
-    // const asset = await this.assetService.retrieveAsset(assetId, format);
-    const asset = true;
+    const asset = await this.assetService.retrieveAsset(assetId, format);
+    // const asset = true;
     console.log(asset);
     if (asset) {
       console.log('asset', this.mock);
@@ -251,7 +251,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.textCopyDialog = true;
       }
       else if (format === 'image') {
-        // this.copyHtmlToClipboard(`<img src="${asset.Content}" alt="Image">`);
+        this.copyHtmlToClipboard(`<img src="${asset.Content}" alt="Image">`);
         this.messageService.add({
           severity: 'success',
           summary: 'Success',

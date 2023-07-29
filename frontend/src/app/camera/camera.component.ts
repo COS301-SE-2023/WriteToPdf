@@ -101,8 +101,6 @@ export class CameraComponent {
         format
       )
       .then((res) => {
-        console.log(format);
-        console.log(res);
         if (res) {
           setTimeout(() => {
             this.goBack();

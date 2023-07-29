@@ -44,7 +44,7 @@ export class AssetService {
               severity: 'success',
               summary: 'Image uploaded successfully',
             });
-            resolve(response.body.Blocks);
+            resolve(true);
           } else {
             resolve(false);
           }
