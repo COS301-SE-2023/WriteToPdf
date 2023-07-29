@@ -109,7 +109,7 @@ $page-height: 29.7cm;
     background-color: $light-grey;
     min-width: 100px;
     margin-left: 15px;
-    margin-top:-15px;
+    margin-top: -15px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
 
@@ -121,11 +121,12 @@ $page-height: 29.7cm;
     background-color: darken($light-grey, 10%);
 }
 
-.dropdownOptions{
+.dropdownOptions {
     margin: 5px;
     padding: 5px;
     border-radius: 5px;
 }
+
 .uploadAssetIcon:hover .dropdownContent {
     display: block;
     cursor: pointer;
@@ -602,4 +603,14 @@ Preserve the relative scale, though. */
     width: 30px;
     height: 30px;
     padding: 5px;
+}
+
+.spinner {
+    margin: auto;
+    width: 30%;
+}
+
+.spinnerWrapper {
+    display:flex;
+    margin: auto;
 }

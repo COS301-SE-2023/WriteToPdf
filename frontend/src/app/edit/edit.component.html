@@ -161,6 +161,7 @@
 
       <div class="alignDiv"></div>
 
+      <div class="spinnerWrapper" *ngIf = "assets.length === 0"><img class="spinner" src="assets/Spinner/loading2.gif" title="Loading..."></div>
       <div *ngFor="let obj of assets" class="assetWrapper">
         <div class="assetHeader">
           <div class="assetName">
