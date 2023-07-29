@@ -1,5 +1,6 @@
 export class AssetDTO {
   AssetID: string | undefined;
+  TextID: string | undefined;
   Format: string | undefined;
   FileName: string | undefined;
   Content: string | undefined;
@@ -13,6 +14,7 @@ export class AssetDTO {
 
   constructor() {
     this.AssetID = undefined;
+    this.TextID = undefined;
     this.Format = undefined;
     this.FileName = undefined;
     this.Content = undefined;

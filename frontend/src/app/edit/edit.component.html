@@ -190,14 +190,14 @@
             <img
               *ngIf="obj.Format === 'image'"
               class="copyAssetIcon"
-              (click)="retrieveAsset(obj.AssetID, obj.Format)"
+              (click)="retrieveAsset(obj.AssetID, obj.Format, '')"
               src="assets/Icons/editIcons/copy.svg"
               alt=""
             />
             <img
               *ngIf="obj.Format === 'text'"
               class="copyAssetIcon"
-              (click)="retrieveAsset(obj.AssetID, obj.Format)"
+              (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)"
               src="assets/Icons/editIcons/view.png"
               alt=""
             />
@@ -252,4 +252,5 @@
       />
     </div>
   </div>
+  <p *ngIf="textFromAsset.length===0">No text detected :(</p>
 </p-dialog>
