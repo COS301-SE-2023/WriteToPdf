@@ -36,12 +36,14 @@ export class AssetManagerService {
     if (uploadAssetDTO.Format === 'text') {
       return this.textManagerService.upload(
         uploadAssetDTO,
+        isTest,
       );
     } else if (
       uploadAssetDTO.Format === 'image'
     ) {
       return this.imageManagerService.upload(
         uploadAssetDTO,
+        isTest,
       );
     }
   }
@@ -68,6 +70,7 @@ export class AssetManagerService {
         const asset =
           await this.imageManagerService.retrieveOne(
             assetDTO,
+            isTest,
           );
 
         // Compress/Resize the image
@@ -89,6 +92,7 @@ export class AssetManagerService {
         const tempAssetDTO =
           await this.textManagerService.retrieveOne(
             assetDTO,
+            isTest,
           );
 
         assets[j].Image = tempAssetDTO.Image;
@@ -106,12 +110,14 @@ export class AssetManagerService {
     if (retrieveAssetDTO.Format === 'text') {
       return this.textManagerService.retrieveOne(
         retrieveAssetDTO,
+        isTest,
       );
     }
 
     if (retrieveAssetDTO.Format === 'image') {
       return this.imageManagerService.retrieveOne(
         retrieveAssetDTO,
+        isTest,
       );
     }
   }
