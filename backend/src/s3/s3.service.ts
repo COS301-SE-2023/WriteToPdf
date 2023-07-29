@@ -370,16 +370,16 @@ export class S3Service {
   async saveAsset(saveAssetDTO: AssetDTO) {
     let filePath = `${saveAssetDTO.UserID}`;
 
-    try {
-      await mkdir(`./storage/${filePath}`, {
-        recursive: true,
-      });
-    } catch (err) {
-      console.log(
-        'Directory Creation Error:' + err,
-      );
-      return undefined;
-    }
+    // try {
+    //   await mkdir(`./storage/${filePath}`, {
+    //     recursive: true,
+    //   });
+    // } catch (err) {
+    //   console.log(
+    //     'Directory Creation Error:' + err,
+    //   );
+    //   return undefined;
+    // }
 
     const fileData = new Uint8Array(
       Buffer.from(saveAssetDTO.Content),
@@ -388,30 +388,33 @@ export class S3Service {
     filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.AssetID}`;
 
     try {
-      await writeFile(
-        `./storage/${filePath}`,
-        fileData,
-        'utf-8',
-      );
-      // /*const response = */ await this.s3Client.send(
-      //   new PutObjectCommand({
-      //     Bucket: this.awsS3BucketName,
-      //     Key: filePath,
-      //     Body: fileData,
-      //   }),
+      // await writeFile(
+      //   `./storage/${filePath}`,
+      //   fileData,
+      //   'utf-8',
       // );
+      /*const response = */ await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: filePath,
+          Body: fileData,
+        }),
+      );
     } catch (err) {
       console.log('Write File Error:' + err);
       return undefined;
     }
 
-    const fileStats = await stat(
-      `./storage/${filePath}`,
-    );
-    console.log(fileStats);
-    saveAssetDTO.DateCreated = fileStats.mtime;
+    // const fileStats = await stat(
+    //   `./storage/${filePath}`,
+    // );
+    // console.log(fileStats);
+    // saveAssetDTO.DateCreated = fileStats.mtime;
+    saveAssetDTO.DateCreated = new Date();
+    // saveAssetDTO.Size =
+    //   fileData.buffer.byteLength; // TODO: Change to s3 return object
     saveAssetDTO.Size =
-      fileData.buffer.byteLength; // TODO: Change to s3 return object
+      saveAssetDTO.Content.length;
     saveAssetDTO.Content = '';
     return saveAssetDTO;
   }
