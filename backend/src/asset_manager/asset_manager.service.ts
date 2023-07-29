@@ -62,10 +62,11 @@ export class AssetManagerService {
     for (let j = 0; j < assets.length; j++) {
       if (assets[j].Format === 'text') {
         const assetDTO = new AssetDTO();
-        assetDTO.AssetID = assets[j].AssetID;
-        assetDTO.UserID = assets[j].UserID;
+        assetDTO.AssetID = assets[j].AssetID; // for the text image data file
+        assetDTO.TextID = assets[j].TextID; // for the OCR text data file
+        assetDTO.UserID = assets[j].UserID; // for the path to both files in the s3
 
-        // Retrieve the delineated data from S3
+        // Retrieve the image and the OCR text for this asset
         const tempAssetDTO =
           await this.textManagerService.retrieveOne(
             assetDTO,
