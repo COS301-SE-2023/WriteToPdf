@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import 'dotenv/config';
-import { S3Client } from '@aws-sdk/client-s3';
+import {
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import {
   writeFile,
   mkdir,
@@ -314,6 +317,54 @@ export class S3Service {
 
     // console.log(markdownFileDTO);
     return markdownFileDTO;
+  }
+
+  async createAsset(assetDTO: AssetDTO) {
+    // Generate new AssetID
+    assetDTO.AssetID = CryptoJS.SHA256(
+      assetDTO.UserID.toString() +
+        new Date().getTime().toString(),
+    ).toString();
+
+    const filePath = `${assetDTO.UserID}`;
+
+    // try {
+    //   await mkdir(`./storage/${filePath}`, {
+    //     recursive: true,
+    //   });
+    // } catch (err) {
+    //   console.log(
+    //     'Directory Creation Error:' + err,
+    //   );
+    //   return undefined;
+    // }
+
+    try {
+      // await writeFile(
+      //   `./storage/${filePath}/${assetDTO.AssetID}`,
+      //   '',
+      //   'utf-8',
+      // );
+      /*const response = */
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/${assetDTO.AssetID}`,
+          Body: new Uint8Array(Buffer.from('')),
+        }),
+      );
+    } catch (err) {
+      console.log('Write File Error:' + err);
+      return undefined;
+    }
+
+    // const fileStats = await stat(
+    //   `./storage/${filePath}`,
+    // );
+    assetDTO.Content = '';
+    assetDTO.DateCreated = new Date();
+    assetDTO.Size = 0;
+    return assetDTO;
   }
 
   async saveAsset(saveAssetDTO: AssetDTO) {
