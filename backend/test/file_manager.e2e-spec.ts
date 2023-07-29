@@ -16,7 +16,7 @@ import * as dotenv from 'dotenv';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { MarkdownFile } from '../src/markdown_files/entities/markdown_file.entity';
-import { S3Service } from '../src/s3/s3.service';
+// import { S3Service } from '../src/s3/s3.service';
 import { S3ServiceMock } from '../src/s3/__mocks__/s3.service';
 // import { FileDTO } from '../src/s3/dto/file.dto';
 
@@ -47,10 +47,6 @@ describe('FileManagerController (integration)', () => {
               getRepositoryToken(MarkdownFile),
             useClass: Repository,
           },
-          {
-            provide: S3Service,
-            useClass: S3ServiceMock,
-          },
         ],
       }).compile();
 
@@ -60,8 +56,7 @@ describe('FileManagerController (integration)', () => {
     markdownFileRepository = moduleFixture.get<
       Repository<MarkdownFile>
     >(getRepositoryToken(MarkdownFile));
-    s3Service =
-      moduleFixture.get<S3ServiceMock>(S3Service);
+    s3Service = new S3ServiceMock();
 
     await resetUser(ResetScope.ALL);
   });
@@ -114,6 +109,14 @@ describe('FileManagerController (integration)', () => {
 
         await s3Service.deleteFile(deleteFileDTO);
       }
+
+      await markdownFileRepository.query(
+        'DELETE FROM MARKDOWN_FILES WHERE UserID = ?',
+        [process.env.TEST_USERID],
+      );
+      console.log(
+        '################################### Deleted all test user files',
+      );
     }
 
     // Reset the db for the test user
@@ -121,14 +124,6 @@ describe('FileManagerController (integration)', () => {
       folderID = '';
       await markdownFileRepository.query(
         'DELETE FROM FOLDERS WHERE UserID = ?',
-        [process.env.TEST_USERID],
-      );
-    } else if (
-      ResetScope.ALL ||
-      ResetScope.MARKDOWN_FILES
-    ) {
-      await markdownFileRepository.query(
-        'DELETE FROM MARKDOWN_FILES WHERE UserID = ?',
         [process.env.TEST_USERID],
       );
     }
@@ -211,6 +206,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -246,6 +242,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.body).toHaveProperty(
@@ -305,6 +302,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -340,6 +338,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -380,6 +379,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -409,6 +409,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -445,6 +446,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -482,6 +484,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -522,6 +525,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         // console.log('response.body: ', response.body);
@@ -568,6 +572,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -606,6 +611,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -644,6 +650,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -725,6 +732,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.body).toHaveProperty(
@@ -777,6 +785,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -813,6 +822,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -850,6 +860,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -890,6 +901,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.body).toHaveProperty(
@@ -940,6 +952,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
@@ -1014,6 +1027,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
         expect(response.body).toHaveProperty(
@@ -1054,6 +1068,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestDirectoryFilesDTO);
 
         expect(response.status).toBe(
@@ -1092,6 +1107,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestDirectoryFilesDTO);
 
         expect(response.body).toHaveProperty(
@@ -1133,6 +1149,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1168,6 +1185,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1203,6 +1221,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1241,6 +1260,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.body).toHaveProperty(
@@ -1297,6 +1317,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1331,6 +1352,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1366,6 +1388,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1389,6 +1412,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1424,6 +1448,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1459,6 +1484,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1495,6 +1521,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.body).toHaveProperty(
@@ -1528,6 +1555,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1564,6 +1592,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1600,6 +1629,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1636,6 +1666,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.status).toBe(
@@ -1674,6 +1705,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestFolder);
 
         expect(response.body).toHaveProperty(
@@ -1716,6 +1748,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestDirectoryFoldersDTO);
 
         expect(response.status).toBe(
@@ -1752,6 +1785,7 @@ describe('FileManagerController (integration)', () => {
             'Authorization',
             'Bearer ' + process.env.AUTH_BEARER,
           )
+          .set('isTest', 'true')
           .send(requestDirectoryFoldersDTO);
 
         expect(response.body).toHaveProperty(
