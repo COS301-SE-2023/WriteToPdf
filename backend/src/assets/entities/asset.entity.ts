@@ -10,13 +10,13 @@ export class Asset {
   AssetID: string;
 
   @Column()
+  TextID: string;
+
+  @Column()
   Format: string;
 
   @Column()
   FileName: string;
-
-  @Column()
-  ConvertedElement: string;
 
   @Column()
   Image: string;
