@@ -60,13 +60,15 @@ export class TextractService {
   ) {
     let textCommand: StartDocumentTextDetectionCommand;
     let tableCommand: StartDocumentAnalysisCommand;
+    const filePath = `${assetDTO.UserID}/${assetDTO.AssetID}`;
+
     if (extractType === 'text') {
       textCommand =
         new StartDocumentTextDetectionCommand({
           DocumentLocation: {
             S3Object: {
               Bucket: this.awsS3BucketName,
-              Name: assetDTO.AssetID,
+              Name: filePath,
             },
           },
           NotificationChannel: {
@@ -80,7 +82,7 @@ export class TextractService {
           DocumentLocation: {
             S3Object: {
               Bucket: this.awsS3BucketName,
-              Name: assetDTO.AssetID,
+              Name: filePath,
             },
           },
           NotificationChannel: {
@@ -169,13 +171,15 @@ export class TextractService {
   ) {
     let textCommand: DetectDocumentTextCommand;
     let tableCommand: AnalyzeDocumentCommand;
+    const filePath = `${assetDTO.UserID}/${assetDTO.AssetID}`;
+
     if (extractType === 'text') {
       textCommand = new DetectDocumentTextCommand(
         {
           Document: {
             S3Object: {
               Bucket: this.awsS3BucketName,
-              Name: assetDTO.AssetID,
+              Name: filePath,
             },
           },
         },
@@ -185,7 +189,7 @@ export class TextractService {
         Document: {
           S3Object: {
             Bucket: this.awsS3BucketName,
-            Name: assetDTO.AssetID,
+            Name: filePath,
           },
         },
         FeatureTypes: [FeatureType.TABLES],
@@ -295,6 +299,11 @@ export class TextractService {
             assetDTO,
             extractType,
           );
+
+        console.log(
+          'textract.service retVal: ',
+          retVal,
+        );
       } else {
         retVal =
           await this._extractDocumentAsynchronous(
