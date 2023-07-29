@@ -18,11 +18,48 @@ export class ConversionService {
     this.turndownService = new TurndownService();
     this.markdownIt = new markdownIt();
   }
+
+  // Helper function to return inline styling for htmlcontent
+  applyInlineStylesToTable(htmlContent) {
+    const tableStyle = `
+    border-collapse: collapse;
+    width: 100%;
+  `;
+
+    const cellStyle = `
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+  `;
+
+    // Apply style to the <table> element
+    htmlContent = htmlContent.replace(
+      /<table([^>]*)>/gi,
+      `<table style="${tableStyle}"$1>`,
+    );
+
+    // Apply style to the <th> and <td> elements
+    htmlContent = htmlContent.replace(
+      /<(th|td)([^>]*)>/gi,
+      `<$1 style="${cellStyle}"$2>`,
+    );
+
+    return htmlContent;
+  }
   async generatePdf(htmlContent: string) {
+    //Applying CSS stylings to html page to allow for table conversion
+    const headerStylesString1 =
+      'table { border-collapse: collapse; width: 100%; }\n';
+    const headerStylesString2 =
+      'th, td { border: 1px solid black; padding: 8px;    text-align: left;}';
+    const headerStyles =
+      headerStylesString1 + headerStylesString2;
+    //Creating temp html file for creation of PDF.
     const tempHtmlFilePath = path.join(
       __dirname,
       'temp.html',
     );
+
     fs.writeFileSync(tempHtmlFilePath, ''); // Create a blank HTML file
     fs.appendFileSync(
       tempHtmlFilePath,
@@ -41,14 +78,24 @@ export class ConversionService {
       width: 1920,
       height: 1080,
     });
-
-    await page.goto(dataUri, {
-      waitUntil: 'networkidle0',
-    });
-
-    //    await page.setContent(html, {
+    //
+    //    await page.goto(dataUri, {
     //      waitUntil: 'networkidle0',
     //    });
+    //    await page.evaluate(() => {
+    //      const style =
+    //        document.createElement('style');
+    //      style.textContent = headerStyles;
+    //      document.head.appendChild(style);
+    //    });
+
+    //TODO apply inline styling to images
+
+    htmlContent =
+      this.applyInlineStylesToTable(htmlContent);
+    await page.setContent(htmlContent, {
+      waitUntil: 'networkidle0',
+    });
 
     // Set a higher scale to improve quality (e.g., 2 for Retina displays)
     const pdfFile = await page.pdf({
