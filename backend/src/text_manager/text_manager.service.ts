@@ -60,7 +60,10 @@ export class TextManagerService {
     }
   }
 
-  async retrieveOne(retrieveTextDTO: AssetDTO) {
+  async retrieveOne(
+    retrieveTextDTO: AssetDTO,
+    isTest = false,
+  ) {
     // Retrieve text asset reference from database
     const asset =
       await this.assetsService.retrieveOne(
@@ -75,12 +78,22 @@ export class TextManagerService {
       );
     }
 
-    // Retrieve text asset from S3
-    const assetDTO =
-      await this.s3Service.retrieveAssetByID(
-        asset.AssetID,
-        asset.UserID,
-      );
+    let assetDTO: AssetDTO;
+    if (isTest) {
+      // Retrieve text asset from local storage
+      assetDTO =
+        await this.s3ServiceMock.retrieveAssetByID(
+          asset.AssetID,
+          asset.UserID,
+        );
+    } else {
+      // Retrieve text asset from S3
+      assetDTO =
+        await this.s3Service.retrieveAssetByID(
+          asset.AssetID,
+          asset.UserID,
+        );
+    }
 
     return this.parseS3Content(assetDTO);
   }
