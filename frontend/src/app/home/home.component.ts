@@ -95,23 +95,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.contextMenuItems = [
       {
         label: 'Create New Folder',
-        icon: 'pi pi-folder-plus',
-        // command: () => this.createNewFolder()
+        icon: 'pi pi-folder',
+        command: () => this.createNewFolderDialogueVisible = true
       },
       {
         label: 'Create New File',
         icon: 'pi pi-file',
-        // command: () => this.createNewFile()
+        command: () => this.createNewDocumentDialogueVisible = true
       },
-      {
-        label: 'Enclose in Folder',
-        icon: 'pi pi-folder-plus',
-        // command: () => this.encloseSelectionInFolder()
-      },
+      // {
+      //   label: 'Enclose in Folder',
+      //   icon: 'pi pi-folder-plus',
+      //   // command: () => this.encloseSelectionInFolder()
+      // },
       {
         label: 'Delete',
         icon: 'pi pi-trash',
-        // command: () => this.deleteSelection()
+        command: () => this.deleteSelectedEntity(this.currentDirectory)
       },
     ];
   }
@@ -801,6 +801,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   deleteSelectedEntity(event: any): void {
+    console.log('event', event);
     if (this.currentDirectory != null) {
       let message = `Are you sure that you want to delete '${this.currentDirectory.data.name}'?`;
       const type = this.currentDirectory.data.type;
