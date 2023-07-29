@@ -59,8 +59,6 @@ describe('TextManagerService', () => {
 
       const uploadTextDTO = new AssetDTO();
       uploadTextDTO.UserID = 1;
-      // .ConvertedElement left undefined
-      // .Content left undefined
 
       const assetDTO = new AssetDTO();
 
