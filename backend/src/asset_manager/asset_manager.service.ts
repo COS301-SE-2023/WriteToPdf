@@ -85,8 +85,6 @@ export class AssetManagerService {
             assetDTO,
           );
 
-        assets[j].ConvertedElement =
-          tempAssetDTO.Content;
         assets[j].Image = tempAssetDTO.Image;
       }
     }
