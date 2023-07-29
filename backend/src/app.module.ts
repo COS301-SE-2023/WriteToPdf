@@ -20,6 +20,7 @@ import { FoldersService } from './folders/folders.service';
 import { MarkdownFile } from './markdown_files/entities/markdown_file.entity';
 import { Folder } from './folders/entities/folder.entity';
 import { S3Service } from './s3/s3.service';
+import { S3ServiceMock } from './s3/__mocks__/s3.service';
 import { User } from './users/entities/user.entity';
 import { AssetManagerModule } from './asset_manager/asset_manager.module';
 import { ConversionService } from './conversion/conversion.service';
@@ -54,6 +55,7 @@ import { TextractService } from './textract/textract.service';
     MarkdownFilesService,
     FoldersService,
     S3Service,
+    S3ServiceMock,
     ConversionService,
     TextractService,
   ],
