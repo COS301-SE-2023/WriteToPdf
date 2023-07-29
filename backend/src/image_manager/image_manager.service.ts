@@ -23,10 +23,6 @@ export class ImageManagerService {
         new Date().getTime().toString(),
     ).toString();
 
-    if (!uploadImageDTO.ConvertedElement) {
-      uploadImageDTO.ConvertedElement = '';
-    }
-
     if (!uploadImageDTO.Content) {
       uploadImageDTO.Content = '';
     }
