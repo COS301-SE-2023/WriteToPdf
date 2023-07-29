@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { AssetService } from '../services/asset.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -20,6 +20,7 @@ export class CameraComponent {
   path: string = '';
   isAsset: boolean = false;
   captured: boolean = false;
+  flipCamera: boolean = false;
 
   constructor(
     private elementRef: ElementRef,
@@ -119,5 +120,12 @@ export class CameraComponent {
     this.location.back();
   }
 
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if(event.key === 'r') {
+      this.getSnapshot();
+      this.sidebarVisible = true;
+    }
+  }
   
 }
