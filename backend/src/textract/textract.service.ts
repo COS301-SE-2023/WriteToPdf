@@ -212,7 +212,8 @@ export class TextractService {
       Children: textractResponse,
     };
     console.log(
-      'Textract response: ' + textractResponse,
+      'Textract response: ',
+      textractResponse,
     );
     return textractResponse;
   }
@@ -299,11 +300,6 @@ export class TextractService {
             assetDTO,
             extractType,
           );
-
-        console.log(
-          'textract.service retVal: ',
-          retVal,
-        );
       } else {
         retVal =
           await this._extractDocumentAsynchronous(
@@ -314,7 +310,7 @@ export class TextractService {
     } catch (error) {
       console.log(error.message);
     } finally {
-      console.log('Finally');
+      // console.log('Finally');
       return retVal;
     }
   }
