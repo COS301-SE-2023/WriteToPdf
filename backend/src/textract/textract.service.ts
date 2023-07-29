@@ -191,6 +191,7 @@ export class TextractService {
         FeatureTypes: [FeatureType.TABLES],
       });
     }
+
     const textractResponse =
       await this.textractClient.send(
         extractType === 'text'
@@ -206,8 +207,9 @@ export class TextractService {
       // ),
       Children: textractResponse,
     };
-    console.log(textractResponse);
-
+    console.log(
+      'Textract response: ' + textractResponse,
+    );
     return textractResponse;
   }
 
