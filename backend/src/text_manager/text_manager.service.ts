@@ -49,28 +49,11 @@ export class TextManagerService {
       'base64',
     );
 
-    // use fs-promises to save a file
-    await fs.writeFile(
-      `./storage/test/${uploadTextDTO.AssetID}.jpeg`,
-      uploadTextDTO.ImageBuffer,
-      (err) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log('The file was saved!');
-        }
-      },
-    );
     // Save image data in the S3
     const savedAssetDTO =
-      await this.s3Service.saveAsset(
+      await this.s3Service.saveTextAsset(
         uploadTextDTO,
       );
-
-    console.log(
-      'textmanagerservice.upload: ',
-      savedAssetDTO,
-    );
 
     // Send textract to classify s3 image
     const OCRResponse =
