@@ -11,6 +11,7 @@ import { PrimeIcons } from 'primeng/api';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { Inject } from '@angular/core';
+import { set } from 'cypress/types/lodash';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +31,7 @@ export class UserService {
     private http: HttpClient,
     private messageService: MessageService,
     @Inject(Router) private router: Router
-  ) {}
+  ) { }
 
   async login(email: string, password: string): Promise<boolean> {
     let salt: string;
@@ -55,6 +56,17 @@ export class UserService {
             this.firstName = response.body.FirstName;
             this.doExpirationCheck = true;
             this.encryptionKey = response.body.EncryptionKey;
+            if (this.authToken && this.userID && this.expiresAt && this.email && this.firstName && this.encryptionKey) {
+              localStorage.setItem('isAuthenticated', 'true');
+              localStorage.setItem('authToken', this.authToken);
+              localStorage.setItem('userID', this.userID.toString());
+              localStorage.setItem('expiresAt', this.expiresAt.toString());
+              localStorage.setItem('email', this.email);
+              localStorage.setItem('firstName', this.firstName);
+              localStorage.setItem('encryptionKey', this.encryptionKey);
+            }
+
+
             this.startExpirationCheck();
             resolve(true);
           } else {
@@ -167,6 +179,34 @@ export class UserService {
 
   getEncryptionKey(): string | undefined {
     return this.encryptionKey;
+  }
+
+  setEncryptionKey(encryptionKey: string): void {
+    this.encryptionKey = encryptionKey;
+  }
+
+  setFirstName(firstName: string): void {
+    this.firstName = firstName;
+  }
+
+  setUserID(userID: number): void {
+    this.userID = userID;
+  }
+
+  setEmail(email: string): void {
+    this.email = email;
+  }
+
+  setAuthToken(authToken: string): void {
+    this.authToken = authToken;
+  }
+
+  setAuthenticated(isAuthenticated: boolean): void {
+    this.isAuthenticated = isAuthenticated;
+  }
+
+  setExpiresAt(expiresAt: Date): void {
+    this.expiresAt = expiresAt;
   }
 
   sendLoginData(
