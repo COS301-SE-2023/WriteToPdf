@@ -393,12 +393,16 @@ export class S3Service {
       //   fileData,
       //   'utf-8',
       // );
-      /*const response = */ await this.s3Client.send(
+      const response = await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
           Key: filePath,
           Body: fileData,
         }),
+      );
+
+      console.log(
+        'S3 Save Asset Response: ' + response,
       );
     } catch (err) {
       console.log('Write File Error:' + err);
