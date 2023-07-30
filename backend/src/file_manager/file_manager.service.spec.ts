@@ -668,6 +668,39 @@ describe('FileManagerService', () => {
       expect(response.Size).toBe(0);
     });
 
+    it('should use mocked out s3 if it is a test', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.Name = 'test';
+      markdownFileDTO.Size = 0;
+
+      jest
+        .spyOn(Repository.prototype, 'create')
+        .mockResolvedValueOnce(markdownFileDTO);
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockResolvedValueOnce(markdownFileDTO);
+
+      jest
+        .spyOn(
+          S3ServiceMock.prototype,
+          'createFile',
+        )
+        .mockResolvedValueOnce(markdownFileDTO);
+
+      const response = await service.createFile(
+        markdownFileDTO,
+        true,
+      );
+
+      expect(
+        S3ServiceMock.prototype.createFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+
     it('should create a new file with provided values', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();
