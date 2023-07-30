@@ -3,6 +3,7 @@ import {
   TestingModule,
 } from '@nestjs/testing';
 import { TextManagerService } from './text_manager.service';
+import { TextractService } from '../textract/textract.service';
 import { AssetsService } from '../assets/assets.service';
 import { S3Service } from '../s3/s3.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -20,6 +21,8 @@ import {
 describe('TextManagerService', () => {
   let service: TextManagerService;
   let assetsService: AssetsService;
+  let s3Service: S3Service;
+  let textractService: TextractService;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -34,6 +37,7 @@ describe('TextManagerService', () => {
           },
           AuthService,
           JwtService,
+          TextractService,
         ],
       }).compile();
 
@@ -42,6 +46,10 @@ describe('TextManagerService', () => {
     );
     assetsService = module.get<AssetsService>(
       AssetsService,
+    );
+    s3Service = module.get<S3Service>(S3Service);
+    textractService = module.get<TextractService>(
+      TextractService,
     );
   });
 
@@ -63,6 +71,10 @@ describe('TextManagerService', () => {
       const assetDTO = new AssetDTO();
 
       jest
+        .spyOn(s3Service, 'createAsset')
+        .mockResolvedValue(assetDTO);
+
+      jest
         .spyOn(Repository.prototype, 'create')
         .mockReturnValue(assetDTO);
 
@@ -72,11 +84,37 @@ describe('TextManagerService', () => {
 
       jest.spyOn(assetsService, 'saveAsset');
 
+      jest
+        .spyOn(service, 'removeBase64Descriptor')
+        .mockResolvedValue(
+          'mock content' as never,
+        );
+
+      jest
+        .spyOn(s3Service, 'saveTextAssetImage')
+        .mockResolvedValue(assetDTO);
+
+      jest
+        .spyOn(textractService, 'extractDocument')
+        .mockResolvedValue(
+          'mock textract response' as any,
+        );
+
+      jest
+        .spyOn(s3Service, 'saveTextractResponse')
+        .mockResolvedValue(assetDTO);
+
+      jest
+        .spyOn(Buffer, 'from')
+        .mockReturnValue('mock buffer' as any);
+
       const response = await service.upload(
         uploadTextDTO,
       );
 
-      expect(response).toBe(uploadTextDTO);
+      expect(response).toBe(
+        'mock textract response',
+      );
     });
   });
 
@@ -98,14 +136,24 @@ describe('TextManagerService', () => {
         .mockReturnValue(assetDTO as any);
 
       jest
-        .spyOn(service, 'parseS3Content')
-        .mockReturnValue(assetDTO as any);
+        .spyOn(s3Service, 'retrieveAssetByID')
+        .mockResolvedValue(
+          Buffer.from('mock buffer') as any,
+        );
+
+      jest
+        .spyOn(s3Service, 'retrieveAssetByID')
+        .mockResolvedValue(
+          '{textract: response}',
+        );
 
       const response = await service.retrieveOne(
         retrieveTextDTO,
       );
 
-      expect(response).toBe(assetDTO);
+      expect(response.Image).toBe(
+        '{textract: response}',
+      );
     });
 
     it('should throw error if asset not found', async () => {
@@ -140,16 +188,16 @@ describe('TextManagerService', () => {
     });
   });
 
-  describe('parseS3Content', () => {
-    it('should parse s3 content', async () => {
-      const assetDTO = new AssetDTO();
-      assetDTO.Content = '1\na<base64 string>';
-      const response =
-        await service.parseS3Content(assetDTO);
-      expect(response.Image).toBe(
-        '<base64 string>',
-      );
-      expect(response.Content).toBe('a');
-    });
-  });
+  // describe('parseS3Content', () => {
+  //   it('should parse s3 content', async () => {
+  //     const assetDTO = new AssetDTO();
+  //     assetDTO.Content = '1\na<base64 string>';
+  //     const response =
+  //       await service.parseS3Content(assetDTO);
+  //     expect(response.Image).toBe(
+  //       '<base64 string>',
+  //     );
+  //     expect(response.Content).toBe('a');
+  //   });
+  // });
 });
