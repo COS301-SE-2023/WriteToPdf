@@ -14,7 +14,7 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { RetrieveAllDTO } from './dto/retrieve_all.dto';
-import { text } from 'stream/consumers';
+import { TextractService } from '../textract/textract.service';
 
 describe('AssetManagerService', () => {
   let service: AssetManagerService;
@@ -31,6 +31,7 @@ describe('AssetManagerService', () => {
           AssetsService,
           S3Service,
           TextManagerService,
+          TextractService,
           {
             provide: getRepositoryToken(Asset),
             useClass: Repository,
