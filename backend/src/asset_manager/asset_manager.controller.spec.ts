@@ -113,6 +113,7 @@ describe('AssetManagerController', () => {
       assetDTO.AssetID = 'test';
       assetDTO.UserID = 1;
       assetDTO.ParentFolderID = '';
+      const isTest = '';
 
       jest
         .spyOn(
@@ -124,13 +125,16 @@ describe('AssetManagerController', () => {
       const response =
         await controller.upload_asset(
           assetDTO,
-          '',
+          isTest,
         );
 
       expect(response).toBe(assetDTO);
       expect(
         assetManagerService.upload_asset,
-      ).toHaveBeenCalledWith(assetDTO, false);
+      ).toHaveBeenCalledWith(
+        assetDTO,
+        isTest && isTest === 'true',
+      );
     });
   });
 
