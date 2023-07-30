@@ -9,7 +9,7 @@
       (click)="captured=false"></p-button>
   </div>
 
-  <p *ngIf="!cameraAvailable" style="text-align: center; width:100%;"><br /><br />Camera Not Available<br />Try to
+  <p *ngIf="!cameraAvailable" style="text-align: center; width:100%;color:white;"><br /><br />Camera Not Available<br />Try to
     enable camera permission and refresh if your device has a camera</p>
   <div class="webcamWrapper" [ngClass]="{ 'notVisible': captured}">
     <video class="camera" id="camera" autoplay width="1000px" height="800px"
