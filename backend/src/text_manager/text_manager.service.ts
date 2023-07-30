@@ -111,51 +111,6 @@ export class TextManagerService {
 
   /// HELPER FUNCTIONS
 
-  // packageTextForS3(uploadTextDTO: AssetDTO) {
-  //   let newContent = '';
-  //   newContent += uploadTextDTO.Content.length;
-  //   newContent += '\n';
-  //   newContent += uploadTextDTO.Content;
-  //   newContent += uploadTextDTO.Image;
-  //   return newContent;
-  // }
-
-  // parseS3Content(assetDTO: AssetDTO) {
-  //   // Get length of entire file
-  //   const fileLength = assetDTO.Content.length;
-
-  //   // Get length of text content in S3 file
-  //   const contentLengthBound =
-  //     assetDTO.Content.indexOf('\n');
-
-  //   // Get length of text content in S3 file
-  //   const textLength = parseInt(
-  //     assetDTO.Content.substring(
-  //       0,
-  //       contentLengthBound,
-  //     ),
-  //   );
-
-  //   const endOfText =
-  //     contentLengthBound + textLength + 1;
-
-  //   // Parse text content in S3 file
-  //   const textComponent =
-  //     assetDTO.Content.substring(
-  //       contentLengthBound + 1,
-  //       endOfText,
-  //     );
-
-  //   // Parse image content in S3 file
-  //   assetDTO.Image = assetDTO.Content.substring(
-  //     endOfText,
-  //     fileLength,
-  //   );
-
-  //   assetDTO.Content = textComponent;
-  //   return assetDTO;
-  // }
-
   removeBase64Descriptor(base64String: string) {
     const returnVal = base64String
       .split(';base64,')
