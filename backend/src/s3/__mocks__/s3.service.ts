@@ -160,6 +160,7 @@ export class S3ServiceMock {
   }
 
   async saveAsset(saveAssetDTO: AssetDTO) {
+    console.log('Save Asset (mock)');
     let filePath = `${saveAssetDTO.UserID}`;
 
     try {
@@ -202,6 +203,7 @@ export class S3ServiceMock {
     assetID: string,
     userID: number,
   ) {
+    console.log('Retrieve Asset (mock)');
     const retrieveAssetDTO = new AssetDTO();
 
     let filePath = `${userID}`;
@@ -239,6 +241,7 @@ export class S3ServiceMock {
   async retrieveAsset(
     retrieveAssetDTO: AssetDTO,
   ) {
+    console.log('Retrieve Asset (mock)');
     let filePath = `${retrieveAssetDTO.UserID}`;
 
     try {
@@ -272,6 +275,7 @@ export class S3ServiceMock {
   }
 
   async deleteAsset(assetDTO: AssetDTO) {
+    console.log('Delete Asset (mock)');
     let filePath = `${assetDTO.UserID}`;
 
     try {
