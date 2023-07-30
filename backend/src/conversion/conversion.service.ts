@@ -117,31 +117,137 @@ export class ConversionService {
     return this.turndownService.turndown(html);
   }
 
+  // async convertHtmlToJpeg(
+  //   html: string,
+  // ): Promise<Buffer> {
+  //   const browser = await puppeteer.launch();
+  //   const page = await browser.newPage();
+  //   await page.setContent(html);
+  //   const screenshot = await page.screenshot();
+  //   await browser.close();
+
+  //   const jpegImage = await sharp(screenshot)
+  //     .toFormat('jpeg')
+  //     .toBuffer();
+  //   return jpegImage;
+  // }
+
   async convertHtmlToJpeg(
     html: string,
   ): Promise<Buffer> {
-    const browser = await puppeteer.launch();
+    // Launch Puppeteer browser and create a new page with new Headless mode
+    const browser = await puppeteer.launch({
+      headless: 'new',
+    });
     const page = await browser.newPage();
-    await page.setContent(html);
+
+    // Set the page content and wait for it to load
+    await page.setContent(html, {
+      waitUntil: 'domcontentloaded',
+    });
+
+    // Get the dimensions of the HTML content
+    let { width, height } = await page.evaluate(
+      () => {
+        const body = document.body;
+        const { width, height } =
+          body.getBoundingClientRect();
+        return { width, height };
+      },
+    );
+    width = Math.floor(width);
+    height = Math.floor(height);
+
+    // Check if the width and height values are valid integers greater than 0
+    const validWidth =
+      Number.isInteger(width) && width > 0;
+    const validHeight =
+      Number.isInteger(height) && height > 0;
+    if (!validWidth || !validHeight) {
+      throw new Error(
+        'Invalid width or height dimensions obtained from the HTML content.',
+      );
+    }
+
+    // Set the viewport of the page to match the dimensions of the HTML content
+    await page.setViewport({ width, height });
+
+    // Take a screenshot of the entire page
     const screenshot = await page.screenshot();
+
+    // Close the browser
     await browser.close();
 
+    // Convert the screenshot to JPEG and return the buffer
     const jpegImage = await sharp(screenshot)
       .toFormat('jpeg')
       .toBuffer();
     return jpegImage;
   }
 
+  // async convertHtmlToPng(
+  //   html: string,
+  // ): Promise<Buffer> {
+  //   const browser = await puppeteer.launch();
+  //   const page = await browser.newPage();
+  //   await page.setContent(html);
+  //   const screenshot = await page.screenshot();
+  //   await browser.close();
+
+  //   return screenshot;
+  // }
+
   async convertHtmlToPng(
     html: string,
   ): Promise<Buffer> {
-    const browser = await puppeteer.launch();
+    // Launch Puppeteer browser and create a new page with new Headless mode
+    const browser = await puppeteer.launch({
+      headless: 'new',
+    });
     const page = await browser.newPage();
-    await page.setContent(html);
+
+    // Set the page content and wait for it to load
+    await page.setContent(html, {
+      waitUntil: 'domcontentloaded',
+    });
+
+    // Get the dimensions of the HTML content
+    let { width, height } = await page.evaluate(
+      () => {
+        const body = document.body;
+        const { width, height } =
+          body.getBoundingClientRect();
+        return { width, height };
+      },
+    );
+    width = Math.floor(width);
+    height = Math.floor(height);
+
+    // Check if the width and height values are valid integers greater than 0
+    const validWidth =
+      Number.isInteger(width) && width > 0;
+    const validHeight =
+      Number.isInteger(height) && height > 0;
+    if (!validWidth || !validHeight) {
+      throw new Error(
+        'Invalid width or height dimensions obtained from the HTML content.',
+      );
+    }
+
+    // Set the viewport of the page to match the dimensions of the HTML content
+    await page.setViewport({ width, height });
+
+    // Take a screenshot of the entire page
     const screenshot = await page.screenshot();
+
+    // Close the browser
     await browser.close();
 
-    return screenshot;
+    // Convert the screenshot to PNG and return the buffer
+    const pngImage = await sharp(screenshot)
+      .toFormat('png')
+      .toBuffer();
+    return pngImage;
   }
 
   // async convertPdfToHtml(
