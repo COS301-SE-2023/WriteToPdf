@@ -238,6 +238,31 @@ describe('AssetManagerService', () => {
   });
 
   describe('delete_asset', () => {
+    it('should use the mocked s3 if it is a test', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'test';
+      assetDTO.Format = 'image';
+
+      jest
+        .spyOn(assetsService, 'removeOne')
+        .mockResolvedValue(assetDTO as any);
+
+      jest
+        .spyOn(
+          S3ServiceMock.prototype,
+          'deleteAsset',
+        )
+        .mockResolvedValue(assetDTO as any);
+
+      await service.delete_asset(assetDTO, true);
+
+      expect(
+        assetsService.removeOne,
+      ).toBeCalledWith(assetDTO.AssetID);
+      expect(
+        S3ServiceMock.prototype.deleteAsset,
+      ).toBeCalledWith(assetDTO);
+    });
     it('should delete an asset', async () => {
       const assetDTO = new AssetDTO();
       assetDTO.AssetID = 'test';
