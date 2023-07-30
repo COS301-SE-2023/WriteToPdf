@@ -387,7 +387,9 @@ export class S3Service {
     return saveAssetDTO;
   }
 
-  async saveTextAsset(saveAssetDTO: AssetDTO) {
+  async saveTextAssetImage(
+    saveAssetDTO: AssetDTO,
+  ) {
     let filePath = `${saveAssetDTO.UserID}`;
 
     try {

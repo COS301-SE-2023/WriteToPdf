@@ -60,7 +60,7 @@ export class TextManagerService {
 
     // Save image data in the S3
     const savedAssetDTO =
-      await this.s3Service.saveTextAsset(
+      await this.s3Service.saveTextAssetImage(
         uploadTextDTO,
       );
 
