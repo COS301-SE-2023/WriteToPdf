@@ -8,6 +8,7 @@ import {
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
+import {ImageUploadPopupComponent} from '../image-upload-popup/image-upload-popup.component';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
@@ -52,6 +53,17 @@ export class EditComponent implements AfterViewInit, OnInit {
     private clipboard: Clipboard,
     private messageService: MessageService
   ) { }
+
+
+  showImageUploadPopup(): void {
+    const ref = this.dialogService.open(ImageUploadPopupComponent, {
+      header: 'Upload Images',
+      showHeader: true,
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true,
+    });
+  }
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {

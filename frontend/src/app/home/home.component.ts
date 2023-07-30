@@ -21,6 +21,8 @@ import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
 import { Inject } from '@angular/core';
 import { CoordinateService } from '../services/coordinate-service.service';
+import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
+
 
 interface Column {
   field: string;
@@ -441,6 +443,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     // Subscribe to dialog close event if needed
     ref.onClose.subscribe(() => {
       // Handle any actions after the dialog is closed
+    });
+  }
+  showImageUploadPopup(): void {
+    const ref = this.dialogService.open(ImageUploadPopupComponent, {
+      header: 'Upload Images',
+      showHeader: true,
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true,
     });
   }
 
