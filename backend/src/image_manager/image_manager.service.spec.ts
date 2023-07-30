@@ -71,7 +71,7 @@ describe('ImageManagerService', () => {
         .mockResolvedValue(uploadImage);
 
       jest
-        .spyOn(s3Service, 'saveAsset')
+        .spyOn(s3Service, 'saveImageAsset')
         .mockImplementation((assetDTO) =>
           Promise.resolve(assetDTO),
         );
@@ -105,7 +105,7 @@ describe('ImageManagerService', () => {
         .mockResolvedValue(uploadAssetWithImage);
 
       jest
-        .spyOn(s3Service, 'saveAsset')
+        .spyOn(s3Service, 'saveImageAsset')
         .mockImplementation((assetDTO) =>
           Promise.resolve(assetDTO),
         );
@@ -120,7 +120,9 @@ describe('ImageManagerService', () => {
       expect(
         assetsService.saveAsset,
       ).toBeCalled();
-      expect(s3Service.saveAsset).toBeCalled();
+      expect(
+        s3Service.saveImageAsset,
+      ).toBeCalled();
       expect(CryptoJS.SHA256).toBeCalled();
     });
   });
