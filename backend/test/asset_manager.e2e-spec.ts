@@ -369,5 +369,118 @@ describe('AssetManager (integration)', () => {
         );
       });
     });
+
+    describe('retrieve_one', () => {
+      it('/asset_manager/retrieve_one (POST) - valid request', async () => {
+        await resetUser(ResetScope.ASSETS);
+
+        const requestDTO = new AssetDTO();
+        requestDTO.AssetID = 'Test Asset';
+        requestDTO.TextID = 'Test TextID';
+        requestDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestDTO.Format = 'text';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/asset_manager/retrieve_one')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestDTO);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty(
+          'Image',
+        );
+        expect(response.body).toHaveProperty(
+          'Size',
+        );
+
+        expect(response.body.Image).toEqual(
+          'Test Asset Content',
+        );
+        expect(response.body.Size).not.toEqual(0);
+      });
+    });
+
+    describe('rename_asset', () => {
+      it('/asset_manager/rename_asset (POST) - valid request', async () => {
+        await resetUser(ResetScope.ASSETS);
+
+        const requestDTO = new AssetDTO();
+        requestDTO.AssetID = 'Test Asset';
+        requestDTO.TextID = 'Test TextID';
+        requestDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestDTO.Format = 'text';
+        requestDTO.FileName = 'New Asset Name';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/asset_manager/rename_asset')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestDTO);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty(
+          'FileName',
+        );
+
+        expect(response.body.FileName).toEqual(
+          'New Asset Name',
+        );
+      });
+    });
+
+    describe('delete_asset', () => {
+      it('/asset_manager/delete_asset (POST) - valid request', async () => {
+        await resetUser(ResetScope.ASSETS);
+
+        const requestDTO = new AssetDTO();
+        requestDTO.AssetID = 'Test Asset';
+        requestDTO.TextID = 'Test TextID';
+        requestDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestDTO.Format = 'text';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/asset_manager/delete_asset')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestDTO);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty(
+          'AssetID',
+        );
+        expect(response.body).toHaveProperty(
+          'TextID',
+        );
+
+        expect(response.body.AssetID).toEqual(
+          'Test Asset',
+        );
+        expect(response.body.TextID).toEqual(
+          'Test TextID',
+        );
+      });
+    });
   });
 });
