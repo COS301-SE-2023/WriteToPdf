@@ -162,7 +162,6 @@ export class EditComponent implements AfterViewInit, OnInit {
           (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
           // Set the saved content after the editor is ready
           editor.setData(<string>this.editService.getContent());
-          console.log(<string>this.editService.getContent());
           this.editor = editor;
         })
         .catch((err) => {
@@ -188,7 +187,6 @@ export class EditComponent implements AfterViewInit, OnInit {
       ParentFolderId: this.editService.getParentFolderID(),
       Path: this.editService.getPath(),
     };
-    console.log('On move to cam page: ' + this.editService.getParentFolderID());
     this.router.navigate(['/camera'], { state: data });
   }
 
@@ -196,13 +194,11 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
     let contents = this.editor.getData();
-    console.log('Before function call save:' + contents);
     this.fileService.saveDocument(
       contents,
       this.editService.getMarkdownID(),
       this.editService.getPath()
     );
-    console.log('After function call save:' + contents);
   }
 
   hideSideBar() {
@@ -214,7 +210,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (sidebar && editor && showAssetSidebar) {
       if (this.sidebarVisible) {
         //then hide the sidebar
-        console.log('hide');
         editor.setAttribute('style', 'left:0px;width:100%;margin:auto;');
         sidebar.setAttribute('style', 'display:none');
         showAssetSidebar.setAttribute('style', 'display:block');
@@ -233,7 +228,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   renameDocument() {
-    console.log('rename');
     this.fileService
       .renameDocument(
         this.editService.getMarkdownID(),
@@ -287,7 +281,6 @@ export class EditComponent implements AfterViewInit, OnInit {
       })
     ]).then(
       () => {
-        console.log('HTML data (image) copied to clipboard successfully!');
       },
       (error) => {
         console.error('Could not copy HTML data (image) to clipboard: ', error);
@@ -332,7 +325,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     const inputElement = event.target as HTMLInputElement;
     const inputValue = inputElement.value;
     const asset = await this.assetService.renameAsset(assetId, inputValue);
-    console.log(asset);
     for (let i = 0; i < this.assets.length; i++) {
       if (this.assets[i].Id === assetId) {
         this.assets[i].FileName = inputValue;
@@ -406,7 +398,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   //Functions for exporting from HTML
   convertToFileType(fileType: string) {
     let contents = `<body style="word-break: normal; font-family: Arial, Helvetica, sans-serif; padding:35px 75px 75px;">${this.editor.getData()}</body>`;
-    console.log(contents);
     const markdownID = this.editService.getMarkdownID();
     const name = this.editService.getName();
     if (markdownID && name) {

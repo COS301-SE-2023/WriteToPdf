@@ -118,8 +118,6 @@ export class UserService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSignupData(email, firstName, lastName, password).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
             resolve(true);
@@ -291,7 +289,6 @@ export class UserService {
     if (this.doExpirationCheck) {
       if (!this.expiresAt) {
         // Handle the case when expiresAt is undefined or falsy
-        console.log('expiresAt is undefined or falsy.');
         return;
       }
 
@@ -301,18 +298,13 @@ export class UserService {
 
       if (currentDate >= notificationTime && currentDate < expiresAtDate) {
         // Send the expiration notification
-        console.log('Sending expiration notification...');
         this.sendRefreshTokenRequest().subscribe({
           next: (response: HttpResponse<any>) => {
-            console.log(response);
-            console.log(response.status);
 
             if (response.status === 200) {
-              // console.log("Refresh token successful");
               this.authToken = response.body.Token;
               this.expiresAt = response.body.ExpiresAt;
             } else {
-              // console.log("Refresh token failed");
             }
           },
           error: (error) => {
@@ -332,7 +324,6 @@ export class UserService {
     body.Email = this.email;
     body.ExpiresAt = this.expiresAt;
 
-    console.log('Body: ' + JSON.stringify(body));
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.authToken

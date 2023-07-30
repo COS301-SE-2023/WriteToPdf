@@ -37,10 +37,8 @@ export class AssetService {
         format
       ).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log('RES: ', response.body.Blocks);
 
           if (response.status === 201) {
-            console.log('Image uploaded successfully');
             this.messageService.add({
               severity: 'success',
               summary: 'Image uploaded successfully',
@@ -98,7 +96,6 @@ export class AssetService {
         this.sendRetrieveAssetData(assetId, format).subscribe({
           next: (response: HttpResponse<any>) => {
             if (response.status === 200) {
-              console.log('Image retrieved successfully');
               resolve(response.body);
             } else {
               resolve(null);
@@ -109,7 +106,6 @@ export class AssetService {
         this.sendRetrieveTextData(assetId, format, textId).subscribe({
           next: (response: HttpResponse<any>) => {
             if (response.status === 200) {
-              console.log('Text retrieved successfully');
               resolve(JSON.parse(response.body.Content));
             } else {
               resolve(null);
@@ -131,7 +127,6 @@ export class AssetService {
     body.AssetID = assetId;
     body.Format = format;
 
-    console.log('BODY', body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -162,11 +157,9 @@ export class AssetService {
   }
 
   retrieveAll(parentFolderId: string | undefined): Promise<any[]> {
-    console.log('Retrieving all images');
     return new Promise<any[]>((resolve, reject) => {
       this.sendRetrieveAllData(parentFolderId).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log('Retreive All: ', response);
           if (response.status === 200) {
             resolve(response.body);
           } else {
@@ -202,9 +195,7 @@ export class AssetService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteAssetData(assetId).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log('DELETE: ' + JSON.stringify(response));
           if (response.status === 200) {
-            console.log('Image deleted successfully');
             resolve(true);
           } else {
             resolve(false);
@@ -233,9 +224,7 @@ export class AssetService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameAssetData(assetId, newName).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
           if (response.status === 200) {
-            console.log('Image renamed successfully');
             resolve(true);
           } else {
             resolve(false);

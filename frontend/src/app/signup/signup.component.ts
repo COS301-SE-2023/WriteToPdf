@@ -103,12 +103,4 @@ export class SignupComponent {
     if (confirmPassword != this.password) return false;
     return true;
   }
-
-  outputForm() {
-    console.log(this.firstName);
-    console.log(this.lastName);
-    console.log(this.email);
-    console.log(this.password);
-    console.log(this.confirmPassword);
-  }
 }

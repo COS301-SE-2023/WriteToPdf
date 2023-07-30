@@ -40,10 +40,8 @@ export class ImageUploadPopupComponent {
 
     reader.onload = (e: any) => {
       const fileContent = reader.result as string;
-      console.log(fileContent);
       const name = file.name.split('.')[0];
       const type = file.name.split('.')[1];
-      console.log(type);
 
       let path = this.editService.getPath();
       if (!this.editService.getPath())

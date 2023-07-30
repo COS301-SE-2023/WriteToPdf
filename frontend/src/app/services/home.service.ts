@@ -343,7 +343,6 @@ export class NodeService {
       if (!parentFolder.FolderID) {
         return false;
       }
-      console.log('pFolder', parentFolder);
       parentFolder = this.getFolderDTOByID(parentFolder.ParentFolderID);
     }
 

@@ -27,8 +27,6 @@ export class FolderService {
     return new Promise<FolderDTO>((resolve, reject) => {
       this.sendMoveData(folderID, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
             this.messageService.add({
@@ -45,7 +43,6 @@ export class FolderService {
 
             resolve(folder);
           } else {
-            console.log('Move failed');
             reject();
           }
         },
@@ -134,7 +131,6 @@ export class FolderService {
           }
         },
         error: (error) => {
-          console.log(error);
           reject();
         },
       });
@@ -163,8 +159,6 @@ export class FolderService {
     return new Promise<FolderDTO>((resolve, reject) => {
       this.sendCreateData(path, folderName, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
             this.messageService.add({
@@ -178,7 +172,6 @@ export class FolderService {
             folder.FolderID = response.body.FolderID;
             resolve(folder);
           } else {
-            console.log('Retrieve unsuccessful');
             reject();
           }
         },
@@ -216,8 +209,6 @@ export class FolderService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameData(folderID, path, folderName).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
             this.messageService.add({

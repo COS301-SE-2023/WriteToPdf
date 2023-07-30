@@ -84,7 +84,6 @@ export class CameraComponent {
     const dataUrl = canvas.toDataURL('image/jpeg', 1); // Adjust the quality (0.0 to 1.0)
 
     this.sysImage = dataUrl;
-    console.log(dataUrl);
   }
 
   async uploadImage() {

@@ -205,7 +205,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   sendEditedRowLabel(event: any, key: string, type: string): void {
-    console.log(event, key, type);
     if (type === 'folder') {
       const folder = this.nodeService.getFolderDTOByID(key);
       this.folderService
@@ -336,7 +335,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (2 == searchCollapseExpandRoot) {
       explodeOrCollapse = true;
       filterValue = filterEvent.node.label;
-      console.log(filterValue);
     }
     if (0 == searchCollapseExpandRoot) {
       explodeOrCollapse = false;
@@ -346,7 +344,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       filterValue = filterEvent;
       explodeOrCollapse = false;
     }
-    console.log(filterValue);
     // Perform filtering based on the first column
     this.filteredFilesDirectoryTreeTable = this.filesDirectoryTreeTable.filter(
       (node) => {
@@ -464,15 +461,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onOpenFileSelect(event: any): void {
     const file = this.nodeService.getFileDTOByID(event.key);
-    console.log('FILE: ' + JSON.stringify(file));
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
-        console.log('Data retrieved on file open: ' + data);
         this.editService.setContent(data);
         this.editService.setName(file.Name);
         this.editService.setMarkdownID(file.MarkdownID);
-        console.log('Parent Folder ID: ' + file.ParentFolderID);
         this.editService.setParentFolderID(file.ParentFolderID);
         this.editService.setPath(file.Path);
         this.navigateToPage('edit');
@@ -484,12 +478,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     newPath: string,
     newParentFolderID: string
   ): void {
-    console.log(event);
     const file = this.nodeService.getFileDTOByID(event.key);
     this.entityToMove = event;
     // this.showFileManagerPopup('move');
     this.moveDialogVisible = true;
-    console.log(file);
   }
 
   //TODO - implement the move folder function
@@ -498,16 +490,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     newPath: string,
     newParentFolderID: string
   ): void {
-    console.log(event);
     const folder = this.nodeService.getFolderDTOByID(event.key);
     this.entityToMove = event;
     this.moveDialogVisible = true;
-    console.log(folder);
   }
 
   delete(event: any) {
-    console.log('delete');
-    console.log(event);
     if (event.data.type == 'folder') {
       this.deleteAllChildren(this.nodeService.getFolderDTOByID(event.key));
 
@@ -812,7 +800,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   deleteSelectedEntity(event: any): void {
-    console.log('event', event);
     if (this.currentDirectory != null) {
       let message = `Are you sure that you want to delete '${this.currentDirectory.data.name}'?`;
       const type = this.currentDirectory.data.type;
@@ -845,7 +832,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   openFileDoubleClick() {
-    console.log('UNIQUE: ' + this.currentDirectory);
     if (this.currentNode == this.previousNode && this.previousNode != null)
       this.onOpenFileSelect(this.previousNode);
     else {
@@ -862,9 +848,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onNodeDrag($event: any) {
     this.isDraggingNode = true;
-    console.log('Drag start: ', $event);
     const key = $event.source.element.nativeElement?.getAttribute('data-key');
-    console.log('Key: ', JSON.stringify(key));
     this.originalPosition = {
       x: $event.source._dragRef._passiveTransform.x,
       y: $event.source._dragRef._passiveTransform.y,
@@ -889,8 +873,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const keyOfDropped = this.getParentElement(
         this.coordinateService.getElementAtCoordinate()
       )?.getAttribute('data-key');
-      console.log('Key of dragged: ', keyOfDragged);
-      console.log('Key of dropped: ', keyOfDropped);
 
       this.moveByKey(keyOfDragged, keyOfDropped);
     }, 10);
@@ -940,7 +922,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (type === 'file') {
       const movingNode = this.nodeService.getFileDTOByID(keyOfDragged);
       if (movingNode.ParentFolderID === parentFolderID) return;
-      console.log('Folder:', folder);
       this.fileService
         .moveDocument(movingNode.MarkdownID, path, parentFolderID)
         .then((data) => {
@@ -954,8 +935,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const movingNode = this.nodeService.getFolderDTOByID(keyOfDragged);
       if (movingNode.ParentFolderID === parentFolderID) return;
       //check if moving parent folder into some child folder
-      console.log('Folder:', folder);
-      console.log('Moving node:', movingNode);
       if (this.nodeService.checkIfChildFolder(folder, movingNode)) {
         this.messageService.add({
           severity: 'warn',
