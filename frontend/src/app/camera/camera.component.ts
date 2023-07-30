@@ -81,7 +81,7 @@ export class CameraComponent {
     ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     // Get the data URL of the canvas as a PNG image with reduced quality
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.99); // Adjust the quality (0.0 to 1.0)
+    const dataUrl = canvas.toDataURL('image/jpeg', 1); // Adjust the quality (0.0 to 1.0)
 
     this.sysImage = dataUrl;
     console.log(dataUrl);

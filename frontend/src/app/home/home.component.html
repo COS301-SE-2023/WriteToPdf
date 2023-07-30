@@ -117,12 +117,29 @@
         class="icon newDoc"
         src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png"
       />
-      <img
-        alt="New Scan"
-        (click)="navigateToPage('camera')"
-        class="icon"
-        src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png"
-      />
+      <div class="uploadAssetIcon">
+        <img
+          alt="New Scan"
+          (click)="navigateToPage('camera')"
+          class="icon"
+          src="assets/Icons/editIcons/plus.png"
+        />
+        <div class="dropdownContent">
+          <div class="dropdownInput">
+            <img class="dropdownIcon1" src="assets/Icons/editIcons/addAsset.png" alt="">
+            <p class="dropdownOptions" (click)="navigateToPage('camera')">
+              Camera
+            </p>
+          </div>
+          <div class="dropdownInput">
+            <img class="dropdownIcon2" src="assets/Icons/editIcons/upload.png" alt="">
+            <p class="dropdownOptions" (click)="showImageUploadPopup()">
+              Upload
+            </p>
+          </div>
+        </div>
+      </div>
+
     </div>
     <div class="directoryTree">
       <p-tree
