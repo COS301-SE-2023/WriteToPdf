@@ -7,7 +7,6 @@ import { AssetDTO } from '../assets/dto/asset.dto';
 import { S3Service } from '../s3/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import { TextractService } from '../textract/textract.service';
-import * as fs from 'fs';
 
 @Injectable()
 export class TextManagerService {
@@ -61,7 +60,7 @@ export class TextManagerService {
 
     // Save image data in the S3
     const savedAssetDTO =
-      await this.s3Service.saveTextAsset(
+      await this.s3Service.saveTextAssetImage(
         uploadTextDTO,
       );
 
