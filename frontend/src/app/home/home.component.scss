@@ -120,6 +120,7 @@ to co-operate.
 
 .directoryTree{
   overflow: auto;
+  padding-top:9px;
 }
 
 .cdk-drag {
@@ -128,18 +129,26 @@ to co-operate.
 
 .leftSideBarHeading {
   padding-top: 15px;
-  padding-left: 50px;
+  display:flex;
+  justify-content: center;
+//  padding-left: 50px;
 }
 
 .leftSideBarTools .icon {
-  width: 30px;
-  height: 30px;
+  width: 42px;
+  height: 42px;
   padding: 4px;
+  cursor: pointer;
 }
 
 .leftSideBarTools {
   padding: 5px;
+  gap:15px;
+  display:flex;
+//  margin-left:10px;
+  justify-content:center;
 }
+
 
 
 
@@ -174,10 +183,11 @@ to co-operate.
 }
 // Below is the styling for the searchBar
 .searchBar {
-  margin-top: 15px;
+  margin-top: 18px;
   box-sizing: border-box;
   position: relative;
   padding: 10px;
+  margin-left:8px;
   width: auto;
   background: #F7F7F7;
   /* Main Colours/Dark Gray */
