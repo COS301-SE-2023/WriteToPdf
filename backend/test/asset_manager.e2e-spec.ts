@@ -14,6 +14,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { S3ServiceMock } from '../src/s3/__mocks__/s3.service';
 import { Asset } from '../src/assets/entities/asset.entity';
 import { AssetDTO } from '../src/assets/dto/asset.dto';
+import { RetrieveAllDTO } from '../src/asset_manager/dto/retrieve_all.dto';
 
 let assetID = '';
 
@@ -261,6 +262,110 @@ describe('AssetManager (integration)', () => {
         );
         expect(response.body.FileName).toEqual(
           assetDTO.FileName,
+        );
+      });
+    });
+
+    describe('retrieve_all', () => {
+      it('/asset_manager/retrieve_all (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+
+        const requestDTO = new RetrieveAllDTO();
+        requestDTO.ParentFolderID = '';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/asset_manager/retrieve_all')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestDTO);
+
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data: UserID missing',
+        );
+      });
+
+      it('/asset_manager/retrieve_all (POST) - missing ParentFolderID', async () => {
+        await resetUser(ResetScope.NONE);
+
+        const requestDTO = new RetrieveAllDTO();
+        requestDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/asset_manager/retrieve_all')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestDTO);
+
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data: ParentFolderID missing',
+        );
+      });
+
+      it('/asset_manager/retrieve_all (POST) - valid request', async () => {
+        await resetUser(ResetScope.ASSETS);
+
+        const requestDTO = new RetrieveAllDTO();
+        requestDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestDTO.ParentFolderID = '';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/asset_manager/retrieve_all')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestDTO);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toBeInstanceOf(
+          Array,
+        );
+        expect(response.body.length).toBe(1);
+        expect(response.body[0]).toHaveProperty(
+          'AssetID',
         );
       });
     });
