@@ -67,12 +67,15 @@ export class AssetManagerService {
         assetDTO.UserID = assets[j].UserID; // for the path to both files in the s3
 
         // Retrieve the image and the OCR text for this asset
-        const tempAssetDTO =
+        const textAsset =
           await this.textManagerService.retrieveOne(
             assetDTO,
           );
 
-        assets[j].Image = tempAssetDTO.Image;
+        assets[j].Image =
+          await this.imageManagerService.compressImage(
+            textAsset.Image,
+          );
       }
     }
 
