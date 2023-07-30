@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { AssetService } from '../services/asset.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -20,6 +20,8 @@ export class CameraComponent {
   path: string = '';
   isAsset: boolean = false;
   captured: boolean = false;
+  flipCamera: boolean = false;
+  cameraAvailable: boolean = false;
 
   constructor(
     private elementRef: ElementRef,
@@ -27,7 +29,7 @@ export class CameraComponent {
     private router: Router,
     private location: Location,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   ngOnInit() {
     const data = history.state;
@@ -55,21 +57,41 @@ export class CameraComponent {
   }
 
   setupCamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.error("getUserMedia is not supported in this browser.");
+      this.cameraAvailable = false;
+      return;
+    }
+
+    // Request camera access
     navigator.mediaDevices
       .getUserMedia({
         video: {},
         audio: false,
       })
       .then((stream) => {
+        // Access granted, display the camera stream
+        this.cameraAvailable = true;
         this.videoRef.srcObject = stream;
-        (document.getElementsByClassName('container')[0] as HTMLElement).style.backgroundImage = `url(${this.videoRef.srcObject})`;
+      })
+      .catch((error) => {
+        // Handle errors and permission denial
+        console.error("Error accessing camera:", error);
+        this.cameraAvailable = false;
+        // You can show a user-friendly message on the page to inform the user about the camera access issue.
       });
   }
 
+
+
   disableCamera() {
-    this.videoRef.srcObject
-      .getTracks()
-      .forEach((track: { stop: () => any }) => track.stop());
+    try {
+      this.videoRef.srcObject
+        .getTracks()
+        .forEach((track: { stop: () => any }) => track.stop());
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   public getSnapshot(): void {
@@ -119,5 +141,12 @@ export class CameraComponent {
     this.location.back();
   }
 
-  
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'r' && this.cameraAvailable) {
+      this.getSnapshot();
+      this.sidebarVisible = true;
+    }
+  }
+
 }
