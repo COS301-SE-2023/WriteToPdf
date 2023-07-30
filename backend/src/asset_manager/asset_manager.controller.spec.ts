@@ -131,10 +131,7 @@ describe('AssetManagerController', () => {
       expect(response).toBe(assetDTO);
       expect(
         assetManagerService.upload_asset,
-      ).toHaveBeenCalledWith(
-        assetDTO,
-        isTest && isTest === 'true',
-      );
+      ).toHaveBeenCalledWith(assetDTO, false);
     });
   });
 
