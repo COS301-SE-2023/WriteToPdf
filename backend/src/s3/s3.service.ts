@@ -352,10 +352,7 @@ export class S3Service {
         fileData,
         'utf-8',
       );
-      // console.log(
-      //   'S3.saveAsset.filePath',
-      //   filePath,
-      // );
+
       const response = await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
@@ -363,24 +360,12 @@ export class S3Service {
           Body: fileData,
         }),
       );
-
-      // console.log(
-      //   'S3 Save Asset Response: ',
-      //   response,
-      // );
     } catch (err) {
       console.log('Write File Error: ' + err);
       return undefined;
     }
 
-    // const fileStats = await stat(
-    //   `./storage/${filePath}`,
-    // );
-    // console.log(fileStats);
-    // saveAssetDTO.DateCreated = fileStats.mtime;
     saveAssetDTO.DateCreated = new Date();
-    // saveAssetDTO.Size =
-    //   fileData.buffer.byteLength; // TODO: Change to s3 return object
     saveAssetDTO.Size =
       saveAssetDTO.Content.length;
     saveAssetDTO.Content = '';
@@ -415,10 +400,7 @@ export class S3Service {
         fileData,
         'utf-8',
       );
-      console.log(
-        'S3.saveAsset.filePath',
-        filePath,
-      );
+
       const response = await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
@@ -426,24 +408,12 @@ export class S3Service {
           Body: fileData,
         }),
       );
-
-      console.log(
-        'S3 Save Asset Response: ',
-        response,
-      );
     } catch (err) {
       console.log('Write File Error: ' + err);
       return undefined;
     }
 
-    // const fileStats = await stat(
-    //   `./storage/${filePath}`,
-    // );
-    // console.log(fileStats);
-    // saveAssetDTO.DateCreated = fileStats.mtime;
     saveAssetDTO.DateCreated = new Date();
-    // saveAssetDTO.Size =
-    //   fileData.buffer.byteLength; // TODO: Change to s3 return object
     saveAssetDTO.Size =
       saveAssetDTO.Content.length;
     saveAssetDTO.Content = '';
@@ -453,10 +423,12 @@ export class S3Service {
   async retrieveAssetByID(
     assetID: string,
     userID: number,
+    type: string,
   ) {
-    const retrieveAssetDTO = new AssetDTO();
-
+    let response;
     let filePath = `${userID}`;
+
+    // console.log('S3.retrieveAssetByID', assetID);
 
     try {
       await fs.access(`./storage/${filePath}`);
@@ -468,33 +440,34 @@ export class S3Service {
     filePath += `/${assetID}`;
 
     try {
-      retrieveAssetDTO.Content =
-        await fs.readFile(
-          `./storage/${filePath}`,
-          {
-            encoding: 'utf-8',
-          },
-        );
-      retrieveAssetDTO.Size =
-        retrieveAssetDTO.Content.length;
+      // retrieveAssetDTO.Content =
+      //   await fs.readFile(
+      //     `./storage/${filePath}`,
+      //     {
+      //       encoding: 'utf-8',
+      //     },
+      //   );
+      // retrieveAssetDTO.Size =
+      //   retrieveAssetDTO.Content.length;
 
-      const response = await this.s3Client.send(
+      response = await this.s3Client.send(
         new GetObjectCommand({
           Bucket: this.awsS3BucketName,
           Key: filePath,
         }),
       );
-
-      retrieveAssetDTO.Content =
-        await response.Body.transformToString();
-      retrieveAssetDTO.Size =
-        retrieveAssetDTO.Content.length;
     } catch (err) {
       console.log('Read File Error: ' + err);
       return undefined;
     }
-
-    return retrieveAssetDTO;
+    if (type === 'textractResponse') {
+      return await response.Body.transformToString();
+    } else if (type === 'image') {
+      let temp =
+        await response.Body.transformToByteArray();
+      temp = Buffer.from(temp);
+      return temp;
+    }
   }
 
   async retrieveAsset(
@@ -527,11 +500,6 @@ export class S3Service {
           Bucket: this.awsS3BucketName,
           Key: filePath,
         }),
-      );
-
-      console.log(
-        'S3.retrieveAsset.response',
-        response,
       );
 
       retrieveAssetDTO.Content =
