@@ -110,9 +110,9 @@ export class TextractService {
           }),
         );
       if (Messages) {
-        console.log(
-          `Message[0]: ${Messages[0].Body}`,
-        );
+        // console.log(
+        //   `Message[0]: ${Messages[0].Body}`,
+        // );
         await this.sqsClient.send(
           new DeleteMessageCommand({
             QueueUrl: this.queueUrl,
@@ -153,11 +153,11 @@ export class TextractService {
       } else {
         const tick = 5000;
         waitTime += tick;
-        console.log(
-          `Waited ${
-            waitTime / 1000
-          } seconds. No messages yet.`,
-        );
+        // console.log(
+        //   `Waited ${
+        //     waitTime / 1000
+        //   } seconds. No messages yet.`,
+        // );
         setTimeout(getJob, tick);
       }
     };
@@ -211,10 +211,10 @@ export class TextractService {
       // ),
       Children: textractResponse,
     };
-    console.log(
-      'Textract response: ',
-      textractResponse,
-    );
+    // console.log(
+    //   'Textract response: ',
+    //   textractResponse,
+    // );
     return textractResponse;
   }
 
