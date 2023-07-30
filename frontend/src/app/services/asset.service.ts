@@ -23,7 +23,7 @@ export class AssetService {
 
   uploadImage(
     image: string | undefined,
-    path: string,
+    path: string|undefined,
     fileName: string,
     parentFolderId: string | undefined,
     format: string
@@ -56,7 +56,7 @@ export class AssetService {
 
   sendUploadImageData(
     image: string | undefined,
-    path: string,
+    path: string|undefined,
     fileName: string,
     parentFolderId: string | undefined,
     format: string
