@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { S3Service } from '../s3/s3.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import * as CryptoJS from 'crypto-js';
 
@@ -13,18 +14,22 @@ export class TextManagerService {
   constructor(
     private readonly assetsService: AssetsService,
     private readonly s3Service: S3Service,
+    private readonly s3ServiceMock: S3ServiceMock,
   ) {}
 
-  upload(uploadTextDTO: AssetDTO) {
+  async upload(
+    uploadTextDTO: AssetDTO,
+    isTest = false,
+  ) {
     // Generate AssetID
     uploadTextDTO.AssetID = CryptoJS.SHA256(
       uploadTextDTO.UserID.toString() +
         new Date().getTime().toString(),
     ).toString();
 
-    if (!uploadTextDTO.ConvertedElement) {
-      uploadTextDTO.ConvertedElement = '';
-    }
+    // if (!uploadTextDTO.ConvertedElement) {
+    //   uploadTextDTO.ConvertedElement = '';
+    // }
 
     // Simulate OCR-generated text
     if (!uploadTextDTO.Content) {
@@ -35,7 +40,9 @@ export class TextManagerService {
     // Save text asset in database
     const imageData = uploadTextDTO.Image;
     uploadTextDTO.Image = '';
-    this.assetsService.saveAsset(uploadTextDTO);
+    await this.assetsService.saveAsset(
+      uploadTextDTO,
+    );
     uploadTextDTO.Image = imageData;
 
     // Preprocess text for storage in the S3
@@ -43,13 +50,22 @@ export class TextManagerService {
       uploadTextDTO,
     );
 
-    // Save asset in the S3/local storage
-    return this.s3Service.saveAsset(
-      uploadTextDTO,
-    );
+    if (isTest) {
+      // Save asset in the S3/local storage
+      return await this.s3ServiceMock.saveAsset(
+        uploadTextDTO,
+      );
+    } else {
+      return await this.s3Service.saveAsset(
+        uploadTextDTO,
+      );
+    }
   }
 
-  async retrieveOne(retrieveTextDTO: AssetDTO) {
+  async retrieveOne(
+    retrieveTextDTO: AssetDTO,
+    isTest = false,
+  ) {
     // Retrieve text asset reference from database
     const asset =
       await this.assetsService.retrieveOne(
@@ -64,12 +80,22 @@ export class TextManagerService {
       );
     }
 
-    // Retrieve text asset from S3
-    const assetDTO =
-      await this.s3Service.retrieveAssetByID(
-        asset.AssetID,
-        asset.UserID,
-      );
+    let assetDTO: AssetDTO;
+    if (isTest) {
+      // Retrieve text asset from local storage
+      assetDTO =
+        await this.s3ServiceMock.retrieveAssetByID(
+          asset.AssetID,
+          asset.UserID,
+        );
+    } else {
+      // Retrieve text asset from S3
+      assetDTO =
+        await this.s3Service.retrieveAssetByID(
+          asset.AssetID,
+          asset.UserID,
+        );
+    }
 
     return this.parseS3Content(assetDTO);
   }

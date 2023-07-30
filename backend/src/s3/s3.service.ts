@@ -313,6 +313,7 @@ export class S3Service {
   async retrieveAsset(
     retrieveAssetDTO: AssetDTO,
   ) {
+    console.log('Retrieve Asset (s3)');
     let filePath = `${retrieveAssetDTO.UserID}`;
 
     try {
@@ -355,6 +356,7 @@ export class S3Service {
   }
 
   async deleteAsset(assetDTO: AssetDTO) {
+    console.log('Delete Asset (s3)');
     let filePath = `${assetDTO.UserID}`;
 
     try {
