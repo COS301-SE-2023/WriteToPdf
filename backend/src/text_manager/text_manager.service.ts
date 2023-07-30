@@ -23,21 +23,11 @@ export class TextManagerService {
         uploadTextDTO,
       );
 
-    console.log(
-      'Text image data file ID: ' +
-        imageDataFile.AssetID,
-    );
-
     // Create S3 text data file
     const textDataFile =
       await this.s3Service.createAsset(
         uploadTextDTO,
       );
-
-    console.log(
-      'Text OCR data file ID: ' +
-        textDataFile.AssetID,
-    );
 
     // Save text asset in database
     uploadTextDTO.AssetID = imageDataFile.AssetID;
@@ -82,6 +72,7 @@ export class TextManagerService {
 
   async retrieveOne(retrieveTextDTO: AssetDTO) {
     // Retrieve text asset reference from database
+    const newAssetDTO = new AssetDTO();
     const asset =
       await this.assetsService.retrieveOne(
         retrieveTextDTO,
@@ -95,81 +86,86 @@ export class TextManagerService {
       );
     }
 
-    // get text image
-    console.log(
-      'Looking for image file: ' + asset.AssetID,
-    );
-    const newAssetDTO =
+    // Get text image
+    newAssetDTO.ImageBuffer =
       await this.s3Service.retrieveAssetByID(
         asset.AssetID,
         asset.UserID,
+        'image',
       );
 
-    // get text ocr
-    console.log(
-      'Looking for OCR file: ' + asset.TextID,
-    );
-    newAssetDTO.Content = (
+    // Further processing
+    newAssetDTO.Image =
+      newAssetDTO.ImageBuffer.toString('base64');
+
+    // Get text OCR
+    newAssetDTO.Content =
       await this.s3Service.retrieveAssetByID(
         asset.TextID,
         asset.UserID,
-      )
-    ).Content;
+        'textractResponse',
+      );
 
     return newAssetDTO;
   }
 
   /// HELPER FUNCTIONS
 
-  packageTextForS3(uploadTextDTO: AssetDTO) {
-    let newContent = '';
-    newContent += uploadTextDTO.Content.length;
-    newContent += '\n';
-    newContent += uploadTextDTO.Content;
-    newContent += uploadTextDTO.Image;
-    return newContent;
-  }
+  // packageTextForS3(uploadTextDTO: AssetDTO) {
+  //   let newContent = '';
+  //   newContent += uploadTextDTO.Content.length;
+  //   newContent += '\n';
+  //   newContent += uploadTextDTO.Content;
+  //   newContent += uploadTextDTO.Image;
+  //   return newContent;
+  // }
 
-  parseS3Content(assetDTO: AssetDTO) {
-    // Get length of entire file
-    const fileLength = assetDTO.Content.length;
+  // parseS3Content(assetDTO: AssetDTO) {
+  //   // Get length of entire file
+  //   const fileLength = assetDTO.Content.length;
 
-    // Get length of text content in S3 file
-    const contentLengthBound =
-      assetDTO.Content.indexOf('\n');
+  //   // Get length of text content in S3 file
+  //   const contentLengthBound =
+  //     assetDTO.Content.indexOf('\n');
 
-    // Get length of text content in S3 file
-    const textLength = parseInt(
-      assetDTO.Content.substring(
-        0,
-        contentLengthBound,
-      ),
-    );
+  //   // Get length of text content in S3 file
+  //   const textLength = parseInt(
+  //     assetDTO.Content.substring(
+  //       0,
+  //       contentLengthBound,
+  //     ),
+  //   );
 
-    const endOfText =
-      contentLengthBound + textLength + 1;
+  //   const endOfText =
+  //     contentLengthBound + textLength + 1;
 
-    // Parse text content in S3 file
-    const textComponent =
-      assetDTO.Content.substring(
-        contentLengthBound + 1,
-        endOfText,
-      );
+  //   // Parse text content in S3 file
+  //   const textComponent =
+  //     assetDTO.Content.substring(
+  //       contentLengthBound + 1,
+  //       endOfText,
+  //     );
 
-    // Parse image content in S3 file
-    assetDTO.Image = assetDTO.Content.substring(
-      endOfText,
-      fileLength,
-    );
+  //   // Parse image content in S3 file
+  //   assetDTO.Image = assetDTO.Content.substring(
+  //     endOfText,
+  //     fileLength,
+  //   );
 
-    assetDTO.Content = textComponent;
-    return assetDTO;
-  }
+  //   assetDTO.Content = textComponent;
+  //   return assetDTO;
+  // }
 
   removeBase64Descriptor(base64String: string) {
     const returnVal = base64String
       .split(';base64,')
       .pop();
     return returnVal;
+  }
+
+  prependBase64Descriptor(base64String: string) {
+    return (
+      'data:image/jpeg;base64,' + base64String
+    );
   }
 }
