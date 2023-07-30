@@ -8,7 +8,7 @@ import {
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
-import {ImageUploadPopupComponent} from '../image-upload-popup/image-upload-popup.component';
+import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
@@ -22,6 +22,7 @@ import { PageBreak } from '@ckeditor/ckeditor5-page-break';
 import html2pdf from 'html2pdf.js/dist/html2pdf';
 
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
+import { parse } from 'path';
 
 @Component({
   selector: 'app-edit',
@@ -263,6 +264,18 @@ export class EditComponent implements AfterViewInit, OnInit {
         });
       }
     }
+  }
+
+  async copyAllText(assetId: string, format: string, textId: string) {
+    const asset = await this.assetService.retrieveAsset(assetId, format, textId);
+
+    this.parseAssetText(asset);
+
+    let text = '';
+    for (let i = 0; i < this.textFromAsset.length; i++) {
+      text += this.textFromAsset[i] + '\n';
+    }
+    this.copyTextToClipboard(text);
   }
 
   parseAssetText(asset: any) {

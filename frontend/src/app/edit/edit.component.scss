@@ -297,7 +297,7 @@ div[contenteditable="true"]:focus {
     transition: 0.3s;
 }
 
-.copyAsset {
+.copyAsset,.copyTextAsset {
     margin-left: 10px;
 }
 
@@ -307,7 +307,8 @@ div[contenteditable="true"]:focus {
 }
 
 .deleteAsset,
-.copyAsset {
+.copyAsset,
+.copyTextAsset{
     border-radius: 5px;
     // display:flex;
     width: 30px;
@@ -315,15 +316,17 @@ div[contenteditable="true"]:focus {
     padding: 5px;
 }
 
-.deleteAsset:hover,
+.deleteAssetHover:hover,
 .copyAsset:hover,
-.copyTextIconWrapper:hover {
+.copyTextIconWrapper:hover,
+.copyTextAsset:hover {
     cursor: pointer;
     background-color: darken($light-grey, 10%);
 }
 
 .deleteAssetIcon,
-.copyAssetIcon {
+.copyAssetIcon,
+.copyTextIcon {
     margin: auto;
     width: 20px;
     height: 20px;

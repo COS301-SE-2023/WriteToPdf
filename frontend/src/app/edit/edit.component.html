@@ -184,22 +184,8 @@
               title="{{ obj.FileName }}"
             />
           </div>
-          <div class="deleteAsset">
-            <img
-              class="deleteAssetIcon"
-              src="assets/Icons/editIcons/delete.png"
-              alt=""
-              (click)="deleteAsset(obj.AssetID)"
-            />
-          </div>
-          <div class="copyAsset">
-            <img
-              *ngIf="obj.Format === 'image'"
-              class="copyAssetIcon"
-              (click)="retrieveAsset(obj.AssetID, obj.Format, '')"
-              src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
+
+          <div class="deleteAsset" [ngClass]="{'deleteAssetHover': obj.Format === 'text'}" title="View Text">
             <img
               *ngIf="obj.Format === 'text'"
               class="copyAssetIcon"
@@ -208,6 +194,34 @@
               alt=""
             />
           </div>
+
+          <div class="copyAsset" title="Delete Asset">
+            <img
+              class="deleteAssetIcon"
+              src="assets/Icons/editIcons/delete.png"
+              alt=""
+              (click)="deleteAsset(obj.AssetID)"
+            />
+
+          </div>
+
+          <div class="copyTextAsset" title="Copy">
+            <img
+            *ngIf="obj.Format === 'image'"
+              class="copyTextIcon"
+              (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
+            <img
+            *ngIf="obj.Format === 'text'"
+              class="copyTextIcon"
+              (click)="copyAllText(obj.AssetID, obj.Format, obj.TextID)"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
+          </div>
+
         </div>
         <div class="assetContent">
           <img class="assetImage" src="{{ obj.Image }}" alt="" />
