@@ -17,7 +17,7 @@ export class TextManagerService {
     private readonly s3ServiceMock: S3ServiceMock,
   ) {}
 
-  upload(
+  async upload(
     uploadTextDTO: AssetDTO,
     isTest = false,
   ) {
@@ -40,7 +40,9 @@ export class TextManagerService {
     // Save text asset in database
     const imageData = uploadTextDTO.Image;
     uploadTextDTO.Image = '';
-    this.assetsService.saveAsset(uploadTextDTO);
+    await this.assetsService.saveAsset(
+      uploadTextDTO,
+    );
     uploadTextDTO.Image = imageData;
 
     // Preprocess text for storage in the S3
@@ -50,11 +52,11 @@ export class TextManagerService {
 
     if (isTest) {
       // Save asset in the S3/local storage
-      return this.s3ServiceMock.saveAsset(
+      return await this.s3ServiceMock.saveAsset(
         uploadTextDTO,
       );
     } else {
-      return this.s3Service.saveAsset(
+      return await this.s3Service.saveAsset(
         uploadTextDTO,
       );
     }
