@@ -23,7 +23,7 @@ enum ResetScope {
   NONE,
 }
 
-describe('FileManagerController (integration)', () => {
+describe('AssetManager (integration)', () => {
   let app: INestApplication;
   let assetRepository: Repository<Asset>;
   let s3Service: S3ServiceMock;
@@ -65,37 +65,204 @@ describe('FileManagerController (integration)', () => {
     ) {
       const testUserAssets =
         await assetRepository.query(
-          `SELECT * FROM ASSET WHERE UserID = ?`,
+          `SELECT * FROM ASSETS WHERE UserID = ?`,
           [process.env.TEST_USERID],
         );
 
       for (const asset of testUserAssets) {
-        await assetRepository.delete(asset);
         await s3Service.deleteAsset(asset);
       }
 
+      await assetRepository.query(
+        `DELETE FROM ASSETS WHERE UserID = ?`,
+        [process.env.TEST_USERID],
+      );
+
       const testAsset = new Asset();
       testAsset.AssetID = 'Test Asset';
+      testAsset.TextID = 'TextID';
       testAsset.UserID = parseInt(
         process.env.TEST_USERID,
       );
       testAsset.FileName = 'Test Asset';
       testAsset.Format = 'text';
       testAsset.ParentFolderID = '';
+      testAsset.Image = 'Test Image';
+      testAsset.Size = 0;
 
       const testAssetDTO = new AssetDTO();
       testAssetDTO.AssetID = 'Test Asset';
+      testAssetDTO.TextID = 'TextID';
       testAssetDTO.UserID = parseInt(
         process.env.TEST_USERID,
       );
       testAssetDTO.FileName = 'Test Asset';
       testAssetDTO.Format = 'text';
       testAssetDTO.ParentFolderID = '';
+      testAssetDTO.Content = 'Test Asset Content';
+      testAssetDTO.Image = 'Test Image';
+      testAssetDTO.Size = 0;
 
       assetID = testAsset.AssetID;
 
       await s3Service.saveAsset(testAssetDTO);
-      await assetRepository.save(testAsset);
+      //   await assetRepository.save(testAsset);
+      await assetRepository.query(
+        `INSERT INTO ASSETS (AssetID, TextID, UserID, FileName, Format, ParentFolderID, Image, Size) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          testAsset.AssetID,
+          testAsset.TextID,
+          testAsset.UserID,
+          testAsset.FileName,
+          testAsset.Format,
+          testAsset.ParentFolderID,
+          testAsset.Image,
+          testAsset.Size,
+        ],
+      );
     }
   }
+
+  describe('asset_manager endpoint', () => {
+    // it('should be mocked out', async () => {
+    //   await resetUser(ResetScope.ASSETS);
+    //   expect(true).toBe(true);
+    // });
+
+    describe('upload_asset', () => {
+      it('/asset_manager/upload_asset (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = 'New Asset';
+        assetDTO.FileName = 'Test Asset';
+        assetDTO.Format = 'text';
+        assetDTO.ParentFolderID = '';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/asset_manager/upload_asset')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(assetDTO);
+
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data: UserID missing',
+        );
+      });
+
+      it('/asset_manager/upload_asset (POST) - missing ParentFolderID', async () => {
+        await resetUser(ResetScope.NONE);
+
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = 'New Asset';
+        assetDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        assetDTO.FileName = 'Test Asset';
+        assetDTO.Format = 'text';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/asset_manager/upload_asset')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(assetDTO);
+
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data: ParentFolderID missing',
+        );
+      });
+
+      it('/asset_manager/upload_asset (POST) - valid request', async () => {
+        await resetUser(ResetScope.ASSETS);
+        const assetDTO = new AssetDTO();
+        assetDTO.AssetID = 'New Asset';
+        assetDTO.TextID = 'TextID';
+        assetDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        assetDTO.FileName = 'New Asset';
+        assetDTO.Format = 'text';
+        assetDTO.ParentFolderID = '';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/asset_manager/upload_asset')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(assetDTO);
+
+        expect(response.status).toBe(201);
+
+        expect(response.body).toHaveProperty(
+          'AssetID',
+        );
+        expect(response.body).toHaveProperty(
+          'TextID',
+        );
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.body).toHaveProperty(
+          'FileName',
+        );
+        expect(response.body).toHaveProperty(
+          'Format',
+        );
+        expect(response.body).toHaveProperty(
+          'ParentFolderID',
+        );
+
+        expect(response.body.AssetID).not.toEqual(
+          assetDTO.AssetID,
+        );
+        expect(response.body.TextID).toEqual(
+          assetDTO.TextID,
+        );
+        expect(response.body.UserID).toEqual(
+          assetDTO.UserID,
+        );
+        expect(response.body.FileName).toEqual(
+          assetDTO.FileName,
+        );
+      });
+    });
+  });
 });
