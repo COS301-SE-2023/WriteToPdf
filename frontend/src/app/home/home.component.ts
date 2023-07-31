@@ -29,7 +29,7 @@ import { FolderService } from '../services/folder.service';
 import { Inject } from '@angular/core';
 import { CoordinateService } from '../services/coordinate-service.service';
 import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
-import {NgxSpinnerService} from "ngx-spinner";
+import { NgxSpinnerService } from "ngx-spinner";
 
 interface Column {
   field: string;
@@ -59,9 +59,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public currentDirectory!: any;
 
   //variables for dynamic resizing
-componentWidth: string = '';
-menubarElement: HTMLElement | null = null;
-subMenu: HTMLElement | null = null;
+  componentWidth: string = '';
+  menubarElement: HTMLElement | null = null;
+  subMenu: HTMLElement | null = null;
 
   //variables for double click and enter key to open doc
   public previousNode!: any;
@@ -89,6 +89,8 @@ subMenu: HTMLElement | null = null;
   public entityName: string = '';
   uploadedFiles: any[] = [];
   contextMenuItems: any[];
+
+  public loading: boolean = false;
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
   constructor(
@@ -243,12 +245,12 @@ subMenu: HTMLElement | null = null;
       const folder = this.nodeService.getFolderDTOByID(key);
       this.folderService
         .renameFolder(folder.FolderID, folder.Path, event)
-        .then((data) => {});
+        .then((data) => { });
     } else {
       const file = this.nodeService.getFileDTOByID(key);
       this.fileService
         .renameDocument(file.MarkdownID, event, file.Path)
-        .then((data) => {});
+        .then((data) => { });
     }
   }
 
@@ -338,20 +340,20 @@ subMenu: HTMLElement | null = null;
   }
 
   iterateNodeIDRemoval(node: any[]) {
-    if(!node){
+    if (!node) {
       return node;
     }
-    for(let i=0;i<node.length;i++){
+    for (let i = 0; i < node.length; i++) {
       this.removeUniqueIDRecursive(node[i]);
     }
     return node;
   }
 
-  removeUniqueIDRecursive(node: any){
-    node.data.name=this.removeUniqueID(node.data.name);
-    node.label=this.removeUniqueID(node.label);
-    if(node.children){
-      for(let i=0;i<node.children.length;i++){
+  removeUniqueIDRecursive(node: any) {
+    node.data.name = this.removeUniqueID(node.data.name);
+    node.label = this.removeUniqueID(node.label);
+    if (node.children) {
+      for (let i = 0; i < node.children.length; i++) {
         this.removeUniqueIDRecursive(node.children[i]);
       }
     }
@@ -515,7 +517,7 @@ subMenu: HTMLElement | null = null;
   // this code updates the background layer to not be adjusted from the edit page after navigation.
   ngAfterViewInit() {
     this.subMenu = this.elementRef.nativeElement.querySelector('.p-menubarsub');
-    if(this.subMenu){
+    if (this.subMenu) {
       this.subMenu.style.zIndex = "10000 !important";
     }
     this.updateMenubarWidth();
@@ -526,6 +528,7 @@ subMenu: HTMLElement | null = null;
 
   onOpenFileSelect(event: any): void {
     const file = this.nodeService.getFileDTOByID(event.key);
+    this.loading = true;
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
@@ -534,6 +537,7 @@ subMenu: HTMLElement | null = null;
         this.editService.setMarkdownID(file.MarkdownID);
         this.editService.setParentFolderID(file.ParentFolderID);
         this.editService.setPath(file.Path);
+        this.loading = false;
         this.navigateToPage('edit');
       });
   }
@@ -771,11 +775,13 @@ subMenu: HTMLElement | null = null;
       path,
       'folder'
     );
+    this.loading = true;
     this.folderService
       .createFolder(path, this.entityName, parentFolderID)
       .then((data) => {
         this.nodeService.addFolder(data);
         this.refreshTree();
+        this.loading = false;
         this.createNewFolderDialogueVisible = false;
         this.entityName = '';
       });
@@ -833,18 +839,18 @@ subMenu: HTMLElement | null = null;
       path,
       'file'
     );
-
-    if (
-      await this.fileService.createDocument(
-        this.entityName,
-        path,
-        parentFolderID
-      )
-    ) {
+    this.loading = true;
+    const check = await this.fileService.createDocument(
+      this.entityName,
+      path,
+      parentFolderID
+    );
+    if (check) {
       this.entityName = '';
       this.createNewDocumentDialogueVisible = false;
       this.navigateToPage('edit');
     }
+    this.loading = false;
   }
 
   refreshTree() {
@@ -895,7 +901,7 @@ subMenu: HTMLElement | null = null;
               summary: 'File deleted successfully',
             });
         },
-        reject: () => {},
+        reject: () => { },
       });
     }
   }
@@ -908,7 +914,6 @@ subMenu: HTMLElement | null = null;
   }
 
   selectNode($event: any) {
-    console.log($event);
     this.currentNode = $event.node;
   }
 
@@ -938,16 +943,16 @@ subMenu: HTMLElement | null = null;
 
     // Reset the draggable element's position back to its original position
     $event.source._dragRef.reset();
-    setTimeout(() => {
+    setTimeout(async () => {
       const keyOfDragged = this.currentlyDraggedNode.getAttribute('data-key');
       const keyOfDropped = this.getParentElement(
         this.coordinateService.getElementAtCoordinate()
       )?.getAttribute('data-key');
-      this.moveByKey(keyOfDragged, keyOfDropped);
+      await this.moveByKey(keyOfDragged, keyOfDropped);
+      if (this.currentlyDraggedNode) {
+        this.currentlyDraggedNode.classList.remove('dragging');
+      }
     }, 10);
-    if (this.currentlyDraggedNode) {
-      this.currentlyDraggedNode.classList.remove('dragging');
-    }
   }
 
   getElementAtCoordinate(x: number, y: number): HTMLElement | null {
@@ -969,7 +974,7 @@ subMenu: HTMLElement | null = null;
     return rowData.key;
   }
 
-  moveByKey(
+  async moveByKey(
     keyOfDragged: string | undefined | null,
     keyOfDropped: string | undefined | null
   ) {
@@ -991,7 +996,8 @@ subMenu: HTMLElement | null = null;
     if (type === 'file') {
       const movingNode = this.nodeService.getFileDTOByID(keyOfDragged);
       if (movingNode.ParentFolderID === parentFolderID) return;
-      this.fileService
+      this.loading = true;
+      await this.fileService
         .moveDocument(movingNode.MarkdownID, path, parentFolderID)
         .then((data) => {
           this.nodeService.removeFile(movingNode.MarkdownID);
@@ -999,6 +1005,7 @@ subMenu: HTMLElement | null = null;
           data.Size = movingNode.Size;
           this.nodeService.addFile(data);
           this.refreshTree();
+          this.loading = false;
         });
     } else if (type === 'folder') {
       const movingNode = this.nodeService.getFolderDTOByID(keyOfDragged);
@@ -1012,7 +1019,8 @@ subMenu: HTMLElement | null = null;
         });
         return;
       }
-      this.folderService
+      this.loading = true;
+      await this.folderService
         .moveFolder(movingNode.FolderID, path, parentFolderID)
         .then((data) => {
           this.nodeService.removeFolder(movingNode.FolderID);
@@ -1020,6 +1028,7 @@ subMenu: HTMLElement | null = null;
 
           this.nodeService.addFolder(data);
           this.refreshTree();
+          this.loading = false;
         });
     }
   }
