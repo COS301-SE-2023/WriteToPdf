@@ -114,9 +114,9 @@ describe('FileManagerController (integration)', () => {
         'DELETE FROM MARKDOWN_FILES WHERE UserID = ?',
         [process.env.TEST_USERID],
       );
-      console.log(
-        '################################### Deleted all test user files',
-      );
+      // console.log(
+      //   '################################### Deleted all test user files',
+      // );
     }
 
     // Reset the db for the test user
@@ -178,17 +178,6 @@ describe('FileManagerController (integration)', () => {
       createFolderDTO.FolderID = '1';
       folderID = createFolderDTO.FolderID;
 
-    await markdownFileRepository.query(
-      'INSERT INTO FOLDERS (FolderID, FolderName, Path, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?)',
-      [
-        createFolderDTO.FolderID,
-        createFolderDTO.FolderName,
-        createFolderDTO.Path,
-        createFolderDTO.ParentFolderID,
-        createFolderDTO.UserID,
-      ],
-    );
-  }
       await markdownFileRepository.query(
         'INSERT INTO FOLDERS (FolderID, FolderName, Path, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?)',
         [
@@ -220,22 +209,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/create_file/ (POST) - valid request', async () => {
         await resetUser(ResetScope.NONE);
@@ -256,46 +245,46 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.body).toHaveProperty(
-    //       'MarkdownID',
-    //     );
-    //     fileID = response.body.MarkdownID;
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Name',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Content',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Path',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'DateCreated',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'LastModified',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Size',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'ParentFolderID',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'UserID',
-    //     );
-    //     expect(response.body.Name).toEqual(
-    //       'New Document',
-    //     );
-    //     expect(response.body.Path).toEqual('');
-    //     expect(
-    //       response.body.ParentFolderID,
-    //     ).toEqual('');
-    //   });
-    // });
+        expect(response.body).toHaveProperty(
+          'MarkdownID',
+        );
+        fileID = response.body.MarkdownID;
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'Name',
+        );
+        expect(response.body).toHaveProperty(
+          'Content',
+        );
+        expect(response.body).toHaveProperty(
+          'Path',
+        );
+        expect(response.body).toHaveProperty(
+          'DateCreated',
+        );
+        expect(response.body).toHaveProperty(
+          'LastModified',
+        );
+        expect(response.body).toHaveProperty(
+          'Size',
+        );
+        expect(response.body).toHaveProperty(
+          'ParentFolderID',
+        );
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.body.Name).toEqual(
+          'New Document',
+        );
+        expect(response.body.Path).toEqual('');
+        expect(
+          response.body.ParentFolderID,
+        ).toEqual('');
+      });
+    });
 
     describe('delete_file', () => {
       it('/file-manager/delete_file/ (POST) - missing UserID', async () => {
@@ -316,22 +305,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/delete_file/ (POST) - missing MarkdownID', async () => {
         await resetUser(ResetScope.NONE);
@@ -352,22 +341,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/delete_file/ (POST) - valid request', async () => {
         await resetUser(
@@ -379,8 +368,8 @@ describe('FileManagerController (integration)', () => {
           process.env.TEST_USERID,
         );
 
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
 
         const response = await request(
           app.getHttpServer(),
@@ -393,15 +382,15 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'affected',
-    //     );
-    //     expect(response.body.affected).toEqual(1);
-    //   });
-    // });
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'affected',
+        );
+        expect(response.body.affected).toEqual(1);
+      });
+    });
 
     describe('rename_file', () => {
       it('/file-manager/rename_file/ (POST) - missing UserID', async () => {
@@ -423,22 +412,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/rename_file/ (POST) - missing MarkdownID', async () => {
         await resetUser(ResetScope.NONE);
@@ -460,22 +449,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/rename_file/ (POST) - missing Name', async () => {
         await resetUser(ResetScope.NONE);
@@ -498,22 +487,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/rename_file/ (POST) - valid request', async () => {
         await resetUser(
@@ -539,30 +528,30 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     // console.log('response.body: ', response.body);
-    //     expect(response.body).toHaveProperty(
-    //       'MarkdownID',
-    //     );
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Name',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'UserID',
-    //     );
-    //     expect(response.body.MarkdownID).toEqual(
-    //       fileID,
-    //     );
-    //     expect(response.body.Name).toEqual(
-    //       'New Name',
-    //     );
-    //     expect(response.body.UserID).toEqual(
-    //       parseInt(process.env.TEST_USERID),
-    //     );
-    //   });
-    // });
+        // console.log('response.body: ', response.body);
+        expect(response.body).toHaveProperty(
+          'MarkdownID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'Name',
+        );
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.body.MarkdownID).toEqual(
+          fileID,
+        );
+        expect(response.body.Name).toEqual(
+          'New Name',
+        );
+        expect(response.body.UserID).toEqual(
+          parseInt(process.env.TEST_USERID),
+        );
+      });
+    });
 
     describe('move_file', () => {
       it('/file-manager/move_file/ (POST) - missing UserID', async () => {
@@ -586,22 +575,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/move_file/ (POST) - missing MarkdownID', async () => {
         await resetUser(ResetScope.NONE);
@@ -625,22 +614,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/move_file/ (POST) - missing ParentFolderID', async () => {
         await resetUser(ResetScope.NONE);
@@ -664,22 +653,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/move_file/ (POST) - missing Path', async () => {
         await resetUser(ResetScope.NONE);
@@ -693,32 +682,32 @@ describe('FileManagerController (integration)', () => {
         requestMarkdownFileDTO.ParentFolderID =
           'test';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/move_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/move_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/move_file/ (POST) - valid request', async () => {
         await resetUser(
@@ -746,38 +735,38 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.body).toHaveProperty(
-    //       'MarkdownID',
-    //     );
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Name',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'UserID',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Path',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'ParentFolderID',
-    //     );
-    //     expect(response.body.MarkdownID).toEqual(
-    //       fileID,
-    //     );
-    //     expect(response.body.Path).toEqual(
-    //       'test',
-    //     );
-    //     expect(
-    //       response.body.ParentFolderID,
-    //     ).toEqual('test');
-    //     expect(response.body.UserID).toEqual(
-    //       parseInt(process.env.TEST_USERID),
-    //     );
-    //   });
-    // });
+        expect(response.body).toHaveProperty(
+          'MarkdownID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'Name',
+        );
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.body).toHaveProperty(
+          'Path',
+        );
+        expect(response.body).toHaveProperty(
+          'ParentFolderID',
+        );
+        expect(response.body.MarkdownID).toEqual(
+          fileID,
+        );
+        expect(response.body.Path).toEqual(
+          'test',
+        );
+        expect(
+          response.body.ParentFolderID,
+        ).toEqual('test');
+        expect(response.body.UserID).toEqual(
+          parseInt(process.env.TEST_USERID),
+        );
+      });
+    });
 
     describe('save_file', () => {
       it('/file-manager/save_file/ (POST) - missing UserID', async () => {
@@ -799,22 +788,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/save_file/ (POST) - missing MarkdownID', async () => {
         await resetUser(ResetScope.NONE);
@@ -836,22 +825,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/save_file/ (POST) - missing Content', async () => {
         await resetUser(ResetScope.NONE);
@@ -874,22 +863,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/save_file/ (POST) - valid request', async () => {
         await resetUser(
@@ -915,37 +904,37 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.body).toHaveProperty(
-    //       'MarkdownID',
-    //     );
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Name',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'UserID',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Path',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'ParentFolderID',
-    //     );
-    //     expect(response.body.MarkdownID).toEqual(
-    //       fileID,
-    //     );
-    //     expect(response.body.Path).toEqual('');
-    //     expect(
-    //       response.body.ParentFolderID,
-    //     ).toEqual('');
-    //     expect(response.body.UserID).toEqual(
-    //       parseInt(process.env.TEST_USERID),
-    //     );
-    //     //TODO expand test to check the s3 bucket
-    //   });
-    // });
+        expect(response.body).toHaveProperty(
+          'MarkdownID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'Name',
+        );
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.body).toHaveProperty(
+          'Path',
+        );
+        expect(response.body).toHaveProperty(
+          'ParentFolderID',
+        );
+        expect(response.body.MarkdownID).toEqual(
+          fileID,
+        );
+        expect(response.body.Path).toEqual('');
+        expect(
+          response.body.ParentFolderID,
+        ).toEqual('');
+        expect(response.body.UserID).toEqual(
+          parseInt(process.env.TEST_USERID),
+        );
+        //TODO expand test to check the s3 bucket
+      });
+    });
 
     describe('retrieve_file', () => {
       it('/file-manager/retrieve_file/ (POST) - missing UserID', async () => {
@@ -966,22 +955,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/retrieve_file/ (POST) - missing MarkdownID', async () => {
         await resetUser(ResetScope.NONE);
@@ -991,32 +980,32 @@ describe('FileManagerController (integration)', () => {
           process.env.TEST_USERID,
         );
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/retrieve_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/retrieve_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .send(requestMarkdownFileDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/retrieve_file/ (POST) - valid request', async () => {
         await resetUser(
@@ -1041,27 +1030,27 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestMarkdownFileDTO);
 
-    //     expect(response.body).toHaveProperty(
-    //       'MarkdownID',
-    //     );
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'UserID',
-    //     );
-    //     expect(response.body.MarkdownID).toEqual(
-    //       fileID,
-    //     );
-    //     expect(response.body.UserID).toEqual(
-    //       parseInt(process.env.TEST_USERID),
-    //     );
-    //     expect(response.body.Content).toEqual(
-    //       'Test content',
-    //     );
-    //     expect(response.body.Size).not.toEqual(0);
-    //   });
-    // });
+        expect(response.body).toHaveProperty(
+          'MarkdownID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.body.MarkdownID).toEqual(
+          fileID,
+        );
+        expect(response.body.UserID).toEqual(
+          parseInt(process.env.TEST_USERID),
+        );
+        expect(response.body.Content).toEqual(
+          'Test content',
+        );
+        expect(response.body.Size).not.toEqual(0);
+      });
+    });
 
     describe('retrieve_all_files', () => {
       it('/file-manager/retrieve_all_files/ (POST) - missing UserID', async () => {
@@ -1082,22 +1071,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestDirectoryFilesDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('file-manager/retrieve_all_files/ (POST) - valid request', async () => {
         await resetUser(
@@ -1121,29 +1110,29 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestDirectoryFilesDTO);
 
-    //     expect(response.body).toHaveProperty(
-    //       'UserID',
-    //     );
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Files',
-    //     );
-    //     expect(response.body.UserID).toEqual(
-    //       parseInt(process.env.TEST_USERID),
-    //     );
-    //     expect(response.body.Files).not.toEqual(
-    //       [],
-    //     );
-    //     expect(response.body.Files).toHaveLength(
-    //       1,
-    //     );
-    //     expect(
-    //       response.body.Files[0],
-    //     ).toHaveProperty('MarkdownID');
-    //   });
-    // });
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'Files',
+        );
+        expect(response.body.UserID).toEqual(
+          parseInt(process.env.TEST_USERID),
+        );
+        expect(response.body.Files).not.toEqual(
+          [],
+        );
+        expect(response.body.Files).toHaveLength(
+          1,
+        );
+        expect(
+          response.body.Files[0],
+        ).toHaveProperty('MarkdownID');
+      });
+    });
 
     describe('create_folder', () => {
       it('/file-manager/create_folder/ (POST) - missing UserID', async () => {
@@ -1163,22 +1152,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/create_folder/ (POST) - missing FolderName', async () => {
         await resetUser(ResetScope.NONE);
@@ -1199,22 +1188,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/create_folder/ (POST) - missing Path', async () => {
         await resetUser(ResetScope.NONE);
@@ -1235,22 +1224,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/create_folder/ (POST) - valid request', async () => {
         await resetUser(ResetScope.FOLDERS);
@@ -1274,45 +1263,45 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.body).toHaveProperty(
-    //       'FolderID',
-    //     );
-    //     fileID = response.body.MarkdownID;
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'FolderName',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Path',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'DateCreated',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'LastModified',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'ParentFolderID',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'UserID',
-    //     );
-    //     expect(response.body.FolderName).toEqual(
-    //       'Test Name',
-    //     );
-    //     expect(response.body.Path).toEqual(
-    //       'Test Path',
-    //     );
-    //     expect(
-    //       response.body.ParentFolderID,
-    //     ).toEqual('Test ParentFolderID');
-    //     expect(response.body.UserID).toEqual(
-    //       parseInt(process.env.TEST_USERID),
-    //     );
-    //   });
-    // });
+        expect(response.body).toHaveProperty(
+          'FolderID',
+        );
+        fileID = response.body.MarkdownID;
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'FolderName',
+        );
+        expect(response.body).toHaveProperty(
+          'Path',
+        );
+        expect(response.body).toHaveProperty(
+          'DateCreated',
+        );
+        expect(response.body).toHaveProperty(
+          'LastModified',
+        );
+        expect(response.body).toHaveProperty(
+          'ParentFolderID',
+        );
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.body.FolderName).toEqual(
+          'Test Name',
+        );
+        expect(response.body.Path).toEqual(
+          'Test Path',
+        );
+        expect(
+          response.body.ParentFolderID,
+        ).toEqual('Test ParentFolderID');
+        expect(response.body.UserID).toEqual(
+          parseInt(process.env.TEST_USERID),
+        );
+      });
+    });
 
     describe('delete_folder', () => {
       it('/file-manager/delete_folder/ (POST) - missing UserID', async () => {
@@ -1331,22 +1320,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/delete_folder/ (POST) - missing FolderID', async () => {
         await resetUser(ResetScope.NONE);
@@ -1366,22 +1355,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('file-manager/delete_folder/ (POST) - valid request', async () => {
         await resetUser(ResetScope.FOLDERS);
@@ -1402,11 +1391,11 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //   });
-    // });
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+      });
+    });
 
     describe('rename_folder', () => {
       it('/file-manager/rename_folder/ (POST) - missing UserID', async () => {
@@ -1426,22 +1415,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/rename_folder/ (POST) - missing FolderName', async () => {
         await resetUser(ResetScope.NONE);
@@ -1462,22 +1451,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/rename_folder/ (POST) - missing FolderID', async () => {
         await resetUser(ResetScope.NONE);
@@ -1498,22 +1487,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/rename_folder/ (POST) - valid request', async () => {
         await resetUser(ResetScope.FOLDERS);
@@ -1535,20 +1524,20 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.body).toHaveProperty(
-    //       'FolderID',
-    //     );
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'FolderName',
-    //     );
-    //     expect(response.body.FolderName).toEqual(
-    //       'New Name',
-    //     );
-    //   });
-    // });
+        expect(response.body).toHaveProperty(
+          'FolderID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'FolderName',
+        );
+        expect(response.body.FolderName).toEqual(
+          'New Name',
+        );
+      });
+    });
 
     describe('move_folder', () => {
       it('/file-manager/move_folder/ (POST) - missing UserID', async () => {
@@ -1569,22 +1558,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/move_folder/ (POST) - missing ParentFolderID', async () => {
         await resetUser(ResetScope.NONE);
@@ -1606,22 +1595,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/move_folder/ (POST) - missing FolderID', async () => {
         await resetUser(ResetScope.NONE);
@@ -1643,22 +1632,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/move_folder/ (POST) - missing Path', async () => {
         await resetUser(ResetScope.NONE);
@@ -1680,22 +1669,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('/file-manager/move_folder/ (POST) - valid request', async () => {
         await resetUser(ResetScope.FOLDERS);
@@ -1719,29 +1708,29 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestFolder);
 
-    //     expect(response.body).toHaveProperty(
-    //       'FolderID',
-    //     );
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'FolderName',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Path',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'ParentFolderID',
-    //     );
-    //     expect(response.body.Path).toEqual(
-    //       'New Path',
-    //     );
-    //     expect(
-    //       response.body.ParentFolderID,
-    //     ).toEqual('New ParentFolderID');
-    //   });
-    // });
+        expect(response.body).toHaveProperty(
+          'FolderID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'FolderName',
+        );
+        expect(response.body).toHaveProperty(
+          'Path',
+        );
+        expect(response.body).toHaveProperty(
+          'ParentFolderID',
+        );
+        expect(response.body.Path).toEqual(
+          'New Path',
+        );
+        expect(
+          response.body.ParentFolderID,
+        ).toEqual('New ParentFolderID');
+      });
+    });
 
     describe('retrieve_all_folders', () => {
       it('/file-manager/retrieve_all_folders/ (POST) - missing UserID', async () => {
@@ -1762,22 +1751,22 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestDirectoryFoldersDTO);
 
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
+        expect(response.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body).toHaveProperty(
+          'statusCode',
+        );
+        expect(response.body).toHaveProperty(
+          'message',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(response.body.message).toEqual(
+          'Invalid request data',
+        );
+      });
 
       it('file-manager/retrieve_all_folders/ (POST) - valid request', async () => {
         await resetUser(ResetScope.FOLDERS);
@@ -1799,28 +1788,28 @@ describe('FileManagerController (integration)', () => {
           .set('isTest', 'true')
           .send(requestDirectoryFoldersDTO);
 
-    //     expect(response.body).toHaveProperty(
-    //       'UserID',
-    //     );
-    //     expect(response.status).toBe(
-    //       HttpStatus.OK,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'Folders',
-    //     );
-    //     expect(response.body.UserID).toEqual(
-    //       parseInt(process.env.TEST_USERID),
-    //     );
-    //     expect(response.body.Folders).not.toEqual(
-    //       [],
-    //     );
-    //     expect(
-    //       response.body.Folders,
-    //     ).toHaveLength(1);
-    //     expect(
-    //       response.body.Folders[0],
-    //     ).toHaveProperty('FolderID');
-    //   });
-    // });
+        expect(response.body).toHaveProperty(
+          'UserID',
+        );
+        expect(response.status).toBe(
+          HttpStatus.OK,
+        );
+        expect(response.body).toHaveProperty(
+          'Folders',
+        );
+        expect(response.body.UserID).toEqual(
+          parseInt(process.env.TEST_USERID),
+        );
+        expect(response.body.Folders).not.toEqual(
+          [],
+        );
+        expect(
+          response.body.Folders,
+        ).toHaveLength(1);
+        expect(
+          response.body.Folders[0],
+        ).toHaveProperty('FolderID');
+      });
+    });
   });
 });
