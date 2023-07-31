@@ -247,35 +247,71 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async retrieveAsset(assetId: string, format: string, textId: string) {
-    const asset = await this.assetService.retrieveAsset(assetId, format, textId);
+    let currAssetIndex: number = 0;
+    for (let i = 0; i < this.assets.length; i++) {
+      if (this.assets[i].Id === assetId) {
+        currAssetIndex = i;
+        break;
+      }
+    }
     // const asset = true;
-    if (asset) {
-      if (format === 'text') {
-        this.textFromAsset = [];
-        this.parseAssetText(asset);
-        this.textCopyDialog = true;
+    if (format === 'text') {
+      let asset = this.assets[currAssetIndex];
+      if (!asset.Blocks) {
+        asset = await this.assetService.retrieveAsset(assetId, format, textId);
+        this.assets[currAssetIndex].Blocks = asset.Blocks;
       }
-      else if (format === 'image') {
-        this.copyHtmlToClipboard(`<img src="${asset.Content}" alt="Image">`);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Image copied to clipboard',
-        });
+      this.parseAssetText(asset);
+      this.textCopyDialog = true;
+    }
+    else if (format === 'image') {
+
+      let asset = this.assets[currAssetIndex];
+      if (!asset.CopyContent) {
+        asset = await this.assetService.retrieveAsset(assetId, format, textId);
+        this.assets[currAssetIndex].CopyContent = asset.Content;
+        asset.CopyContent = asset.Content;
       }
+      this.copyHtmlToClipboard(`<img src="${asset.CopyContent}" alt="Image">`);
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Image copied to clipboard',
+      });
     }
   }
 
   async copyAllText(assetId: string, format: string, textId: string) {
-    const asset = await this.assetService.retrieveAsset(assetId, format, textId);
-
-    this.parseAssetText(asset);
-
-    let text = '';
-    for (let i = 0; i < this.textFromAsset.length; i++) {
-      text += this.textFromAsset[i] + '\n';
+    let currAssetIndex: number = 0;
+    for (let i = 0; i < this.assets.length; i++) {
+      if (this.assets[i].Id === assetId) {
+        currAssetIndex = i;
+        break;
+      }
     }
-    this.copyTextToClipboard(text);
+
+    if (this.assets[currAssetIndex].Blocks) {
+      this.parseAssetText(this.assets[currAssetIndex]);
+
+      let text = '';
+      for (let i = 0; i < this.textFromAsset.length; i++) {
+        text += this.textFromAsset[i] + '\n';
+      }
+      this.copyTextToClipboard(text);
+
+      return;
+    } else {
+      const asset = await this.assetService.retrieveAsset(assetId, format, textId);
+
+      this.assets[currAssetIndex].Blocks = asset.Blocks;
+      this.parseAssetText(asset);
+
+      let text = '';
+      for (let i = 0; i < this.textFromAsset.length; i++) {
+        text += this.textFromAsset[i] + '\n';
+      }
+      this.copyTextToClipboard(text);
+    }
   }
 
   parseAssetText(asset: any) {
