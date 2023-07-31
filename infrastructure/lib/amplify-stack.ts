@@ -13,13 +13,16 @@ export class AmplifyStack extends Stack {
 
     const sourceCodeProvider = new GitHubSourceCodeProvider({
       // oauthToken: cdk.SecretValue.secretsManager("GITHUB_TOKEN"),
-      oauthToken: SecretValue.unsafePlainText(""),
+      oauthToken: SecretValue.unsafePlainText(
+        "" // Remove
+      ),
       owner: "COS301-SE-2023",
       repository: "WriteToPdf",
     });
 
     const environmentVariables = {
       AMPLIFY_MONOREPO_APP_ROOT: "frontend",
+      WRITETOPDF_API: "", // Add in using Amplify console/find way to obfuscate
     };
 
     const buildSpec = BuildSpec.fromObjectToYaml({
@@ -30,7 +33,11 @@ export class AmplifyStack extends Stack {
           frontend: {
             phases: {
               preBuild: {
-                commands: ["npm ci"],
+                commands: [
+                  // Fix envirmonment vars
+                  "npm ci",
+                  "echo \"export const environment = { production: false,apiURL: 'http://$WRITETOPDF_API:3000/',DEV_USER_EMAIL: 'secret',DEV_USER_PASSWORD: 'secret',};\" >> src/environments/environment.staging.ts",
+                ],
               },
               build: {
                 commands: ["npm run prod"],
@@ -59,10 +66,6 @@ export class AmplifyStack extends Stack {
     });
 
     const testBranch = amplifyFrontend.addBranch("test", {
-      autoBuild: true,
-    });
-
-    const devBranch = amplifyFrontend.addBranch("dev/devOps", {
       autoBuild: true,
     });
   }
