@@ -75,18 +75,20 @@ describe('TextractService', () => {
   });
 
   describe('Asynchronous extract', () => {
-    it('should return an extraction object', async () => {
-      const assetDTO = new AssetDTO();
-      assetDTO.UserID = 16;
-      assetDTO.AssetID = '1';
+    describe('Text Extraction', () => {
+      it('should return an extraction object', async () => {
+        const assetDTO = new AssetDTO();
+        assetDTO.UserID = 16;
+        assetDTO.AssetID = '1';
 
-      const result =
-        textractService._extractDocumentAsynchronous(
-          assetDTO,
-          'text',
-        );
+        const result =
+          textractService._extractDocumentAsynchronous(
+            assetDTO,
+            'text',
+          );
 
-      expect(result).toBeDefined();
+        expect(result).toBeDefined();
+      });
     });
   });
 });
