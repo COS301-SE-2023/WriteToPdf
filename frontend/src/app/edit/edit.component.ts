@@ -279,7 +279,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   parseAssetText(asset: any) {
-
+    this.textFromAsset = [];
     for (let i = 0; i < asset.Blocks.length; i++) {
       if (asset.Blocks[i].BlockType === 'LINE')
         this.textFromAsset.push(asset.Blocks[i].Text);
