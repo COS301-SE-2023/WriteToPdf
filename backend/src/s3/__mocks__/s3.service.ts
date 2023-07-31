@@ -7,7 +7,7 @@ export class S3ServiceMock {
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    console.log('Delete File (mock)');
+    // console.log('Delete File (mock)');
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
@@ -17,14 +17,14 @@ export class S3ServiceMock {
     try {
       await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error (mock): ' + err);
+      // console.log('Access Error (mock): ' + err);
       return undefined;
     }
 
     try {
       await fs.unlink(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Delete Error (mock): ' + err);
+      // console.log('Delete Error (mock): ' + err);
       return undefined;
     }
 
@@ -34,7 +34,7 @@ export class S3ServiceMock {
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    console.log('Create File (mock)');
+    // console.log('Create File (mock)');
     const markdownID = CryptoJS.SHA256(
       markdownFileDTO.UserID.toString() +
         new Date().getTime().toString(),
@@ -51,9 +51,9 @@ export class S3ServiceMock {
         recursive: true,
       });
     } catch (err) {
-      console.log(
-        'Directory Creation Error (mock): ' + err,
-      );
+      // console.log(
+      //   'Directory Creation Error (mock): ' + err,
+      // );
       return undefined;
     }
 
@@ -64,9 +64,9 @@ export class S3ServiceMock {
         'utf-8',
       );
     } catch (err) {
-      console.log(
-        'Write File Error (mock): ' + err,
-      );
+      // console.log(
+      //   'Write File Error (mock): ' + err,
+      // );
       return undefined;
     }
 
@@ -79,7 +79,7 @@ export class S3ServiceMock {
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    console.log('Save File (mock)');
+    // console.log('Save File (mock)');
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
@@ -89,7 +89,7 @@ export class S3ServiceMock {
     try {
       await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error: ' + err);
+      // console.log('Access Error: ' + err);
       return undefined;
     }
 
@@ -104,9 +104,9 @@ export class S3ServiceMock {
         'utf-8',
       );
     } catch (err) {
-      console.log(
-        'Write File Error (mock): ' + err,
-      );
+      // console.log(
+      //   'Write File Error (mock): ' + err,
+      // );
       return undefined;
     }
 
@@ -116,7 +116,7 @@ export class S3ServiceMock {
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    console.log('Retrieve File (mock)');
+    // console.log('Retrieve File (mock)');
     let filePath = '';
     if (markdownFileDTO.Path === '')
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
@@ -126,9 +126,9 @@ export class S3ServiceMock {
     try {
       await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log(
-        'Access Error (mock) --> ' + err,
-      );
+      // console.log(
+      //   'Access Error (mock) --> ' + err,
+      // );
       return undefined;
     }
 
@@ -142,9 +142,9 @@ export class S3ServiceMock {
       markdownFileDTO.Size =
         markdownFileDTO.Content.length;
     } catch (err) {
-      console.log(
-        'Read File Error (mock):' + err,
-      );
+      // console.log(
+      //   'Read File Error (mock):' + err,
+      // );
       return undefined;
     }
 
@@ -160,7 +160,7 @@ export class S3ServiceMock {
   }
 
   async saveAsset(saveAssetDTO: AssetDTO) {
-    console.log('Save Asset (mock)');
+    // console.log('Save Asset (mock)');
     let filePath = `${saveAssetDTO.UserID}`;
 
     try {
@@ -168,9 +168,9 @@ export class S3ServiceMock {
         recursive: true,
       });
     } catch (err) {
-      console.log(
-        'Directory Creation Error (mock): ' + err,
-      );
+      // console.log(
+      //   'Directory Creation Error (mock): ' + err,
+      // );
       return undefined;
     }
 
@@ -187,9 +187,9 @@ export class S3ServiceMock {
         'utf-8',
       );
     } catch (err) {
-      console.log(
-        'Write File Error (mock): ' + err,
-      );
+      // console.log(
+      //   'Write File Error (mock): ' + err,
+      // );
       return undefined;
     }
 
@@ -203,7 +203,7 @@ export class S3ServiceMock {
     assetID: string,
     userID: number,
   ) {
-    console.log('Retrieve Asset (mock)');
+    // console.log('Retrieve Asset (mock)');
     const retrieveAssetDTO = new AssetDTO();
 
     let filePath = `${userID}`;
@@ -211,9 +211,9 @@ export class S3ServiceMock {
     try {
       await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log(
-        'Access Error (mock) --> ' + err,
-      );
+      // console.log(
+      //   'Access Error (mock) --> ' + err,
+      // );
       return undefined;
     }
 
@@ -230,9 +230,9 @@ export class S3ServiceMock {
       retrieveAssetDTO.Size =
         retrieveAssetDTO.Content.length;
     } catch (err) {
-      console.log(
-        'Read File Error (mock):' + err,
-      );
+      // console.log(
+      //   'Read File Error (mock):' + err,
+      // );
       return undefined;
     }
     return retrieveAssetDTO;
@@ -241,15 +241,15 @@ export class S3ServiceMock {
   async retrieveAsset(
     retrieveAssetDTO: AssetDTO,
   ) {
-    console.log('Retrieve Asset (mock)');
+    // console.log('Retrieve Asset (mock)');
     let filePath = `${retrieveAssetDTO.UserID}`;
 
     try {
       await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log(
-        'Access Error (mock) --> ' + err,
-      );
+      // console.log(
+      //   'Access Error (mock) --> ' + err,
+      // );
       return undefined;
     }
 
@@ -266,24 +266,24 @@ export class S3ServiceMock {
       retrieveAssetDTO.Size =
         retrieveAssetDTO.Content.length;
     } catch (err) {
-      console.log(
-        'Read File Error (mock):' + err,
-      );
+      // console.log(
+      //   'Read File Error (mock):' + err,
+      // );
       return undefined;
     }
     return retrieveAssetDTO;
   }
 
   async deleteAsset(assetDTO: AssetDTO) {
-    console.log('Delete Asset (mock)');
+    // console.log('Delete Asset (mock)');
     let filePath = `${assetDTO.UserID}`;
 
     try {
       await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log(
-        'Access Error (mock) --> ' + err,
-      );
+      // console.log(
+      //   'Access Error (mock) --> ' + err,
+      // );
       return undefined;
     }
 
@@ -292,9 +292,9 @@ export class S3ServiceMock {
     try {
       await fs.unlink(`./storage/${filePath}`);
     } catch (err) {
-      console.log(
-        'Delete Error (mock) --> ' + err,
-      );
+      // console.log(
+      //   'Delete Error (mock) --> ' + err,
+      // );
       return undefined;
     }
     return assetDTO;
