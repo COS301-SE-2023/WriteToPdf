@@ -39,19 +39,6 @@ describe('S3Service', () => {
 
     jest.mock('fs/promises');
     jest.mock('@aws-sdk/client-s3');
-    // Configure mockS3Client
-    mockS3Client.reset();
-    const stream = new Readable();
-    stream.push('hello world');
-    stream.push(null); // end of stream
-    stream.pipe(process.stdout);
-    const sdkStream = sdkStreamMixin(stream);
-    mockS3Client
-      .on(GetObjectCommand)
-      .resolves({ Body: sdkStream });
-
-    jest.mock('fs/promises');
-    jest.mock('@aws-sdk/client-s3');
   });
 
   describe('FileDTO', () => {
@@ -782,13 +769,7 @@ describe('S3Service', () => {
 
         const response =
           await s3Service.deleteAsset(assetDTO);
-        const response =
-          await s3Service.deleteAsset(assetDTO);
 
-        expect(response).toBeDefined();
-      });
-    });
-  });
         expect(response).toBeDefined();
       });
     });
