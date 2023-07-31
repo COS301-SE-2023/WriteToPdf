@@ -62,6 +62,7 @@ describe('FileManagerService', () => {
   let foldersService: FoldersService;
   let markdownFilesService: MarkdownFilesService;
   let s3Service: S3Service;
+  let s3ServiceMock: S3ServiceMock;
   let conversionService: ConversionService;
   let usersService: UsersService;
 
@@ -161,6 +162,9 @@ describe('FileManagerService', () => {
         MarkdownFilesService,
       );
     s3Service = module.get<S3Service>(S3Service);
+    s3ServiceMock = module.get<S3ServiceMock>(
+      S3ServiceMock,
+    );
     conversionService =
       module.get<ConversionService>(
         ConversionService,
@@ -774,6 +778,23 @@ describe('FileManagerService', () => {
       }
     });
 
+    it('should use s3 mock if it is a test', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+
+      jest.spyOn(s3ServiceMock, 'retrieveFile');
+
+      await service.retrieveFile(
+        markdownFileDTO,
+        true,
+      );
+
+      expect(
+        s3ServiceMock.retrieveFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+
     it('should call retrieveFile method', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -1243,6 +1264,33 @@ describe('FileManagerService', () => {
       ).toHaveBeenCalledWith(markdownFileDTO);
     });
 
+    it('should call the s3 mock if it is a test', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Content = 'test';
+
+      jest
+        .spyOn(s3ServiceMock, 'saveFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'updateLastModified',
+        )
+        .mockResolvedValue(new MarkdownFile());
+
+      await service.saveFile(
+        markdownFileDTO,
+        true,
+      );
+
+      expect(
+        s3ServiceMock.saveFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+
     it('should call updateLastModified method', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -1326,6 +1374,29 @@ describe('FileManagerService', () => {
       ).toHaveBeenCalledWith(markdownFileDTO);
     });
 
+    it('should call the s3 mock if it is a test', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+
+      jest
+        .spyOn(s3ServiceMock, 'deleteFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(markdownFilesService, 'remove')
+        .mockResolvedValue(new MarkdownFile());
+
+      await service.deleteFile(
+        markdownFileDTO,
+        true,
+      );
+
+      expect(
+        s3ServiceMock.deleteFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+
     it('should call remove method', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -1393,6 +1464,7 @@ describe('FileManagerService', () => {
         );
       }
     });
+
     it('should call convertTxtToHtml method for txt types', async () => {
       const importDTO = new ImportDTO();
       importDTO.UserID = 0;
