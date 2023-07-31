@@ -114,9 +114,9 @@ describe('FileManagerController (integration)', () => {
         'DELETE FROM MARKDOWN_FILES WHERE UserID = ?',
         [process.env.TEST_USERID],
       );
-      console.log(
-        '################################### Deleted all test user files',
-      );
+      // console.log(
+      //   '################################### Deleted all test user files',
+      // );
     }
 
     // Reset the db for the test user
