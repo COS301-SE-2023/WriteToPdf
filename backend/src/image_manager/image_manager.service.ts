@@ -51,7 +51,7 @@ export class ImageManagerService {
         uploadImageDTO,
       );
     } else {
-      return this.s3Service.saveAsset(
+      return this.s3Service.saveImageAsset(
         uploadImageDTO,
       );
     }
