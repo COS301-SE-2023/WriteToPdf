@@ -40,6 +40,7 @@ $top-bottom-color: #202221;
 
 .footer {
     display: flex;
+    align-items: center;
     background-color: $top-bottom-color;
     margin-top: 10px;
     min-height: 60px;
@@ -51,6 +52,7 @@ $top-bottom-color: #202221;
     display: flex;
     transition: 0.5s;
     margin: auto;
+    margin-right: 140px;
     width: 50px;
     height: 50px;
     border-radius: 25px;
@@ -141,11 +143,17 @@ $top-bottom-color: #202221;
     height: 50%;
 }
 
-.endFooter {
+
+.startFooter {
     margin: auto;
+    margin-right: 0;
+    flex-grow: 1;
 }
 
-.startFooter{
+.endFooter {
+    flex-grow: 1;
+}
+
+.flipButton {
     margin: auto;
-    margin-right:0;
 }
