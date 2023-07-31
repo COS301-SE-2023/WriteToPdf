@@ -44,9 +44,16 @@ jest.mock('crypto-js', () => {
     SHA256: jest.fn().mockReturnValue({
       toString: mockedHash,
     }),
-    AES: jest.fn().mockReturnValue({
-      toString: mockedHash,
-    }),
+    AES: {
+      decrypt: jest.fn().mockReturnValue({
+        toString: mockedHash,
+      }),
+      enc: {
+        Utf8: {
+          stringify: jest.fn(),
+        },
+      },
+    },
   };
 });
 
@@ -1699,4 +1706,31 @@ describe('FileManagerService', () => {
       ).toHaveBeenCalledWith(foundUser.Password);
     });
   });
+
+  // describe('decryptContent', () => {
+  //   it('should decrypt the content', async () => {
+  //     const content = 'Encrypted content';
+  //     const encryptionKey =
+  //       'encryption-secret-key';
+
+  //     const decryptedMessage =
+  //       await service.decryptContent(
+  //         content,
+  //         encryptionKey,
+  //       );
+
+  //     expect(
+  //       CryptoJS.AES.decrypt,
+  //     ).toHaveBeenCalledWith(
+  //       content,
+  //       encryptionKey,
+  //     );
+  //     expect(
+  //       CryptoJS.AES.decrypt().toString,
+  //     ).toHaveBeenCalledWith(CryptoJS.enc.Utf8);
+  //     expect(decryptedMessage).toEqual(
+  //       'Decrypted message',
+  //     );
+  //   });
+  // });
 });
