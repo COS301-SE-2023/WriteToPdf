@@ -100,15 +100,15 @@
           src="assets/Icons/editIcons/plus.png"
         />
         <div class="dropdownContent">
-          <div class="dropdownInput">
+          <div class="dropdownInput" (click)="navigateToPage('camera')">
             <img class="dropdownIcon1" src="assets/Icons/editIcons/addAsset.png" alt="">
-            <p class="dropdownOptions" (click)="navigateToPage('camera')">
+            <p class="dropdownOptions" >
               Camera
             </p>
           </div>
-          <div class="dropdownInput">
+          <div class="dropdownInput"  (click)="showImageUploadPopup()">
             <img class="dropdownIcon2" src="assets/Icons/editIcons/upload.png" alt="">
-            <p class="dropdownOptions" (click)="showImageUploadPopup()">
+            <p class="dropdownOptions">
               Upload
             </p>
           </div>
