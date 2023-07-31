@@ -8,26 +8,15 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { sdkStreamMixin } from '@aws-sdk/util-stream-node';
-import {
-  GetObjectCommand,
-  S3Client,
-} from '@aws-sdk/client-s3';
-import { sdkStreamMixin } from '@aws-sdk/util-stream-node';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import * as fs from 'fs/promises';
-import { Readable } from 'stream';
 import { mockClient } from 'aws-sdk-client-mock';
 import { FileDTO } from './dto/file.dto';
 import { AssetDTO } from '../assets/dto/asset.dto';
-import * as fs from 'fs/promises';
 import { Readable } from 'stream';
-import { mockClient } from 'aws-sdk-client-mock';
-import { FileDTO } from './dto/file.dto';
-import { AssetDTO } from '../assets/dto/asset.dto';
 
 describe('S3Service', () => {
   let s3Service: S3Service;
-  const mockS3Client = mockClient(S3Client);
   const mockS3Client = mockClient(S3Client);
 
   beforeEach(async () => {
