@@ -8,12 +8,6 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import * as fs from 'fs/promises';
-  DeleteObjectCommand,
-  GetObjectCommand,
-  PutObjectCommand,
-  S3Client,
-} from '@aws-sdk/client-s3';
-import * as fs from 'fs/promises';
 import * as CryptoJS from 'crypto-js';
 import { AssetDTO } from '../assets/dto/asset.dto';
 
@@ -52,9 +46,7 @@ export class S3Service {
 
     try {
       await fs.access(`./storage/${filePath}`);
-      await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error: ' + err);
       console.log('Access Error: ' + err);
       return undefined;
     }
@@ -75,7 +67,6 @@ export class S3Service {
         }),
       );
     } catch (err) {
-      console.log('Delete Error: ' + err);
       console.log('Delete Error: ' + err);
       return undefined;
     }
@@ -102,19 +93,16 @@ export class S3Service {
 
     try {
       await fs.mkdir(`./storage/${filePath}`, {
-      await fs.mkdir(`./storage/${filePath}`, {
         recursive: true,
       });
     } catch (err) {
       console.log(
-        'Directory Creation Error: ' + err,
         'Directory Creation Error: ' + err,
       );
       return undefined;
     }
 
     try {
-      await fs.writeFile(
       await fs.writeFile(
         `./storage/${filePath}/${markdownFileDTO.MarkdownID}`,
         '',
@@ -135,7 +123,6 @@ export class S3Service {
         }),
       );
     } catch (err) {
-      console.log('Write File Error: ' + err);
       console.log('Write File Error: ' + err);
       return undefined;
     }
@@ -162,9 +149,7 @@ export class S3Service {
 
     try {
       await fs.access(`./storage/${filePath}`);
-      await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error: ' + err);
       console.log('Access Error: ' + err);
       return undefined;
     }
@@ -174,7 +159,6 @@ export class S3Service {
     );
 
     try {
-      await fs.writeFile(
       await fs.writeFile(
         `./storage/${filePath}`,
         fileData,
@@ -195,7 +179,6 @@ export class S3Service {
         }),
       );
     } catch (err) {
-      console.log('Write File Error: ' + err);
       console.log('Write File Error: ' + err);
       return undefined;
     }
@@ -219,15 +202,12 @@ export class S3Service {
 
     try {
       await fs.access(`./storage/${filePath}`);
-      await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error: ' + err);
       console.log('Access Error: ' + err);
       return undefined;
     }
 
     try {
-      markdownFileDTO.Content = await fs.readFile(
       markdownFileDTO.Content = await fs.readFile(
         `./storage/${filePath}`,
         {
@@ -374,7 +354,6 @@ export class S3Service {
 
     try {
       await fs.mkdir(`./storage/${filePath}`, {
-      await fs.mkdir(`./storage/${filePath}`, {
         recursive: true,
       });
     } catch (err) {
@@ -391,7 +370,6 @@ export class S3Service {
     filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.AssetID}`;
 
     try {
-      await fs.writeFile(
       await fs.writeFile(
         `./storage/${filePath}`,
         fileData,
