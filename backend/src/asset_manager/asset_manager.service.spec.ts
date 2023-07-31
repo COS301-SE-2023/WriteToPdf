@@ -302,10 +302,10 @@ describe('AssetManagerService', () => {
   //   assetDTO.UserID = 1;
   //   assetDTO.Content = 'Uncompressed content';
 
-    //   const newAssetDTO = new AssetDTO();
-    //   newAssetDTO.AssetID = 'test';
-    //   newAssetDTO.UserID = 1;
-    //   newAssetDTO.Image = 'Compressed content';
+  //   const newAssetDTO = new AssetDTO();
+  //   newAssetDTO.AssetID = 'test';
+  //   newAssetDTO.UserID = 1;
+  //   newAssetDTO.Image = 'Compressed content';
 
   //   const assets = [assetDTO];
 
