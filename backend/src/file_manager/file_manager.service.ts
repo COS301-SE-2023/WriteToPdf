@@ -393,11 +393,6 @@ export class FileManagerService {
     importDTO: ImportDTO,
     isTest = false,
   ) {
-    if (importDTO.Path === undefined)
-      throw new HttpException(
-        'Path cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
     const encryptionKey =
       await this.getEncryptionKey(
         importDTO.UserID,
