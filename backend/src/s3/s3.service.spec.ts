@@ -679,25 +679,27 @@ describe('S3Service', () => {
     //   expect(response).toBeUndefined();
     // });
 
-    // it('should throw error if readFile not possible', async () => {
-    //   const assetDTO = new AssetDTO();
-    //   assetDTO.AssetID = 'mock_id';
+    it('should throw error if readFile not possible', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'mock_id';
 
-    //   jest
-    //     .spyOn(fs, 'access')
-    //     .mockResolvedValue(undefined);
+      mockS3Client.on(GetObjectCommand).rejects();
 
-    //   jest
-    //     .spyOn(fs, 'readFile')
-    //     .mockImplementation(() => {
-    //       throw new Error('Directory Test Error');
-    //     });
+      jest
+        .spyOn(fs, 'access')
+        .mockResolvedValue(undefined);
 
-    //   const response =
-    //     await s3Service.retrieveAsset(assetDTO);
+      jest
+        .spyOn(fs, 'readFile')
+        .mockImplementation(() => {
+          throw new Error('Directory Test Error');
+        });
 
-    //   expect(response).toBeUndefined();
-    // });
+      const response =
+        await s3Service.retrieveAsset(assetDTO);
+
+      expect(response).toBeUndefined();
+    });
 
     // it('should throw error if readFile not possible', async () => {
     //   const assetDTO = new AssetDTO();
