@@ -398,9 +398,7 @@ export class S3Service {
 
     try {
       await fs.access(`./storage/${filePath}`);
-      await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error: ' + err);
       console.log('Access Error: ' + err);
       return undefined;
     }
@@ -426,7 +424,6 @@ export class S3Service {
       );
     } catch (err) {
       console.log('Read File Error: ' + err);
-      console.log('Read File Error: ' + err);
       return undefined;
     }
     if (type === 'textractResponse') {
@@ -447,9 +444,7 @@ export class S3Service {
 
     try {
       await fs.access(`./storage/${filePath}`);
-      await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error: ' + err);
       console.log('Access Error: ' + err);
       return undefined;
     }
@@ -480,7 +475,6 @@ export class S3Service {
         retrieveAssetDTO.Content.length;
     } catch (err) {
       console.log('Read File Error: ' + err);
-      console.log('Read File Error: ' + err);
       return undefined;
     }
 
@@ -493,9 +487,7 @@ export class S3Service {
 
     try {
       await fs.access(`./storage/${filePath}`);
-      await fs.access(`./storage/${filePath}`);
     } catch (err) {
-      console.log('Access Error: ' + err);
       console.log('Access Error: ' + err);
       return undefined;
     }
@@ -511,7 +503,6 @@ export class S3Service {
         }),
       );
     } catch (err) {
-      console.log('Delete Error: ' + err);
       console.log('Delete Error: ' + err);
       return undefined;
     }
