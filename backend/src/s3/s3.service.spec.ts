@@ -262,6 +262,23 @@ describe('S3Service', () => {
   });
 
   describe('createAsset', () => {
+    // it('should return undefined if the s3 send fails', async () => {
+    //   const assetDTO = new AssetDTO();
+    //   assetDTO.UserID = 1;
+
+    //   jest
+    //     .spyOn(mockS3Client, 'send')
+    //     .mockImplementation(() => {
+    //       throw new Error('S3 Test Error');
+    //     });
+
+    //   const result = await s3Service.createAsset(
+    //     assetDTO,
+    //   );
+
+    //   expect(result).toBeUndefined();
+    // });
+
     it('should create asset', () => {
       const asset = new AssetDTO();
       asset.UserID = 1;
