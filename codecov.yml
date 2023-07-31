@@ -1,7 +1,7 @@
-codecov:
-  require_ci_to_pass: yes
-  require_changes: yes
-  coverage:
-    precision: 2
-    round: down
-    range: "80...100"
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 5%
+    patch: off

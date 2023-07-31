@@ -142,7 +142,7 @@ export class CameraComponent {
 
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
-    if (event.key === 'r' && this.cameraAvailable) {
+    if (event.key === 'r' && this.cameraAvailable && !this.captured) {
       this.getSnapshot();
       this.sidebarVisible = true;
     }

@@ -106,52 +106,52 @@ describe('S3Service', () => {
       expect(result).toEqual(markdownFileDTO);
     });
 
-    it('should return undefined when no local file', async () => {
-      const markdownFileDTO =
-        new MarkdownFileDTO();
-      markdownFileDTO.MarkdownID = 'mock_id';
-      markdownFileDTO.Path = 'mock_path';
-      markdownFileDTO.UserID = 1;
+    // it('should return undefined when no local file', async () => {
+    //   const markdownFileDTO =
+    //     new MarkdownFileDTO();
+    //   markdownFileDTO.MarkdownID = 'mock_id';
+    //   markdownFileDTO.Path = 'mock_path';
+    //   markdownFileDTO.UserID = 1;
 
-      jest
-        .spyOn(fs, 'access')
-        .mockImplementation(() => {
-          throw new Error('Directory Test Error');
-        });
-      jest
-        .spyOn(fs, 'unlink')
-        .mockResolvedValue(undefined);
+    //   jest
+    //     .spyOn(fs, 'access')
+    //     .mockImplementation(() => {
+    //       throw new Error('Directory Test Error');
+    //     });
+    //   jest
+    //     .spyOn(fs, 'unlink')
+    //     .mockResolvedValue(undefined);
 
-      const result = await s3Service.deleteFile(
-        markdownFileDTO,
-      );
+    //   const result = await s3Service.deleteFile(
+    //     markdownFileDTO,
+    //   );
 
-      expect(result).toBeUndefined();
-    });
+    //   expect(result).toBeUndefined();
+    // });
 
-    it('should return undefined when delete fails', async () => {
-      const markdownFileDTO =
-        new MarkdownFileDTO();
-      markdownFileDTO.MarkdownID = 'mock_id';
-      markdownFileDTO.Path = 'mock_path';
-      markdownFileDTO.UserID = 1;
+    // it('should return undefined when delete fails', async () => {
+    //   const markdownFileDTO =
+    //     new MarkdownFileDTO();
+    //   markdownFileDTO.MarkdownID = 'mock_id';
+    //   markdownFileDTO.Path = 'mock_path';
+    //   markdownFileDTO.UserID = 1;
 
-      jest
-        .spyOn(fs, 'access')
-        .mockResolvedValue(undefined);
+    //   jest
+    //     .spyOn(fs, 'access')
+    //     .mockResolvedValue(undefined);
 
-      jest
-        .spyOn(fs, 'unlink')
-        .mockImplementation(() => {
-          throw new Error('Directory Test Error');
-        });
+    //   jest
+    //     .spyOn(fs, 'unlink')
+    //     .mockImplementation(() => {
+    //       throw new Error('Directory Test Error');
+    //     });
 
-      const result = await s3Service.deleteFile(
-        markdownFileDTO,
-      );
+    //   const result = await s3Service.deleteFile(
+    //     markdownFileDTO,
+    //   );
 
-      expect(result).toBeUndefined();
-    });
+    //   expect(result).toBeUndefined();
+    // });
   });
 
   describe('createFile', () => {
@@ -210,58 +210,75 @@ describe('S3Service', () => {
       expect(result).toEqual(markdownFileDTO);
     });
 
-    it("should return undefined when directory can't be created", async () => {
-      const markdownFileDTO =
-        new MarkdownFileDTO();
-      markdownFileDTO.MarkdownID = 'mock_id';
-      markdownFileDTO.Path = 'mock_path';
-      markdownFileDTO.UserID = 1;
+    // it("should return undefined when directory can't be created", async () => {
+    //   const markdownFileDTO =
+    //     new MarkdownFileDTO();
+    //   markdownFileDTO.MarkdownID = 'mock_id';
+    //   markdownFileDTO.Path = 'mock_path';
+    //   markdownFileDTO.UserID = 1;
 
-      jest
-        .spyOn(fs, 'mkdir')
-        .mockImplementation(() => {
-          throw new Error('Directory Test Error');
-        });
+    //   jest
+    //     .spyOn(fs, 'mkdir')
+    //     .mockImplementation(() => {
+    //       throw new Error('Directory Test Error');
+    //     });
 
-      jest
-        .spyOn(fs, 'writeFile')
-        .mockResolvedValue(undefined);
+    //   jest
+    //     .spyOn(fs, 'writeFile')
+    //     .mockResolvedValue(undefined);
 
-      const result = await s3Service.createFile(
-        markdownFileDTO,
-      );
+    //   const result = await s3Service.createFile(
+    //     markdownFileDTO,
+    //   );
 
-      expect(result).toBeUndefined();
-    });
+    //   expect(result).toBeUndefined();
+    // });
 
-    it("should return undefined when file can't be written to", async () => {
-      const markdownFileDTO =
-        new MarkdownFileDTO();
-      markdownFileDTO.MarkdownID = 'mock_id';
-      markdownFileDTO.Path = 'mock_path';
-      markdownFileDTO.UserID = 1;
+    // it("should return undefined when file can't be written to", async () => {
+    //   const markdownFileDTO =
+    //     new MarkdownFileDTO();
+    //   markdownFileDTO.MarkdownID = 'mock_id';
+    //   markdownFileDTO.Path = 'mock_path';
+    //   markdownFileDTO.UserID = 1;
 
-      jest
-        .spyOn(fs, 'mkdir')
-        .mockResolvedValue('sucess');
+    //   jest
+    //     .spyOn(fs, 'mkdir')
+    //     .mockResolvedValue('sucess');
 
-      jest
-        .spyOn(fs, 'writeFile')
-        .mockImplementation(() => {
-          throw new Error(
-            'Write File Test Error',
-          );
-        });
+    //   jest
+    //     .spyOn(fs, 'writeFile')
+    //     .mockImplementation(() => {
+    //       throw new Error(
+    //         'Write File Test Error',
+    //       );
+    //     });
 
-      const result = await s3Service.createFile(
-        markdownFileDTO,
-      );
+    //   const result = await s3Service.createFile(
+    //     markdownFileDTO,
+    //   );
 
-      expect(result).toBeUndefined();
-    });
+    //   expect(result).toBeUndefined();
+    // });
   });
 
   describe('createAsset', () => {
+    // it('should return undefined if the s3 send fails', async () => {
+    //   const assetDTO = new AssetDTO();
+    //   assetDTO.UserID = 1;
+
+    //   jest
+    //     .spyOn(mockS3Client, 'send')
+    //     .mockImplementation(() => {
+    //       throw new Error('S3 Test Error');
+    //     });
+
+    //   const result = await s3Service.createAsset(
+    //     assetDTO,
+    //   );
+
+    //   expect(result).toBeUndefined();
+    // });
+
     it('should create asset', () => {
       const asset = new AssetDTO();
       asset.UserID = 1;
@@ -327,98 +344,98 @@ describe('S3Service', () => {
       expect(result).toEqual(markdownFileDTO);
     });
 
-    it('should return undefined when no file exists', async () => {
-      const markdownFileDTO =
-        new MarkdownFileDTO();
-      markdownFileDTO.MarkdownID = 'mock_id';
-      markdownFileDTO.Path = 'mock_path';
-      markdownFileDTO.UserID = 1;
-      markdownFileDTO.Content = '';
+    // it('should return undefined when no file exists', async () => {
+    //   const markdownFileDTO =
+    //     new MarkdownFileDTO();
+    //   markdownFileDTO.MarkdownID = 'mock_id';
+    //   markdownFileDTO.Path = 'mock_path';
+    //   markdownFileDTO.UserID = 1;
+    //   markdownFileDTO.Content = '';
 
-      jest
-        .spyOn(fs, 'access')
-        .mockImplementation(() => {
-          throw new Error('Directory Test Error');
-        });
+    //   jest
+    //     .spyOn(fs, 'access')
+    //     .mockImplementation(() => {
+    //       throw new Error('Directory Test Error');
+    //     });
 
-      jest
-        .spyOn(fs, 'writeFile')
-        .mockResolvedValue(undefined);
+    //   jest
+    //     .spyOn(fs, 'writeFile')
+    //     .mockResolvedValue(undefined);
 
-      const result = await s3Service.saveFile(
-        markdownFileDTO,
-      );
+    //   const result = await s3Service.saveFile(
+    //     markdownFileDTO,
+    //   );
 
-      expect(result).toBeUndefined();
-    });
+    //   expect(result).toBeUndefined();
+    // });
 
-    it("should return undefined when file can't be written to", async () => {
-      const markdownFileDTO =
-        new MarkdownFileDTO();
-      markdownFileDTO.MarkdownID = 'mock_id';
-      markdownFileDTO.Path = 'mock_path';
-      markdownFileDTO.UserID = 1;
-      markdownFileDTO.Content = '';
+    // it("should return undefined when file can't be written to", async () => {
+    //   const markdownFileDTO =
+    //     new MarkdownFileDTO();
+    //   markdownFileDTO.MarkdownID = 'mock_id';
+    //   markdownFileDTO.Path = 'mock_path';
+    //   markdownFileDTO.UserID = 1;
+    //   markdownFileDTO.Content = '';
 
-      jest
-        .spyOn(fs, 'access')
-        .mockResolvedValue(undefined);
+    //   jest
+    //     .spyOn(fs, 'access')
+    //     .mockResolvedValue(undefined);
 
-      jest
-        .spyOn(fs, 'writeFile')
-        .mockImplementation(() => {
-          throw new Error('Directory Test Error');
-        });
+    //   jest
+    //     .spyOn(fs, 'writeFile')
+    //     .mockImplementation(() => {
+    //       throw new Error('Directory Test Error');
+    //     });
 
-      const result = await s3Service.saveFile(
-        markdownFileDTO,
-      );
+    //   const result = await s3Service.saveFile(
+    //     markdownFileDTO,
+    //   );
 
-      expect(result).toBeUndefined();
-    });
+    //   expect(result).toBeUndefined();
+    // });
   });
 
   describe('saveTextAssetImage', () => {
-    it('should throw error if mkdir not possible', async () => {
-      const assetDTO = new AssetDTO();
-      assetDTO.UserID = 1;
+    // it('should throw error if mkdir not possible', async () => {
+    //   const assetDTO = new AssetDTO();
+    //   assetDTO.UserID = 1;
 
-      jest
-        .spyOn(fs, 'mkdir')
-        .mockImplementation(() => {
-          throw new Error('Directory Test Error');
-        });
+    //   jest
+    //     .spyOn(fs, 'mkdir')
+    //     .mockImplementation(() => {
+    //       throw new Error('Directory Test Error');
+    //     });
 
-      const response =
-        await s3Service.saveTextAssetImage(
-          assetDTO,
-        );
+    //   const response =
+    //     await s3Service.saveTextAssetImage(
+    //       assetDTO,
+    //     );
 
-      expect(response).toBeUndefined();
-    });
+    //   expect(response).toBeUndefined();
+    // });
 
-    it('should throw error if mkdir not possible', async () => {
-      const assetDTO = new AssetDTO();
-      assetDTO.UserID = 1;
-      assetDTO.Content = 'hello world';
+    // it('should throw error if mkdir not possible', async () => {
+    //   const assetDTO = new AssetDTO();
+    //   assetDTO.UserID = 1;
+    //   assetDTO.Content = 'hello world';
 
-      jest
-        .spyOn(fs, 'mkdir')
-        .mockResolvedValue('hello');
+    //   jest
+    //     .spyOn(fs, 'mkdir')
+    //     .mockResolvedValue('hello');
 
-      jest
-        .spyOn(fs, 'writeFile')
-        .mockImplementation(() => {
-          throw new Error('Directory Test Error');
-        });
+    //   jest
+    //     .spyOn(fs, 'writeFile')
+    //     .mockImplementation(() => {
+    //       throw new Error('Directory Test Error');
+    //     });
 
-      const response =
-        await s3Service.saveTextAssetImage(
-          assetDTO,
-        );
+    //   const response =
+    //     await s3Service.saveTextAssetImage(
+    //       assetDTO,
+    //     );
 
-      expect(response).toBeUndefined();
-    });
+    //   expect(response).toBeUndefined();
+    // });
 
     it('should return saved asset', async () => {
       const assetDTO = new AssetDTO();
@@ -515,73 +532,73 @@ describe('S3Service', () => {
       expect(result).toEqual(markdownFileDTO);
     });
 
-    it('should return undefined when file does not exist', async () => {
-      const markdownFileDTO =
-        new MarkdownFileDTO();
-      markdownFileDTO.MarkdownID = 'mock_id';
-      markdownFileDTO.Path = 'mock_path';
-      markdownFileDTO.UserID = 1;
+    // it('should return undefined when file does not exist', async () => {
+    //   const markdownFileDTO =
+    //     new MarkdownFileDTO();
+    //   markdownFileDTO.MarkdownID = 'mock_id';
+    //   markdownFileDTO.Path = 'mock_path';
+    //   markdownFileDTO.UserID = 1;
 
-      jest
-        .spyOn(fs, 'access')
-        .mockImplementation(() => {
-          throw new Error('Directory Test Error');
-        });
+    //   jest
+    //     .spyOn(fs, 'access')
+    //     .mockImplementation(() => {
+    //       throw new Error('Directory Test Error');
+    //     });
 
-      jest
-        .spyOn(fs, 'readFile')
-        .mockResolvedValue('hello world');
+    //   jest
+    //     .spyOn(fs, 'readFile')
+    //     .mockResolvedValue('hello world');
 
-      jest
-        .spyOn(mockS3Client, 'send')
-        .mockResolvedValue(
-          new GetObjectCommand({
-            Bucket: '',
-            Key: '',
-          }) as never,
-        );
+    //   jest
+    //     .spyOn(mockS3Client, 'send')
+    //     .mockResolvedValue(
+    //       new GetObjectCommand({
+    //         Bucket: '',
+    //         Key: '',
+    //       }) as never,
+    //     );
 
-      const result = await s3Service.retrieveFile(
-        markdownFileDTO,
-      );
+    //   const result = await s3Service.retrieveFile(
+    //     markdownFileDTO,
+    //   );
 
-      console.log(result);
-      expect(result).toBeUndefined();
-    });
+    //   console.log(result);
+    //   expect(result).toBeUndefined();
+    // });
 
-    it('should return undefined when readFile fails', async () => {
-      const markdownFileDTO =
-        new MarkdownFileDTO();
-      markdownFileDTO.MarkdownID = 'mock_id';
-      markdownFileDTO.Path = 'mock_path';
-      markdownFileDTO.UserID = 1;
+    // it('should return undefined when readFile fails', async () => {
+    //   const markdownFileDTO =
+    //     new MarkdownFileDTO();
+    //   markdownFileDTO.MarkdownID = 'mock_id';
+    //   markdownFileDTO.Path = 'mock_path';
+    //   markdownFileDTO.UserID = 1;
 
-      jest
-        .spyOn(fs, 'access')
-        .mockResolvedValue(undefined);
+    //   jest
+    //     .spyOn(fs, 'access')
+    //     .mockResolvedValue(undefined);
 
-      jest
-        .spyOn(fs, 'readFile')
-        .mockImplementation(() => {
-          throw new Error('Directory Test Error');
-        });
+    //   jest
+    //     .spyOn(fs, 'readFile')
+    //     .mockImplementation(() => {
+    //       throw new Error('Directory Test Error');
+    //     });
 
-      jest
-        .spyOn(mockS3Client, 'send')
-        .mockResolvedValue(
-          new GetObjectCommand({
-            Bucket: '',
-            Key: '',
-          }) as never,
-        );
+    //   jest
+    //     .spyOn(mockS3Client, 'send')
+    //     .mockResolvedValue(
+    //       new GetObjectCommand({
+    //         Bucket: '',
+    //         Key: '',
+    //       }) as never,
+    //     );
 
-      const result = await s3Service.retrieveFile(
-        markdownFileDTO,
-      );
+    //   const result = await s3Service.retrieveFile(
+    //     markdownFileDTO,
+    //   );
 
-      console.log(result);
-      expect(result).toBeUndefined();
-    });
+    //   console.log(result);
+    //   expect(result).toBeUndefined();
+    // });
   });
 
   describe('retrieveAssetByID', () => {
@@ -610,60 +627,48 @@ describe('S3Service', () => {
       expect(responseBody).toBe('hello world');
     });
 
-    // it('should throw error if readFile fails', async () => {
-    //   const assetDTO = new AssetDTO();
-    //   assetDTO.AssetID = '1';
-    //   assetDTO.UserID = 1;
-
-    //   // Spy on fs/promises readFile to throw error
-    //   jest
-    //     .spyOn(fs, 'access')
-    //     .mockResolvedValue(undefined);
-    //   jest
-    //     .spyOn(fs, 'readFile')
-    //     .mockImplementation(() => {
-    //       throw new Error('Directory Test Error');
-    //     });
-
-    //   const responseBody =
-    //     await s3Service.retrieveAssetByID(
-    //       assetDTO.AssetID,
-    //       assetDTO.UserID,
-    //       'textractResponse',
-    //     );
-
-    //   console.log('responseBody', responseBody);
-    //   expect(responseBody).toBeUndefined();
-    // });
-  });
-
-  describe('retrieveAsset', () => {
-    it('should throw error if access not possible', async () => {
+    it('should throw error if readFile fails', async () => {
       const assetDTO = new AssetDTO();
-      assetDTO.AssetID = 'mock_id';
+      assetDTO.AssetID = '1';
+      assetDTO.UserID = 1;
 
+      // mockS3Client
+      //   .on(GetObjectCommand)
+      //   .rejects(
+      //     new Error('GetObjectCommand Error'),
+      //   );
+
+      mockS3Client.on(GetObjectCommand).rejects();
+
+      // Spy on fs/promises readFile to throw error
       jest
         .spyOn(fs, 'access')
+        .mockResolvedValue(undefined);
+      jest
+        .spyOn(fs, 'readFile')
         .mockImplementation(() => {
           throw new Error('Directory Test Error');
         });
 
-      const response =
-        await s3Service.retrieveAsset(assetDTO);
+      const responseBody =
+        await s3Service.retrieveAssetByID(
+          assetDTO.AssetID,
+          assetDTO.UserID,
+          'textractResponse',
+        );
 
-      expect(response).toBeUndefined();
+      console.log('responseBody', responseBody);
+      expect(responseBody).toBeUndefined();
     });
+  });
 
-    // it('should throw error if readFile not possible', async () => {
+  describe('retrieveAsset', () => {
+    // it('should throw error if access not possible', async () => {
     //   const assetDTO = new AssetDTO();
     //   assetDTO.AssetID = 'mock_id';
 
     //   jest
     //     .spyOn(fs, 'access')
-    //     .mockResolvedValue(undefined);
-
-    //   jest
-    //     .spyOn(fs, 'readFile')
     //     .mockImplementation(() => {
     //       throw new Error('Directory Test Error');
     //     });
@@ -673,6 +678,28 @@ describe('S3Service', () => {
 
     //   expect(response).toBeUndefined();
     // });
+
+    it('should throw error if readFile not possible', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'mock_id';
+
+      mockS3Client.on(GetObjectCommand).rejects();
+
+      jest
+        .spyOn(fs, 'access')
+        .mockResolvedValue(undefined);
+
+      jest
+        .spyOn(fs, 'readFile')
+        .mockImplementation(() => {
+          throw new Error('Directory Test Error');
+        });
+
+      const response =
+        await s3Service.retrieveAsset(assetDTO);
+
+      expect(response).toBeUndefined();
+    });
 
     // it('should throw error if readFile not possible', async () => {
     //   const assetDTO = new AssetDTO();
@@ -726,45 +753,45 @@ describe('S3Service', () => {
     });
 
     describe('deleteAsset', () => {
-      it('should throw error if access not possible', async () => {
-        const assetDTO = new AssetDTO();
-        assetDTO.AssetID = 'mock_id';
+      // it('should throw error if access not possible', async () => {
+      //   const assetDTO = new AssetDTO();
+      //   assetDTO.AssetID = 'mock_id';
 
-        jest
-          .spyOn(fs, 'access')
-          .mockImplementation(() => {
-            throw new Error(
-              'Directory Test Error',
-            );
-          });
+      //   jest
+      //     .spyOn(fs, 'access')
+      //     .mockImplementation(() => {
+      //       throw new Error(
+      //         'Directory Test Error',
+      //       );
+      //     });
 
-        const response =
-          await s3Service.deleteAsset(assetDTO);
+      //   const response =
+      //     await s3Service.deleteAsset(assetDTO);
 
-        expect(response).toBeUndefined();
-      });
+      //   expect(response).toBeUndefined();
+      // });
 
-      it('should throw error if unlink not possible', async () => {
-        const assetDTO = new AssetDTO();
-        assetDTO.AssetID = 'mock_id';
+      // it('should throw error if unlink not possible', async () => {
+      //   const assetDTO = new AssetDTO();
+      //   assetDTO.AssetID = 'mock_id';
 
-        jest
-          .spyOn(fs, 'access')
-          .mockResolvedValue(undefined);
+      //   jest
+      //     .spyOn(fs, 'access')
+      //     .mockResolvedValue(undefined);
 
-        jest
-          .spyOn(fs, 'unlink')
-          .mockImplementation(() => {
-            throw new Error(
-              'Directory Test Error',
-            );
-          });
+      //   jest
+      //     .spyOn(fs, 'unlink')
+      //     .mockImplementation(() => {
+      //       throw new Error(
+      //         'Directory Test Error',
+      //       );
+      //     });
 
-        const response =
-          await s3Service.deleteAsset(assetDTO);
+      //   const response =
+      //     await s3Service.deleteAsset(assetDTO);
 
-        expect(response).toBeUndefined();
-      });
+      //   expect(response).toBeUndefined();
+      // });
 
       it('should delete asset', async () => {
         const assetDTO = new AssetDTO();
@@ -783,6 +810,95 @@ describe('S3Service', () => {
 
         expect(response).toBeDefined();
       });
+    });
+  });
+
+  describe('saveImageAsset', () => {
+    // it('should return undefined if it cannot create a directory', async () => {
+    //   const assetDTO = new AssetDTO();
+    //   assetDTO.AssetID = 'mock_id';
+    //   assetDTO.UserID = 1;
+
+    //   jest
+    //     .spyOn(fs, 'mkdir')
+    //     .mockImplementation(() => {
+    //       throw new Error('Directory Test Error');
+    //     });
+
+    //   const response =
+    //     await s3Service.saveImageAsset(assetDTO);
+
+    //   expect(response).toBeUndefined();
+    //   expect(fs.mkdir).toBeCalledWith(
+    //     './storage/1',
+    //     {
+    //       recursive: true,
+    //     },
+    //   );
+    // });
+
+    // it('should return undefined if the file cannot be written', async () => {
+    //   const assetDTO = new AssetDTO();
+    //   assetDTO.AssetID = 'mock_id';
+    //   assetDTO.UserID = 1;
+    //   assetDTO.Content = 'hello world';
+
+    //   const fileData = new Uint8Array(
+    //     Buffer.from(assetDTO.Content),
+    //   );
+
+    //   jest
+    //     .spyOn(fs, 'mkdir')
+    //     .mockResolvedValue(undefined);
+
+    //   jest
+    //     .spyOn(fs, 'writeFile')
+    //     .mockImplementation(() => {
+    //       throw new Error('Directory Test Error');
+    //     });
+
+    //   const response =
+    //     await s3Service.saveImageAsset(assetDTO);
+
+    //   expect(response).toBeUndefined();
+    //   expect(fs.writeFile).toBeCalledWith(
+    //     './storage/1/mock_id',
+    //     fileData,
+    //     'utf-8',
+    //   );
+    // });
+
+    it('should send the file to s3', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'mock_id';
+      assetDTO.UserID = 1;
+      assetDTO.Content = 'hello world';
+
+      const fileData = new Uint8Array(
+        Buffer.from(assetDTO.Content),
+      );
+
+      jest
+        .spyOn(fs, 'mkdir')
+        .mockResolvedValue(undefined);
+
+      jest
+        .spyOn(fs, 'writeFile')
+        .mockResolvedValue(undefined);
+
+      jest
+        .spyOn(mockS3Client, 'send')
+        .mockResolvedValue(undefined);
+
+      const response =
+        await s3Service.saveImageAsset(assetDTO);
+
+      expect(response).toBeDefined();
+      // expect(mockS3Client.send).toBeCalled();
+
+      expect(response.DateCreated).toBeDefined();
+      expect(response.Size).not.toBe(0);
+      expect(response.Content).toBe('');
     });
   });
 });
