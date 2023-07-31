@@ -2,7 +2,7 @@
 # Install OS packages
 sudo apt-get update &&
 sudo apt-get upgrade -y &&
-sudo apt-get install git -y &&
+sudo apt-get install git chromium-browser -y &&
 cd /home/ubuntu/ &&
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash &&
 . ~/.nvm/nvm.sh &&
