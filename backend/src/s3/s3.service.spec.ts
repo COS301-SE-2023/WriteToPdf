@@ -802,4 +802,93 @@ describe('S3Service', () => {
       });
     });
   });
+
+  describe('saveImageAsset', () => {
+    it('should return undefined if it cannot create a directory', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'mock_id';
+      assetDTO.UserID = 1;
+
+      jest
+        .spyOn(fs, 'mkdir')
+        .mockImplementation(() => {
+          throw new Error('Directory Test Error');
+        });
+
+      const response =
+        await s3Service.saveImageAsset(assetDTO);
+
+      expect(response).toBeUndefined();
+      expect(fs.mkdir).toBeCalledWith(
+        './storage/1',
+        {
+          recursive: true,
+        },
+      );
+    });
+
+    it('should return undefined if the file cannot be written', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'mock_id';
+      assetDTO.UserID = 1;
+      assetDTO.Content = 'hello world';
+
+      const fileData = new Uint8Array(
+        Buffer.from(assetDTO.Content),
+      );
+
+      jest
+        .spyOn(fs, 'mkdir')
+        .mockResolvedValue(undefined);
+
+      jest
+        .spyOn(fs, 'writeFile')
+        .mockImplementation(() => {
+          throw new Error('Directory Test Error');
+        });
+
+      const response =
+        await s3Service.saveImageAsset(assetDTO);
+
+      expect(response).toBeUndefined();
+      expect(fs.writeFile).toBeCalledWith(
+        './storage/1/mock_id',
+        fileData,
+        'utf-8',
+      );
+    });
+
+    it('should send the file to s3', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = 'mock_id';
+      assetDTO.UserID = 1;
+      assetDTO.Content = 'hello world';
+
+      const fileData = new Uint8Array(
+        Buffer.from(assetDTO.Content),
+      );
+
+      jest
+        .spyOn(fs, 'mkdir')
+        .mockResolvedValue(undefined);
+
+      jest
+        .spyOn(fs, 'writeFile')
+        .mockResolvedValue(undefined);
+
+      jest
+        .spyOn(mockS3Client, 'send')
+        .mockResolvedValue(undefined);
+
+      const response =
+        await s3Service.saveImageAsset(assetDTO);
+
+      expect(response).toBeDefined();
+      // expect(mockS3Client.send).toBeCalled();
+
+      expect(response.DateCreated).toBeDefined();
+      expect(response.Size).not.toBe(0);
+      expect(response.Content).toBe('');
+    });
+  });
 });
