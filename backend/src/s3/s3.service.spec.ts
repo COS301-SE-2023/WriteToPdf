@@ -265,6 +265,10 @@ describe('S3Service', () => {
     it('should create asset', () => {
       const asset = new AssetDTO();
       asset.UserID = 1;
+
+      const result = s3Service.createAsset(asset);
+
+      expect(result).toBeDefined();
     });
   });
 
