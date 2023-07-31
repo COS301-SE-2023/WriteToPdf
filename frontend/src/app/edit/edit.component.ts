@@ -247,8 +247,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async retrieveAsset(assetId: string, format: string, textId: string) {
-    console.log('assets ', this.assets);
-    console.log('asset: ', assetId);
     let currAssetIndex: number = 0;
     for (let i = 0; i < this.assets.length; i++) {
       if (this.assets[i].AssetID === assetId) {
