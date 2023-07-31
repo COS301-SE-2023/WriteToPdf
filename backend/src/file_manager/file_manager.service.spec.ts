@@ -1776,6 +1776,157 @@ describe('FileManagerService', () => {
         );
       }
     });
+
+    it('should call generatePDF for pdf Types', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 0;
+      exportDTO.MarkdownID = '1';
+      exportDTO.Content = 'test';
+      exportDTO.Type = 'pdf';
+
+      const buffer = new Buffer('test');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('test');
+
+      jest
+        .spyOn(conversionService, 'generatePdf')
+        .mockResolvedValue(buffer);
+
+      const response = await service.exportFile(
+        exportDTO,
+      );
+
+      expect(response).toBe(buffer);
+      expect(
+        conversionService.generatePdf,
+      ).toHaveBeenCalledWith(exportDTO.Content);
+    });
+
+    it('should call convertHtmlToTxt for txt types', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 0;
+      exportDTO.MarkdownID = '1';
+      exportDTO.Content = 'test';
+      exportDTO.Type = 'txt';
+
+      const buffer = new Buffer('test');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('test');
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertHtmlToTxt',
+        ) as any
+      ).mockResolvedValue('test');
+
+      jest
+        .spyOn(Buffer, 'from')
+        .mockReturnValue(buffer);
+
+      const response = await service.exportFile(
+        exportDTO,
+      );
+
+      expect(response).toBe(buffer);
+      expect(
+        conversionService.convertHtmlToTxt,
+      ).toHaveBeenCalledWith(exportDTO.Content);
+    });
+
+    it('should call convertHtmlToMarkdown for md types', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 0;
+      exportDTO.MarkdownID = '1';
+      exportDTO.Content = 'test';
+      exportDTO.Type = 'md';
+
+      const buffer = new Buffer('test');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('test');
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertHtmlToMarkdown',
+        ) as any
+      ).mockResolvedValue('test');
+
+      jest
+        .spyOn(Buffer, 'from')
+        .mockReturnValue(buffer);
+
+      const response = await service.exportFile(
+        exportDTO,
+      );
+
+      expect(response).toBe(buffer);
+      expect(
+        conversionService.convertHtmlToMarkdown,
+      ).toBeCalledWith(exportDTO.Content);
+    });
+
+    it('should call convertHtmlToJpeg for jpeg types', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.MarkdownID = '1';
+      exportDTO.Content = 'test';
+      exportDTO.UserID = 0;
+      exportDTO.Type = 'jpeg';
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('test');
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertHtmlToJpeg',
+        ) as any
+      ).mockResolvedValue('test');
+
+      const response = await service.exportFile(
+        exportDTO,
+      );
+
+      expect(response).toBe('test');
+      expect(
+        conversionService.convertHtmlToJpeg,
+      ).toBeCalledWith(exportDTO.Content);
+    });
+
+    it('should call convertHtmlToPng for png types', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.MarkdownID = '1';
+      exportDTO.Content = 'test';
+      exportDTO.UserID = 0;
+      exportDTO.Type = 'png';
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('test');
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertHtmlToPng',
+        ) as any
+      ).mockResolvedValue('test');
+
+      const response = await service.exportFile(
+        exportDTO,
+      );
+
+      expect(response).toBe('test');
+      expect(
+        conversionService.convertHtmlToPng,
+      ).toBeCalledWith(exportDTO.Content);
+    });
   });
 
   // describe('decryptContent', () => {
