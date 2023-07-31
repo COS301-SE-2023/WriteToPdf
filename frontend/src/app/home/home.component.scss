@@ -112,9 +112,7 @@ to co-operate.
   opacity: 100%;
   box-shadow: 3px 0px 5px rgba(0, 0, 0, 0.1);
   /* Main Colours/Dark Gray */
-  border-width: 0px 1px 1px 0px;
-  border-style: solid;
-  border-color: #6F6F6F;
+
   z-index: 2;
 }
 
@@ -328,4 +326,16 @@ textarea {
 .uploadAssetIcon:hover .dropdownContent {
   display: block;
   cursor: pointer;
+}
+
+.spinner {
+  margin: auto;
+  height:50px;
+}
+
+.spinnerWrapper {
+  position: absolute;
+  display: flex;
+  margin: auto;
+  height:50px;
 }
