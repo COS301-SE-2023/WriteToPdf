@@ -247,13 +247,17 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async retrieveAsset(assetId: string, format: string, textId: string) {
+    console.log('assets ', this.assets);
+    console.log('asset: ', assetId);
     let currAssetIndex: number = 0;
     for (let i = 0; i < this.assets.length; i++) {
-      if (this.assets[i].Id === assetId) {
+      if (this.assets[i].AssetID === assetId) {
         currAssetIndex = i;
         break;
       }
     }
+
+    this.assets[currAssetIndex].NotRetrieving = true;
     // const asset = true;
     if (format === 'text') {
       let asset = this.assets[currAssetIndex];
@@ -263,6 +267,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       }
       this.parseAssetText(asset);
       this.textCopyDialog = true;
+      this.assets[currAssetIndex].NotRetrieving = false;
     }
     else if (format === 'image') {
 
@@ -278,18 +283,19 @@ export class EditComponent implements AfterViewInit, OnInit {
         summary: 'Success',
         detail: 'Image copied to clipboard',
       });
+      this.assets[currAssetIndex].NotRetrieving = false;
     }
   }
 
   async copyAllText(assetId: string, format: string, textId: string) {
     let currAssetIndex: number = 0;
     for (let i = 0; i < this.assets.length; i++) {
-      if (this.assets[i].Id === assetId) {
+      if (this.assets[i].AssetID === assetId) {
         currAssetIndex = i;
         break;
       }
     }
-
+    this.assets[currAssetIndex].NotRetrieving = true;
     if (this.assets[currAssetIndex].Blocks) {
       this.parseAssetText(this.assets[currAssetIndex]);
 
@@ -299,7 +305,6 @@ export class EditComponent implements AfterViewInit, OnInit {
       }
       this.copyTextToClipboard(text);
 
-      return;
     } else {
       const asset = await this.assetService.retrieveAsset(assetId, format, textId);
 
@@ -312,6 +317,8 @@ export class EditComponent implements AfterViewInit, OnInit {
       }
       this.copyTextToClipboard(text);
     }
+    this.assets[currAssetIndex].NotRetrieving = false;
+    return;
   }
 
   parseAssetText(asset: any) {
@@ -360,13 +367,27 @@ export class EditComponent implements AfterViewInit, OnInit {
 
 
   async deleteAsset(assetId: string) {
+    let currAssetIndex: number = 0;
+    for (let i = 0; i < this.assets.length; i++) {
+      if (this.assets[i].AssetID === assetId) {
+        currAssetIndex = i;
+        break;
+      }
+    }
+
+    this.assets[currAssetIndex].Deleted=true;
+    
     if (await this.assetService.deleteAsset(assetId)) {
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
         detail: 'Asset deleted',
       });
-      await this.refreshSidebar();
+      this.assets.splice(currAssetIndex, 1);
+    }
+    else{
+      this.assets[currAssetIndex].Deleted=false;
+
     }
   }
 
@@ -375,7 +396,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     const inputValue = inputElement.value;
     const asset = await this.assetService.renameAsset(assetId, inputValue);
     for (let i = 0; i < this.assets.length; i++) {
-      if (this.assets[i].Id === assetId) {
+      if (this.assets[i].AssetID === assetId) {
         this.assets[i].FileName = inputValue;
       }
     }
