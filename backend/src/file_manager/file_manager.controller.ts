@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Headers,
   HttpCode,
   HttpException,
   HttpStatus,
@@ -13,8 +14,9 @@ import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
-import { ImportDTO } from './dto/import.dto';
 import { ExportDTO } from './dto/export.dto';
+import { ImportDTO } from './dto/import.dto';
+import { ConversionService } from '../conversion/conversion.service';
 
 @Controller('file_manager')
 export class FileManagerController {
@@ -29,6 +31,7 @@ export class FileManagerController {
     @Body()
     markdownFileDTO: MarkdownFileDTO,
     @Req() request: Request,
+    @Headers('isTest') isTest: string, // For using mocked out services
   ) {
     if (request.method !== 'POST') {
       throw new HttpException(
@@ -45,6 +48,7 @@ export class FileManagerController {
 
     return this.fileManagerService.createFile(
       markdownFileDTO,
+      isTest && isTest === 'true' ? true : false,
     );
   }
 
@@ -54,6 +58,7 @@ export class FileManagerController {
     @Body()
     markdownFileDTO: MarkdownFileDTO,
     @Req() request: Request,
+    @Headers('isTest') isTest: string, // For using mocked out services
   ) {
     if (request.method !== 'POST') {
       throw new HttpException(
@@ -73,6 +78,7 @@ export class FileManagerController {
 
     return this.fileManagerService.deleteFile(
       markdownFileDTO,
+      isTest && isTest === 'true' ? true : false,
     );
   }
 
@@ -143,6 +149,7 @@ export class FileManagerController {
     @Body()
     markdownFileDTO: MarkdownFileDTO,
     @Req() request: Request,
+    @Headers('isTest') isTest: string, // For using mocked out services
   ) {
     if (request.method !== 'POST') {
       throw new HttpException(
@@ -164,6 +171,7 @@ export class FileManagerController {
 
     return this.fileManagerService.saveFile(
       markdownFileDTO,
+      isTest && isTest === 'true' ? true : false,
     );
   }
 
@@ -173,6 +181,7 @@ export class FileManagerController {
     @Body()
     markdownFileDTO: MarkdownFileDTO,
     @Req() request: Request,
+    @Headers('isTest') isTest: string, // For using mocked out services
   ) {
     if (request.method !== 'POST') {
       throw new HttpException(
@@ -192,6 +201,7 @@ export class FileManagerController {
 
     return this.fileManagerService.retrieveFile(
       markdownFileDTO,
+      isTest && isTest === 'true' ? true : false,
     );
   }
 
@@ -359,13 +369,13 @@ export class FileManagerController {
     );
   }
 
-  // Import & Export operations #################################################
   @Post('import')
   @HttpCode(HttpStatus.OK)
   import(
     @Body()
     importDTO: ImportDTO,
     @Req() request: Request,
+    @Headers('isTest') isTest: string, // For using mocked out services
   ) {
     if (request.method !== 'POST') {
       throw new HttpException(
@@ -391,6 +401,7 @@ export class FileManagerController {
 
     return this.fileManagerService.importFile(
       importDTO,
+      isTest && isTest === 'true' ? true : false,
     );
   }
 

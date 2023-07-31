@@ -7,6 +7,7 @@ import { MarkdownFile } from './entities/markdown_file.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
+import { create } from 'domain';
 
 describe('MarkdownFilesService', () => {
   let service: MarkdownFilesService;
@@ -35,16 +36,30 @@ describe('MarkdownFilesService', () => {
       markdownFile.MarkdownID = '1';
       markdownFile.Name = 'markdownFile1';
       markdownFile.Path = 'path1';
+      markdownFile.ParentFolderID = '1';
+
+      const createdMakdownFile =
+        new MarkdownFile();
+      createdMakdownFile.MarkdownID =
+        markdownFile.MarkdownID;
+      createdMakdownFile.Name = markdownFile.Name;
+      createdMakdownFile.Path = markdownFile.Path;
+      createdMakdownFile.DateCreated = new Date();
+      createdMakdownFile.LastModified =
+        new Date();
+      createdMakdownFile.Size = 0;
+      createdMakdownFile.ParentFolderID =
+        markdownFile.ParentFolderID;
 
       jest
         .spyOn(Repository.prototype, 'save')
-        .mockResolvedValue(markdownFile);
+        .mockResolvedValue(createdMakdownFile);
 
       const result = await service.create(
         markdownFile,
       );
 
-      expect(result).toBe(markdownFile);
+      expect(result).toBe(createdMakdownFile);
       expect(
         Repository.prototype.save,
       ).toBeCalledWith(markdownFile);
@@ -96,12 +111,16 @@ describe('MarkdownFilesService', () => {
       markdownFile.MarkdownID = '1';
       markdownFile.Name = 'markdownFile1';
       markdownFile.Path = 'oldPath';
+      markdownFile.ParentFolderID =
+        'oldParentFolderID';
 
       const updatedMarkdownFile =
         new MarkdownFileDTO();
       updatedMarkdownFile.MarkdownID = '1';
       updatedMarkdownFile.Name = 'markdownFile1';
       updatedMarkdownFile.Path = 'newPath';
+      updatedMarkdownFile.ParentFolderID =
+        'newParentFolderID';
 
       jest
         .spyOn(Repository.prototype, 'findOne')
@@ -109,13 +128,17 @@ describe('MarkdownFilesService', () => {
 
       jest
         .spyOn(Repository.prototype, 'save')
-        .mockResolvedValue(updatedMarkdownFile);
+        .mockImplementation((markdownFile) => {
+          return markdownFile;
+        });
 
       const result = await service.updatePath(
-        markdownFile,
+        updatedMarkdownFile,
       );
 
-      expect(result).toBe(updatedMarkdownFile);
+      expect(result).toStrictEqual(
+        updatedMarkdownFile,
+      );
       expect(
         Repository.prototype.findOne,
       ).toBeCalledWith({

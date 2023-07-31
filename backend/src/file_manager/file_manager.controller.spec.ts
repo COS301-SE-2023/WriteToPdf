@@ -20,6 +20,7 @@ import { Repository } from 'typeorm';
 import { Folder } from '../folders/entities/folder.entity';
 import { ConversionService } from '../conversion/conversion.service';
 import { S3Service } from '../s3/s3.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { UsersService } from '../users/users.service';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
@@ -44,6 +45,7 @@ describe('FileManagerController', () => {
           FoldersService,
           ConversionService,
           S3Service,
+          S3ServiceMock,
           UsersService,
           AuthService,
           JwtService,
@@ -91,6 +93,7 @@ describe('FileManagerController', () => {
         await controller.createFile(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -117,6 +120,7 @@ describe('FileManagerController', () => {
         controller.createFile(
           markdownFileDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -141,6 +145,7 @@ describe('FileManagerController', () => {
       const result = await controller.createFile(
         markdownFileDTO,
         request as any,
+        '',
       );
 
       expect(result).toBeInstanceOf(
@@ -157,7 +162,7 @@ describe('FileManagerController', () => {
       );
       expect(
         fileManagerService.createFile,
-      ).toBeCalledWith(markdownFileDTO);
+      ).toBeCalledWith(markdownFileDTO, false);
     });
   });
 
@@ -288,6 +293,7 @@ describe('FileManagerController', () => {
         await controller.deleteFile(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -313,6 +319,7 @@ describe('FileManagerController', () => {
         await controller.deleteFile(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -338,6 +345,7 @@ describe('FileManagerController', () => {
         await controller.deleteFile(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -370,6 +378,7 @@ describe('FileManagerController', () => {
       const result = await controller.deleteFile(
         markdownFileDTO,
         request as any,
+        '',
       );
 
       expect(result).toBeInstanceOf(
@@ -377,7 +386,10 @@ describe('FileManagerController', () => {
       );
       expect(
         fileManagerService.deleteFile,
-      ).toHaveBeenCalledWith(markdownFileDTO);
+      ).toHaveBeenCalledWith(
+        markdownFileDTO,
+        false,
+      );
     });
   });
 
@@ -458,6 +470,60 @@ describe('FileManagerController', () => {
           HttpStatus.BAD_REQUEST,
         );
       }
+    });
+
+    it('should not throw an exception if ParentFolderID is empty', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = 'abc123';
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.ParentFolderID = '';
+      markdownFileDTO.Path = 'test';
+
+      jest
+        .spyOn(fileManagerService, 'moveFile')
+        .mockResolvedValue(markdownFileDTO);
+
+      const controllerMethod = async () =>
+        await controller.moveFile(
+          markdownFileDTO,
+          request as any,
+        );
+
+      expect(controllerMethod).not.toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should not throw an exception if Path is empty', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = 'abc123';
+      markdownFileDTO.UserID = 123;
+      markdownFileDTO.ParentFolderID = '123';
+      markdownFileDTO.Path = '';
+
+      jest
+        .spyOn(fileManagerService, 'moveFile')
+        .mockResolvedValue(markdownFileDTO);
+
+      const controllerMethod = async () =>
+        await controller.moveFile(
+          markdownFileDTO,
+          request as any,
+        );
+
+      expect(controllerMethod).not.toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
     });
 
     it('should throw an exception if ParentFolderID is undefined', async () => {
@@ -562,6 +628,7 @@ describe('FileManagerController', () => {
         await controller.retrieveFile(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -587,6 +654,7 @@ describe('FileManagerController', () => {
         controller.retrieveFile(
           markdownFileDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -606,6 +674,7 @@ describe('FileManagerController', () => {
         controller.retrieveFile(
           markdownFileDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -631,6 +700,7 @@ describe('FileManagerController', () => {
         await controller.retrieveFile(
           markdownFileDTO,
           request as any,
+          '',
         );
 
       expect(result).toBeInstanceOf(
@@ -644,7 +714,10 @@ describe('FileManagerController', () => {
       );
       expect(
         fileManagerService.retrieveFile,
-      ).toHaveBeenCalledWith(markdownFileDTO);
+      ).toHaveBeenCalledWith(
+        markdownFileDTO,
+        false,
+      );
     });
 
     it('should throw BadRequest exception if MarkdownID is undefined', async () => {
@@ -657,6 +730,7 @@ describe('FileManagerController', () => {
         await controller.retrieveFile(
           markdownFileDTO,
           request as any,
+          '',
         );
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -682,6 +756,7 @@ describe('FileManagerController', () => {
         await controller.save(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -708,6 +783,7 @@ describe('FileManagerController', () => {
         controller.save(
           markdownFileDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -728,6 +804,7 @@ describe('FileManagerController', () => {
         await controller.save(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -754,6 +831,7 @@ describe('FileManagerController', () => {
         await controller.save(
           markdownFileDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -785,6 +863,7 @@ describe('FileManagerController', () => {
       const result = await controller.save(
         markdownFileDTO,
         request as any,
+        '',
       );
 
       expect(result).toBeInstanceOf(
@@ -798,7 +877,10 @@ describe('FileManagerController', () => {
       );
       expect(
         fileManagerService.saveFile,
-      ).toHaveBeenCalledWith(markdownFileDTO);
+      ).toHaveBeenCalledWith(
+        markdownFileDTO,
+        false,
+      );
     });
   });
 
@@ -937,6 +1019,26 @@ describe('FileManagerController', () => {
           request as any,
         ),
       ).toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should not throw an exception if Path is empty', () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderName = 'test';
+      folderDTO.UserID = 123;
+      folderDTO.Path = '';
+
+      expect(() =>
+        controller.createFolder(
+          folderDTO,
+          request as any,
+        ),
+      ).not.toThrowError(
         new HttpException(
           'Invalid request data',
           HttpStatus.BAD_REQUEST,
@@ -1326,6 +1428,57 @@ describe('FileManagerController', () => {
         );
       }
     });
+    it('should not throw an exception if ParentFolderID is empty', async () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderID = 'abc123';
+      folderDTO.UserID = 123;
+      folderDTO.ParentFolderID = '';
+      folderDTO.Path = 'test';
+
+      jest
+        .spyOn(fileManagerService, 'moveFolder')
+        .mockResolvedValue(folderDTO);
+
+      const controllerMethod = async () =>
+        await controller.moveFolder(
+          folderDTO,
+          request as any,
+        );
+
+      expect(controllerMethod).not.toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should not throw an exception if Path is empty', async () => {
+      const request = { method: 'POST' };
+      const folderDTO = new FolderDTO();
+      folderDTO.FolderID = 'abc123';
+      folderDTO.UserID = 123;
+      folderDTO.ParentFolderID = '123';
+      folderDTO.Path = '';
+
+      jest
+        .spyOn(fileManagerService, 'moveFolder')
+        .mockResolvedValue(folderDTO);
+
+      const controllerMethod = async () =>
+        await controller.moveFolder(
+          folderDTO,
+          request as any,
+        );
+
+      expect(controllerMethod).not.toThrowError(
+        new HttpException(
+          'Invalid request data',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
 
     it('should return a FolderDTO', async () => {
       const request = { method: 'POST' };
@@ -1445,6 +1598,7 @@ describe('FileManagerController', () => {
         await controller.import(
           importDTO,
           request as any,
+          '',
         );
         expect(true).toBe(false);
       } catch (error) {
@@ -1473,6 +1627,7 @@ describe('FileManagerController', () => {
         controller.import(
           importDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -1495,6 +1650,7 @@ describe('FileManagerController', () => {
         controller.import(
           importDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -1517,6 +1673,7 @@ describe('FileManagerController', () => {
         controller.import(
           importDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -1539,6 +1696,7 @@ describe('FileManagerController', () => {
         controller.import(
           importDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -1561,6 +1719,7 @@ describe('FileManagerController', () => {
         controller.import(
           importDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -1583,6 +1742,7 @@ describe('FileManagerController', () => {
         controller.import(
           importDTO,
           request as any,
+          '',
         ),
       ).toThrowError(
         new HttpException(
@@ -1609,6 +1769,7 @@ describe('FileManagerController', () => {
       const result = await controller.import(
         importDTO,
         request as any,
+        '',
       );
 
       expect(result).toBeInstanceOf(
@@ -1616,7 +1777,7 @@ describe('FileManagerController', () => {
       );
       expect(
         fileManagerService.importFile,
-      ).toBeCalledWith(importDTO);
+      ).toBeCalledWith(importDTO, false);
     });
   });
 
@@ -1710,14 +1871,14 @@ describe('FileManagerController', () => {
 
       jest
         .spyOn(fileManagerService, 'exportFile')
-        .mockResolvedValue(exportDTO);
+        .mockResolvedValue('success' as any);
 
       const result = await controller.export(
         exportDTO,
         request as any,
       );
 
-      expect(result).toBeInstanceOf(ExportDTO);
+      expect(result).toBe('success');
       expect(
         fileManagerService.exportFile,
       ).toBeCalledWith(exportDTO);

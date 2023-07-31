@@ -52,6 +52,9 @@ export class MarkdownFilesService {
     markdownFile.Path =
       updateMarkdownFileDTO.Path;
 
+    markdownFile.ParentFolderID =
+      updateMarkdownFileDTO.ParentFolderID;
+
     return this.markdownFileRepository.save(
       markdownFile,
     );
@@ -82,6 +85,7 @@ export class MarkdownFilesService {
         },
       );
     markdownToUpdate.LastModified = new Date();
+    markdownToUpdate.Size = markdownDTO.Size;
     return this.markdownFileRepository.save(
       markdownToUpdate,
     );

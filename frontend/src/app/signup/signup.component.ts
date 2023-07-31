@@ -17,9 +17,12 @@ export class SignupComponent {
   confirmPassword: string = '';
 
   value: string = '';
-  
-  constructor(@Inject(Router) private router: Router, private elementRef: ElementRef, private userService: UserService) { }
 
+  constructor(
+    @Inject(Router) private router: Router,
+    private elementRef: ElementRef,
+    private userService: UserService
+  ) {}
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
@@ -99,13 +102,5 @@ export class SignupComponent {
   isValidConfirmPassword(confirmPassword: string): boolean {
     if (confirmPassword != this.password) return false;
     return true;
-  }
-
-  outputForm() {
-    console.log(this.firstName);
-    console.log(this.lastName);
-    console.log(this.email);
-    console.log(this.password);
-    console.log(this.confirmPassword);
   }
 }

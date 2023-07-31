@@ -4,7 +4,7 @@ on:
     push:
         branches: [main, test, codecov]
     pull_request:
-        branches: [main, test, codecov]
+        branches: [main, test]
 
 env:
     JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
@@ -15,6 +15,7 @@ env:
     DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     DB_NAME: ${{ secrets.DB_NAME }}
     PEPPER: ${{ secrets.PEPPER }}
+    TEST_USERID: ${{ secrets.TEST_USERID }}
     TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
     TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
     TEST_SALT: ${{ secrets.TEST_SALT }}

@@ -1,24 +1,35 @@
-import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+  HostListener,
+} from '@angular/core';
 // import {NgModule} from "@angular/core";
 import { Router } from '@angular/router';
 import { TreeTable } from 'primeng/treetable';
-// import {Tree, TreeModule} from "primeng/tree";
-// import {TreeSelectModule} from "primeng/treeselect";
-// import {FormsModule} from "@angular/forms";
-// import {EditorModule} from "primeng/editor";
-// import {DropdownModule} from "primeng/dropdown";
-// import {EditComponent} from "../edit/edit.component";
 
-import { MenuItem, MessageService, TreeNode } from 'primeng/api';
+import {
+  MenuItem,
+  MessageService,
+  TreeNode,
+  ConfirmationService,
+  ConfirmEventType,
+} from 'primeng/api';
 import { NodeService } from '../services/home.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { UserService } from '../services/user.service';
+import { FileManagerPopupComponent } from '../file-manager-popup/file-manager-popup.component';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
 import { ViewChild } from '@angular/core';
 import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
 import { Inject } from '@angular/core';
+import { CoordinateService } from '../services/coordinate-service.service';
+import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
+import {NgxSpinnerService} from "ngx-spinner";
 
 interface Column {
   field: string;
@@ -44,7 +55,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public menuBarItems!: MenuItem[];
   public speedDialItems!: MenuItem[];
   public treeTableColumns!: Column[];
+
   public currentDirectory!: any;
+
+  //variables for dynamic resizing
+componentWidth: string = '';
+menubarElement: HTMLElement | null = null;
+subMenu: HTMLElement | null = null;
+
+  //variables for double click and enter key to open doc
+  public previousNode!: any;
+  public currentNode!: any;
+
+  //variables for drag and drop
+  public originalPosition: { x: number; y: number } | null = null;
+  public currentlyDraggedNode!: any;
+  public isDraggingNode = false;
+
   public treeSelectedFile!: any;
   public directoryData!: any;
   public recentToggle: boolean = false;
@@ -61,28 +88,78 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public createNewFolderDialogueVisible: boolean = false;
   public entityName: string = '';
   uploadedFiles: any[] = [];
+  contextMenuItems: any[];
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
-  constructor(@Inject(Router) private router: Router,
-
+  constructor(
+    @Inject(Router) private router: Router,
     private nodeService: NodeService,
     private elementRef: ElementRef,
     private messageService: MessageService,
     private dialogService: DialogService,
+    private loadingSpinnerService: NgxSpinnerService,
     private fileService: FileService,
     private userService: UserService,
     private editService: EditService,
-    private folderService: FolderService
-  ) {}
+    private folderService: FolderService,
+    private renderer: Renderer2,
+    private coordinateService: CoordinateService,
+    private confirmationService: ConfirmationService
+  ) {
+    this.contextMenuItems = [
+      {
+        label: 'Create New Folder',
+        icon: 'pi pi-folder',
+        command: () => this.createNewFolderDialogueVisible = true
+      },
+      {
+        label: 'Create New File',
+        icon: 'pi pi-file',
+        command: () => this.createNewDocumentDialogueVisible = true
+      },
+      // {
+      //   label: 'Enclose in Folder',
+      //   icon: 'pi pi-folder-plus',
+      //   // command: () => this.encloseSelectionInFolder()
+      // },
+      {
+        label: 'Delete',
+        icon: 'pi pi-trash',
+        command: () => this.deleteSelectedEntity(this.currentDirectory)
+      },
+    ];
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onWindowResize(event: Event) {
+    this.updateMenubarWidth(); // Call the function when the window is resized
+  }
+
+  updateMenubarWidth() {
+    if (!this.menubarElement) return; // Ensure that the menubar element is available
+
+    const viewportWidth = window.innerWidth;
+
+    if (viewportWidth >= 960) {
+      this.componentWidth = '400px';
+    } else {
+      this.componentWidth = '190px';
+    }
+
+    // Update the style of the menubar element with the calculated width
+    this.menubarElement.style.minWidth = this.componentWidth;
+  }
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
   }
+
   // These functions serve to add intelligent routing and usage for directory management
 
   reloadMainFromRoot(): void {
     this.filterTable('', 3);
   }
+
   // The functions below serve to allow for editing and all other processes involved with editing
   // file names.
   onRowLabelEdit(event: any, rowNode: any): void {
@@ -148,10 +225,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return false;
   }
 
+  //TODO Implement breadcrumb
   updateBreadcrumb(selectedNode: TreeNode | undefined) {
     // Clear the existing breadcrumb items
     this.activeDirectoryItems = [];
-
     // Traverse the selected node's ancestors to generate the breadcrumb items
     let currentNode = selectedNode;
     while (currentNode) {
@@ -162,7 +239,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   sendEditedRowLabel(event: any, key: string, type: string): void {
-    console.log(event, key, type);
     if (type === 'folder') {
       const folder = this.nodeService.getFolderDTOByID(key);
       this.folderService
@@ -176,13 +252,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // End of functions that implement editing funcitonality.
-  /**
-   *
-   * @JancoSpies, this function over here generates tree nodes from the  treetable data
-   * in essence, all that's important is that the keys remain unique and in the format as seen in
-   * home.service.ts
-   */
+  // End of functions that implement editing functionality.
   generateTreeNodes(data: any[]): TreeNode[] {
     return data.map((item) => {
       const node: TreeNode = {
@@ -197,6 +267,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     {
+      // Get a reference to the menubar element with the specific class
+      this.menubarElement = this.elementRef.nativeElement.querySelector('.p-menubar.custom-menubar');
+
+      // Call the function to set the component width initially
+      this.updateMenubarWidth();
       // Below is the function that initially populates the fileTree
       this.nodeService.getFilesAndFolders().then(() => {
         const data = this.nodeService.getTreeTableNodesData();
@@ -262,6 +337,26 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
+  iterateNodeIDRemoval(node: any[]) {
+    if(!node){
+      return node;
+    }
+    for(let i=0;i<node.length;i++){
+      this.removeUniqueIDRecursive(node[i]);
+    }
+    return node;
+  }
+
+  removeUniqueIDRecursive(node: any){
+    node.data.name=this.removeUniqueID(node.data.name);
+    node.label=this.removeUniqueID(node.label);
+    if(node.children){
+      for(let i=0;i<node.children.length;i++){
+        this.removeUniqueIDRecursive(node.children[i]);
+      }
+    }
+  }
+
   onNodeSelect(event: any): void {
     this.filterTable(event, 2);
   }
@@ -282,7 +377,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   //TODO filter events from click on the left side directory contents need to rather use
   // a filter that finds the relevant directories via keys, not the actual text of the
-  // file's name or something like that.
+  // file's name.
   filterTable(filterEvent: any, searchCollapseExpandRoot: number) {
     let filterValue = '';
     let explodeOrCollapse: boolean = true;
@@ -299,7 +394,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (2 == searchCollapseExpandRoot) {
       explodeOrCollapse = true;
       filterValue = filterEvent.node.label;
-      console.log(filterValue);
     }
     if (0 == searchCollapseExpandRoot) {
       explodeOrCollapse = false;
@@ -309,7 +403,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       filterValue = filterEvent;
       explodeOrCollapse = false;
     }
-    console.log(filterValue);
     // Perform filtering based on the first column
     this.filteredFilesDirectoryTreeTable = this.filesDirectoryTreeTable.filter(
       (node) => {
@@ -327,6 +420,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       explodeOrCollapse
     );
   }
+
   // a helper function for filterTable that searches for child nodes inside the treeTable
   // that may be included into a parent node
   // this prevents searching in only the first node layer.
@@ -345,16 +439,54 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
     return false;
   }
-  // Below is the code that implements file uploading.
-  onUpload(event: any) {
-    for (let file of event.files) {
-      this.uploadedFiles.push(file);
+
+  /**
+   *
+   * @param options, must be "folder" || "move" || "document"
+   */
+  showFileManagerPopup(options: string): void {
+    if (options === 'folder') {
+      //TODO communicate intentions to file manager pop-up
+      const ref = this.dialogService.open(FileManagerPopupComponent, {
+        header: 'Folder Creation: Select location',
+        showHeader: true,
+        closable: true,
+        closeOnEscape: true,
+        dismissableMask: true,
+      });
+      ref.onClose.subscribe(() => {
+        //If the user creates a new folder we want it to be reflected in our home page,
+        //So we need to call ngOnInit once more to update the homepage after closing.
+        this.ngOnInit();
+        // Handle any actions after the dialog is closed
+      });
     }
-    this.messageService.add({
-      severity: 'info',
-      summary: 'File Uploaded',
-      detail: '',
-    });
+    if (options === 'move') {
+      //TODO communicate intentions to file manager pop-up
+      const ref = this.dialogService.open(FileManagerPopupComponent, {
+        header: 'Select new location',
+        showHeader: true,
+        closable: true,
+        closeOnEscape: true,
+        dismissableMask: true,
+      });
+      ref.onClose.subscribe(() => {
+        // Handle any actions after the dialog is closed
+      });
+    }
+    if (options === 'document') {
+      //TODO communicate intentions to file manager pop-up
+      const ref = this.dialogService.open(FileManagerPopupComponent, {
+        header: 'Select document location',
+        showHeader: true,
+        closable: true,
+        closeOnEscape: true,
+        dismissableMask: true,
+      });
+      ref.onClose.subscribe(() => {
+        // Handle any actions after the dialog is closed
+      });
+    }
   }
 
   showFileUploadPopup(): void {
@@ -365,14 +497,28 @@ export class HomeComponent implements OnInit, AfterViewInit {
       closeOnEscape: true,
       dismissableMask: true,
     });
-
     // Subscribe to dialog close event if needed
     ref.onClose.subscribe(() => {
       // Handle any actions after the dialog is closed
     });
   }
+  showImageUploadPopup(): void {
+    const ref = this.dialogService.open(ImageUploadPopupComponent, {
+      header: 'Upload Images',
+      showHeader: true,
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true,
+    });
+  }
+
   // this code updates the background layer to not be adjusted from the edit page after navigation.
   ngAfterViewInit() {
+    this.subMenu = this.elementRef.nativeElement.querySelector('.p-menubarsub');
+    if(this.subMenu){
+      this.subMenu.style.zIndex = "10000 !important";
+    }
+    this.updateMenubarWidth();
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#FFFFFF';
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
@@ -380,7 +526,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onOpenFileSelect(event: any): void {
     const file = this.nodeService.getFileDTOByID(event.key);
-    console.log('FILE: ' + JSON.stringify(file));
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
@@ -398,35 +543,28 @@ export class HomeComponent implements OnInit, AfterViewInit {
     newPath: string,
     newParentFolderID: string
   ): void {
-    console.log(event);
     const file = this.nodeService.getFileDTOByID(event.key);
     this.entityToMove = event;
+    // this.showFileManagerPopup('move');
     this.moveDialogVisible = true;
-    console.log(file);
   }
 
+  //TODO - implement the move folder function
   onMoveFolderSelect(
     event: any,
     newPath: string,
     newParentFolderID: string
   ): void {
-    console.log(event);
     const folder = this.nodeService.getFolderDTOByID(event.key);
     this.entityToMove = event;
     this.moveDialogVisible = true;
-    console.log(folder);
   }
 
   delete(event: any) {
-    console.log('delete');
-    console.log(event);
     if (event.data.type == 'folder') {
-      this.folderService.deleteFolder(event.key);
-      this.deleteEntryByKey(this.filesDirectoryTree, event.key);
-      this.deleteEntryByKey(this.filesDirectoryTreeTable, event.key);
-      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.key);
-      this.filterTable('', 3);
-      this.nodeService.removeFolder(event.key);
+      this.deleteAllChildren(this.nodeService.getFolderDTOByID(event.key));
+
+      this.refreshTree();
       this.currentDirectory = null;
     } else {
       this.fileService.deleteDocument(event.key);
@@ -435,8 +573,43 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.key);
       this.filterTable('', 3);
       this.nodeService.removeFile(event.key);
+      this.refreshTree();
       this.currentDirectory = null;
     }
+  }
+
+  deleteAllChildren(event: any) {
+    const files = this.nodeService.findAllChildrenFiles(event.FolderID);
+    const folders = this.nodeService.findAllChildrenFolders(event.FolderID);
+    for (const file of files) {
+      this.fileService.deleteDocument(file.MarkdownID);
+      this.deleteEntryByKey(this.filesDirectoryTree, file.MarkdownID);
+      this.deleteEntryByKey(this.filesDirectoryTreeTable, file.MarkdownID);
+      this.deleteEntryByKey(
+        this.filteredFilesDirectoryTreeTable,
+        file.MarkdownID
+      );
+      this.filterTable('', 3);
+      this.nodeService.removeFile(file.MarkdownID);
+    }
+    for (const folder of folders) {
+      this.deleteAllChildren(folder);
+      this.folderService.deleteFolder(folder.FolderID);
+      this.deleteEntryByKey(this.filesDirectoryTree, folder.FolderID);
+      this.deleteEntryByKey(this.filesDirectoryTreeTable, folder.FolderID);
+      this.deleteEntryByKey(
+        this.filteredFilesDirectoryTreeTable,
+        folder.FolderID
+      );
+      this.filterTable('', 3);
+      this.nodeService.removeFolder(folder.FolderID);
+    }
+    this.folderService.deleteFolder(event.FolderID);
+    this.deleteEntryByKey(this.filesDirectoryTree, event.FolderID);
+    this.deleteEntryByKey(this.filesDirectoryTreeTable, event.FolderID);
+    this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.FolderID);
+    this.filterTable('', 3);
+    this.nodeService.removeFolder(event.FolderID);
   }
 
   deleteEntryByKey(data: TreeNode[], keyToDelete: string): void {
@@ -466,6 +639,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 label: 'Folder',
                 icon: 'pi pi-fw pi-folder',
                 command: () => {
+                  // this.showFileManagerPopup('folder');
                   this.createNewFolderDialogueVisible = true;
                 },
               },
@@ -473,6 +647,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 label: 'Document',
                 icon: 'pi pi-fw pi-file',
                 command: () => {
+                  // this.showFileManagerPopup('document');
                   this.createNewDocumentDialogueVisible = true;
                 },
               },
@@ -513,7 +688,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             icon: 'pi pi-fw pi-trash',
             command: () => {
               if (this.currentDirectory != null)
-                this.delete(this.currentDirectory);
+                this.deleteSelectedEntity(this.currentDirectory);
               else {
                 this.messageService.add({
                   severity: 'warn',
@@ -526,11 +701,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
           {
             separator: true,
           },
-          // {
+          // {//TODO implement downloading a file from the database
           //   label: 'Export',
           //   icon: 'pi pi-fw pi-external-link',
           //   command: () => {
-          //     //TODO implement downloading a file from the database
+          //
           //   }
           // }
         ],
@@ -562,7 +737,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return this.userService.getFirstName();
   }
 
-  async newFolder() {
+  async createNewFolder() {
+    this.createNewFolderDialogueVisible = false;
+
     let path: string | undefined = '';
     let parentFolderID: string | undefined = '';
     if (this.entityName == '') {
@@ -594,7 +771,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       path,
       'folder'
     );
-
     this.folderService
       .createFolder(path, this.entityName, parentFolderID)
       .then((data) => {
@@ -620,41 +796,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   moveEntity() {
-    const destinationFolder = this.nodeService.getFolderDTOByID(
-      this.currentDirectory.key
-    );
-    let path: string | undefined =
-      destinationFolder.Path + `/${destinationFolder.FolderName}`;
-    if (destinationFolder.Path === '') {
-      path = destinationFolder.FolderName;
-    }
-
-    if (this.entityToMove.data.type === 'folder') {
-      this.folderService
-        .moveFolder(this.entityToMove.key, path, destinationFolder.FolderID)
-        .then((data) => {
-          this.nodeService.removeFolder(this.entityToMove.key);
-          data.FolderName = this.entityToMove.data.name;
-
-          this.nodeService.addFolder(data);
-          this.refreshTree();
-          this.moveDialogVisible = false;
-        });
-    } else {
-      this.fileService
-        .moveDocument(this.entityToMove.key, path, destinationFolder.FolderID)
-        .then((data) => {
-          this.nodeService.removeFile(this.entityToMove.key);
-          data.Name = this.entityToMove.data.name;
-          data.Size = this.entityToMove.data.size;
-          this.nodeService.addFile(data);
-          this.refreshTree();
-          this.moveDialogVisible = false;
-        });
-    }
+    this.moveByKey(this.entityToMove.data.key, this.currentDirectory.key);
+    this.moveDialogVisible = false;
   }
 
   async createNewDocument() {
+    this.createNewDocumentDialogueVisible = false;
     let path: string | undefined = '';
     let parentFolderID: string | undefined = '';
     if (this.entityName == '') {
@@ -700,10 +847,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  outputCurrDir() {
-    console.log(this.currentDirectory);
-  }
-
   refreshTree() {
     const directory = this.nodeService.getTreeTableNodesData();
     this.filesDirectoryTree = this.generateTreeNodes(directory);
@@ -720,5 +863,169 @@ export class HomeComponent implements OnInit, AfterViewInit {
     ];
     this.filterTable('', 3);
   }
+
+  openFileEnter(event: any): void {
+    if (this.currentNode != null) this.onOpenFileSelect(this.currentNode);
+    else {
+    }
+  }
+
+  deleteSelectedEntity(event: any): void {
+    if (this.currentDirectory != null) {
+      let message = `Are you sure that you want to delete '${this.removeUniqueID(this.currentDirectory.data.name)}'?`;
+      const type = this.currentDirectory.data.type;
+      if (type === 'folder') {
+        message = `Are you sure that you want to delete '${this.removeUniqueID(this.currentDirectory.data.name)}' and all of its contents?`;
+      }
+      this.confirmationService.confirm({
+        message: message,
+        header: 'Delete Confirmation',
+        icon: 'pi pi-exclamation-triangle',
+        accept: async () => {
+          await this.delete(this.currentDirectory);
+
+          if (type === 'folder')
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Folder deleted successfully',
+            });
+          else
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File deleted successfully',
+            });
+        },
+        reject: () => {},
+      });
+    }
+  }
+
+  openFileDoubleClick() {
+    if (this.currentNode == this.previousNode && this.previousNode != null)
+      this.onOpenFileSelect(this.previousNode);
+    else {
+    }
+  }
+
+  selectNode($event: any) {
+    console.log($event);
+    this.currentNode = $event.node;
+  }
+
+  unselectNode($event: any) {
+    this.previousNode = $event.node;
+  }
+
+  onNodeDrag($event: any) {
+    this.isDraggingNode = true;
+    const key = $event.source.element.nativeElement?.getAttribute('data-key');
+    this.originalPosition = {
+      x: $event.source._dragRef._passiveTransform.x,
+      y: $event.source._dragRef._passiveTransform.y,
+    };
+    this.currentlyDraggedNode = this.getParentElement($event.event.srcElement);
+    this.currentlyDraggedNode.style.pointerEvents = 'none';
+    this.currentlyDraggedNode.classList.add('dragging');
+  }
+
+  onDragReleased($event: any) {
+    this.currentlyDraggedNode.style.pointerEvents = 'auto';
+    this.isDraggingNode = false;
+    this.originalPosition = {
+      x: $event.source._dragRef._passiveTransform.x,
+      y: $event.source._dragRef._passiveTransform.y,
+    };
+
+    // Reset the draggable element's position back to its original position
+    $event.source._dragRef.reset();
+    setTimeout(() => {
+      const keyOfDragged = this.currentlyDraggedNode.getAttribute('data-key');
+      const keyOfDropped = this.getParentElement(
+        this.coordinateService.getElementAtCoordinate()
+      )?.getAttribute('data-key');
+      this.moveByKey(keyOfDragged, keyOfDropped);
+    }, 10);
+    if (this.currentlyDraggedNode) {
+      this.currentlyDraggedNode.classList.remove('dragging');
+    }
+  }
+
+  getElementAtCoordinate(x: number, y: number): HTMLElement | null {
+    return document.elementFromPoint(x, y) as HTMLElement;
+  }
+
+  getParentElement(currentElement: HTMLElement | null) {
+    if (currentElement == null) return null;
+    const parentElement: HTMLElement | null = currentElement.parentElement;
+
+    if (parentElement) {
+      return parentElement;
+    } else {
+      return null;
+    }
+  }
+
+  getData(rowData: any) {
+    return rowData.key;
+  }
+
+  moveByKey(
+    keyOfDragged: string | undefined | null,
+    keyOfDropped: string | undefined | null
+  ) {
+    if (keyOfDragged == keyOfDropped) return;
+    const folder = this.nodeService.getParentFolderByID(keyOfDropped);
+
+    let path: string | undefined = folder.Path + `/${folder.FolderName}`;
+    let parentFolderID: string | undefined = folder.FolderID;
+    if (folder.Path === '') {
+      path = folder.FolderName;
+    }
+
+    if (!folder.FolderID) {
+      path = '';
+      parentFolderID = '';
+    }
+
+    const type = this.nodeService.checkType(keyOfDragged);
+    if (type === 'file') {
+      const movingNode = this.nodeService.getFileDTOByID(keyOfDragged);
+      if (movingNode.ParentFolderID === parentFolderID) return;
+      this.fileService
+        .moveDocument(movingNode.MarkdownID, path, parentFolderID)
+        .then((data) => {
+          this.nodeService.removeFile(movingNode.MarkdownID);
+          data.Name = movingNode.Name;
+          data.Size = movingNode.Size;
+          this.nodeService.addFile(data);
+          this.refreshTree();
+        });
+    } else if (type === 'folder') {
+      const movingNode = this.nodeService.getFolderDTOByID(keyOfDragged);
+      if (movingNode.ParentFolderID === parentFolderID) return;
+      //check if moving parent folder into some child folder
+      if (this.nodeService.checkIfChildFolder(folder, movingNode)) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Cannot move folder into child folder',
+          detail: '',
+        });
+        return;
+      }
+      this.folderService
+        .moveFolder(movingNode.FolderID, path, parentFolderID)
+        .then((data) => {
+          this.nodeService.removeFolder(movingNode.FolderID);
+          data.FolderName = movingNode.FolderName;
+
+          this.nodeService.addFolder(data);
+          this.refreshTree();
+        });
+    }
+  }
+  removeUniqueID(name: string): string {
+    return name.split('!#$')[0];
+  }
+
   protected readonly focus = focus;
 }

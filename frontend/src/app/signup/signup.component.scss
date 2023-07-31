@@ -3,25 +3,41 @@
 .signupWrapper {
 
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-
-    width: 420px;
+    width: 90vw;
+    max-width: 420px;
+    min-width: 280px;
 
     height: -moz-fit-content;
     height: fit-content;
 
+    max-height: 99vh;
+    overflow-y: auto;
     margin: auto;
-
-    background-color: $light-grey;
+    background-color: rgba($light-grey, 0.6);
 
     border-radius: 33px;
 
-    padding-top: 50px;
+    padding-top: min(4vh, 50px);
 
+}
+
+.backgroundImage {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    /* Uncomment the following line if you want to use a linear gradient fallback */
+    /* background: radial-gradient(at center, #3498db, #9b59b6); */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /* Center the background image */
+    background-image: linear-gradient(rgba(100, 100, 100, 0.7), rgba(100, 100, 100, 0.7)), url(/assets/MockData/BGIW.jpg);
 }
 
 .signupForm {
@@ -32,7 +48,8 @@
 .heading {
     font-size: 22px;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-top: min(20px, 1vh);
+    margin-bottom: min(20px, 1vh);
     text-align: center;
 }
 
@@ -43,7 +60,7 @@
 
 
     margin: auto;
-    margin-bottom: 50px;
+    margin-bottom: 3vh;
 }
 
 .logo {
@@ -51,39 +68,42 @@
     margin: auto;
 }
 
-.textBox {
-    border: 2px solid #ffffff;
-    border-radius: 90px;
+// .textBox {
+//     border: 2px solid #ffffff;
+//     border-radius: 90px;
 
-    background-color: $text-box-color;
+//     background-color: $text-box-color;
 
-    height: 40px;
-    padding: 0 5%;
+//     height: 40px;
+//     padding: 0 5%;
+//     width: 80%;
+//     margin: auto;
+// }
+
+.password {
     width: 80%;
     margin: auto;
-}
-
-.password{
-    width: 80%;
-    margin:auto;
-    display:flex;
+    display: flex;
 }
 
 :host ::ng-deep .p-inputtext {
-    border: 2px solid #ffffff ;
-    border-radius: 90px ;
+    padding-left: 20px;
+    border: 2px solid #ffffff;
+    border-radius: 90px;
 
     background-color: $text-box-color ;
 
-    height: 40px ;
-    width: 100%;
-    margin: auto ;
-    
+    height: 4vh;
+    max-height: 40px;
+    min-height: 30px;
+    width: 80%;
+    margin: auto;
+
 }
 
 .formElement {
     display: flex;
-    margin-bottom: 20px !important;
+    margin-bottom: min(20px, 1vh) !important;
     width: -moz-fit-content;
     width: fit-content;
     width: 100%;
@@ -91,7 +111,7 @@
 }
 
 .labelElement {
-    margin-bottom: 10px !important;
+    margin-bottom: min(10px, 1vh) !important;
     width: 80%;
     margin: auto;
     font-size: 18px;
@@ -99,16 +119,18 @@
 }
 
 .signupButton,
-.signupButtonDisabled{
+.signupButtonDisabled {
     font-family: Cabin;
     border: none;
     border-radius: 90px;
 
     background-color: #ffffff;
 
-    height: 40px;
+    height: 4vh;
+    max-height: 40px;
+    min-height: 30px;
 
-    font-size: 16px;
+    font-size: clamp(12px, 2vh, 16px);
 
     width: 50%;
     margin: auto;
@@ -134,9 +156,12 @@
 
     background-color: #ffffff;
 
-    height: 40px;
+    height: 4vh;
+    max-height: 40px;
+    min-height: 30px;
 
-    font-size: 16px;
+    font-size: clamp(12px, 2vh, 16px);
+    text-align: center;
 
     width: 50%;
     margin: auto;
