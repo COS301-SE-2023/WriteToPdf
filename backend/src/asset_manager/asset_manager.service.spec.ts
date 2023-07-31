@@ -15,6 +15,7 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { RetrieveAllDTO } from './dto/retrieve_all.dto';
+import { TextractService } from '../textract/textract.service';
 
 describe('AssetManagerService', () => {
   let service: AssetManagerService;
@@ -32,6 +33,7 @@ describe('AssetManagerService', () => {
           S3Service,
           S3ServiceMock,
           TextManagerService,
+          TextractService,
           {
             provide: getRepositoryToken(Asset),
             useClass: Repository,
@@ -300,11 +302,10 @@ describe('AssetManagerService', () => {
   //   assetDTO.UserID = 1;
   //   assetDTO.Content = 'Uncompressed content';
 
-  //   const newAssetDTO = new AssetDTO();
-  //   newAssetDTO.AssetID = 'test';
-  //   newAssetDTO.UserID = 1;
-  //   newAssetDTO.ConvertedElement = '';
-  //   newAssetDTO.Image = 'Compressed content';
+    //   const newAssetDTO = new AssetDTO();
+    //   newAssetDTO.AssetID = 'test';
+    //   newAssetDTO.UserID = 1;
+    //   newAssetDTO.Image = 'Compressed content';
 
   //   const assets = [assetDTO];
 

@@ -85,6 +85,7 @@ export class MarkdownFilesService {
         },
       );
     markdownToUpdate.LastModified = new Date();
+    markdownToUpdate.Size = markdownDTO.Size;
     return this.markdownFileRepository.save(
       markdownToUpdate,
     );

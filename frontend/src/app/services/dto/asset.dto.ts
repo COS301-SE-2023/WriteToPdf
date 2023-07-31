@@ -1,8 +1,8 @@
 export class AssetDTO {
   AssetID: string | undefined;
+  TextID: string | undefined;
   Format: string | undefined;
   FileName: string | undefined;
-  ConvertedElement: string | undefined;
   Content: string | undefined;
   Image: string | undefined;
   DateCreated: Date | undefined;
@@ -14,9 +14,9 @@ export class AssetDTO {
 
   constructor() {
     this.AssetID = undefined;
+    this.TextID = undefined;
     this.Format = undefined;
     this.FileName = undefined;
-    this.ConvertedElement = undefined;
     this.Content = undefined;
     this.DateCreated = undefined;
     this.Size = undefined;

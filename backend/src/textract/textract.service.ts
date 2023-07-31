@@ -11,12 +11,12 @@ import {
   DetectDocumentTextCommand,
 } from '@aws-sdk/client-textract';
 import 'dotenv/config';
-import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import {
   DeleteMessageCommand,
   ReceiveMessageCommand,
   SQSClient,
 } from '@aws-sdk/client-sqs';
+import { AssetDTO } from 'src/assets/dto/asset.dto';
 
 @Injectable()
 export class TextractService {
@@ -55,19 +55,20 @@ export class TextractService {
   extraction = null;
 
   async _extractDocumentAsynchronous(
-    markdownFileDTO: MarkdownFileDTO,
+    assetDTO: AssetDTO,
     extractType: string,
   ) {
-    console.log(markdownFileDTO);
     let textCommand: StartDocumentTextDetectionCommand;
     let tableCommand: StartDocumentAnalysisCommand;
+    const filePath = `${assetDTO.UserID}/${assetDTO.AssetID}`;
+
     if (extractType === 'text') {
       textCommand =
         new StartDocumentTextDetectionCommand({
           DocumentLocation: {
             S3Object: {
               Bucket: this.awsS3BucketName,
-              Name: markdownFileDTO.MarkdownID,
+              Name: filePath,
             },
           },
           NotificationChannel: {
@@ -81,7 +82,7 @@ export class TextractService {
           DocumentLocation: {
             S3Object: {
               Bucket: this.awsS3BucketName,
-              Name: markdownFileDTO.MarkdownID,
+              Name: filePath,
             },
           },
           NotificationChannel: {
@@ -98,7 +99,6 @@ export class TextractService {
           ? textCommand
           : tableCommand,
       );
-    console.log(`JobId: ${jobId}`);
 
     let waitTime = 0;
     const getJob = async (jobId: string) => {
@@ -110,9 +110,9 @@ export class TextractService {
           }),
         );
       if (Messages) {
-        console.log(
-          `Message[0]: ${Messages[0].Body}`,
-        );
+        // console.log(
+        //   `Message[0]: ${Messages[0].Body}`,
+        // );
         await this.sqsClient.send(
           new DeleteMessageCommand({
             QueueUrl: this.queueUrl,
@@ -145,25 +145,19 @@ export class TextractService {
                 : getTableCommand,
             );
           this.extraction = {
-            Name: markdownFileDTO.MarkdownID,
+            Name: assetDTO.AssetID,
             ExtractType: extractType,
             Extracted: Blocks,
           };
-
-          // if (waitTime > 20000) {
-          //   return;
-          // }
-
-          console.log(this.extraction);
         }
       } else {
         const tick = 5000;
         waitTime += tick;
-        console.log(
-          `Waited ${
-            waitTime / 1000
-          } seconds. No messages yet.`,
-        );
+        // console.log(
+        //   `Waited ${
+        //     waitTime / 1000
+        //   } seconds. No messages yet.`,
+        // );
         setTimeout(getJob, tick);
       }
     };
@@ -172,18 +166,20 @@ export class TextractService {
   }
 
   async _extractDocumentSynchronous(
-    markdownFileDTO: MarkdownFileDTO,
+    assetDTO: AssetDTO,
     extractType: string,
   ) {
     let textCommand: DetectDocumentTextCommand;
     let tableCommand: AnalyzeDocumentCommand;
+    const filePath = `${assetDTO.UserID}/${assetDTO.AssetID}`;
+
     if (extractType === 'text') {
       textCommand = new DetectDocumentTextCommand(
         {
           Document: {
             S3Object: {
               Bucket: this.awsS3BucketName,
-              Name: markdownFileDTO.MarkdownID,
+              Name: filePath,
             },
           },
         },
@@ -193,12 +189,13 @@ export class TextractService {
         Document: {
           S3Object: {
             Bucket: this.awsS3BucketName,
-            Name: markdownFileDTO.MarkdownID,
+            Name: filePath,
           },
         },
         FeatureTypes: [FeatureType.TABLES],
       });
     }
+
     const textractResponse =
       await this.textractClient.send(
         extractType === 'text'
@@ -207,15 +204,17 @@ export class TextractService {
       );
 
     this.extraction = {
-      Name: markdownFileDTO.MarkdownID,
+      Name: assetDTO.AssetID,
       ExtractType: extractType,
       // Children: this._make_page_hierarchy(
       //   textractResponse['Blocks'],
       // ),
       Children: textractResponse,
     };
-    console.log(textractResponse);
-
+    // console.log(
+    //   'Textract response: ',
+    //   textractResponse,
+    // );
     return textractResponse;
   }
 
@@ -290,7 +289,7 @@ export class TextractService {
 
   async extractDocument(
     syncType: string,
-    markdownFileDTO: MarkdownFileDTO,
+    assetDTO: AssetDTO,
     extractType: string,
   ) {
     let retVal;
@@ -298,20 +297,20 @@ export class TextractService {
       if (syncType === 'sync') {
         retVal =
           await this._extractDocumentSynchronous(
-            markdownFileDTO,
+            assetDTO,
             extractType,
           );
       } else {
         retVal =
           await this._extractDocumentAsynchronous(
-            markdownFileDTO,
+            assetDTO,
             extractType,
           );
       }
     } catch (error) {
       console.log(error.message);
     } finally {
-      console.log('Finally');
+      // console.log('Finally');
       return retVal;
     }
   }

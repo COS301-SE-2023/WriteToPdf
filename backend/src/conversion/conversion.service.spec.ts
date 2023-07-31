@@ -102,6 +102,11 @@ describe('ConversionService', () => {
         screenshot: jest
           .fn()
           .mockReturnValue(mockBuffer),
+        evaluate: jest
+          .fn()
+          .mockImplementation(() => {
+            return { width: 100, height: 100 };
+          }),
       };
 
       const mockBrowser = {
@@ -159,6 +164,12 @@ describe('ConversionService', () => {
       screenshot: jest
         .fn()
         .mockReturnValue(mockBuffer),
+      evaluate: jest
+        .fn()
+        .mockImplementation(() => {
+          return { width: 100, height: 100 };
+        }),
+      setViewport: jest.fn(),
     };
 
     const html = '<p>Hello, World!</p>';

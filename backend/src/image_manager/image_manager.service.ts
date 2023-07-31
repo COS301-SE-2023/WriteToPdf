@@ -36,11 +36,14 @@ export class ImageManagerService {
       uploadImageDTO.Content = '';
     }
 
+    if (!uploadImageDTO.TextID) {
+      uploadImageDTO.TextID = '';
+    }
+
     // Store in database
-    const imageData = uploadImageDTO.Image;
+    uploadImageDTO.Content = uploadImageDTO.Image;
     uploadImageDTO.Image = '';
     this.assetsService.saveAsset(uploadImageDTO);
-    uploadImageDTO.Content = imageData;
 
     if (isTest) {
       // Save asset in the S3/local storage
@@ -48,7 +51,7 @@ export class ImageManagerService {
         uploadImageDTO,
       );
     } else {
-      return this.s3Service.saveAsset(
+      return this.s3Service.saveImageAsset(
         uploadImageDTO,
       );
     }

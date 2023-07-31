@@ -103,29 +103,4 @@ export class SignupComponent {
     if (confirmPassword != this.password) return false;
     return true;
   }
-
-  outputForm() {
-    console.log(this.firstName);
-    console.log(this.lastName);
-    console.log(this.email);
-    console.log(this.password);
-    console.log(this.confirmPassword);
-  }
-
-  movemouse(event: MouseEvent) {
-    // const windowWidth = window.innerWidth;
-    // const windowHeight = window.innerHeight;
-
-    // if (!windowWidth || !windowHeight) return;
-    // const diffX = -1 * ((event.pageX - windowWidth / 2) / 1.5) / windowWidth;
-    // const diffY = -1 * ((event.pageY - windowHeight / 2) / 1.5) / windowHeight;
-    // const mouseXpercentage = Math.round((event.pageX / windowWidth + diffX) * 100);
-    // const mouseYpercentage = Math.round((event.pageY / windowHeight + diffY) * 100);
-    // // const mouseXpercentage = Math.round(event.pageX / windowWidth * 100);
-    // // const mouseYpercentage = Math.round(event.pageY / windowHeight * 100);
-
-    // // (document.getElementsByClassName('backgroundImage')[0] as HTMLElement).style.backgroundImage= 'radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, #3498db, #9b59b6)';
-    // (document.getElementsByClassName('backgroundImage')[0] as HTMLElement).style.backgroundImage = 'radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, rgb(100 100 100 / 70%), rgb(0 0 0 / 70%), rgb(0 0 0 / 70%)), url(/assets/MockData/BGIW.jpg)';
-
-  }
 }

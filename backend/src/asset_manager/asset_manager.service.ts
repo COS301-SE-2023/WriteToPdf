@@ -64,7 +64,6 @@ export class AssetManagerService {
         const assetDTO = new AssetDTO();
         assetDTO.AssetID = assets[i].AssetID;
         assetDTO.UserID = assets[i].UserID;
-        // assetDTO.ConvertedElement = '';
 
         // Retrieve the image from s3
         const asset =
@@ -84,18 +83,21 @@ export class AssetManagerService {
     for (let j = 0; j < assets.length; j++) {
       if (assets[j].Format === 'text') {
         const assetDTO = new AssetDTO();
-        assetDTO.AssetID = assets[j].AssetID;
-        assetDTO.UserID = assets[j].UserID;
-        // assetDTO.ConvertedElement = '';
+        assetDTO.AssetID = assets[j].AssetID; // for the text image data file
+        assetDTO.TextID = assets[j].TextID; // for the OCR text data file
+        assetDTO.UserID = assets[j].UserID; // for the path to both files in the s3
 
-        // Retrieve the delineated data from S3
-        const tempAssetDTO =
+        // Retrieve the image and the OCR text for this asset
+        const textAsset =
           await this.textManagerService.retrieveOne(
             assetDTO,
             isTest,
           );
 
-        assets[j].Image = tempAssetDTO.Image;
+        assets[j].Image =
+          await this.imageManagerService.compressImage(
+            textAsset.Image,
+          );
       }
     }
 

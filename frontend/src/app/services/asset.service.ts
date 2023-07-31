@@ -8,6 +8,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserService } from './user.service';
 import { MessageService } from 'primeng/api';
 import { environment } from '../../environments/environment';
+import { MarkdownFileDTO } from './dto/markdown_file.dto';
+import { text } from 'stream/consumers';
 
 @Injectable({
   providedIn: 'root',
@@ -17,16 +19,16 @@ export class AssetService {
     private http: HttpClient,
     private userService: UserService,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   uploadImage(
     image: string | undefined,
-    path: string,
+    path: string|undefined,
     fileName: string,
     parentFolderId: string | undefined,
     format: string
-  ): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+  ): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
       this.sendUploadImageData(
         image,
         path,
@@ -35,8 +37,8 @@ export class AssetService {
         format
       ).subscribe({
         next: (response: HttpResponse<any>) => {
+
           if (response.status === 201) {
-            console.log('Image uploaded successfully');
             this.messageService.add({
               severity: 'success',
               summary: 'Image uploaded successfully',
@@ -52,7 +54,7 @@ export class AssetService {
 
   sendUploadImageData(
     image: string | undefined,
-    path: string,
+    path: string|undefined,
     fileName: string,
     parentFolderId: string | undefined,
     format: string
@@ -76,6 +78,11 @@ export class AssetService {
     }
     body.Format = format;
 
+    // const body = new MarkdownFileDTO();
+    // body.UserID = this.userService.getUserID();
+    // body.MarkdownID = 'IMG_3600.jpeg';
+
+
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -83,18 +90,28 @@ export class AssetService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveAsset(assetId: string, format: string): Promise<any> {
+  retrieveAsset(assetId: string, format: string, textId:string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      this.sendRetrieveAssetData(assetId, format).subscribe({
-        next: (response: HttpResponse<any>) => {
-          if (response.status === 200) {
-            console.log('Image retrieved successfully');
-            resolve(response.body);
-          } else {
-            resolve(null);
-          }
-        },
-      });
+      if (format === 'image')
+        this.sendRetrieveAssetData(assetId, format).subscribe({
+          next: (response: HttpResponse<any>) => {
+            if (response.status === 200) {
+              resolve(response.body);
+            } else {
+              resolve(null);
+            }
+          },
+        });
+      else if (format === 'text')
+        this.sendRetrieveTextData(assetId, format, textId).subscribe({
+          next: (response: HttpResponse<any>) => {
+            if (response.status === 200) {
+              resolve(JSON.parse(response.body.Content));
+            } else {
+              resolve(null);
+            }
+          },
+        });
     });
   }
 
@@ -110,7 +127,28 @@ export class AssetService {
     body.AssetID = assetId;
     body.Format = format;
 
-    console.log('BODY', body);
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  sendRetrieveTextData(
+    assetId: string,
+    format: string,
+    textID: string
+  ): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}asset_manager/retrieve_one`;
+
+    const body = new AssetDTO();
+    body.UserID = this.userService.getUserID();
+    body.AssetID = assetId;
+    body.Format = format;
+    body.TextID = textID;
+
+
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -119,14 +157,10 @@ export class AssetService {
   }
 
   retrieveAll(parentFolderId: string | undefined): Promise<any[]> {
-    console.log('Retrieving all images');
     return new Promise<any[]>((resolve, reject) => {
       this.sendRetrieveAllData(parentFolderId).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log('Retreive All: ', response);
           if (response.status === 200) {
-            console.log('Images retrieved successfully');
-            console.log(response.body.Content);
             resolve(response.body);
           } else {
             resolve([]);
@@ -161,9 +195,7 @@ export class AssetService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteAssetData(assetId).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log('DELETE: ' + JSON.stringify(response));
           if (response.status === 200) {
-            console.log('Image deleted successfully');
             resolve(true);
           } else {
             resolve(false);
@@ -192,9 +224,7 @@ export class AssetService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameAssetData(assetId, newName).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
           if (response.status === 200) {
-            console.log('Image renamed successfully');
             resolve(true);
           } else {
             resolve(false);

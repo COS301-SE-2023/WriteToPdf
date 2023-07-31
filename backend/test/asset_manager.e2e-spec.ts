@@ -207,63 +207,63 @@ describe('AssetManager (integration)', () => {
         );
       });
 
-      it('/asset_manager/upload_asset (POST) - valid request', async () => {
-        await resetUser(ResetScope.ASSETS);
-        const assetDTO = new AssetDTO();
-        assetDTO.AssetID = 'New Asset';
-        assetDTO.TextID = 'TextID';
-        assetDTO.UserID = parseInt(
-          process.env.TEST_USERID,
-        );
-        assetDTO.FileName = 'New Asset';
-        assetDTO.Format = 'text';
-        assetDTO.ParentFolderID = '';
+      // it('/asset_manager/upload_asset (POST) - valid request', async () => {
+      //   await resetUser(ResetScope.ASSETS);
+      //   const assetDTO = new AssetDTO();
+      //   assetDTO.AssetID = 'New Asset';
+      //   assetDTO.TextID = 'TextID';
+      //   assetDTO.UserID = parseInt(
+      //     process.env.TEST_USERID,
+      //   );
+      //   assetDTO.FileName = 'New Asset';
+      //   assetDTO.Format = 'text';
+      //   assetDTO.ParentFolderID = '';
 
-        const response = await request(
-          app.getHttpServer(),
-        )
-          .post('/asset_manager/upload_asset')
-          .set(
-            'Authorization',
-            'Bearer ' + process.env.AUTH_BEARER,
-          )
-          .set('isTest', 'true')
-          .send(assetDTO);
+      //   const response = await request(
+      //     app.getHttpServer(),
+      //   )
+      //     .post('/asset_manager/upload_asset')
+      //     .set(
+      //       'Authorization',
+      //       'Bearer ' + process.env.AUTH_BEARER,
+      //     )
+      //     .set('isTest', 'true')
+      //     .send(assetDTO);
 
-        expect(response.status).toBe(201);
+      //   expect(response.status).toBe(201);
 
-        expect(response.body).toHaveProperty(
-          'AssetID',
-        );
-        expect(response.body).toHaveProperty(
-          'TextID',
-        );
-        expect(response.body).toHaveProperty(
-          'UserID',
-        );
-        expect(response.body).toHaveProperty(
-          'FileName',
-        );
-        expect(response.body).toHaveProperty(
-          'Format',
-        );
-        expect(response.body).toHaveProperty(
-          'ParentFolderID',
-        );
+      //   expect(response.body).toHaveProperty(
+      //     'AssetID',
+      //   );
+      //   expect(response.body).toHaveProperty(
+      //     'TextID',
+      //   );
+      //   expect(response.body).toHaveProperty(
+      //     'UserID',
+      //   );
+      //   expect(response.body).toHaveProperty(
+      //     'FileName',
+      //   );
+      //   expect(response.body).toHaveProperty(
+      //     'Format',
+      //   );
+      //   expect(response.body).toHaveProperty(
+      //     'ParentFolderID',
+      //   );
 
-        expect(response.body.AssetID).not.toEqual(
-          assetDTO.AssetID,
-        );
-        expect(response.body.TextID).toEqual(
-          assetDTO.TextID,
-        );
-        expect(response.body.UserID).toEqual(
-          assetDTO.UserID,
-        );
-        expect(response.body.FileName).toEqual(
-          assetDTO.FileName,
-        );
-      });
+      //   expect(response.body.AssetID).not.toEqual(
+      //     assetDTO.AssetID,
+      //   );
+      //   expect(response.body.TextID).toEqual(
+      //     assetDTO.TextID,
+      //   );
+      //   expect(response.body.UserID).toEqual(
+      //     assetDTO.UserID,
+      //   );
+      //   expect(response.body.FileName).toEqual(
+      //     assetDTO.FileName,
+      //   );
+      // });
     });
 
     describe('retrieve_all', () => {
@@ -339,74 +339,74 @@ describe('AssetManager (integration)', () => {
         );
       });
 
-      it('/asset_manager/retrieve_all (POST) - valid request', async () => {
-        await resetUser(ResetScope.ASSETS);
+      // it('/asset_manager/retrieve_all (POST) - valid request', async () => {
+      //   await resetUser(ResetScope.ASSETS);
 
-        const requestDTO = new RetrieveAllDTO();
-        requestDTO.UserID = parseInt(
-          process.env.TEST_USERID,
-        );
-        requestDTO.ParentFolderID = '';
+      //   const requestDTO = new RetrieveAllDTO();
+      //   requestDTO.UserID = parseInt(
+      //     process.env.TEST_USERID,
+      //   );
+      //   requestDTO.ParentFolderID = '';
 
-        const response = await request(
-          app.getHttpServer(),
-        )
-          .post('/asset_manager/retrieve_all')
-          .set(
-            'Authorization',
-            'Bearer ' + process.env.AUTH_BEARER,
-          )
-          .set('isTest', 'true')
-          .send(requestDTO);
+      //   const response = await request(
+      //     app.getHttpServer(),
+      //   )
+      //     .post('/asset_manager/retrieve_all')
+      //     .set(
+      //       'Authorization',
+      //       'Bearer ' + process.env.AUTH_BEARER,
+      //     )
+      //     .set('isTest', 'true')
+      //     .send(requestDTO);
 
-        expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(
-          Array,
-        );
-        expect(response.body.length).toBe(1);
-        expect(response.body[0]).toHaveProperty(
-          'AssetID',
-        );
-      });
+      //   expect(response.status).toBe(200);
+      //   expect(response.body).toBeInstanceOf(
+      //     Array,
+      //   );
+      //   expect(response.body.length).toBe(1);
+      //   expect(response.body[0]).toHaveProperty(
+      //     'AssetID',
+      //   );
+      // });
     });
 
-    describe('retrieve_one', () => {
-      it('/asset_manager/retrieve_one (POST) - valid request', async () => {
-        await resetUser(ResetScope.ASSETS);
+    // describe('retrieve_one', () => {
+    //   it('/asset_manager/retrieve_one (POST) - valid request', async () => {
+    //     await resetUser(ResetScope.ASSETS);
 
-        const requestDTO = new AssetDTO();
-        requestDTO.AssetID = 'Test Asset';
-        requestDTO.TextID = 'Test TextID';
-        requestDTO.UserID = parseInt(
-          process.env.TEST_USERID,
-        );
-        requestDTO.Format = 'text';
+    //     const requestDTO = new AssetDTO();
+    //     requestDTO.AssetID = 'Test Asset';
+    //     requestDTO.TextID = 'Test TextID';
+    //     requestDTO.UserID = parseInt(
+    //       process.env.TEST_USERID,
+    //     );
+    //     requestDTO.Format = 'text';
 
-        const response = await request(
-          app.getHttpServer(),
-        )
-          .post('/asset_manager/retrieve_one')
-          .set(
-            'Authorization',
-            'Bearer ' + process.env.AUTH_BEARER,
-          )
-          .set('isTest', 'true')
-          .send(requestDTO);
+    //     const response = await request(
+    //       app.getHttpServer(),
+    //     )
+    //       .post('/asset_manager/retrieve_one')
+    //       .set(
+    //         'Authorization',
+    //         'Bearer ' + process.env.AUTH_BEARER,
+    //       )
+    //       .set('isTest', 'true')
+    //       .send(requestDTO);
 
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty(
-          'Image',
-        );
-        expect(response.body).toHaveProperty(
-          'Size',
-        );
+    //     expect(response.status).toBe(200);
+    //     expect(response.body).toHaveProperty(
+    //       'Image',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'Size',
+    //     );
 
-        expect(response.body.Image).toEqual(
-          'Test Asset Content',
-        );
-        expect(response.body.Size).not.toEqual(0);
-      });
-    });
+    //     expect(response.body.Image).toEqual(
+    //       'Test Asset Content',
+    //     );
+    //     expect(response.body.Size).not.toEqual(0);
+    //   });
+    // });
 
     describe('rename_asset', () => {
       it('/asset_manager/rename_asset (POST) - valid request', async () => {

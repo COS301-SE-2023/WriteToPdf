@@ -1187,6 +1187,7 @@ describe('FileManagerService', () => {
       markdownFileDTO.Path = 'test/path';
       markdownFileDTO.UserID = 0;
       markdownFileDTO.ParentFolderID = '1';
+      markdownFileDTO.Content = 'test';
 
       try {
         await service.saveFile(markdownFileDTO);
@@ -1211,6 +1212,7 @@ describe('FileManagerService', () => {
       markdownFileDTO.Path = 'test/path';
       markdownFileDTO.UserID = 0;
       markdownFileDTO.ParentFolderID = '1';
+      markdownFileDTO.Content = 'test';
 
       jest
         .spyOn(s3Service, 'saveFile')
@@ -1241,6 +1243,7 @@ describe('FileManagerService', () => {
       markdownFileDTO.Path = 'test/path';
       markdownFileDTO.UserID = 0;
       markdownFileDTO.ParentFolderID = '1';
+      markdownFileDTO.Content = 'test';
 
       jest
         .spyOn(s3Service, 'saveFile')

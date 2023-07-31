@@ -8,6 +8,7 @@ import {
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
+import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
@@ -21,6 +22,7 @@ import { PageBreak } from '@ckeditor/ckeditor5-page-break';
 import html2pdf from 'html2pdf.js/dist/html2pdf';
 
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
+import { parse } from 'path';
 
 @Component({
   selector: 'app-edit',
@@ -35,6 +37,10 @@ export class EditComponent implements AfterViewInit, OnInit {
   exportDialogVisible: boolean = false;
   public speedDialItems!: MenuItem[];
   assets: any[] = [];
+  textFromAsset: any[] = [];
+  textCopyDialog: boolean = false;
+  noAssetsAvailable: boolean = false;
+
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
@@ -48,6 +54,17 @@ export class EditComponent implements AfterViewInit, OnInit {
     private clipboard: Clipboard,
     private messageService: MessageService
   ) { }
+
+
+  showImageUploadPopup(): void {
+    const ref = this.dialogService.open(ImageUploadPopupComponent, {
+      header: 'Upload Images',
+      showHeader: true,
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true,
+    });
+  }
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
@@ -103,7 +120,16 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (editableArea && toolbarContainer) {
       DecoupledEditor.create(editableArea, {
         toolbar: {
-          shouldNotGroupWhenFull: false,
+          items: [
+            'undo', 'redo',
+            '|', 'heading',
+            '|', 'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor',
+            '|', 'bold', 'italic', 'underline', 'strikethrough',
+            '|', 'link', 'insertTable', 'blockQuote',
+            '|', 'alignment',
+            '|', 'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent'
+          ],
+          shouldNotGroupWhenFull: false
         },
         cloudServices: {
           //TODO Great for Collaboration features.
@@ -137,7 +163,6 @@ export class EditComponent implements AfterViewInit, OnInit {
           (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
           // Set the saved content after the editor is ready
           editor.setData(<string>this.editService.getContent());
-          console.log(<string>this.editService.getContent());
           this.editor = editor;
         })
         .catch((err) => {
@@ -163,7 +188,6 @@ export class EditComponent implements AfterViewInit, OnInit {
       ParentFolderId: this.editService.getParentFolderID(),
       Path: this.editService.getPath(),
     };
-    console.log('On move to cam page: ' + this.editService.getParentFolderID());
     this.router.navigate(['/camera'], { state: data });
   }
 
@@ -171,13 +195,11 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
     let contents = this.editor.getData();
-    console.log('Before function call save:' + contents);
     this.fileService.saveDocument(
       contents,
       this.editService.getMarkdownID(),
       this.editService.getPath()
     );
-    console.log('After function call save:' + contents);
   }
 
   hideSideBar() {
@@ -189,7 +211,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (sidebar && editor && showAssetSidebar) {
       if (this.sidebarVisible) {
         //then hide the sidebar
-        console.log('hide');
         editor.setAttribute('style', 'left:0px;width:100%;margin:auto;');
         sidebar.setAttribute('style', 'display:none');
         showAssetSidebar.setAttribute('style', 'display:block');
@@ -208,7 +229,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   renameDocument() {
-    console.log('rename');
     this.fileService
       .renameDocument(
         this.editService.getMarkdownID(),
@@ -226,26 +246,47 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.exportDialogVisible = true;
   }
 
-  async retrieveAsset(assetId: string, format: string) {
-    const asset = await this.assetService.retrieveAsset(assetId, format);
-    console.log(asset);
+  async retrieveAsset(assetId: string, format: string, textId: string) {
+    const asset = await this.assetService.retrieveAsset(assetId, format, textId);
+    // const asset = true;
     if (asset) {
-      console.log('asset', asset);
-      if(format==='text'){
-        this.clipboard.copy(asset.Content);
+      if (format === 'text') {
+        this.textFromAsset = [];
+        this.parseAssetText(asset);
+        this.textCopyDialog = true;
       }
-      else if(format==='image'){
-        this.copyToClipboard(`<img src="${asset.Content}" alt="Image">`);
+      else if (format === 'image') {
+        this.copyHtmlToClipboard(`<img src="${asset.Content}" alt="Image">`);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Image copied to clipboard',
+        });
       }
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Asset copied to clipboard',
-      });
     }
   }
 
-  copyToClipboard(html: string) {
+  async copyAllText(assetId: string, format: string, textId: string) {
+    const asset = await this.assetService.retrieveAsset(assetId, format, textId);
+
+    this.parseAssetText(asset);
+
+    let text = '';
+    for (let i = 0; i < this.textFromAsset.length; i++) {
+      text += this.textFromAsset[i] + '\n';
+    }
+    this.copyTextToClipboard(text);
+  }
+
+  parseAssetText(asset: any) {
+
+    for (let i = 0; i < asset.Blocks.length; i++) {
+      if (asset.Blocks[i].BlockType === 'LINE')
+        this.textFromAsset.push(asset.Blocks[i].Text);
+    }
+  }
+
+  copyHtmlToClipboard(html: string) {
     // Use the Clipboard API to copy the data to the clipboard
     navigator.clipboard.write([
       new ClipboardItem({
@@ -253,10 +294,30 @@ export class EditComponent implements AfterViewInit, OnInit {
       })
     ]).then(
       () => {
-        console.log('HTML data (image) copied to clipboard successfully!');
       },
       (error) => {
         console.error('Could not copy HTML data (image) to clipboard: ', error);
+      }
+    );
+  }
+
+  copyTextToClipboard(text: string) {
+    // Use the Clipboard API to copy the data to the clipboard
+    navigator.clipboard.write([
+      new ClipboardItem({
+        'text/plain': new Blob([text], { type: 'text/plain' })
+      })
+    ]).then(
+      () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Text copied to clipboard',
+        });
+        this.textCopyDialog = false;
+      },
+      (error) => {
+        console.error('Could not copy text to clipboard: ', error);
       }
     );
   }
@@ -277,13 +338,19 @@ export class EditComponent implements AfterViewInit, OnInit {
     const inputElement = event.target as HTMLInputElement;
     const inputValue = inputElement.value;
     const asset = await this.assetService.renameAsset(assetId, inputValue);
-    console.log(asset);
+    for (let i = 0; i < this.assets.length; i++) {
+      if (this.assets[i].Id === assetId) {
+        this.assets[i].FileName = inputValue;
+      }
+    }
   }
 
   async refreshSidebar() {
     this.assets = await this.assetService.retrieveAll(
       this.editService.getParentFolderID()
     );
+    this.noAssetsAvailable = this.assets.length === 0;
+    this.assets.sort((a, b) => new Date(b.DateCreated).getTime() - new Date(a.DateCreated).getTime());
   }
 
   pageBreak() {
@@ -343,7 +410,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   //Functions for exporting from HTML
   convertToFileType(fileType: string) {
-    let contents = `<body style="word-break: normal; font-family: Arial, Helvetica, sans-serif;">${this.editor.getData()}</body>`;
+    let contents = `<body style="word-break: normal; font-family: Arial, Helvetica, sans-serif; padding:35px 75px 75px;">${this.editor.getData()}</body>`;
     const markdownID = this.editService.getMarkdownID();
     const name = this.editService.getName();
     if (markdownID && name) {
@@ -356,4 +423,24 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
   }
 
+  capitalizeFirstLetter(inputString: string): string {
+    if (!inputString || inputString.length === 0) {
+      return inputString; // Return the input string as-is if it's empty or null.
+    }
+
+    return inputString.charAt(0).toUpperCase() + inputString.slice(1);
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString || dateString.length === 0) {
+      return dateString; // Return the input string as-is if it's empty or null.
+    }
+
+    const date = new Date(dateString);
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
 }

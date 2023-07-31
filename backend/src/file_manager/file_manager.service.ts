@@ -18,7 +18,6 @@ import { ExportDTO } from './dto/export.dto';
 import * as CryptoJS from 'crypto-js';
 import { ConversionService } from '../conversion/conversion.service';
 import { ImportDTO } from './dto/import.dto';
-import { is } from 'cheerio/lib/api/traversing';
 
 @Injectable()
 export class FileManagerService {
@@ -212,6 +211,8 @@ export class FileManagerService {
     markdownFileDTO: MarkdownFileDTO,
     isTest = false,
   ) {
+    markdownFileDTO.Size =
+      markdownFileDTO.Content.length;
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
         'MarkdownID cannot be undefined',

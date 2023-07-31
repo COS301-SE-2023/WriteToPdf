@@ -16,6 +16,7 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { RetrieveAllDTO } from './dto/retrieve_all.dto';
+import { TextractService } from '../textract/textract.service';
 import {
   HttpException,
   HttpStatus,
@@ -36,6 +37,7 @@ describe('AssetManagerController', () => {
           S3Service,
           S3ServiceMock,
           TextManagerService,
+          TextractService,
           {
             provide: getRepositoryToken(Asset),
             useClass: Repository,

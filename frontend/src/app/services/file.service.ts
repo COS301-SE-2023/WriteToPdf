@@ -56,7 +56,6 @@ export class FileService {
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
-    console.log('Before function call sendSaveData:' + content);
     body.Content = this.encryptDocument(content);
     body.MarkdownID = markdownID;
     body.Path = path;
@@ -280,7 +279,6 @@ export class FileService {
     body.MarkdownID = markdownID;
     body.ParentFolderID = parentFolderID;
 
-    console.log('Moving File: ', body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -413,7 +411,6 @@ export class FileService {
     }
     this.sendExportData(markdownID, name, content, type).subscribe({
       next: (response: HttpResponse<any>) => {
-        console.log('RES: ', response);
         if (response.status === 200) {
           const fileData: number[] = response.body.data;
           const uint8Array = new Uint8Array(fileData);

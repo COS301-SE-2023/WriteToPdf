@@ -28,6 +28,7 @@ import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
 import { Inject } from '@angular/core';
 import { CoordinateService } from '../services/coordinate-service.service';
+import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
 import {NgxSpinnerService} from "ngx-spinner";
 
 interface Column {
@@ -108,23 +109,23 @@ subMenu: HTMLElement | null = null;
     this.contextMenuItems = [
       {
         label: 'Create New Folder',
-        icon: 'pi pi-folder-plus',
-        // command: () => this.createNewFolder()
+        icon: 'pi pi-folder',
+        command: () => this.createNewFolderDialogueVisible = true
       },
       {
         label: 'Create New File',
         icon: 'pi pi-file',
-        // command: () => this.createNewFile()
+        command: () => this.createNewDocumentDialogueVisible = true
       },
-      {
-        label: 'Enclose in Folder',
-        icon: 'pi pi-folder-plus',
-        // command: () => this.encloseSelectionInFolder()
-      },
+      // {
+      //   label: 'Enclose in Folder',
+      //   icon: 'pi pi-folder-plus',
+      //   // command: () => this.encloseSelectionInFolder()
+      // },
       {
         label: 'Delete',
         icon: 'pi pi-trash',
-        // command: () => this.deleteSelection()
+        command: () => this.deleteSelectedEntity(this.currentDirectory)
       },
     ];
   }
@@ -501,6 +502,15 @@ subMenu: HTMLElement | null = null;
       // Handle any actions after the dialog is closed
     });
   }
+  showImageUploadPopup(): void {
+    const ref = this.dialogService.open(ImageUploadPopupComponent, {
+      header: 'Upload Images',
+      showHeader: true,
+      closable: true,
+      closeOnEscape: true,
+      dismissableMask: true,
+    });
+  }
 
   // this code updates the background layer to not be adjusted from the edit page after navigation.
   ngAfterViewInit() {
@@ -535,7 +545,7 @@ subMenu: HTMLElement | null = null;
   ): void {
     const file = this.nodeService.getFileDTOByID(event.key);
     this.entityToMove = event;
-    this.showFileManagerPopup('move');
+    // this.showFileManagerPopup('move');
     this.moveDialogVisible = true;
   }
 
@@ -629,7 +639,7 @@ subMenu: HTMLElement | null = null;
                 label: 'Folder',
                 icon: 'pi pi-fw pi-folder',
                 command: () => {
-                  this.showFileManagerPopup('folder');
+                  // this.showFileManagerPopup('folder');
                   this.createNewFolderDialogueVisible = true;
                 },
               },
@@ -637,7 +647,7 @@ subMenu: HTMLElement | null = null;
                 label: 'Document',
                 icon: 'pi pi-fw pi-file',
                 command: () => {
-                  this.showFileManagerPopup('document');
+                  // this.showFileManagerPopup('document');
                   this.createNewDocumentDialogueVisible = true;
                 },
               },
@@ -728,6 +738,8 @@ subMenu: HTMLElement | null = null;
   }
 
   async createNewFolder() {
+    this.createNewFolderDialogueVisible = false;
+
     let path: string | undefined = '';
     let parentFolderID: string | undefined = '';
     if (this.entityName == '') {
@@ -759,7 +771,6 @@ subMenu: HTMLElement | null = null;
       path,
       'folder'
     );
-
     this.folderService
       .createFolder(path, this.entityName, parentFolderID)
       .then((data) => {
@@ -790,6 +801,7 @@ subMenu: HTMLElement | null = null;
   }
 
   async createNewDocument() {
+    this.createNewDocumentDialogueVisible = false;
     let path: string | undefined = '';
     let parentFolderID: string | undefined = '';
     if (this.entityName == '') {

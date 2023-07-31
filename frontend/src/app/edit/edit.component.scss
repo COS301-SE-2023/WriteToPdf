@@ -14,8 +14,8 @@ $page-height: 29.7cm;
     display: flex;
     width: 100%;
     justify-content: space-between;
-    z-index: 10;
     margin: 0;
+    z-index: 0;
     background-image: linear-gradient(to right, #ffffff, #e7e7e7);
     border-bottom: 1px solid #ccc;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -31,6 +31,7 @@ $page-height: 29.7cm;
     margin: 10px;
     margin-left: 20px;
     height: 52px;
+    width: 100%;
 }
 
 .docTitleWrapper {
@@ -39,7 +40,7 @@ $page-height: 29.7cm;
 }
 
 .speedDialEditMenu {
-    z-index: 20;
+    z-index: 9;
     margin-right: 100px;
     margin-top: 24px;
 
@@ -93,8 +94,10 @@ $page-height: 29.7cm;
 }
 
 .dropdownInput {
+    display: flex;
+    transition: 0.5s;
     margin: 0;
-    background-color: #d9d9d9;
+    background-color: lighten($light-grey, 10%);
     padding: 5px;
     border-radius: 5px;
 }
@@ -106,11 +109,12 @@ $page-height: 29.7cm;
 
 .dropdownContent {
     display: none;
+    transition: 0.5s;
     position: fixed;
-    background-color: $light-grey;
+    background-color: lighten($light-grey, 10%);
     min-width: 100px;
     margin-left: 15px;
-    margin-top:-15px;
+    margin-top: -15px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
 
@@ -122,11 +126,26 @@ $page-height: 29.7cm;
     background-color: darken($light-grey, 10%);
 }
 
-.dropdownOptions{
-    margin: 5px;
-    padding: 5px;
+.dropdownOptions {
+    margin: 0;
+    padding: 0;
     border-radius: 5px;
+    vertical-align: middle;
 }
+
+.dropdownIcon1 {
+    margin: auto;
+    height: 20px;
+    margin-left: 0;
+    margin-right: 5px;
+}
+.dropdownIcon2 {
+    margin: auto;
+    height: 20px;
+    margin-left: 2px;
+    margin-right: 7px;
+}
+
 .uploadAssetIcon:hover .dropdownContent {
     display: block;
     cursor: pointer;
@@ -136,8 +155,17 @@ $page-height: 29.7cm;
     height: 52px;
 }
 
+.logoWrapper:hover {
+    cursor: pointer;
+}
+
 .logo {
     width: 50px;
+}
+
+.exitEditPage {
+    margin: auto;
+    margin-right: 50px;
 }
 
 .editor {
@@ -276,7 +304,7 @@ div[contenteditable="true"]:focus {
     border: 1px solid #000000;
 }
 
-.copyAsset {
+.copyAsset,.copyTextAsset {
     margin-left: 10px;
 }
 
@@ -286,7 +314,8 @@ div[contenteditable="true"]:focus {
 }
 
 .deleteAsset,
-.copyAsset {
+.copyAsset,
+.copyTextAsset{
     border-radius: 5px;
     // display:flex;
     width: 30px;
@@ -294,14 +323,17 @@ div[contenteditable="true"]:focus {
     padding: 5px;
 }
 
-.deleteAsset:hover,
-.copyAsset:hover {
+.deleteAssetHover:hover,
+.copyAsset:hover,
+.copyTextIconWrapper:hover,
+.copyTextAsset:hover {
     cursor: pointer;
     background-color: darken($light-grey, 10%);
 }
 
 .deleteAssetIcon,
-.copyAssetIcon {
+.copyAssetIcon,
+.copyTextIcon {
     margin: auto;
     width: 20px;
     height: 20px;
@@ -340,6 +372,7 @@ div[contenteditable="true"]:focus {
 
 .assetDescription {
     margin-left: 5px;
+    height: 1rem;
 }
 
 .displayNone {
@@ -572,3 +605,50 @@ Preserve the relative scale, though. */
 
 
 // Above are all the stylings for the document editor
+
+.extractedTextDialog {
+    z-index: 11 !important;
+}
+
+.copyTextWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.copyText {
+    width: max-content;
+    max-width: 70%;
+    min-height: 1rem;
+    height: 1rem;
+    margin-right: auto;
+}
+
+.copyTextIcon {
+    margin: auto;
+    width: 20px;
+    height: 20px;
+}
+
+.copyTextIconWrapper {
+    margin: auto;
+    margin-right: 20px;
+    padding: 20px;
+
+    border-radius: 5px;
+    width: 30px;
+    height: 30px;
+    padding: 5px;
+}
+
+.spinner {
+    margin: auto;
+    width: 30%;
+}
+
+.spinnerWrapper {
+    display: flex;
+    margin: auto;
+}

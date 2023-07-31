@@ -37,6 +37,7 @@ describe('AssetsService', () => {
     it('should initialize DateCreated and Size', async () => {
       const assetDTO = new AssetDTO();
       assetDTO.Content = 'test';
+      assetDTO.Image = 'test';
 
       jest
         .spyOn(Repository.prototype, 'create')
@@ -58,6 +59,7 @@ describe('AssetsService', () => {
     it('should call create and save', async () => {
       const assetDTO = new AssetDTO();
       assetDTO.Content = 'test';
+      assetDTO.Image = 'test';
 
       jest
         .spyOn(Repository.prototype, 'create')

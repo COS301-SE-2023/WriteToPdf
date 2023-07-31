@@ -24,9 +24,13 @@
       </p-dialog>
     </div>
     <!--    TODO FileManagerPopup above-->
-    <div class="speedDialEditMenu">
-      <p-speedDial [model]="speedDialItems" class="speedDial" direction="down"></p-speedDial>
-    </div>
+    <!-- <div class="speedDialEditMenu">
+      <p-speedDial
+        [model]="speedDialItems"
+        class="speedDial"
+        direction="down"
+      ></p-speedDial>
+    </div> -->
 
     <!--    TODO FileManagerPopup below-->
     <div class="fileOperations-container">
@@ -34,11 +38,18 @@
         header="Create Document" [focusOnShow]="true" (keydown.escape)="createNewDocumentDialogueVisible = false">
         <div class="fileOperations">
           <p>Document Name:</p>
-          <input placeholder="Document Name" [(ngModel)]="entityName" label="Document Name: " pInputText type="text"
-            (keydown.enter)="createNewDocument()" />
+          <input
+            placeholder="Document Name"
+            [(ngModel)]="entityName"
+            label="Document Name: "
+            pInputText
+            type="text"
+            (keydown.enter)="createNewDocument()"
+            (keydown.enter)="createNewDocumentDialogueVisible = false"
+          />
           <br />
           <br />
-          <p-button (click)="createNewDocument()" label="Create"></p-button>
+          <p-button (click)="createNewDocument()" (click)="createNewDocumentDialogueVisible = false" label="Create"></p-button>
         </div>
       </p-dialog>
     </div>
@@ -48,25 +59,62 @@
         header="Create Folder" [focusOnShow]="true" (keydown.escape)="createNewFolderDialogueVisible = false">
         <div class="fileOperations">
           <p class="fileOperations-entity">Folder Name:</p>
-          <input placeholder="Folder Name" class="fileOperations-entity" [(ngModel)]="entityName" label="Folder Name: "
-            pInputText type="text" (keydown.enter)="createNewFolder()" />
+          <input
+          placeholder="Folder Name"
+            class="fileOperations-entity"
+            [(ngModel)]="entityName"
+            label="Folder Name: "
+            pInputText
+            type="text"
+            (keydown.enter)="createNewFolder()"
+            (keydown.enter)="createNewFolderDialogueVisible = false"
+          />
           <br />
           <br />
-          <p-button (click)="createNewFolder()" label="Create"></p-button>
+          <p-button (click)="createNewFolder()" (click)="createNewFolderDialogueVisible = false" label="Create"></p-button>
         </div>
       </p-dialog>
     </div>
     <!--    TODO FileManagerPopup above-->
   </div>
   <div class="leftSideBarWrapper" id="scrollingDiv">
-    <div class="leftSideBarHeading">{{ getUserFirstName() }}'s Projects</div>
+    <div class="leftSideBarHeading">{{ getUserFirstName() }}'s Files</div>
     <div class="leftSideBarTools">
-      <img alt="New Folder" (click)="createNewFolderDialogueVisible = true" class="icon"
-        src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png" />
-      <img alt="New Document" (click)="createNewDocumentDialogueVisible = true" class="icon newDoc"
-        src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png" />
-      <img alt="New Scan" (click)="navigateToPage('camera')" class="icon"
-        src="assets/Icons/homeIcons/leftSideBarIcons/newScan.png" />
+      <img
+        alt="New Folder"
+        (click)="createNewFolderDialogueVisible = true"
+        class="icon"
+        src="assets/Icons/homeIcons/leftSideBarIcons/newDirectory.png"
+      />
+      <img
+        alt="New Document"
+        (click)="createNewDocumentDialogueVisible = true"
+        class="icon newDoc"
+        src="assets/Icons/homeIcons/leftSideBarIcons/newDocument.png"
+      />
+      <div class="uploadAssetIcon">
+        <img
+          alt="New Scan"
+          (click)="navigateToPage('camera')"
+          class="icon"
+          src="assets/Icons/editIcons/plus.png"
+        />
+        <div class="dropdownContent">
+          <div class="dropdownInput">
+            <img class="dropdownIcon1" src="assets/Icons/editIcons/addAsset.png" alt="">
+            <p class="dropdownOptions" (click)="navigateToPage('camera')">
+              Camera
+            </p>
+          </div>
+          <div class="dropdownInput">
+            <img class="dropdownIcon2" src="assets/Icons/editIcons/upload.png" alt="">
+            <p class="dropdownOptions" (click)="showImageUploadPopup()">
+              Upload
+            </p>
+          </div>
+        </div>
+      </div>
+
     </div>
     <div class="directoryTree">
       <p-tree class="leftTree" (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile" [value]="iterateNodeIDRemoval(filesDirectoryTree)"
@@ -78,7 +126,7 @@
     <!--    <div class="directoryPath">-->
     <!--      <p-breadcrumb class="max-w-full" [model]="activeDirectoryItems" [home]="directoryHome" ></p-breadcrumb>-->
     <!--    </div>-->
-    <div class="filterButtons">
+    <!-- <div class="filterButtons">
       <p-toolbar>
         <div class="p-toolbar-group-start">
           <p-button (onClick)="reloadMainFromRoot()" class="toolbarItem" label="Root"></p-button>
@@ -89,7 +137,7 @@
             onLabel="Select"></p-toggleButton>
         </div>
       </p-toolbar>
-    </div>
+    </div> -->
     <div class="searchBar">
       <img alt="searchIcon" src="assets/Icons/homeIcons/mainWindow/searchIcon.png" />
       <input (input)="filterTable($event, 0)" class="search-input" placeholder="Search..." type="text" />
@@ -156,7 +204,10 @@
       </p-treeTable>
     </div>
   </div>
-  <p-contextMenu #cm [model]="contextMenuItems" appendTo="parent"></p-contextMenu>
+  <p-contextMenu
+    #cm
+    [model]="contextMenuItems"
+  ></p-contextMenu>
   <!-- file-upload-popup.component.html -->
   <p-confirmDialog [style]="{width: '50vw', minWidth:'300px'}"></p-confirmDialog>
 

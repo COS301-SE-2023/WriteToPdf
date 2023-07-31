@@ -3,8 +3,12 @@
   <div class="header">
     <div class="toolbarWrapper">
       <div class="titleWrapper">
-        <div class="logoWrapper" (click)="navigateToPage('home')">
-          <img class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="" />
+        <div class="logoWrapper" (click)="navigateToPage('home')" title="Return Home">
+          <img
+            class="logo"
+            src="assets/Logos/WriteToPdf_Logo_white.png"
+            alt=""
+          />
         </div>
         <div class="docTitleWrapper">
           <label for="editHeading" class="displayNone">a</label>
@@ -17,8 +21,12 @@
             maxlength="50"
             (blur)="renameDocument()"
             [(ngModel)]="fileName"
-            title="Rename Document"
+            [title]="fileName"
           />
+        </div>
+        <div class="exitEditPage">
+              <p-button class="backButton" icon="pi pi-times" label="Exit" styleClass="p-button-rounded"
+                (click)="navigateToPage('home')"></p-button>
         </div>
       </div>
       <div class="toolsWrapper">
@@ -26,18 +34,46 @@
           <!-- Download -->
           <img src="assets/Icons/editIcons/download.svg" alt="" />
         </div>
-        <p-dialog header="Export File" [(visible)]="exportDialogVisible" [focusOnShow]="true" [modal]="true"
-          [style]="{ width: '50vw' }">
+        <p-dialog
+          header="Export File"
+          [(visible)]="exportDialogVisible"
+          [focusOnShow]="true"
+          [modal]="true"
+          [style]="{ width: '50vw' }"
+        >
           <div class="flex py-2 justify-content-center"></div>
           <!-- <input type="text" pInputText [(ngModel)]="fileType" /> -->
           <div class="buttonsWrapper">
-
-            <p-button label="Export to pdf" (click)="convertToFileType('pdf')" [style]="{width:'150px'}"></p-button>
-            <p-button label="Export to txt" (click)="convertToFileType('txt')" [style]="{width:'150px'}"></p-button>
-            <p-button label="Export to html" (click)="convertToFileType('html')" [style]="{width:'150px'}"></p-button>
-            <p-button label="Export to md" (click)="convertToFileType('md')" [style]="{width:'150px'}"></p-button>
-            <p-button label="Export to jpeg" (click)="convertToFileType('jpeg')" [style]="{width:'150px'}"></p-button>
-            <p-button label="Export to png" (click)="convertToFileType('png')" [style]="{width:'150px'}"></p-button>
+            <p-button
+              label="Export to pdf"
+              (click)="convertToFileType('pdf')"
+              [style]="{ width: '150px' }"
+            ></p-button>
+            <p-button
+              label="Export to txt"
+              (click)="convertToFileType('txt')"
+              [style]="{ width: '150px' }"
+            ></p-button>
+            <p-button
+              label="Export to html"
+              (click)="convertToFileType('html')"
+              [style]="{ width: '150px' }"
+            ></p-button>
+            <p-button
+              label="Export to md"
+              (click)="convertToFileType('md')"
+              [style]="{ width: '150px' }"
+            ></p-button>
+            <p-button
+              label="Export to jpeg"
+              (click)="convertToFileType('jpeg')"
+              [style]="{ width: '150px' }"
+            ></p-button>
+            <p-button
+              label="Export to png"
+              (click)="convertToFileType('png')"
+              [style]="{ width: '150px' }"
+            ></p-button>
           </div>
         </p-dialog>
 
@@ -83,16 +119,26 @@
             <h4 class="sidebarHeaderText">Assets</h4>
           </div>
           <div class="uploadAssetIcon">
-            <div class="sidebarHeaderIconWrapper">
-              <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/addAsset.png" alt="" />
+            <div class="sidebarHeaderIconWrapper" title="Upload Image">
+              <img
+                class="sidebarHeaderIcon"
+                src="assets/Icons/editIcons/plus.png"
+                alt=""
+              />
             </div>
 
             <div class="dropdownContent">
               <div class="dropdownInput">
-                <p class="dropdownOptions" (click)="navigateToPage('camera')">Camera</p>
+                <img class="dropdownIcon1" src="assets/Icons/editIcons/addAsset.png" alt="">
+                <p class="dropdownOptions" (click)="navigateToPage('camera')">
+                  Camera
+                </p>
               </div>
               <div class="dropdownInput">
-                <p class="dropdownOptions" (click)="showFileUploadPopup()">File System</p>
+                <img class="dropdownIcon2" src="assets/Icons/editIcons/upload.png" alt="">
+                <p class="dropdownOptions" (click)="showImageUploadPopup()">
+                  Upload
+                </p>
               </div>
             </div>
           </div>
@@ -105,8 +151,9 @@
       </div>
 
       <div class="alignDiv"></div>
-
-      <div *ngFor="let obj of assets" class="assetWrapper">
+      <p *ngIf="noAssetsAvailable" style="text-align: center;">No Assets Available</p>
+      <div class="spinnerWrapper" *ngIf = "assets.length === 0 && !noAssetsAvailable"><img class="spinner" src="assets/Spinner/loading2.gif" title="Loading..."></div>
+      <div *ngFor="let obj of assets" class="assetWrapper" title="{{ 'File Name: '+obj.FileName }}">
         <div class="assetHeader">
           <div class="assetName">
             <!-- <h4 class="assetNameText"></h4> -->
@@ -119,26 +166,59 @@
               value="{{ obj.FileName }}"
               maxlength="50"
               (blur)="renameAsset(obj.AssetID, $event)"
-              title="Edit Name"
+              title="{{ obj.FileName }}"
             />
           </div>
-          <div class="deleteAsset">
-            <img class="deleteAssetIcon" src="assets/Icons/editIcons/delete.png" alt=""
-              (click)="deleteAsset(obj.AssetID)" />
+
+          <div class="deleteAsset" [ngClass]="{'deleteAssetHover': obj.Format === 'text'}" title="View Text">
+            <img
+              *ngIf="obj.Format === 'text'"
+              class="copyAssetIcon"
+              (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)"
+              src="assets/Icons/editIcons/view.png"
+              alt=""
+            />
           </div>
-          <div class="copyAsset">
-            <img class="copyAssetIcon" (click)="retrieveAsset(obj.AssetID, obj.Format)"
-              src="assets/Icons/editIcons/copy.svg" alt="" />
+
+          <div class="copyAsset" title="Delete Asset">
+            <img
+              class="deleteAssetIcon"
+              src="assets/Icons/editIcons/delete.png"
+              alt=""
+              (click)="deleteAsset(obj.AssetID)"
+            />
+
           </div>
+
+          <div class="copyTextAsset" title="Copy">
+            <img
+            *ngIf="obj.Format === 'image'"
+              class="copyTextIcon"
+              (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
+            <img
+            *ngIf="obj.Format === 'text'"
+              class="copyTextIcon"
+              (click)="copyAllText(obj.AssetID, obj.Format, obj.TextID)"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
+          </div>
+
         </div>
         <div class="assetContent">
           <img class="assetImage" src="{{ obj.Image }}" alt="" />
-          <p class="assetDescription">{{obj.Format}}</p>
+          <div class="assetDescription">
+
+            <p class="assetDescription">{{ capitalizeFirstLetter(obj.Format) }}</p>
+            <p class="assetDescription">{{ formatDate(obj.DateCreated) }}</p>
+          </div>
         </div>
       </div>
-
-
     </div>
+
 
     <!--    Below is the code that allows me to work with CKEditor    -->
     <div class="center-page">
@@ -154,3 +234,25 @@
     </div>
   </div>
 </div>
+
+<p-dialog
+  class="extractedTextDialog"
+  header="Extracted Text:"
+  [(visible)]="textCopyDialog"
+  [modal]="true"
+  [style]="{ width: '30vw', minWidth: '300px' }"
+  [focusOnShow]="true"
+>
+  <div *ngFor="let text of textFromAsset" class="copyTextWrapper">
+    <p class="copyText">{{ text }}</p>
+    <div class="copyTextIconWrapper">
+      <img
+        class="copyTextIcon"
+        (click)="copyTextToClipboard(text)"
+        src="assets/Icons/editIcons/copy.svg"
+        alt=""
+      />
+    </div>
+  </div>
+  <p *ngIf="textFromAsset.length===0">No text detected :(</p>
+</p-dialog>

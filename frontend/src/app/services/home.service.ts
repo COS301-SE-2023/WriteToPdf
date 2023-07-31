@@ -76,7 +76,7 @@ export class NodeService {
       key: string | undefined;
       data: {
         name: string | undefined;
-        size: number | undefined;
+        size: string | undefined;
         type: string | undefined;
         key: string | undefined;
       };
@@ -106,7 +106,7 @@ export class NodeService {
         key: file.MarkdownID,
         data: {
           name: file.Name + '!#$' + (this.nameNumber++),
-          size: file.Size,
+          size: this.getSize(file.Size),
           type: 'file',
           key: file.MarkdownID,
         },
@@ -128,7 +128,7 @@ export class NodeService {
         key: folder.FolderID,
         data: {
           name: folder.FolderName + '!#$' + (this.nameNumber++),
-          size: 0,
+          size: '-',
           type: 'folder',
           key: folder.FolderID,
         },
@@ -138,7 +138,7 @@ export class NodeService {
         key: folder.FolderID,
         data: {
           name: folder.FolderName + '!#$' + (this.nameNumber++),
-          size: 0,
+          size: '-',
           type: 'folder',
           key: folder.FolderID,
         },
@@ -152,7 +152,7 @@ export class NodeService {
           key: file.MarkdownID,
           data: {
             name: file.Name + '!#$' + (this.nameNumber++),
-            size: file.Size,
+            size: this.getSize(file.Size),
             type: 'file',
             key: file.MarkdownID,
           },
@@ -166,6 +166,20 @@ export class NodeService {
       }
 
       return folderObject;
+    }
+  }
+
+  private getSize(size: number) {
+    if (size > 1000000000) {
+      return (size / 1000000000).toFixed(2) + ' GB';
+    } else if (size > 1000000) {
+      return (size / 1000000).toFixed(2) + ' MB';
+    }
+    else if (size > 1000) {
+      return (size / 1000).toFixed(2) + ' KB';
+    }
+    else {
+      return size + ' B';
     }
   }
 
@@ -330,7 +344,6 @@ export class NodeService {
       if (!parentFolder.FolderID) {
         return false;
       }
-      console.log('pFolder', parentFolder);
       parentFolder = this.getFolderDTOByID(parentFolder.ParentFolderID);
     }
 
