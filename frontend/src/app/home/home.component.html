@@ -153,6 +153,8 @@
         <ng-template let-columns pTemplate="header">
           <tr>
             <th *ngFor="let col of columns">{{ col.header }}</th>
+            <div class="spinnerWrapper" *ngIf="loading"><img class="spinner"
+                src="assets/Spinner/loading2.gif" title="Loading..."></div>
           </tr>
         </ng-template>
         <ng-template let-columns="columns" let-rowData="rowData" let-rowNode pTemplate="body">

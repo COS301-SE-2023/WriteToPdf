@@ -327,3 +327,15 @@ textarea {
   display: block;
   cursor: pointer;
 }
+
+.spinner {
+  margin: auto;
+  height:50px;
+}
+
+.spinnerWrapper {
+  position: absolute;
+  display: flex;
+  margin: auto;
+  height:50px;
+}
