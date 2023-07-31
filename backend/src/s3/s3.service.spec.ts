@@ -261,6 +261,13 @@ describe('S3Service', () => {
     });
   });
 
+  describe('createAsset', () => {
+    it('should create asset', () => {
+      const asset = new AssetDTO();
+      asset.UserID = 1;
+    });
+  });
+
   describe('saveFile', () => {
     it('should save file', async () => {
       const markdownFileDTO =
