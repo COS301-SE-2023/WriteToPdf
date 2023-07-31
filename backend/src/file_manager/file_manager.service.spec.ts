@@ -1707,6 +1707,77 @@ describe('FileManagerService', () => {
     });
   });
 
+  describe('exportFile', () => {
+    it('should throw an error if MarkdownID is undefined', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 0;
+      exportDTO.Content = 'test';
+
+      try {
+        await service.exportFile(exportDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'MarkdownID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an error if Content is undefined', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 0;
+      exportDTO.MarkdownID = '1';
+
+      try {
+        await service.exportFile(exportDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Content cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an error if the type is not supported', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 0;
+      exportDTO.MarkdownID = '1';
+      exportDTO.Content = 'test';
+      exportDTO.Type = '';
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('test');
+
+      try {
+        await service.exportFile(exportDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid export type',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+  });
+
   // describe('decryptContent', () => {
   //   it('should decrypt the content', async () => {
   //     const content = 'Encrypted content';
