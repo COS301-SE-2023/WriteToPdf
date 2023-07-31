@@ -190,6 +190,28 @@ describe('TextManagerService', () => {
     });
   });
 
+  describe('removeBase64Descriptor', () => {
+    it('should remove base64 descriptor', async () => {
+      const response =
+        await service.removeBase64Descriptor(
+          'data:image/jpeg;base64,mock base64 string',
+        );
+      expect(response).toBe('mock base64 string');
+    });
+  });
+
+  describe('prependBase64Descriptor', () => {
+    it('should prepend base64 descriptor', async () => {
+      const response =
+        await service.prependBase64Descriptor(
+          'mock base64 string',
+        );
+      expect(response).toBe(
+        'data:image/jpeg;base64,mock base64 string',
+      );
+    });
+  });
+
   // describe('parseS3Content', () => {
   //   it('should parse s3 content', async () => {
   //     const assetDTO = new AssetDTO();
