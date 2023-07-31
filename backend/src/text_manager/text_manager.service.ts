@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { S3Service } from '../s3/s3.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import { TextractService } from '../textract/textract.service';
 
@@ -13,10 +14,14 @@ export class TextManagerService {
   constructor(
     private readonly assetsService: AssetsService,
     private readonly s3Service: S3Service,
+    private readonly s3ServiceMock: S3ServiceMock,
     private readonly textractService: TextractService,
   ) {}
 
-  async upload(uploadTextDTO: AssetDTO) {
+  async upload(
+    uploadTextDTO: AssetDTO,
+    isTest = false,
+  ) {
     // Create S3 image data file
     const imageDataFile =
       await this.s3Service.createAsset(
@@ -70,7 +75,10 @@ export class TextManagerService {
     return textractResponse;
   }
 
-  async retrieveOne(retrieveTextDTO: AssetDTO) {
+  async retrieveOne(
+    retrieveTextDTO: AssetDTO,
+    isTest = false,
+  ) {
     // Retrieve text asset reference from database
     const newAssetDTO = new AssetDTO();
     const asset =

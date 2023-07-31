@@ -27,6 +27,7 @@ export class NodeService {
 
   private files: MarkdownFileDTO[] = [];
   private folders: FolderDTO[] = [];
+  private nameNumber = 0;
 
   /**
    * @Backend, below is a function with data that showcases the
@@ -104,7 +105,7 @@ export class NodeService {
       directoryObject.push({
         key: file.MarkdownID,
         data: {
-          name: file.Name,
+          name: file.Name + '!#$' + (this.nameNumber++),
           size: this.getSize(file.Size),
           type: 'file',
           key: file.MarkdownID,
@@ -126,7 +127,7 @@ export class NodeService {
       return {
         key: folder.FolderID,
         data: {
-          name: folder.FolderName,
+          name: folder.FolderName + '!#$' + (this.nameNumber++),
           size: '-',
           type: 'folder',
           key: folder.FolderID,
@@ -136,7 +137,7 @@ export class NodeService {
       let folderObject = {
         key: folder.FolderID,
         data: {
-          name: folder.FolderName,
+          name: folder.FolderName + '!#$' + (this.nameNumber++),
           size: '-',
           type: 'folder',
           key: folder.FolderID,
@@ -150,7 +151,7 @@ export class NodeService {
         folderObject.children.push({
           key: file.MarkdownID,
           data: {
-            name: file.Name,
+            name: file.Name + '!#$' + (this.nameNumber++),
             size: this.getSize(file.Size),
             type: 'file',
             key: file.MarkdownID,
@@ -366,4 +367,6 @@ export class NodeService {
     }
     return false;
   }
+
+
 }

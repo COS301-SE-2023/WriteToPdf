@@ -17,12 +17,27 @@
     max-height: 99vh;
     overflow-y: auto;
     margin: auto;
-    background-color: $light-grey;
+    background-color: rgba($light-grey, 0.6);
 
     border-radius: 33px;
 
     padding-top: min(4vh, 50px);
 
+}
+
+.backgroundImage {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    /* Uncomment the following line if you want to use a linear gradient fallback */
+    /* background: radial-gradient(at center, #3498db, #9b59b6); */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /* Center the background image */
+    background-image: linear-gradient(rgba(100, 100, 100, 0.7), rgba(100, 100, 100, 0.7)), url(/assets/MockData/BGIW.jpg);
 }
 
 .signupForm {

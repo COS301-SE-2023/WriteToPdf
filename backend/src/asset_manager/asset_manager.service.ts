@@ -5,6 +5,7 @@ import { TextManagerService } from '../text_manager/text_manager.service';
 import { RetrieveAllDTO } from './dto/retrieve_all.dto';
 import { AssetsService } from '../assets/assets.service';
 import { S3Service } from '../s3/s3.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 
 @Injectable()
 export class AssetManagerService {
@@ -12,25 +13,44 @@ export class AssetManagerService {
     private readonly imageManagerService: ImageManagerService,
     private readonly assetsService: AssetsService,
     private readonly s3Service: S3Service,
+    private readonly s3ServiceMock: S3ServiceMock,
     private readonly textManagerService: TextManagerService,
   ) {}
 
-  upload_asset(uploadAssetDTO: AssetDTO) {
+  // upload_image(uploadImageDTO: AssetDTO) {
+  //   return this.imageManagerService.upload(
+  //     uploadImageDTO,
+  //   );
+  // }
+
+  // upload_text(uploadTextDTO: AssetDTO) {
+  //   return this.textManagerService.upload(
+  //     uploadTextDTO,
+  //   );
+  // }
+
+  upload_asset(
+    uploadAssetDTO: AssetDTO,
+    isTest = false,
+  ) {
     if (uploadAssetDTO.Format === 'text') {
       return this.textManagerService.upload(
         uploadAssetDTO,
+        isTest,
       );
     } else if (
       uploadAssetDTO.Format === 'image'
     ) {
       return this.imageManagerService.upload(
         uploadAssetDTO,
+        isTest,
       );
     }
   }
 
   async retrieve_all(
     retrieveAllDTO: RetrieveAllDTO,
+    isTest = false,
   ) {
     // Get asset references from database
     const assets =
@@ -49,6 +69,7 @@ export class AssetManagerService {
         const asset =
           await this.imageManagerService.retrieveOne(
             assetDTO,
+            isTest,
           );
 
         // Compress/Resize the image
@@ -70,6 +91,7 @@ export class AssetManagerService {
         const textAsset =
           await this.textManagerService.retrieveOne(
             assetDTO,
+            isTest,
           );
 
         assets[j].Image =
@@ -83,16 +105,21 @@ export class AssetManagerService {
   }
 
   // When user copies an asset to clipboard
-  retrieve_one(retrieveAssetDTO: AssetDTO) {
+  retrieve_one(
+    retrieveAssetDTO: AssetDTO,
+    isTest = false,
+  ) {
     if (retrieveAssetDTO.Format === 'text') {
       return this.textManagerService.retrieveOne(
         retrieveAssetDTO,
+        isTest,
       );
     }
 
     if (retrieveAssetDTO.Format === 'image') {
       return this.imageManagerService.retrieveOne(
         retrieveAssetDTO,
+        isTest,
       );
     }
   }
@@ -103,15 +130,24 @@ export class AssetManagerService {
     );
   }
 
-  delete_asset(deleteAssetDTO: AssetDTO) {
+  delete_asset(
+    deleteAssetDTO: AssetDTO,
+    isTest = false,
+  ) {
     // Delete asset from database
     this.assetsService.removeOne(
       deleteAssetDTO.AssetID,
     );
 
-    // Delete asset from S3/local storage
-    return this.s3Service.deleteAsset(
-      deleteAssetDTO,
-    );
+    if (isTest) {
+      return this.s3ServiceMock.deleteAsset(
+        deleteAssetDTO,
+      );
+    } else {
+      // Delete asset from S3/local storage
+      return this.s3Service.deleteAsset(
+        deleteAssetDTO,
+      );
+    }
   }
 }

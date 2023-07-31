@@ -4,6 +4,7 @@ import {
 } from '@nestjs/testing';
 import { ImageManagerService } from './image_manager.service';
 import { S3Service } from '../s3/s3.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Asset } from '../assets/entities/asset.entity';
@@ -41,6 +42,7 @@ describe('ImageManagerService', () => {
         providers: [
           ImageManagerService,
           S3Service,
+          S3ServiceMock,
           AssetsService,
           {
             provide: getRepositoryToken(Asset),
@@ -68,7 +70,8 @@ describe('ImageManagerService', () => {
 
       jest
         .spyOn(assetsService, 'saveAsset')
-        .mockResolvedValue(uploadImage);
+        .mockResolvedValue(new Asset());
+      // .mockResolvedValue(uploadImage);
 
       jest
         .spyOn(s3Service, 'saveImageAsset')
@@ -76,6 +79,9 @@ describe('ImageManagerService', () => {
           Promise.resolve(assetDTO),
         );
 
+      // expect(
+      //   uploadImage.ConvertedElement,
+      // ).toBeUndefined();
       expect(uploadImage.Content).toBeUndefined();
 
       const result = await service.upload(
@@ -91,18 +97,15 @@ describe('ImageManagerService', () => {
       uploadAssetWithImage.UserID = 1;
       uploadAssetWithImage.AssetID = 'test';
 
-      const uploadAssetWithoutImage =
-        new AssetDTO();
-      uploadAssetWithoutImage.UserID = 1;
-
-      const expectedAsset = new AssetDTO();
-      expectedAsset.Image = 'test';
-      expectedAsset.UserID = 1;
-      expectedAsset.AssetID = 'hashed string';
+      const asset = new Asset();
+      asset.Image = 'test';
+      asset.UserID = 1;
+      asset.AssetID = 'test';
 
       jest
         .spyOn(assetsService, 'saveAsset')
-        .mockResolvedValue(uploadAssetWithImage);
+        .mockResolvedValue(asset);
+      // .mockResolvedValue(uploadAssetWithImage);
 
       jest
         .spyOn(s3Service, 'saveImageAsset')
@@ -131,7 +134,7 @@ describe('ImageManagerService', () => {
     it('should retrieve all assets', () => {
       const retrieveAllDTO = new RetrieveAllDTO();
 
-      const asset = new AssetDTO();
+      const asset = new Asset();
 
       jest
         .spyOn(assetsService, 'retrieveAllAssets')
@@ -177,15 +180,14 @@ describe('ImageManagerService', () => {
     });
 
     it('should return content of specified asset', async () => {
-      const retrieveAssetDTO: AssetDTO =
-        new AssetDTO();
+      const retrieveAssetDTO = new AssetDTO();
 
       retrieveAssetDTO.AssetID = '1';
       retrieveAssetDTO.Format = 'text';
 
       jest
         .spyOn(assetsService, 'retrieveOne')
-        .mockResolvedValue(retrieveAssetDTO);
+        .mockResolvedValue(new Asset());
 
       jest
         .spyOn(s3Service, 'retrieveAsset')
@@ -229,7 +231,7 @@ describe('ImageManagerService', () => {
     it('should rename specified asset', () => {
       jest
         .spyOn(assetsService, 'renameAsset')
-        .mockResolvedValue(new AssetDTO());
+        .mockResolvedValue(new Asset());
 
       const response = service.renameAsset(
         new AssetDTO(),

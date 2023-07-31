@@ -93,6 +93,9 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "moduleNameMapper": {
+      "^src/s3/s3.service$": "^src/s3/__mocks__/s3.service.ts"
+    },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],

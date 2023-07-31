@@ -4,6 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { S3Service } from '../s3/s3.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import * as CryptoJS from 'crypto-js';
@@ -14,14 +15,22 @@ import { RetrieveAllDTO } from '../asset_manager/dto/retrieve_all.dto';
 export class ImageManagerService {
   constructor(
     private readonly s3Service: S3Service,
+    private readonly s3ServiceMock: S3ServiceMock,
     private readonly assetsService: AssetsService,
   ) {}
 
-  upload(uploadImageDTO: AssetDTO) {
+  upload(
+    uploadImageDTO: AssetDTO,
+    isTest = false,
+  ) {
     uploadImageDTO.AssetID = CryptoJS.SHA256(
       uploadImageDTO.UserID.toString() +
         new Date().getTime().toString(),
     ).toString();
+
+    // if (!uploadImageDTO.ConvertedElement) {
+    //   uploadImageDTO.ConvertedElement = '';
+    // }
 
     if (!uploadImageDTO.Content) {
       uploadImageDTO.Content = '';
@@ -36,10 +45,16 @@ export class ImageManagerService {
     uploadImageDTO.Image = '';
     this.assetsService.saveAsset(uploadImageDTO);
 
-    // Store in S3/local storage
-    return this.s3Service.saveImageAsset(
-      uploadImageDTO,
-    );
+    if (isTest) {
+      // Save asset in the S3/local storage
+      return this.s3ServiceMock.saveAsset(
+        uploadImageDTO,
+      );
+    } else {
+      return this.s3Service.saveAsset(
+        uploadImageDTO,
+      );
+    }
   }
 
   retrieveAll(
@@ -50,7 +65,10 @@ export class ImageManagerService {
     );
   }
 
-  async retrieveOne(retrieveAssetDto: AssetDTO) {
+  async retrieveOne(
+    retrieveAssetDto: AssetDTO,
+    isTest = false,
+  ) {
     const response =
       await this.assetsService.retrieveOne(
         retrieveAssetDto,
@@ -63,22 +81,37 @@ export class ImageManagerService {
         HttpStatus.NOT_FOUND,
       );
     }
-
-    return this.s3Service.retrieveAsset(
-      retrieveAssetDto,
-    );
+    if (isTest) {
+      // Retrieve asset from the S3/local storage
+      return this.s3ServiceMock.retrieveAsset(
+        retrieveAssetDto,
+      );
+    } else {
+      return this.s3Service.retrieveAsset(
+        retrieveAssetDto,
+      );
+    }
   }
 
-  deleteAsset(removeImageDTO: AssetDTO) {
+  deleteAsset(
+    removeImageDTO: AssetDTO,
+    isTest = false,
+  ) {
     // Delete from database
     this.assetsService.removeOne(
       removeImageDTO.AssetID,
     );
 
-    // Delete from S3/local storage
-    return this.s3Service.deleteAsset(
-      removeImageDTO,
-    );
+    if (isTest) {
+      // Delete asset in the S3/local storage
+      return this.s3ServiceMock.deleteAsset(
+        removeImageDTO,
+      );
+    } else {
+      return this.s3Service.deleteAsset(
+        removeImageDTO,
+      );
+    }
   }
 
   renameAsset(renameImageDTO: AssetDTO) {

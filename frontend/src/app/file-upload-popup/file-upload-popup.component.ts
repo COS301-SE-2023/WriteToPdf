@@ -22,7 +22,7 @@ export class FileUploadPopupComponent {
   uploadedFiles: any[] = [];
   fromEditPage: boolean = false;
   fromHomepage: boolean = false;
-  @Input() acceptedTypes = '.md,.txt, .img';
+  @Input() acceptedTypes = '.md,.txt,';
   constructor(
     private dialogRef: DynamicDialogRef,
     private messageService: MessageService,

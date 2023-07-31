@@ -107,23 +107,12 @@
   </div>
 
   <div class="editor">
-    <p-button
-      class="showAssetSidebar"
-      icon="pi pi-arrow-right"
-      (click)="hideSideBar()"
-    ></p-button>
+    <p-button class="showAssetSidebar" icon="pi pi-arrow-right" (click)="hideSideBar()"></p-button>
     <div class="assetSidebar">
       <div class="sidebarHeaderWrapper">
         <div class="sidebarHeader">
-          <div
-            class="sidebarHeaderIconWrapper backWrapper"
-            (click)="hideSideBar()"
-          >
-            <img
-              class="sidebarHeaderIcon"
-              src="assets/Icons/editIcons/back.svg"
-              alt=""
-            />
+          <div class="sidebarHeaderIconWrapper backWrapper" (click)="hideSideBar()">
+            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="" />
           </div>
 
           <div class="sidebarHeaderTextWrapper">
@@ -155,11 +144,7 @@
           </div>
 
           <div class="sidebarHeaderIconWrapper" (click)="refreshSidebar()">
-            <img
-              class="sidebarHeaderIcon"
-              src="assets/Icons/editIcons/refresh.svg"
-              alt=""
-            />
+            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/refresh.svg" alt="" />
           </div>
         </div>
         <hr />
@@ -239,15 +224,8 @@
     <div class="center-page">
       <div class="document-editor" style="overflow: hidden">
         <div class="document-editor__toolbar"></div>
-        <div
-          class="document-editor__editable-container"
-          style="overflow: hidden"
-        >
-          <div
-            class="document-editor__editable"
-            id="editor-contents"
-            style="overflow: hidden"
-          ></div>
+        <div class="document-editor__editable-container" style="overflow: hidden">
+          <div class="document-editor__editable" id="editor-contents" style="overflow: hidden"></div>
         </div>
       </div>
       <br />

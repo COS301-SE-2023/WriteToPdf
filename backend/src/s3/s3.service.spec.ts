@@ -8,7 +8,17 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { sdkStreamMixin } from '@aws-sdk/util-stream-node';
+import {
+  GetObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import { sdkStreamMixin } from '@aws-sdk/util-stream-node';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
+import * as fs from 'fs/promises';
+import { Readable } from 'stream';
+import { mockClient } from 'aws-sdk-client-mock';
+import { FileDTO } from './dto/file.dto';
+import { AssetDTO } from '../assets/dto/asset.dto';
 import * as fs from 'fs/promises';
 import { Readable } from 'stream';
 import { mockClient } from 'aws-sdk-client-mock';
@@ -18,6 +28,7 @@ import { AssetDTO } from '../assets/dto/asset.dto';
 describe('S3Service', () => {
   let s3Service: S3Service;
   const mockS3Client = mockClient(S3Client);
+  const mockS3Client = mockClient(S3Client);
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -26,6 +37,19 @@ describe('S3Service', () => {
       }).compile();
 
     s3Service = module.get<S3Service>(S3Service);
+    // Configure mockS3Client
+    mockS3Client.reset();
+    const stream = new Readable();
+    stream.push('hello world');
+    stream.push(null); // end of stream
+    stream.pipe(process.stdout);
+    const sdkStream = sdkStreamMixin(stream);
+    mockS3Client
+      .on(GetObjectCommand)
+      .resolves({ Body: sdkStream });
+
+    jest.mock('fs/promises');
+    jest.mock('@aws-sdk/client-s3');
     // Configure mockS3Client
     mockS3Client.reset();
     const stream = new Readable();
@@ -769,7 +793,13 @@ describe('S3Service', () => {
 
         const response =
           await s3Service.deleteAsset(assetDTO);
+        const response =
+          await s3Service.deleteAsset(assetDTO);
 
+        expect(response).toBeDefined();
+      });
+    });
+  });
         expect(response).toBeDefined();
       });
     });

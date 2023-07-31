@@ -391,6 +391,7 @@ export class FileService {
     body.Content = this.encryptDocument(content);
     body.Type = type;
 
+    console.log('body',body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()

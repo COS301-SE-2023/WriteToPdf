@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { AssetService } from '../services/asset.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -19,6 +19,9 @@ export class CameraComponent {
   parentFolderId: string = '';
   path: string = '';
   isAsset: boolean = false;
+  captured: boolean = false;
+  flipCamera: boolean = false;
+  cameraAvailable: boolean = false;
 
   constructor(
     private elementRef: ElementRef,
@@ -26,7 +29,7 @@ export class CameraComponent {
     private router: Router,
     private location: Location,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   ngOnInit() {
     const data = history.state;
@@ -42,8 +45,10 @@ export class CameraComponent {
 
   ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
-      '#FFFFFF';
+      '#363232';
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
+    // this.elementRef.nativeElement.ownerDocument.body.style.width = '100vw';
+    // this.elementRef.nativeElement.ownerDocument.body.style.height = '100vh';
   }
 
   navigateToPage(pageName: string) {
@@ -52,20 +57,41 @@ export class CameraComponent {
   }
 
   setupCamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.error("getUserMedia is not supported in this browser.");
+      this.cameraAvailable = false;
+      return;
+    }
+
+    // Request camera access
     navigator.mediaDevices
       .getUserMedia({
         video: {},
         audio: false,
       })
       .then((stream) => {
+        // Access granted, display the camera stream
+        this.cameraAvailable = true;
         this.videoRef.srcObject = stream;
+      })
+      .catch((error) => {
+        // Handle errors and permission denial
+        console.error("Error accessing camera:", error);
+        this.cameraAvailable = false;
+        // You can show a user-friendly message on the page to inform the user about the camera access issue.
       });
   }
 
+
+
   disableCamera() {
-    this.videoRef.srcObject
-      .getTracks()
-      .forEach((track: { stop: () => any }) => track.stop());
+    try {
+      this.videoRef.srcObject
+        .getTracks()
+        .forEach((track: { stop: () => any }) => track.stop());
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   public getSnapshot(): void {
@@ -84,6 +110,7 @@ export class CameraComponent {
     const dataUrl = canvas.toDataURL('image/jpeg', 1); // Adjust the quality (0.0 to 1.0)
 
     this.sysImage = dataUrl;
+    this.captured = true;
   }
 
   async uploadImage() {
@@ -112,4 +139,13 @@ export class CameraComponent {
     this.disableCamera();
     this.location.back();
   }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'r' && this.cameraAvailable) {
+      this.getSnapshot();
+      this.sidebarVisible = true;
+    }
+  }
+
 }

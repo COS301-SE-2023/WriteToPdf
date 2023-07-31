@@ -2,13 +2,12 @@
 
 .container {
   width: 100%;
+  z-index: -4;
   // overflow-x: auto;
   // white-space: nowrap;
 }
 
-.fileOperations-container{
-
-}
+.fileOperations-container {}
 
 .fileOperations {
   display: flex;
@@ -17,36 +16,36 @@
   width: 80%;
 }
 
-.fileOperations-entity{
-  padding:8px;
+.fileOperations-entity {
+  padding: 8px;
   justify-content: center;
   align-items: center;
 }
 
 //Code Section Header Styling
 .header {
-  margin-top:-10px;
-  margin-left:-8px;
+  top: 0;
+  // margin-top:-10px;
+  // margin-left:-8px;
   position: fixed;
   display: flex;
   grid-auto-flow: column;
   //overflow-x: auto;
-  background-image: linear-gradient(to left, #ffffff, #e7e7e7);
-  //border-bottom: 1px solid #ccc;
+  background-image: linear-gradient(to left, #ffffff, #f7f9fc);
+  border-bottom: 1px solid #ccc;
   //box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  border-image:linear-gradient(to left, #ffffff, $dark-grey) ;
-  border-image-width: 0 0 1px;
-  border-image-slice:1;
+
   width: 100%;
   height: 112px;
   //justify-content: space-between;
   z-index: 5;
-  margin:0;
+  margin: 0;
 }
-.speedDialEditMenu{
-  margin-left:auto;
-  margin-right:160px;
-  margin-top:24px;
+
+.speedDialEditMenu {
+  margin-left: auto;
+  margin-right: 160px;
+  margin-top: 24px;
 
 }
 
@@ -64,24 +63,25 @@
 
 .headerNavigation {
   //TODO rename this to something more relevant
-  display: flex;
+  // display: flex;
   margin: auto;
-  margin-left: 0;
+  margin-left: 10px;
+  flex-grow: 1;
 }
 
 /**
 @Julian, please help me to get this menubar floating in line with the left sidebar's edge, it does not want
 to co-operate.
  */
-.menuBar {
-
-  // margin-left: 550px;
-  position:relative;
-  .p-menuitem-link{
-    z-index:5;
-  }
-
+.p-menubar {
+  width: 400px;
+  //min-width: 400px;
+  position: relative;
+  border: 0;
+  z-index: 10;
+  background-color: #00000000;
 }
+
 
 
 //END Code section header styling
@@ -101,17 +101,16 @@ to co-operate.
 
 .leftSideBarWrapper {
   //Positioning
-  z-index:0;
+  z-index: 3;
   position: fixed;
   width: 245px;
   height: 110%;
   left: 0px;
-
   top: 112px;
   // Colour
-  overflow:auto;
-  background-color: white;
+  overflow: auto;
   opacity: 100%;
+  box-shadow: 3px 0px 5px rgba(0, 0, 0, 0.1);
   /* Main Colours/Dark Gray */
   border-width: 0px 1px 1px 0px;
   border-style: solid;
@@ -119,9 +118,16 @@ to co-operate.
   z-index: 2;
 }
 
-.directoryTree{
+.p-tree {
+  background: #00000000 !important;
+  border: none !important;
+}
+
+.directoryTree {
+
   overflow: auto;
-  padding-top:9px;
+  padding-top: 9px;
+  z-index: 3;
 }
 
 .cdk-drag {
@@ -130,9 +136,9 @@ to co-operate.
 
 .leftSideBarHeading {
   padding-top: 15px;
-  display:flex;
+  display: flex;
   justify-content: center;
-//  padding-left: 50px;
+  //  padding-left: 50px;
 }
 
 .leftSideBarTools .icon {
@@ -150,10 +156,10 @@ to co-operate.
 
 .leftSideBarTools {
   padding: 5px;
-  gap:15px;
-  display:flex;
-//  margin-left:10px;
-  justify-content:center;
+  gap: 15px;
+  display: flex;
+  //  margin-left:10px;
+  justify-content: center;
 }
 
 
@@ -165,9 +171,10 @@ to co-operate.
   margin-left: 250px;
   margin-right: 150px;
   margin-top: 120px;
-  width: auto;
   display: inline-block;
   z-index: 0;
+  position: absolute;
+  overflow-x: hidden;
 }
 
 .mainWindowHome .directoryContents {
@@ -180,21 +187,27 @@ to co-operate.
   padding: 4px;
   width: auto;
 }
+
 // Below is the styling for the toolbar above the files in the main window
-.toolbarItem{
-  padding-left:10px;
-  padding-right:10px;
- }
-.p-toolbar{
-  background-color: white;
+.toolbarItem {
+  padding-left: 10px;
+  padding-right: 10px;
 }
+
+.p-toolbar {
+  background-color: white;
+  //  padding-top:10px;
+}
+
 // Below is the styling for the searchBar
 .searchBar {
   margin-top: 18px;
+  margin-left: 15px;
+  margin-right: 15px;
   box-sizing: border-box;
   position: relative;
   padding: 10px;
-  margin-left:8px;
+  margin-left: 8px;
   width: auto;
   background: #F7F7F7;
   /* Main Colours/Dark Gray */
@@ -222,11 +235,11 @@ textarea {
   padding: 5px;
 }
 
-.searchBar:focus-within{
+.searchBar:focus-within {
   border: 1.3px solid black;
 }
 
-.moveDialogueContainer{
+.moveDialogueContainer {
   display: flex;
 }
 

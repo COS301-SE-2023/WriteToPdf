@@ -5,7 +5,6 @@ import {
 import {
   HttpStatus,
   INestApplication,
-  Module,
 } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
@@ -14,22 +13,28 @@ import { FolderDTO } from '../src/folders/dto/folder.dto';
 import { DirectoryFoldersDTO } from '../src/file_manager/dto/directory_folders.dto';
 import { DirectoryFilesDTO } from '../src/file_manager/dto/directory_files.dto';
 import * as dotenv from 'dotenv';
-// import { DataSource } from 'typeorm';
-import { dataSource } from '../db/data-source';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { MarkdownFile } from '../src/markdown_files/entities/markdown_file.entity';
-import { S3Service } from '../src/s3/s3.service';
-import { FileDTO } from '../src/s3/dto/file.dto';
+// import { S3Service } from '../src/s3/s3.service';
+import { S3ServiceMock } from '../src/s3/__mocks__/s3.service';
+// import { FileDTO } from '../src/s3/dto/file.dto';
 
-let startTime: string;
+// let startTime: string;
 let fileID = '';
 let folderID = '';
+
+enum ResetScope {
+  ALL,
+  MARKDOWN_FILES,
+  FOLDERS,
+  NONE,
+}
 
 describe('FileManagerController (integration)', () => {
   let app: INestApplication;
   let markdownFileRepository: Repository<MarkdownFile>;
-  let s3Service: S3Service;
+  let s3Service: S3ServiceMock;
 
   beforeAll(async () => {
     dotenv.config({ path: '.env.test' });
@@ -51,105 +56,127 @@ describe('FileManagerController (integration)', () => {
     markdownFileRepository = moduleFixture.get<
       Repository<MarkdownFile>
     >(getRepositoryToken(MarkdownFile));
-    s3Service =
-      moduleFixture.get<S3Service>(S3Service);
+    s3Service = new S3ServiceMock();
 
-    // await resetUser();
+    await resetUser(ResetScope.ALL);
   });
 
   afterAll(async () => {
     await app.close();
   });
 
-  beforeEach(async () => {
-    const currentTime = new Date();
-    const twoHoursLater = new Date(
-      currentTime.getTime() + 2 * 60 * 60 * 1000,
-    );
-    startTime = twoHoursLater.toISOString();
-  });
+  // beforeEach(async () => {
+  //   const currentTime = new Date();
+  //   const twoHoursLater = new Date(
+  //     currentTime.getTime() + 2 * 60 * 60 * 1000,
+  //   );
+  //   startTime = twoHoursLater.toISOString();
+  // });
 
-  afterEach(async () => {
-    // await resetUser();
-  });
+  // afterEach(async () => {
+  //   // await cleanUp();
+  //   // await resetUser();
+  // });
 
   // afterAll(async () => {
   // });
 
-  async function resetUser() {
-    // Get all the test user's files
-    const testUserFiles =
-      await markdownFileRepository.query(
-        'SELECT * FROM MARKDOWN_FILES WHERE UserID = ?',
-        [process.env.TEST_USERID],
-      );
-
-    // Delete all the test user's files
-    for (const file of testUserFiles) {
-      const deleteFileDTO = new MarkdownFileDTO();
-      deleteFileDTO.UserID = parseInt(
-        process.env.TEST_USERID,
-      );
-      deleteFileDTO.MarkdownID = file.MarkdownID;
-
-      await s3Service.deleteFile(deleteFileDTO);
+  async function resetUser(scope: ResetScope) {
+    if (scope === ResetScope.NONE) {
+      return;
     }
 
-    folderID = '';
+    if (
+      scope === ResetScope.ALL ||
+      scope === ResetScope.MARKDOWN_FILES
+    ) {
+      // Get all the test user's files
+      const testUserFiles =
+        await markdownFileRepository.query(
+          'SELECT * FROM MARKDOWN_FILES WHERE UserID = ?',
+          [process.env.TEST_USERID],
+        );
+
+      // Delete all the test user's files
+      for (const file of testUserFiles) {
+        const deleteFileDTO =
+          new MarkdownFileDTO();
+        deleteFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        deleteFileDTO.MarkdownID =
+          file.MarkdownID;
+
+        await s3Service.deleteFile(deleteFileDTO);
+      }
+
+      await markdownFileRepository.query(
+        'DELETE FROM MARKDOWN_FILES WHERE UserID = ?',
+        [process.env.TEST_USERID],
+      );
+      console.log(
+        '################################### Deleted all test user files',
+      );
+    }
+
     // Reset the db for the test user
-    await markdownFileRepository.query(
-      'DELETE FROM MARKDOWN_FILES WHERE UserID = ?',
-      [process.env.TEST_USERID],
-    );
-    await markdownFileRepository.query(
-      'DELETE FROM FOLDERS WHERE UserID = ?',
-      [process.env.TEST_USERID],
-    );
+    if (ResetScope.ALL || ResetScope.FOLDERS) {
+      folderID = '';
+      await markdownFileRepository.query(
+        'DELETE FROM FOLDERS WHERE UserID = ?',
+        [process.env.TEST_USERID],
+      );
+    }
 
-    // Create a test file
-    const createFileDTO = new MarkdownFileDTO();
-    createFileDTO.UserID = parseInt(
-      process.env.TEST_USERID,
-    );
-    createFileDTO.Path = '';
-    createFileDTO.Name = 'Test File';
-    createFileDTO.Size = 0;
-    createFileDTO.ParentFolderID = '';
+    if (
+      ResetScope.ALL ||
+      ResetScope.MARKDOWN_FILES
+    ) {
+      // Create a test file
+      const createFileDTO = new MarkdownFileDTO();
+      createFileDTO.UserID = parseInt(
+        process.env.TEST_USERID,
+      );
+      createFileDTO.Path = '';
+      createFileDTO.Name = 'Test File';
+      createFileDTO.Size = 0;
+      createFileDTO.ParentFolderID = '';
 
-    const s3Response = await s3Service.createFile(
-      createFileDTO,
-    );
+      const s3Response =
+        await s3Service.createFile(createFileDTO);
 
-    s3Response.Content = 'Test content';
+      s3Response.Content = 'Test content';
 
-    await s3Service.saveFile(s3Response);
+      await s3Service.saveFile(s3Response);
 
-    fileID = s3Response.MarkdownID;
-    // console.log('Setting fileID to ', fileID);
-    // console.log('s3Response: ', s3Response);
+      fileID = s3Response.MarkdownID;
+      // console.log('Setting fileID to ', fileID);
+      // console.log('s3Response: ', s3Response);
 
-    await markdownFileRepository.query(
-      'INSERT INTO MARKDOWN_FILES (MarkdownID, Name, Path, Size, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?, ?)',
-      [
-        s3Response.MarkdownID,
-        createFileDTO.Name,
-        createFileDTO.Path,
-        createFileDTO.Size,
-        createFileDTO.ParentFolderID,
-        createFileDTO.UserID,
-      ],
-    );
+      await markdownFileRepository.query(
+        'INSERT INTO MARKDOWN_FILES (MarkdownID, Name, Path, Size, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?, ?)',
+        [
+          s3Response.MarkdownID,
+          createFileDTO.Name,
+          createFileDTO.Path,
+          createFileDTO.Size,
+          createFileDTO.ParentFolderID,
+          createFileDTO.UserID,
+        ],
+      );
+    }
 
-    // Create a test folder
-    const createFolderDTO = new FolderDTO();
-    createFolderDTO.UserID = parseInt(
-      process.env.TEST_USERID,
-    );
-    createFolderDTO.FolderName = 'Test Folder';
-    createFolderDTO.ParentFolderID = '';
-    createFolderDTO.Path = '';
-    createFolderDTO.FolderID = '1';
-    folderID = createFolderDTO.FolderID;
+    if (ResetScope.ALL || ResetScope.FOLDERS) {
+      // Create a test folder
+      const createFolderDTO = new FolderDTO();
+      createFolderDTO.UserID = parseInt(
+        process.env.TEST_USERID,
+      );
+      createFolderDTO.FolderName = 'Test Folder';
+      createFolderDTO.ParentFolderID = '';
+      createFolderDTO.Path = '';
+      createFolderDTO.FolderID = '1';
+      folderID = createFolderDTO.FolderID;
 
     await markdownFileRepository.query(
       'INSERT INTO FOLDERS (FolderID, FolderName, Path, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?)',
@@ -162,25 +189,36 @@ describe('FileManagerController (integration)', () => {
       ],
     );
   }
+      await markdownFileRepository.query(
+        'INSERT INTO FOLDERS (FolderID, FolderName, Path, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?)',
+        [
+          createFolderDTO.FolderID,
+          createFolderDTO.FolderName,
+          createFolderDTO.Path,
+          createFolderDTO.ParentFolderID,
+          createFolderDTO.UserID,
+        ],
+      );
+    }
+  }
 
   describe('file-manager endpoint', () => {
-    it('should be mocked out', () => {
-      expect(true).toBe(true);
-    });
-    // describe('create_file', () => {
-    //   it('/file-manager/create_file/ (POST) - missing UserID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
+    describe('create_file', () => {
+      it('/file-manager/create_file/ (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/create_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/create_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -199,22 +237,24 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/create_file/ (POST) - valid request', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
+      it('/file-manager/create_file/ (POST) - valid request', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/create_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/create_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
 
     //     expect(response.body).toHaveProperty(
     //       'MarkdownID',
@@ -257,56 +297,24 @@ describe('FileManagerController (integration)', () => {
     //   });
     // });
 
-    // describe('delete_file', () => {
-    //   it('/file-manager/delete_file/ (POST) - missing UserID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
+    describe('delete_file', () => {
+      it('/file-manager/delete_file/ (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/delete_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
-
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
-
-    //   it('/file-manager/delete_file/ (POST) - missing MarkdownID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/delete_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/delete_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -325,25 +333,65 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/delete_file/ (POST) - valid request', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
+      it('/file-manager/delete_file/ (POST) - missing MarkdownID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/delete_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
+
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
     //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+      it('/file-manager/delete_file/ (POST) - valid request', async () => {
+        await resetUser(
+          ResetScope.MARKDOWN_FILES,
+        );
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
 
     //     requestMarkdownFileDTO.MarkdownID =
     //       fileID;
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/delete_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/delete_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
 
     //     expect(response.status).toBe(
     //       HttpStatus.OK,
@@ -355,58 +403,25 @@ describe('FileManagerController (integration)', () => {
     //   });
     // });
 
-    // describe('rename_file', () => {
-    //   it('/file-manager/rename_file/ (POST) - missing UserID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
-    //     requestMarkdownFileDTO.Name = 'New Name';
+    describe('rename_file', () => {
+      it('/file-manager/rename_file/ (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+        requestMarkdownFileDTO.Name = 'New Name';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/rename_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
-
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
-
-    //   it('/file-manager/rename_file/ (POST) - missing MarkdownID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestMarkdownFileDTO.Name = 'New Name';
-
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/rename_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -425,24 +440,25 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/rename_file/ (POST) - missing Name', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
+      it('/file-manager/rename_file/ (POST) - missing MarkdownID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.Name = 'New Name';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/rename_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -461,25 +477,67 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/rename_file/ (POST) - valid request', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
-    //     requestMarkdownFileDTO.Name = 'New Name';
+      it('/file-manager/rename_file/ (POST) - missing Name', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/rename_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
+
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+      it('/file-manager/rename_file/ (POST) - valid request', async () => {
+        await resetUser(
+          ResetScope.MARKDOWN_FILES,
+        );
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+        requestMarkdownFileDTO.Name = 'New Name';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
 
     //     // console.log('response.body: ', response.body);
     //     expect(response.body).toHaveProperty(
@@ -506,15 +564,134 @@ describe('FileManagerController (integration)', () => {
     //   });
     // });
 
-    // describe('move_file', () => {
-    //   it('/file-manager/move_file/ (POST) - missing UserID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
-    //     requestMarkdownFileDTO.ParentFolderID =
-    //       'test';
-    //     requestMarkdownFileDTO.Path = 'test';
+    describe('move_file', () => {
+      it('/file-manager/move_file/ (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+        requestMarkdownFileDTO.ParentFolderID =
+          'test';
+        requestMarkdownFileDTO.Path = 'test';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/move_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
+
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+      it('/file-manager/move_file/ (POST) - missing MarkdownID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.ParentFolderID =
+          'test';
+        requestMarkdownFileDTO.Path = 'test';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/move_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
+
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+      it('/file-manager/move_file/ (POST) - missing ParentFolderID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+        requestMarkdownFileDTO.Path = 'test';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/move_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
+
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+      it('/file-manager/move_file/ (POST) - missing Path', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+        requestMarkdownFileDTO.ParentFolderID =
+          'test';
 
     //     const response = await request(
     //       app.getHttpServer(),
@@ -543,139 +720,31 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/move_file/ (POST) - missing MarkdownID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestMarkdownFileDTO.ParentFolderID =
-    //       'test';
-    //     requestMarkdownFileDTO.Path = 'test';
+      it('/file-manager/move_file/ (POST) - valid request', async () => {
+        await resetUser(
+          ResetScope.MARKDOWN_FILES,
+        );
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+        requestMarkdownFileDTO.ParentFolderID =
+          'test';
+        requestMarkdownFileDTO.Path = 'test';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/move_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
-
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
-
-    //   it('/file-manager/move_file/ (POST) - missing ParentFolderID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
-    //     requestMarkdownFileDTO.Path = 'test';
-
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/move_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
-
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
-
-    //   it('/file-manager/move_file/ (POST) - missing Path', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
-    //     requestMarkdownFileDTO.ParentFolderID =
-    //       'test';
-
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/move_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
-
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
-
-    //   it('/file-manager/move_file/ (POST) - valid request', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
-    //     requestMarkdownFileDTO.ParentFolderID =
-    //       'test';
-    //     requestMarkdownFileDTO.Path = 'test';
-
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/move_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/move_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
 
     //     expect(response.body).toHaveProperty(
     //       'MarkdownID',
@@ -710,58 +779,25 @@ describe('FileManagerController (integration)', () => {
     //   });
     // });
 
-    // describe('save_file', () => {
-    //   it('/file-manager/save_file/ (POST) - missing UserID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
-    //     requestMarkdownFileDTO.Content = 'test';
+    describe('save_file', () => {
+      it('/file-manager/save_file/ (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+        requestMarkdownFileDTO.Content = 'test';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/save_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
-
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
-
-    //   it('/file-manager/save_file/ (POST) - missing MarkdownID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestMarkdownFileDTO.Content = 'test';
-
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/save_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/save_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -780,24 +816,25 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/save_file/ (POST) - missing Content', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
+      it('/file-manager/save_file/ (POST) - missing MarkdownID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.Content = 'test';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/save_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/save_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -816,25 +853,67 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/save_file/ (POST) - valid request', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
-    //     requestMarkdownFileDTO.Content = 'test';
+      it('/file-manager/save_file/ (POST) - missing Content', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/save_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/save_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
+
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+      it('/file-manager/save_file/ (POST) - valid request', async () => {
+        await resetUser(
+          ResetScope.MARKDOWN_FILES,
+        );
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+        requestMarkdownFileDTO.Content = 'test';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/save_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
 
     //     expect(response.body).toHaveProperty(
     //       'MarkdownID',
@@ -868,12 +947,49 @@ describe('FileManagerController (integration)', () => {
     //   });
     // });
 
-    // describe('retrieve_file', () => {
-    //   it('/file-manager/retrieve_file/ (POST) - missing UserID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
+    describe('retrieve_file', () => {
+      it('/file-manager/retrieve_file/ (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/retrieve_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
+
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+      it('/file-manager/retrieve_file/ (POST) - missing MarkdownID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
 
     //     const response = await request(
     //       app.getHttpServer(),
@@ -902,58 +1018,28 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/retrieve_file/ (POST) - missing MarkdownID', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
+      it('/file-manager/retrieve_file/ (POST) - valid request', async () => {
+        await resetUser(
+          ResetScope.MARKDOWN_FILES,
+        );
+        const requestMarkdownFileDTO =
+          new MarkdownFileDTO();
+        requestMarkdownFileDTO.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestMarkdownFileDTO.MarkdownID =
+          fileID;
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/retrieve_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
-
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
-
-    //   it('/file-manager/retrieve_file/ (POST) - valid request', async () => {
-    //     const requestMarkdownFileDTO =
-    //       new MarkdownFileDTO();
-    //     requestMarkdownFileDTO.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestMarkdownFileDTO.MarkdownID =
-    //       fileID;
-
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/retrieve_file/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestMarkdownFileDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/retrieve_file/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestMarkdownFileDTO);
 
     //     expect(response.body).toHaveProperty(
     //       'MarkdownID',
@@ -977,22 +1063,24 @@ describe('FileManagerController (integration)', () => {
     //   });
     // });
 
-    // describe('retrieve_all_files', () => {
-    //   it('/file-manager/retrieve_all_files/ (POST) - missing UserID', async () => {
-    //     const requestDirectoryFilesDTO =
-    //       new DirectoryFilesDTO();
+    describe('retrieve_all_files', () => {
+      it('/file-manager/retrieve_all_files/ (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestDirectoryFilesDTO =
+          new DirectoryFilesDTO();
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post(
-    //         '/file_manager/retrieve_all_files/',
-    //       )
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestDirectoryFilesDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post(
+            '/file_manager/retrieve_all_files/',
+          )
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestDirectoryFilesDTO);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -1011,23 +1099,27 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('file-manager/retrieve_all_files/ (POST) - valid request', async () => {
-    //     const requestDirectoryFilesDTO =
-    //       new DirectoryFilesDTO();
-    //     requestDirectoryFilesDTO.UserID =
-    //       parseInt(process.env.TEST_USERID);
+      it('file-manager/retrieve_all_files/ (POST) - valid request', async () => {
+        await resetUser(
+          ResetScope.MARKDOWN_FILES,
+        );
+        const requestDirectoryFilesDTO =
+          new DirectoryFilesDTO();
+        requestDirectoryFilesDTO.UserID =
+          parseInt(process.env.TEST_USERID);
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post(
-    //         '/file_manager/retrieve_all_files/',
-    //       )
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestDirectoryFilesDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post(
+            '/file_manager/retrieve_all_files/',
+          )
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestDirectoryFilesDTO);
 
     //     expect(response.body).toHaveProperty(
     //       'UserID',
@@ -1053,55 +1145,23 @@ describe('FileManagerController (integration)', () => {
     //   });
     // });
 
-    // describe('create_folder', () => {
-    //   it('/file-manager/create_folder/ (POST) - missing UserID', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.FolderName = 'test';
-    //     requestFolder.Path = 'test';
+    describe('create_folder', () => {
+      it('/file-manager/create_folder/ (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestFolder = new FolderDTO();
+        requestFolder.FolderName = 'test';
+        requestFolder.Path = 'test';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/create_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
-
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
-
-    //   it('/file-manager/create_folder/ (POST) - missing FolderName', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestFolder.Path = 'test';
-
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/create_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/create_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -1120,22 +1180,24 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/create_folder/ (POST) - missing Path', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.FolderName = 'test';
-    //     requestFolder.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
+      it('/file-manager/create_folder/ (POST) - missing FolderName', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.Path = 'test';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/create_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/create_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -1154,25 +1216,63 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/create_folder/ (POST) - valid request', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestFolder.FolderName = 'Test Name';
-    //     requestFolder.Path = 'Test Path';
-    //     requestFolder.ParentFolderID =
-    //       'Test ParentFolderID';
+      it('/file-manager/create_folder/ (POST) - missing Path', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestFolder = new FolderDTO();
+        requestFolder.FolderName = 'test';
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/create_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/create_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
+
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+      it('/file-manager/create_folder/ (POST) - valid request', async () => {
+        await resetUser(ResetScope.FOLDERS);
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.FolderName = 'Test Name';
+        requestFolder.Path = 'Test Path';
+        requestFolder.ParentFolderID =
+          'Test ParentFolderID';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/create_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
 
     //     expect(response.body).toHaveProperty(
     //       'FolderID',
@@ -1214,53 +1314,22 @@ describe('FileManagerController (integration)', () => {
     //   });
     // });
 
-    // describe('delete_folder', () => {
-    //   it('/file-manager/delete_folder/ (POST) - missing UserID', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.FolderID = folderID;
+    describe('delete_folder', () => {
+      it('/file-manager/delete_folder/ (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestFolder = new FolderDTO();
+        requestFolder.FolderID = folderID;
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/delete_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
-
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
-
-    //   it('/file-manager/delete_folder/ (POST) - missing FolderID', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/delete_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/delete_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -1279,22 +1348,59 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('file-manager/delete_folder/ (POST) - valid request', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestFolder.FolderID = folderID;
+      it('/file-manager/delete_folder/ (POST) - missing FolderID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/delete_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/delete_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
+
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+      it('file-manager/delete_folder/ (POST) - valid request', async () => {
+        await resetUser(ResetScope.FOLDERS);
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.FolderID = folderID;
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/delete_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
 
     //     expect(response.status).toBe(
     //       HttpStatus.OK,
@@ -1302,55 +1408,23 @@ describe('FileManagerController (integration)', () => {
     //   });
     // });
 
-    // describe('rename_folder', () => {
-    //   it('/file-manager/rename_folder/ (POST) - missing UserID', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.FolderID = folderID;
-    //     requestFolder.FolderName = 'New Name';
+    describe('rename_folder', () => {
+      it('/file-manager/rename_folder/ (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestFolder = new FolderDTO();
+        requestFolder.FolderID = folderID;
+        requestFolder.FolderName = 'New Name';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/rename_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
-
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
-
-    //   it('/file-manager/rename_folder/ (POST) - missing FolderName', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestFolder.FolderID = folderID;
-
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/rename_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -1369,22 +1443,24 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/rename_folder/ (POST) - missing FolderID', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestFolder.FolderName = 'New Name';
+      it('/file-manager/rename_folder/ (POST) - missing FolderName', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.FolderID = folderID;
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/rename_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -1403,23 +1479,61 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/rename_folder/ (POST) - valid request', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestFolder.FolderID = folderID;
-    //     requestFolder.FolderName = 'New Name';
+      it('/file-manager/rename_folder/ (POST) - missing FolderID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.FolderName = 'New Name';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/rename_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
+
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+      it('/file-manager/rename_folder/ (POST) - valid request', async () => {
+        await resetUser(ResetScope.FOLDERS);
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.FolderID = folderID;
+        requestFolder.FolderName = 'New Name';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/rename_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
 
     //     expect(response.body).toHaveProperty(
     //       'FolderID',
@@ -1436,57 +1550,24 @@ describe('FileManagerController (integration)', () => {
     //   });
     // });
 
-    // describe('move_folder', () => {
-    //   it('/file-manager/move_folder/ (POST) - missing UserID', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.FolderID = folderID;
-    //     requestFolder.ParentFolderID = '';
-    //     requestFolder.Path = '';
+    describe('move_folder', () => {
+      it('/file-manager/move_folder/ (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestFolder = new FolderDTO();
+        requestFolder.FolderID = folderID;
+        requestFolder.ParentFolderID = '';
+        requestFolder.Path = '';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/move_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
-
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
-
-    //   it('/file-manager/move_folder/ (POST) - missing ParentFolderID', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestFolder.FolderID = folderID;
-    //     requestFolder.Path = '';
-
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/move_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/move_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -1505,58 +1586,25 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/move_folder/ (POST) - missing FolderID', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestFolder.Path = '';
-    //     requestFolder.ParentFolderID = '';
+      it('/file-manager/move_folder/ (POST) - missing ParentFolderID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.FolderID = folderID;
+        requestFolder.Path = '';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/move_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
-
-    //     expect(response.status).toBe(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'statusCode',
-    //     );
-    //     expect(response.body).toHaveProperty(
-    //       'message',
-    //     );
-    //     expect(response.body.statusCode).toEqual(
-    //       HttpStatus.BAD_REQUEST,
-    //     );
-    //     expect(response.body.message).toEqual(
-    //       'Invalid request data',
-    //     );
-    //   });
-
-    //   it('/file-manager/move_folder/ (POST) - missing Path', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestFolder.FolderID = folderID;
-    //     requestFolder.ParentFolderID = '';
-
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/move_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/move_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -1575,25 +1623,101 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('/file-manager/move_folder/ (POST) - valid request', async () => {
-    //     const requestFolder = new FolderDTO();
-    //     requestFolder.UserID = parseInt(
-    //       process.env.TEST_USERID,
-    //     );
-    //     requestFolder.FolderID = folderID;
-    //     requestFolder.ParentFolderID =
-    //       'New ParentFolderID';
-    //     requestFolder.Path = 'New Path';
+      it('/file-manager/move_folder/ (POST) - missing FolderID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.Path = '';
+        requestFolder.ParentFolderID = '';
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post('/file_manager/move_folder/')
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestFolder);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/move_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
+
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+      it('/file-manager/move_folder/ (POST) - missing Path', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.FolderID = folderID;
+        requestFolder.ParentFolderID = '';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/move_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
+
+    //     expect(response.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'statusCode',
+    //     );
+    //     expect(response.body).toHaveProperty(
+    //       'message',
+    //     );
+    //     expect(response.body.statusCode).toEqual(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //     expect(response.body.message).toEqual(
+    //       'Invalid request data',
+    //     );
+    //   });
+
+      it('/file-manager/move_folder/ (POST) - valid request', async () => {
+        await resetUser(ResetScope.FOLDERS);
+        const requestFolder = new FolderDTO();
+        requestFolder.UserID = parseInt(
+          process.env.TEST_USERID,
+        );
+        requestFolder.FolderID = folderID;
+        requestFolder.ParentFolderID =
+          'New ParentFolderID';
+        requestFolder.Path = 'New Path';
+
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post('/file_manager/move_folder/')
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestFolder);
 
     //     expect(response.body).toHaveProperty(
     //       'FolderID',
@@ -1619,22 +1743,24 @@ describe('FileManagerController (integration)', () => {
     //   });
     // });
 
-    // describe('retrieve_all_folders', () => {
-    //   it('/file-manager/retrieve_all_folders/ (POST) - missing UserID', async () => {
-    //     const requestDirectoryFoldersDTO =
-    //       new DirectoryFoldersDTO();
+    describe('retrieve_all_folders', () => {
+      it('/file-manager/retrieve_all_folders/ (POST) - missing UserID', async () => {
+        await resetUser(ResetScope.NONE);
+        const requestDirectoryFoldersDTO =
+          new DirectoryFoldersDTO();
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post(
-    //         '/file_manager/retrieve_all_folders/',
-    //       )
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestDirectoryFoldersDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post(
+            '/file_manager/retrieve_all_folders/',
+          )
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestDirectoryFoldersDTO);
 
     //     expect(response.status).toBe(
     //       HttpStatus.BAD_REQUEST,
@@ -1653,23 +1779,25 @@ describe('FileManagerController (integration)', () => {
     //     );
     //   });
 
-    //   it('file-manager/retrieve_all_folders/ (POST) - valid request', async () => {
-    //     const requestDirectoryFoldersDTO =
-    //       new DirectoryFoldersDTO();
-    //     requestDirectoryFoldersDTO.UserID =
-    //       parseInt(process.env.TEST_USERID);
+      it('file-manager/retrieve_all_folders/ (POST) - valid request', async () => {
+        await resetUser(ResetScope.FOLDERS);
+        const requestDirectoryFoldersDTO =
+          new DirectoryFoldersDTO();
+        requestDirectoryFoldersDTO.UserID =
+          parseInt(process.env.TEST_USERID);
 
-    //     const response = await request(
-    //       app.getHttpServer(),
-    //     )
-    //       .post(
-    //         '/file_manager/retrieve_all_folders/',
-    //       )
-    //       .set(
-    //         'Authorization',
-    //         'Bearer ' + process.env.AUTH_BEARER,
-    //       )
-    //       .send(requestDirectoryFoldersDTO);
+        const response = await request(
+          app.getHttpServer(),
+        )
+          .post(
+            '/file_manager/retrieve_all_folders/',
+          )
+          .set(
+            'Authorization',
+            'Bearer ' + process.env.AUTH_BEARER,
+          )
+          .set('isTest', 'true')
+          .send(requestDirectoryFoldersDTO);
 
     //     expect(response.body).toHaveProperty(
     //       'UserID',

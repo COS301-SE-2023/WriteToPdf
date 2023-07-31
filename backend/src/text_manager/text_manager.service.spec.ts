@@ -6,6 +6,7 @@ import { TextManagerService } from './text_manager.service';
 import { TextractService } from '../textract/textract.service';
 import { AssetsService } from '../assets/assets.service';
 import { S3Service } from '../s3/s3.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Asset } from '../assets/entities/asset.entity';
@@ -31,6 +32,7 @@ describe('TextManagerService', () => {
           TextManagerService,
           AssetsService,
           S3Service,
+          S3ServiceMock,
           {
             provide: getRepositoryToken(Asset),
             useClass: Repository,

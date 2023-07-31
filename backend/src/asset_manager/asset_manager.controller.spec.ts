@@ -7,6 +7,7 @@ import { AssetManagerService } from './asset_manager.service';
 import { ImageManagerService } from '../image_manager/image_manager.service';
 import { AssetsService } from '../assets/assets.service';
 import { S3Service } from '../s3/s3.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { TextManagerService } from '../text_manager/text_manager.service';
 import { Asset } from '../assets/entities/asset.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -34,6 +35,7 @@ describe('AssetManagerController', () => {
           ImageManagerService,
           AssetsService,
           S3Service,
+          S3ServiceMock,
           TextManagerService,
           TextractService,
           {
@@ -69,7 +71,7 @@ describe('AssetManagerController', () => {
         .mockResolvedValue(assetDTO);
 
       expect(() =>
-        controller.upload_asset(assetDTO),
+        controller.upload_asset(assetDTO, ''),
       ).toThrowError(
         new HttpException(
           'Invalid request data: UserID missing',
@@ -95,7 +97,7 @@ describe('AssetManagerController', () => {
         .mockResolvedValue(assetDTO);
 
       expect(() =>
-        controller.upload_asset(assetDTO),
+        controller.upload_asset(assetDTO, ''),
       ).toThrowError(
         new HttpException(
           'Invalid request data: ParentFolderID missing',
@@ -113,6 +115,7 @@ describe('AssetManagerController', () => {
       assetDTO.AssetID = 'test';
       assetDTO.UserID = 1;
       assetDTO.ParentFolderID = '';
+      const isTest = '';
 
       jest
         .spyOn(
@@ -122,12 +125,15 @@ describe('AssetManagerController', () => {
         .mockResolvedValue(assetDTO);
 
       const response =
-        await controller.upload_asset(assetDTO);
+        await controller.upload_asset(
+          assetDTO,
+          isTest,
+        );
 
       expect(response).toBe(assetDTO);
       expect(
         assetManagerService.upload_asset,
-      ).toHaveBeenCalledWith(assetDTO);
+      ).toHaveBeenCalledWith(assetDTO, false);
     });
   });
 
@@ -136,7 +142,10 @@ describe('AssetManagerController', () => {
       const retrieveAllDTO = new RetrieveAllDTO();
 
       expect(() =>
-        controller.retrieve_all(retrieveAllDTO),
+        controller.retrieve_all(
+          retrieveAllDTO,
+          '',
+        ),
       ).toThrowError(
         new HttpException(
           'Invalid request data: UserID missing',
@@ -146,9 +155,9 @@ describe('AssetManagerController', () => {
     });
 
     it('should throw an error if ParentFolderID is missing', async () => {
-      const assetDTO = new AssetDTO();
-      assetDTO.AssetID = 'test';
-      assetDTO.UserID = 1;
+      const asset = new Asset();
+      asset.AssetID = 'test';
+      asset.UserID = 1;
 
       const retrieveAllDTO = new RetrieveAllDTO();
       retrieveAllDTO.UserID = 1;
@@ -158,10 +167,13 @@ describe('AssetManagerController', () => {
           assetManagerService,
           'retrieve_all',
         )
-        .mockResolvedValue([assetDTO]);
+        .mockResolvedValue([asset]);
 
       expect(() =>
-        controller.retrieve_all(retrieveAllDTO),
+        controller.retrieve_all(
+          retrieveAllDTO,
+          '',
+        ),
       ).toThrowError(
         new HttpException(
           'Invalid request data: ParentFolderID missing',
@@ -171,9 +183,9 @@ describe('AssetManagerController', () => {
     });
 
     it('should return an array of AssetDTOs', async () => {
-      const assetDTO = new AssetDTO();
-      assetDTO.AssetID = 'test';
-      assetDTO.UserID = 1;
+      const asset = new Asset();
+      asset.AssetID = 'test';
+      asset.UserID = 1;
 
       const retrieveAllDTO = new RetrieveAllDTO();
       retrieveAllDTO.UserID = 1;
@@ -184,17 +196,21 @@ describe('AssetManagerController', () => {
           assetManagerService,
           'retrieve_all',
         )
-        .mockResolvedValue([assetDTO]);
+        .mockResolvedValue([asset]);
 
       const response =
         await controller.retrieve_all(
           retrieveAllDTO,
+          '',
         );
 
-      expect(response).toEqual([assetDTO]);
+      expect(response).toEqual([asset]);
       expect(
         assetManagerService.retrieve_all,
-      ).toHaveBeenCalledWith(retrieveAllDTO);
+      ).toHaveBeenCalledWith(
+        retrieveAllDTO,
+        false,
+      );
     });
   });
 
@@ -212,17 +228,24 @@ describe('AssetManagerController', () => {
         .mockResolvedValue(assetDTO);
 
       const response =
-        await controller.retrieve_one(assetDTO);
+        await controller.retrieve_one(
+          assetDTO,
+          '',
+        );
 
       expect(response).toBe(assetDTO);
       expect(
         assetManagerService.retrieve_one,
-      ).toHaveBeenCalledWith(assetDTO);
+      ).toHaveBeenCalledWith(assetDTO, false);
     });
   });
 
   describe('rename_asset', () => {
     it('should return an AssetDTO', async () => {
+      const asset = new Asset();
+      asset.AssetID = 'test';
+      asset.UserID = 1;
+
       const assetDTO = new AssetDTO();
       assetDTO.AssetID = 'test';
       assetDTO.UserID = 1;
@@ -232,15 +255,15 @@ describe('AssetManagerController', () => {
           assetManagerService,
           'rename_asset',
         )
-        .mockResolvedValue(assetDTO);
+        .mockResolvedValue(asset);
 
       const response =
         await controller.rename_asset(assetDTO);
 
-      expect(response).toBe(assetDTO);
+      expect(response).toBe(asset);
       expect(
         assetManagerService.rename_asset,
-      ).toHaveBeenCalledWith(assetDTO);
+      ).toHaveBeenCalledWith(asset);
     });
   });
 
@@ -258,12 +281,15 @@ describe('AssetManagerController', () => {
         .mockResolvedValue(assetDTO);
 
       const response =
-        await controller.delete_asset(assetDTO);
+        await controller.delete_asset(
+          assetDTO,
+          '',
+        );
 
       expect(response).toBe(assetDTO);
       expect(
         assetManagerService.delete_asset,
-      ).toHaveBeenCalledWith(assetDTO);
+      ).toHaveBeenCalledWith(assetDTO, false);
     });
   });
 });
