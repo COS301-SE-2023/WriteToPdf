@@ -107,11 +107,11 @@
   </div>
 
   <div class="editor">
-    <p-button class="showAssetSidebar" icon="pi pi-arrow-right" (click)="hideSideBar()"></p-button>
+    <p-button class="showAssetSidebar" icon="pi pi-arrow-right" (click)="hideSideBar()" title="Show Asset Bar"></p-button>
     <div class="assetSidebar">
       <div class="sidebarHeaderWrapper">
         <div class="sidebarHeader">
-          <div class="sidebarHeaderIconWrapper backWrapper" (click)="hideSideBar()">
+          <div class="sidebarHeaderIconWrapper backWrapper" (click)="hideSideBar()" title="Hide Asset Bar">
             <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="" />
           </div>
 
@@ -143,7 +143,7 @@
             </div>
           </div>
 
-          <div class="sidebarHeaderIconWrapper" (click)="refreshSidebar()">
+          <div class="sidebarHeaderIconWrapper" (click)="refreshSidebar()" title="Refresh">
             <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/refresh.svg" alt="" />
           </div>
         </div>
@@ -170,38 +170,34 @@
             />
           </div>
 
-          <div class="deleteAsset" [ngClass]="{'deleteAssetHover': obj.Format === 'text'}" title="View Text">
+          <div class="deleteAsset" [ngClass]="{'deleteAssetHover': obj.Format === 'text'}" title="View Text" (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)">
             <img
               *ngIf="obj.Format === 'text'"
               class="copyAssetIcon"
-              (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)"
               src="assets/Icons/editIcons/view.png"
               alt=""
             />
           </div>
 
-          <div class="copyAsset" title="Delete Asset">
+          <div class="copyAsset" title="Delete Asset" (click)="deleteAsset(obj.AssetID)">
             <img
               class="deleteAssetIcon"
               src="assets/Icons/editIcons/delete.png"
               alt=""
-              (click)="deleteAsset(obj.AssetID)"
             />
-
           </div>
 
-          <div class="copyTextAsset" title="Copy">
+          <div class="copyTextAsset" title="Copy Image" *ngIf="obj.Format === 'image'" (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)">
             <img
-            *ngIf="obj.Format === 'image'"
               class="copyTextIcon"
-              (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)"
               src="assets/Icons/editIcons/copy.svg"
               alt=""
             />
+          </div>
+          
+          <div *ngIf="obj.Format==='text'" class="copyTextAsset" title="Copy All Text" (click)="copyAllText(obj.AssetID, obj.Format, obj.TextID)">
             <img
-            *ngIf="obj.Format === 'text'"
               class="copyTextIcon"
-              (click)="copyAllText(obj.AssetID, obj.Format, obj.TextID)"
               src="assets/Icons/editIcons/copy.svg"
               alt=""
             />
