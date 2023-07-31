@@ -23,10 +23,11 @@ export class NodeService {
     private http: HttpClient,
     private fileService: FileService,
     private folderService: FolderService
-  ) {}
+  ) { }
 
   private files: MarkdownFileDTO[] = [];
   private folders: FolderDTO[] = [];
+  private nameNumber = 0;
 
   /**
    * @Backend, below is a function with data that showcases the
@@ -75,8 +76,9 @@ export class NodeService {
       key: string | undefined;
       data: {
         name: string | undefined;
-        size: number | undefined;
+        size: string | undefined;
         type: string | undefined;
+        key: string | undefined;
       };
       children?: [{}];
     }[] = [];
@@ -102,7 +104,12 @@ export class NodeService {
     for (let file of rootFiles) {
       directoryObject.push({
         key: file.MarkdownID,
-        data: { name: file.Name, size: file.Size, type: 'file' },
+        data: {
+          name: file.Name + '!#$' + (this.nameNumber++),
+          size: this.getSize(file.Size),
+          type: 'file',
+          key: file.MarkdownID,
+        },
       });
     }
 
@@ -119,12 +126,22 @@ export class NodeService {
     if (folders.length + files.length === 0) {
       return {
         key: folder.FolderID,
-        data: { name: folder.FolderName, size: 0, type: 'folder' },
+        data: {
+          name: folder.FolderName + '!#$' + (this.nameNumber++),
+          size: '-',
+          type: 'folder',
+          key: folder.FolderID,
+        },
       };
     } else {
       let folderObject = {
         key: folder.FolderID,
-        data: { name: folder.FolderName, size: 0, type: 'folder' },
+        data: {
+          name: folder.FolderName + '!#$' + (this.nameNumber++),
+          size: '-',
+          type: 'folder',
+          key: folder.FolderID,
+        },
         children: [{}],
       };
 
@@ -133,7 +150,12 @@ export class NodeService {
       for (let file of files) {
         folderObject.children.push({
           key: file.MarkdownID,
-          data: { name: file.Name, size: file.Size, type: 'file' },
+          data: {
+            name: file.Name + '!#$' + (this.nameNumber++),
+            size: this.getSize(file.Size),
+            type: 'file',
+            key: file.MarkdownID,
+          },
         });
       }
 
@@ -147,7 +169,21 @@ export class NodeService {
     }
   }
 
-  private findAllChildrenFiles(parentID: string | undefined) {
+  private getSize(size: number) {
+    if (size > 1000000000) {
+      return (size / 1000000000).toFixed(2) + ' GB';
+    } else if (size > 1000000) {
+      return (size / 1000000).toFixed(2) + ' MB';
+    }
+    else if (size > 1000) {
+      return (size / 1000).toFixed(2) + ' KB';
+    }
+    else {
+      return size + ' B';
+    }
+  }
+
+  public findAllChildrenFiles(parentID: string | undefined) {
     let children: any[] = [];
     for (let file of this.files) {
       if (file.ParentFolderID === parentID) {
@@ -157,7 +193,7 @@ export class NodeService {
     return children;
   }
 
-  private findAllChildrenFolders(parentID: string | undefined) {
+  public findAllChildrenFolders(parentID: string | undefined) {
     let children: any[] = [];
     for (let folder of this.folders) {
       if (folder.ParentFolderID === parentID) {
@@ -212,7 +248,7 @@ export class NodeService {
     return Promise.resolve(await this.getTreeTableNodesData());
   }
 
-  getFileDTOByID(MarkdownID: string): MarkdownFileDTO {
+  getFileDTOByID(MarkdownID: string | undefined | null): MarkdownFileDTO {
     for (let file of this.files) {
       if (file.MarkdownID === MarkdownID) {
         return file;
@@ -221,13 +257,27 @@ export class NodeService {
     return new MarkdownFileDTO();
   }
 
-  getFolderDTOByID(FolderID: string): FolderDTO {
+  getFolderDTOByID(FolderID: string | undefined | null): FolderDTO {
     for (let folder of this.folders) {
       if (folder.FolderID === FolderID) {
         return folder;
       }
     }
     return new FolderDTO();
+  }
+
+  checkType(KeyID: string | undefined | null): string {
+    for (let file of this.files) {
+      if (file.MarkdownID === KeyID) {
+        return 'file';
+      }
+    }
+    for (let folder of this.folders) {
+      if (folder.FolderID === KeyID) {
+        return 'folder';
+      }
+    }
+    return '';
   }
 
   addFile(file: MarkdownFileDTO) {
@@ -238,7 +288,7 @@ export class NodeService {
     this.folders.push(folder);
   }
 
-  removeFile(markdownID: string) {
+  removeFile(markdownID: string | undefined) {
     // this.files.splice(this.files.indexOf(file), 1);
     for (let i = 0; i < this.files.length; i++) {
       if (this.files[i].MarkdownID === markdownID) {
@@ -247,13 +297,27 @@ export class NodeService {
     }
   }
 
-  removeFolder(folderID: string) {
+  removeFolder(folderID: string | undefined) {
     // this.folders.splice(this.folders.indexOf(folder), 1);
     for (let i = 0; i < this.folders.length; i++) {
       if (this.folders[i].FolderID === folderID) {
         this.folders.splice(i, 1);
       }
     }
+  }
+
+  getParentFolderByID(ID: string | undefined | null): FolderDTO {
+    for (let folder of this.folders) {
+      if (folder.FolderID === ID) {
+        return folder;
+      }
+    }
+    for (let file of this.files) {
+      if (file.MarkdownID === ID) {
+        return this.getFolderDTOByID(file.ParentFolderID);
+      }
+    }
+    return new FolderDTO();
   }
 
   getUniqueName(name: string, path: string | undefined, type: string): string {
@@ -273,6 +337,19 @@ export class NodeService {
     return newName;
   }
 
+  checkIfChildFolder(destinationDirectory: FolderDTO, movingDirectory: FolderDTO): boolean {
+    if (destinationDirectory.ParentFolderID === '') return false;
+    let parentFolder = this.getFolderDTOByID(destinationDirectory.ParentFolderID);
+    while (parentFolder.FolderID !== movingDirectory.FolderID) {
+      if (!parentFolder.FolderID) {
+        return false;
+      }
+      parentFolder = this.getFolderDTOByID(parentFolder.ParentFolderID);
+    }
+
+    return true;
+  }
+
   private checkIfFolderExists(name: string, path: string | undefined): boolean {
     for (let folder of this.folders) {
       if (folder.FolderName === name && folder.Path === path) {
@@ -290,4 +367,6 @@ export class NodeService {
     }
     return false;
   }
+
+
 }

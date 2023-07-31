@@ -3,22 +3,11 @@ import {
   TestingModule,
 } from '@nestjs/testing';
 import { ConversionService } from './conversion.service';
-import { ImportDTO } from '../file_manager/dto/import.dto';
-import { ExportDTO } from '../file_manager/dto/export.dto';
-import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
-import {
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
-import {
-  convertTextToDelta,
-  convertDeltaToHtml,
-} from 'node-quill-converter';
-
-jest.mock('node-quill-converter', () => ({
-  convertTextToDelta: jest.fn(),
-  convertDeltaToHtml: jest.fn(),
-}));
+import puppeteer from 'puppeteer'; //PDF converter
+import * as cheerio from 'cheerio'; //Plain text converter
+import * as TurndownService from 'turndown'; //Markdown converter
+import * as sharp from 'sharp'; //jpeg converter
+import * as markdownIt from 'markdown-it'; //Markdown converter
 
 describe('ConversionService', () => {
   let service: ConversionService;
@@ -33,191 +22,191 @@ describe('ConversionService', () => {
       ConversionService,
     );
   });
-  describe('convertFrom', () => {
-    it('should accept txt', () => {
-      const importDTO = new ImportDTO();
-      importDTO.Type = 'txt';
+
+  describe('generatePdf', () => {
+    it('should generate a PDF', async () => {
+      const mockPage = {
+        setViewport: jest.fn(),
+        setContent: jest.fn(),
+        pdf: jest
+          .fn()
+          .mockResolvedValue('fake_pdf_data'),
+        close: jest.fn(),
+      };
+
+      const mockBrowser = {
+        newPage: jest.fn(() => mockPage),
+        close: jest.fn(),
+      };
 
       jest
-        .spyOn(service, 'convertFromText')
-        .mockReturnValue(new MarkdownFileDTO());
+        .spyOn(puppeteer, 'launch')
+        .mockResolvedValue(mockBrowser as any);
 
-      const markdownFileDTO =
-        service.convertFrom(importDTO);
+      const html =
+        '<html><body><h1>Hello, World!</h1></body></html>';
+      const pdf = await service.generatePdf(html);
 
-      expect(markdownFileDTO).toBeDefined();
       expect(
-        service.convertFromText,
-      ).toHaveBeenCalledWith(importDTO);
-    });
-
-    it('should throw an error when unsupported type is passed', () => {
-      const importDTO = new ImportDTO();
-      importDTO.Type = 'unsupported';
-
-      try {
-        service.convertFrom(importDTO);
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.getStatus()).toBe(
-          HttpStatus.BAD_REQUEST,
-        );
-        expect(error.getResponse()).toEqual(
-          'Conversion from unsupported is not supported',
-        );
-      }
+        puppeteer.launch,
+      ).toHaveBeenCalledTimes(1);
     });
   });
-  describe('convertTo', () => {
-    it('should accept txt', () => {
-      const exportDTO = new ExportDTO();
-      exportDTO.Type = 'txt';
+
+  describe('convertHtmlToTxt', () => {
+    it('should generate plain text', () => {
+      const html =
+        '<html><body><h1>Hello, World!</h1></body></html>';
+
+      jest.spyOn(cheerio, 'load');
+
+      const txt = service.convertHtmlToTxt(html);
+
+      expect(cheerio.load).toHaveBeenCalledTimes(
+        1,
+      );
+    });
+  });
+
+  describe('convertHtmlToMarkdown', () => {
+    it('should convert HTML to Markdown', () => {
+      const html = '<p>Hello, World!</p>';
+
+      const markdown =
+        service.convertHtmlToMarkdown(html);
+      expect(markdown).toEqual('Hello, World!');
+    });
+  });
+
+  describe('convertHtmlToJpeg', () => {
+    it('should convert HTML to Jpeg format', async () => {
+      const mockBuffer: Buffer = await sharp({
+        create: {
+          width: 100,
+          height: 100,
+          channels: 4, // 4 channels for RGBA
+          background: {
+            r: 255,
+            g: 255,
+            b: 255,
+            alpha: 1,
+          }, // White background
+        },
+      })
+        .png()
+        .toBuffer();
+      const mockPage = {
+        setViewport: jest.fn(),
+        setContent: jest.fn(),
+        close: jest.fn(),
+        screenshot: jest
+          .fn()
+          .mockReturnValue(mockBuffer),
+        evaluate: jest
+          .fn()
+          .mockImplementation(() => {
+            return { width: 100, height: 100 };
+          }),
+      };
+
+      const mockBrowser = {
+        newPage: jest.fn(() => mockPage),
+        close: jest.fn(),
+      };
 
       jest
-        .spyOn(service, 'convertToTxt')
-        .mockReturnValue(new ExportDTO());
+        .spyOn(puppeteer, 'launch')
+        .mockResolvedValue(mockBrowser as any);
 
-      const txt = service.convertTo(exportDTO);
+      const html = '<p>Hello, World!</p>';
 
-      expect(txt).toBeDefined();
-      expect(
-        service.convertToTxt,
-      ).toHaveBeenCalledWith(exportDTO);
-    });
+      const response =
+        await service.convertHtmlToJpeg(html);
 
-    it('should throw an error when unsupported type is passed', () => {
-      const exportDTO = new ExportDTO();
-      exportDTO.Type = 'unsupported';
-
-      try {
-        service.convertTo(exportDTO);
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.getStatus()).toBe(
-          HttpStatus.BAD_REQUEST,
-        );
-        expect(error.getResponse()).toEqual(
-          'Conversion to unsupported is not supported',
-        );
-      }
+      const expectedJpegImage = await sharp(
+        mockBuffer,
+      )
+        .toFormat('jpeg')
+        .toBuffer();
+      expect(response).toEqual(expectedJpegImage);
     });
   });
-  describe('convertFromText', () => {
-    it('should convert importDTO to markdownFileDTO with correct properties', async () => {
-      const textDTO: ImportDTO = {
-        Content: 'Sample content\n',
-        Name: 'Sample Name',
-        Path: 'Sample Path',
-        ParentFolderID: 'Sample Folder ID',
-        UserID: 0,
-        MarkdownID: 'Markdown ID',
-        Type: 'Txt',
-      };
 
-      const delta = {
-        ops: [
-          {
-            insert: 'Sample content\n',
-          },
-        ],
-      };
+  it('convertHtmlToPng', async () => {
+    const mockBuffer: Buffer = await sharp({
+      create: {
+        width: 100,
+        height: 100,
+        channels: 4, // 4 channels for RGBA
+        background: {
+          r: 255,
+          g: 255,
+          b: 255,
+          alpha: 1,
+        }, // White background
+      },
+    })
+      .png()
+      .toBuffer();
 
-      (
-        convertTextToDelta as jest.Mock
-      ).mockReturnValue(delta);
+    const mockBrowser = {
+      newPage: jest.fn(() => mockPage),
+      close: jest.fn(),
+    };
 
-      const result =
-        service.convertFromText(textDTO);
+    jest
+      .spyOn(puppeteer, 'launch')
+      .mockResolvedValue(mockBrowser as any);
 
-      expect(result).toBeInstanceOf(
-        MarkdownFileDTO,
-      );
-      expect(result.Content).toBe(
-        JSON.stringify(delta),
-      );
-      expect(result.Name).toBe(textDTO.Name);
-      expect(result.Path).toBe(textDTO.Path);
-      expect(result.ParentFolderID).toBe(
-        textDTO.ParentFolderID,
-      );
-      expect(result.UserID).toBe(textDTO.UserID);
-    });
-
-    it('should convert empty importDTO to markdownFileDTO with empty Content', async () => {
-      const textDTO: ImportDTO = {
-        Content: '',
-        Name: 'Sample Name',
-        Path: 'Sample Path',
-        ParentFolderID: 'Sample Folder ID',
-        UserID: 0,
-        MarkdownID: 'Markdown ID',
-        Type: 'txt',
-      };
-
-      const delta = {
-        ops: [{ insert: '\n' }],
-      };
-
-      (
-        convertTextToDelta as jest.Mock
-      ).mockReturnValue(delta);
-
-      const result =
-        service.convertFromText(textDTO);
-
-      expect(result).toBeInstanceOf(
-        MarkdownFileDTO,
-      );
-      expect(result.Content).toBe(
-        JSON.stringify(delta),
-      );
-      expect(result.Name).toBe(textDTO.Name);
-      expect(result.Path).toBe(textDTO.Path);
-      expect(result.ParentFolderID).toBe(
-        textDTO.ParentFolderID,
-      );
-      expect(result.UserID).toBe(textDTO.UserID);
-    });
-  });
-  describe('convertToTxt', () => {
-    it('should convert markdownFileDTO to exportDTO with correct properties', async () => {
-      const markdownFileDTO: ExportDTO = {
-        Content: JSON.stringify({
-          ops: [
-            {
-              insert: 'Sample content\n',
-            },
-          ],
+    const mockPage = {
+      setContent: jest.fn(),
+      close: jest.fn(),
+      screenshot: jest
+        .fn()
+        .mockReturnValue(mockBuffer),
+      evaluate: jest
+        .fn()
+        .mockImplementation(() => {
+          return { width: 100, height: 100 };
         }),
-        Name: 'Sample Name',
-        UserID: 0,
-        MarkdownID: 'Markdown ID',
-        Type: 'txt',
-      };
+      setViewport: jest.fn(),
+    };
 
-      const html = '<p>Sample content</p>';
+    const html = '<p>Hello, World!</p>';
 
-      const text = 'Sample content\n';
+    const response =
+      await service.convertHtmlToPng(html);
 
-      (
-        convertDeltaToHtml as jest.Mock
-      ).mockReturnValue(html);
+    expect(response).toEqual(mockBuffer);
+  });
 
-      const result = service.convertToTxt(
-        markdownFileDTO,
+  describe('convertTxtToHtml', () => {
+    it('should convert plain text to HTML', () => {
+      const txt = 'Hello\n World!';
+
+      const html = service.convertTxtToHtml(txt);
+      expect(html).toEqual(
+        '<p>Hello<br> World!</p>',
       );
+    });
+  });
 
-      expect(result).toBeInstanceOf(ExportDTO);
-      expect(result.Content).toBe(text);
-      expect(result.Name).toBe(
-        markdownFileDTO.Name,
-      );
+  describe('convertMdToHtml', () => {
+    it('should convert Markdown to HTML', () => {
+      const markdown = 'Hello\\n World!';
+      const html = '<p>Hello<br> World!</p>';
+
+      jest
+        .spyOn(markdownIt.prototype, 'render')
+        .mockReturnValue(html);
+
+      const response =
+        service.convertMdToHtml(markdown);
+
+      expect(response).toEqual(html);
+      expect(
+        markdownIt.prototype.render,
+      ).toHaveBeenCalledWith(markdown);
     });
   });
 });

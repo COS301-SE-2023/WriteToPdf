@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { FileService } from '../services/file.service';
 import { NodeService } from '../services/home.service';
@@ -20,7 +20,9 @@ interface UploadEvent {
 })
 export class FileUploadPopupComponent {
   uploadedFiles: any[] = [];
-
+  fromEditPage: boolean = false;
+  fromHomepage: boolean = false;
+  @Input() acceptedTypes = '.md,.txt,';
   constructor(
     private dialogRef: DynamicDialogRef,
     private messageService: MessageService,
@@ -28,7 +30,7 @@ export class FileUploadPopupComponent {
     private nodeService: NodeService,
     private editService: EditService,
     @Inject(Router) private router: Router
-  ) { }
+  ) {}
 
   onUpload(event: any) {
     const file = event.files[0];
@@ -36,10 +38,8 @@ export class FileUploadPopupComponent {
     this.uploadedFiles.push(file);
     reader.onload = (e: any) => {
       const fileContent = e.target.result;
-      console.log(fileContent);
       const name = file.name.split('.')[0];
       const type = file.name.split('.')[1];
-      console.log(type);
       this.fileService
         .importDocument(name, '', '', fileContent, type)
         .then((response) => {

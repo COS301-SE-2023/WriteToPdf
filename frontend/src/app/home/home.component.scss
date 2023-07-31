@@ -2,34 +2,50 @@
 
 .container {
   width: 100%;
+  z-index: -4;
   // overflow-x: auto;
   // white-space: nowrap;
 }
 
+.fileOperations-container {}
+
+.fileOperations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+}
+
+.fileOperations-entity {
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
 //Code Section Header Styling
 .header {
-  margin-top:-10px;
-  margin-left:-8px;
+  top: 0;
+  // margin-top:-10px;
+  // margin-left:-8px;
   position: fixed;
   display: flex;
   grid-auto-flow: column;
   //overflow-x: auto;
-  background-image: linear-gradient(to left, #ffffff, #e7e7e7);
-  //border-bottom: 1px solid #ccc;
+  background-image: linear-gradient(to left, #ffffff, #f7f9fc);
+  border-bottom: 1px solid #ccc;
   //box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  border-image:linear-gradient(to left, #ffffff, $dark-grey) ;
-  border-image-width: 0 0 1px;
-  border-image-slice:1;
+
   width: 100%;
   height: 112px;
   //justify-content: space-between;
-  z-index: 10;
-  margin:0;
+  z-index: 5;
+  margin: 0;
 }
-.speedDialEditMenu{
 
-  margin-right:100px;
-  margin-top:24px;
+.speedDialEditMenu {
+  margin-left: auto;
+  margin-right: 160px;
+  margin-top: 24px;
 
 }
 
@@ -47,24 +63,25 @@
 
 .headerNavigation {
   //TODO rename this to something more relevant
-  display: flex;
+  // display: flex;
   margin: auto;
-  margin-left: 153px;
+  margin-left: 10px;
+  flex-grow: 1;
 }
 
 /**
 @Julian, please help me to get this menubar floating in line with the left sidebar's edge, it does not want
 to co-operate.
  */
-.menuBar {
-
-  // margin-left: 550px;
-  position:relative;
-  .p-menuitem-link{
-    z-index:9999999999;
-  }
-
+.p-menubar {
+  width: 400px;
+  //min-width: 400px;
+  position: relative;
+  border: 0;
+  z-index: 10;
+  background-color: #00000000;
 }
+
 
 
 //END Code section header styling
@@ -84,41 +101,67 @@ to co-operate.
 
 .leftSideBarWrapper {
   //Positioning
-  z-index:0;
+  z-index: 3;
   position: fixed;
   width: 245px;
   height: 110%;
   left: 0px;
-
   top: 112px;
   // Colour
-  overflow:auto;
-  background-color: white;
+  overflow: auto;
   opacity: 100%;
+  box-shadow: 3px 0px 5px rgba(0, 0, 0, 0.1);
   /* Main Colours/Dark Gray */
   border-width: 0px 1px 1px 0px;
   border-style: solid;
   border-color: #6F6F6F;
+  z-index: 2;
 }
 
-.directoryTree{
+.p-tree {
+  background: #00000000 !important;
+  border: none !important;
+}
+
+.directoryTree {
+
   overflow: auto;
+  padding-top: 9px;
+  z-index: 3;
+}
+
+.cdk-drag {
+  pointer-events: auto;
 }
 
 .leftSideBarHeading {
   padding-top: 15px;
-  padding-left: 50px;
+  display: flex;
+  justify-content: center;
+  //  padding-left: 50px;
 }
 
 .leftSideBarTools .icon {
-  width: 30px;
-  height: 30px;
+  width: 42px;
+  height: 42px;
   padding: 4px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.leftSideBarTools .icon:hover {
+  background-color: darken($light-grey, 10%);
+  transition: 0.5s;
 }
 
 .leftSideBarTools {
   padding: 5px;
+  gap: 15px;
+  display: flex;
+  //  margin-left:10px;
+  justify-content: center;
 }
+
 
 
 
@@ -128,9 +171,10 @@ to co-operate.
   margin-left: 250px;
   margin-right: 150px;
   margin-top: 120px;
-  width: auto;
   display: inline-block;
   z-index: 0;
+  position: absolute;
+  overflow-x: hidden;
 }
 
 .mainWindowHome .directoryContents {
@@ -143,20 +187,27 @@ to co-operate.
   padding: 4px;
   width: auto;
 }
+
 // Below is the styling for the toolbar above the files in the main window
-.toolbarItem{
-  padding-left:10px;
-  padding-right:10px;
- }
-.p-toolbar{
-  background-color: white;
+.toolbarItem {
+  padding-left: 10px;
+  padding-right: 10px;
 }
+
+.p-toolbar {
+  background-color: white;
+  //  padding-top:10px;
+}
+
 // Below is the styling for the searchBar
 .searchBar {
-  margin-top: 15px;
+  margin-top: 18px;
+  margin-left: 15px;
+  margin-right: 15px;
   box-sizing: border-box;
   position: relative;
   padding: 10px;
+  margin-left: 8px;
   width: auto;
   background: #F7F7F7;
   /* Main Colours/Dark Gray */
@@ -184,10 +235,97 @@ textarea {
   padding: 5px;
 }
 
-.searchBar:focus-within{
+.searchBar:focus-within {
   border: 1.3px solid black;
 }
 
-.moveDialogueContainer{
+.moveDialogueContainer {
   display: flex;
+}
+
+.drag-hover:hover {
+  // background-color: lightgray !important;
+  /* Add other styles as needed */
+  // z-index: 1;
+}
+
+.non-selectable {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+// .dragging{
+//   background-color: lightgray !important;
+//   /* Add other styles as needed */
+//   z-index: 21 !important;
+//   display:inline-block;
+//   width: 100px !important;
+// }
+
+// .dragging:nth-child(1)> :nth-child(2),
+// .dragging:nth-child(1)> :nth-child(3) {
+//   display: none !important;
+// }
+
+.dropdownWrapper {
+  margin: 10px;
+}
+
+.dropdownInput {
+  display: flex;
+  transition: 0.5s;
+  margin: 0;
+  background-color: lighten($light-grey, 10%);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.dropdownText {
+  margin: auto;
+  white-space: nowrap;
+}
+
+.dropdownContent {
+  display: none;
+  transition: 0.5s;
+  position: fixed;
+  background-color: lighten($light-grey, 10%);
+  min-width: 100px;
+  // margin-left: 15px;
+  // margin-top: -15px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+
+  border-radius: 5px;
+}
+
+.dropdownInput:hover {
+  cursor: pointer;
+  background-color: darken($light-grey, 10%);
+}
+
+.dropdownOptions {
+  margin: 0;
+  padding: 0;
+  border-radius: 5px;
+  vertical-align: middle;
+}
+
+.dropdownIcon1 {
+  margin: auto;
+  height: 20px;
+  margin-left: 0;
+  margin-right: 5px;
+}
+
+.dropdownIcon2 {
+  margin: auto;
+  height: 20px;
+  margin-left: 2px;
+  margin-right: 7px;
+}
+
+.uploadAssetIcon:hover .dropdownContent {
+  display: block;
+  cursor: pointer;
 }

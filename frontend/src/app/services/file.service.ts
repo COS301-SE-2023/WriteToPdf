@@ -22,7 +22,7 @@ export class FileService {
     private userService: UserService,
     private editService: EditService,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   saveDocument(
     content: string | undefined,
@@ -32,7 +32,6 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSaveData(content, markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 200) {
             this.messageService.add({
               severity: 'success',
@@ -52,16 +51,14 @@ export class FileService {
     markdownID: string | undefined,
     path: string | undefined
   ): Observable<HttpResponse<any>> {
-
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/save_file`;
     const body = new MarkdownFileDTO();
 
     body.UserID = this.userService.getUserID();
-    body.Content = this.encryptDocument(JSON.stringify(content));
+    body.Content = this.encryptDocument(content);
     body.MarkdownID = markdownID;
     body.Path = path;
-
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -76,7 +73,6 @@ export class FileService {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveData(markdownID, path).subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 200) {
             resolve(this.decryptDocument(response.body.Content));
           } else {
@@ -118,7 +114,6 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendCreateData(name, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 200) {
             this.messageService.add({
               severity: 'success',
@@ -165,12 +160,8 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 200) {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'File deleted successfully',
-            });
+
             resolve(true);
           } else {
             resolve(false);
@@ -206,7 +197,6 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameData(markdownFileID, fileName, path).subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 200) {
             this.messageService.add({
               severity: 'success',
@@ -251,7 +241,6 @@ export class FileService {
     return new Promise<MarkdownFileDTO>((resolve, reject) => {
       this.sendMoveData(markdownID, path, parentFolderID).subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 200) {
             this.messageService.add({
               severity: 'success',
@@ -362,13 +351,11 @@ export class FileService {
       this.sendImportData(name, path, parentFolderID, content, type).subscribe({
         next: (response: HttpResponse<any>) => {
           const outputFile = new MarkdownFileDTO();
-
           if (response.status === 200) {
             this.messageService.add({
               severity: 'success',
               summary: 'File imported successfully',
             });
-
             outputFile.Name = response.body.Name;
             outputFile.Path = response.body.Path;
             outputFile.ParentFolderID = response.body.ParentFolderID;
@@ -377,7 +364,6 @@ export class FileService {
             outputFile.Size = response.body.Size;
             outputFile.DateCreated = response.body.DateCreated;
             outputFile.LastModified = response.body.LastModified;
-
             resolve(outputFile);
           } else {
             resolve(outputFile);
@@ -405,6 +391,7 @@ export class FileService {
     body.Content = this.encryptDocument(content);
     body.Type = type;
 
+    console.log('body',body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -412,31 +399,36 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  exportDocument(
-    markdownID: string,
-    name: string,
-    content: string,
-    type: string
+  exportDocumentToNewFileType(
+    markdownID: string | undefined,
+    name: string | undefined,
+    content: string | undefined,
+    type: string | undefined
   ): void {
+    if (type === 'html') {
+      this.downloadAsHtmlFile(content, name);
+      return;
+    }
     this.sendExportData(markdownID, name, content, type).subscribe({
       next: (response: HttpResponse<any>) => {
         if (response.status === 200) {
+          const fileData: number[] = response.body.data;
+          const uint8Array = new Uint8Array(fileData);
+          const blob = new Blob([uint8Array], { type: 'application/pdf' });
+
+          // Download the File
+          const fileURL = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = fileURL;
+          link.download = name + '.' + type;
+          link.click();
+          URL.revokeObjectURL(fileURL);
+
+          // Show success message
           this.messageService.add({
             severity: 'success',
             summary: 'Export successful',
           });
-          const fileContent = this.decryptDocument(response.body.Content);
-          const fileName = response.body.Name;
-          const fileType = response.body.Type;
-          const downloadURL = URL.createObjectURL(
-            new Blob([fileContent], { type: 'text/plain' })
-          );
-          const downloadLink = document.createElement('a');
-          downloadLink.href = downloadURL;
-          downloadLink.download = fileName + '.' + fileType;
-          downloadLink.click();
-          URL.revokeObjectURL(downloadURL);
-          // document.body.removeChild(downloadLink);
         } else {
           this.messageService.add({
             severity: 'error',
@@ -456,19 +448,34 @@ export class FileService {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/export`;
     const body = new ExportDTO();
-
     body.MarkdownID = markdownID;
     body.Name = name;
-    body.Content = this.encryptDocument(JSON.stringify(content));
+    body.Content = content;
     body.UserID = this.userService.getUserID();
     body.Type = type;
-
-
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
     );
     return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  downloadAsHtmlFile(htmlContent: string | undefined, fileName: string | undefined) {
+    if (htmlContent !== undefined && fileName !== undefined) {
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const fileURL = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = fileURL;
+      link.download = fileName + '.html';
+      link.click();
+      URL.revokeObjectURL(fileURL);
+
+      // Show success message
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Export successful',
+      });
+    }
   }
 
   encryptDocument(content: string | undefined): string {
@@ -480,14 +487,12 @@ export class FileService {
       return '';
     }
   }
-
   decryptDocument(content: string | undefined): string {
     const key = this.userService.getEncryptionKey();
     if (key && content) {
-
-      const decryptedMessage = CryptoJS.AES.decrypt(content, key).toString(
-        CryptoJS.enc.Utf8
-      ).replace(/^"(.*)"$/, '$1');
+      const decryptedMessage = CryptoJS.AES.decrypt(content, key)
+        .toString(CryptoJS.enc.Utf8)
+        .replace(/^"(.*)"$/, '$1');
       return decryptedMessage;
     } else {
       return '';

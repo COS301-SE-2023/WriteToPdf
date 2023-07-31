@@ -1,15 +1,13 @@
 export class ExportDTO {
-  MarkdownID: string;
-  Name: string;
   UserID: number;
-  Content: string;
   Type: string;
+  MarkdownID: string;
+  Content: any;
 
   constructor() {
-    this.MarkdownID = undefined;
-    this.Name = undefined;
     this.UserID = undefined;
-    this.Content = undefined;
     this.Type = undefined;
+    this.MarkdownID = undefined;
+    this.Content = undefined;
   }
 }

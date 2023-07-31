@@ -4,13 +4,14 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserDTO } from './dto/user.dto';
 import { RefreshTokenDTO } from './dto/refresh_token.dto';
-import { SHA256 } from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 import { hashSync, genSaltSync } from 'bcrypt-ts';
 import { MessageService } from 'primeng/api';
 import { PrimeIcons } from 'primeng/api';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { Inject } from '@angular/core';
+import { set } from 'cypress/types/lodash';
 
 @Injectable({
   providedIn: 'root',
@@ -26,9 +27,12 @@ export class UserService {
   private timer: any;
   private encryptionKey: string | undefined = undefined;
 
-  constructor(private http: HttpClient, private messageService: MessageService, @Inject(Router) private router: Router) { }
-  
-  
+  constructor(
+    private http: HttpClient,
+    private messageService: MessageService,
+    @Inject(Router) private router: Router
+  ) { }
+
   async login(email: string, password: string): Promise<boolean> {
     let salt: string;
     await this.retrieveSalt(email)
@@ -52,6 +56,17 @@ export class UserService {
             this.firstName = response.body.FirstName;
             this.doExpirationCheck = true;
             this.encryptionKey = response.body.EncryptionKey;
+            if (this.authToken && this.userID && this.expiresAt && this.email && this.firstName && this.encryptionKey) {
+              localStorage.setItem('isAuthenticated', 'true');
+              localStorage.setItem('authToken', this.authToken);
+              localStorage.setItem('userID', this.userID.toString());
+              localStorage.setItem('expiresAt', this.expiresAt.toString());
+              localStorage.setItem('email', this.email);
+              localStorage.setItem('firstName', this.firstName);
+              localStorage.setItem('encryptionKey', this.encryptionKey);
+            }
+
+
             this.startExpirationCheck();
             resolve(true);
           } else {
@@ -103,8 +118,6 @@ export class UserService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSignupData(email, firstName, lastName, password).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
-          console.log(response.status);
 
           if (response.status === 200) {
             resolve(true);
@@ -134,8 +147,17 @@ export class UserService {
     this.firstName = undefined;
     this.expiresAt = undefined;
     this.doExpirationCheck = false;
+
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userID');
+    localStorage.removeItem('expiresAt');
+    localStorage.removeItem('email');
+    localStorage.removeItem('firstName');
+    localStorage.removeItem('encryptionKey');
+    
     this.navigateToPage('/login');
-    if(this.timer) {
+    if (this.timer) {
       clearInterval(this.timer);
     }
   }
@@ -166,7 +188,39 @@ export class UserService {
     return this.encryptionKey;
   }
 
-  sendLoginData(email: string, password: string, salt: string): Observable<HttpResponse<any>> {
+  setEncryptionKey(encryptionKey: string): void {
+    this.encryptionKey = encryptionKey;
+  }
+
+  setFirstName(firstName: string): void {
+    this.firstName = firstName;
+  }
+
+  setUserID(userID: number): void {
+    this.userID = userID;
+  }
+
+  setEmail(email: string): void {
+    this.email = email;
+  }
+
+  setAuthToken(authToken: string): void {
+    this.authToken = authToken;
+  }
+
+  setAuthenticated(isAuthenticated: boolean): void {
+    this.isAuthenticated = isAuthenticated;
+  }
+
+  setExpiresAt(expiresAt: Date): void {
+    this.expiresAt = expiresAt;
+  }
+
+  sendLoginData(
+    email: string,
+    password: string,
+    salt: string
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}users/login`;
     const body = new UserDTO();
@@ -183,9 +237,13 @@ export class UserService {
     return salt;
   }
 
-
-  sendSignupData(email: string, fName: string, lName: string, password: string): Observable<HttpResponse<any>> {
-        const environmentURL = environment.apiURL;
+  sendSignupData(
+    email: string,
+    fName: string,
+    lName: string,
+    password: string
+  ): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
     const url = `${environmentURL}users/signup`;
 
     const body = new UserDTO();
@@ -222,9 +280,8 @@ export class UserService {
   private startExpirationCheck() {
     const checkInterval = 30000;
 
-    this.timer=setInterval(() => {
+    this.timer = setInterval(() => {
       this.checkExpiration();
-
     }, checkInterval);
   }
 
@@ -232,7 +289,6 @@ export class UserService {
     if (this.doExpirationCheck) {
       if (!this.expiresAt) {
         // Handle the case when expiresAt is undefined or falsy
-        console.log('expiresAt is undefined or falsy.');
         return;
       }
 
@@ -242,18 +298,13 @@ export class UserService {
 
       if (currentDate >= notificationTime && currentDate < expiresAtDate) {
         // Send the expiration notification
-        console.log('Sending expiration notification...');
         this.sendRefreshTokenRequest().subscribe({
           next: (response: HttpResponse<any>) => {
-            console.log(response);
-            console.log(response.status);
 
             if (response.status === 200) {
-              // console.log("Refresh token successful");
               this.authToken = response.body.Token;
               this.expiresAt = response.body.ExpiresAt;
             } else {
-              // console.log("Refresh token failed");
             }
           },
           error: (error) => {
@@ -273,7 +324,6 @@ export class UserService {
     body.Email = this.email;
     body.ExpiresAt = this.expiresAt;
 
-    console.log('Body: '+JSON.stringify(body));
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.authToken

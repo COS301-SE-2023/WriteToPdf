@@ -14,7 +14,7 @@ import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { testingModule } from '../test-utils/testingModule';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
-import { ImportDTO } from './dto/import.dto';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { ConversionService } from '../conversion/conversion.service';
 import { FolderDTO } from '../folders/dto/folder.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
@@ -25,18 +25,44 @@ import {
 } from '@nestjs/common';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ExportDTO } from './dto/export.dto';
+import { ImportDTO } from './dto/import.dto';
 import { UsersService } from '../users/users.service';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/entities/user.entity';
 import { testDBOptions } from '../../db/data-source';
 import { UserDTO } from '../users/dto/user.dto';
+import * as CryptoJS from 'crypto-js';
+import { S3 } from '@aws-sdk/client-s3';
+
+jest.mock('crypto-js', () => {
+  const mockedHash = jest.fn(
+    () => 'hashed string',
+  );
+
+  return {
+    SHA256: jest.fn().mockReturnValue({
+      toString: mockedHash,
+    }),
+    AES: {
+      decrypt: jest.fn().mockReturnValue({
+        toString: mockedHash,
+      }),
+      enc: {
+        Utf8: {
+          stringify: jest.fn(),
+        },
+      },
+    },
+  };
+});
 
 describe('FileManagerService', () => {
   let service: FileManagerService;
   let foldersService: FoldersService;
   let markdownFilesService: MarkdownFilesService;
   let s3Service: S3Service;
+  let s3ServiceMock: S3ServiceMock;
   let conversionService: ConversionService;
   let usersService: UsersService;
 
@@ -48,6 +74,7 @@ describe('FileManagerService', () => {
           FoldersService,
           MarkdownFilesService,
           S3Service,
+          S3ServiceMock,
           ConversionService,
           UsersService,
           AuthService,
@@ -135,6 +162,9 @@ describe('FileManagerService', () => {
         MarkdownFilesService,
       );
     s3Service = module.get<S3Service>(S3Service);
+    s3ServiceMock = module.get<S3ServiceMock>(
+      S3ServiceMock,
+    );
     conversionService =
       module.get<ConversionService>(
         ConversionService,
@@ -154,7 +184,7 @@ describe('FileManagerService', () => {
       try {
         const response =
           await service.createFolder(folderDTO);
-        console.log(response);
+        // console.log(response);
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -178,7 +208,7 @@ describe('FileManagerService', () => {
       try {
         const response =
           await service.createFolder(folderDTO);
-        console.log(response);
+        // console.log(response);
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -202,7 +232,7 @@ describe('FileManagerService', () => {
       try {
         const response =
           await service.createFolder(folderDTO);
-        console.log(response);
+        // console.log(response);
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -226,7 +256,7 @@ describe('FileManagerService', () => {
       try {
         const response =
           await service.createFolder(folderDTO);
-        console.log(response);
+        // console.log(response);
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -251,7 +281,7 @@ describe('FileManagerService', () => {
       try {
         const response =
           await service.createFolder(folderDTO);
-        console.log(response);
+        // console.log(response);
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -298,7 +328,7 @@ describe('FileManagerService', () => {
           await service.retrieveAllFolders(
             directory_foldersDTO,
           );
-        console.log(response);
+        // console.log(response);
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
@@ -649,6 +679,39 @@ describe('FileManagerService', () => {
       expect(response.Size).toBe(0);
     });
 
+    it('should use mocked out s3 if it is a test', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.Path = 'test/path';
+      markdownFileDTO.Name = 'test';
+      markdownFileDTO.Size = 0;
+
+      jest
+        .spyOn(Repository.prototype, 'create')
+        .mockResolvedValueOnce(markdownFileDTO);
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockResolvedValueOnce(markdownFileDTO);
+
+      jest
+        .spyOn(
+          S3ServiceMock.prototype,
+          'createFile',
+        )
+        .mockResolvedValueOnce(markdownFileDTO);
+
+      const response = await service.createFile(
+        markdownFileDTO,
+        true,
+      );
+
+      expect(
+        S3ServiceMock.prototype.createFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+
     it('should create a new file with provided values', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -713,6 +776,23 @@ describe('FileManagerService', () => {
           HttpStatus.BAD_REQUEST,
         );
       }
+    });
+
+    it('should use s3 mock if it is a test', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+
+      jest.spyOn(s3ServiceMock, 'retrieveFile');
+
+      await service.retrieveFile(
+        markdownFileDTO,
+        true,
+      );
+
+      expect(
+        s3ServiceMock.retrieveFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
     });
 
     it('should call retrieveFile method', async () => {
@@ -962,30 +1042,6 @@ describe('FileManagerService', () => {
       }
     });
 
-    it('should throw an error if Path is undefined', async () => {
-      const markdownFileDTO =
-        new MarkdownFileDTO();
-      markdownFileDTO.MarkdownID = '1';
-      markdownFileDTO.Name = 'test';
-      markdownFileDTO.UserID = 0;
-      markdownFileDTO.ParentFolderID = '1';
-
-      try {
-        await service.renameFile(markdownFileDTO);
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'Path cannot be undefined',
-        );
-        expect(error.status).toBe(
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    });
-
     it('should throw an error if UserID is undefined', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -1052,6 +1108,29 @@ describe('FileManagerService', () => {
         );
         expect(error.message).toBe(
           'MarkdownID cannot be undefined',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an error if ParentFolderID is undefined', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.Path = 'test';
+
+      try {
+        await service.moveFile(markdownFileDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'ParentFolderID cannot be undefined',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
@@ -1136,6 +1215,7 @@ describe('FileManagerService', () => {
       markdownFileDTO.Path = 'test/path';
       markdownFileDTO.UserID = 0;
       markdownFileDTO.ParentFolderID = '1';
+      markdownFileDTO.Content = 'test';
 
       try {
         await service.saveFile(markdownFileDTO);
@@ -1160,6 +1240,7 @@ describe('FileManagerService', () => {
       markdownFileDTO.Path = 'test/path';
       markdownFileDTO.UserID = 0;
       markdownFileDTO.ParentFolderID = '1';
+      markdownFileDTO.Content = 'test';
 
       jest
         .spyOn(s3Service, 'saveFile')
@@ -1183,6 +1264,33 @@ describe('FileManagerService', () => {
       ).toHaveBeenCalledWith(markdownFileDTO);
     });
 
+    it('should call the s3 mock if it is a test', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Content = 'test';
+
+      jest
+        .spyOn(s3ServiceMock, 'saveFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'updateLastModified',
+        )
+        .mockResolvedValue(new MarkdownFile());
+
+      await service.saveFile(
+        markdownFileDTO,
+        true,
+      );
+
+      expect(
+        s3ServiceMock.saveFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+
     it('should call updateLastModified method', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -1190,6 +1298,7 @@ describe('FileManagerService', () => {
       markdownFileDTO.Path = 'test/path';
       markdownFileDTO.UserID = 0;
       markdownFileDTO.ParentFolderID = '1';
+      markdownFileDTO.Content = 'test';
 
       jest
         .spyOn(s3Service, 'saveFile')
@@ -1265,6 +1374,29 @@ describe('FileManagerService', () => {
       ).toHaveBeenCalledWith(markdownFileDTO);
     });
 
+    it('should call the s3 mock if it is a test', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+
+      jest
+        .spyOn(s3ServiceMock, 'deleteFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(markdownFilesService, 'remove')
+        .mockResolvedValue(new MarkdownFile());
+
+      await service.deleteFile(
+        markdownFileDTO,
+        true,
+      );
+
+      expect(
+        s3ServiceMock.deleteFile,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+
     it('should call remove method', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();
@@ -1294,22 +1426,38 @@ describe('FileManagerService', () => {
   });
 
   describe('importFile', () => {
-    it('should throw an error if Path is undefined', async () => {
+    it('should throw an exception for invalid types', async () => {
       const importDTO = new ImportDTO();
       importDTO.UserID = 0;
       importDTO.ParentFolderID = '1';
+      importDTO.Path = 'test/path';
       importDTO.Name = 'test';
       importDTO.Content = 'test';
+      importDTO.Type = 'invalid';
+
+      jest
+        .spyOn(service, 'encryptContent')
+        .mockResolvedValue('encrypted');
+
+      jest
+        .spyOn(service, 'decryptContent')
+        .mockResolvedValue('decrypted');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('key');
 
       try {
-        await service.importFile(importDTO);
+        const response = await service.importFile(
+          importDTO,
+        );
         expect(true).toBe(false);
       } catch (error) {
         expect(error).toBeInstanceOf(
           HttpException,
         );
         expect(error.message).toBe(
-          'Path cannot be undefined',
+          'Invalid file type',
         );
         expect(error.status).toBe(
           HttpStatus.BAD_REQUEST,
@@ -1317,66 +1465,21 @@ describe('FileManagerService', () => {
       }
     });
 
-    it('should throw an error if Name is undefined', async () => {
-      const importDTO = new ImportDTO();
-      importDTO.UserID = 0;
-      importDTO.ParentFolderID = '1';
-      importDTO.Path = 'test/path';
-      importDTO.Content = 'test';
-
-      try {
-        await service.importFile(importDTO);
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'Name cannot be undefined',
-        );
-        expect(error.status).toBe(
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    });
-
-    it('should throw an error if Content is undefined', async () => {
-      const importDTO = new ImportDTO();
-      importDTO.UserID = 0;
-      importDTO.ParentFolderID = '1';
-      importDTO.Path = 'test/path';
-      importDTO.Name = 'test';
-
-      try {
-        await service.importFile(importDTO);
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'Content cannot be undefined',
-        );
-        expect(error.status).toBe(
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    });
-
-    it('should call convertFrom method', async () => {
+    it('should call convertTxtToHtml method for txt types', async () => {
       const importDTO = new ImportDTO();
       importDTO.UserID = 0;
       importDTO.ParentFolderID = '1';
       importDTO.Path = 'test/path';
       importDTO.Name = 'test';
       importDTO.Content = 'test';
+      importDTO.Type = 'txt';
 
       (
         jest.spyOn(
           conversionService,
-          'convertFrom',
+          'convertTxtToHtml',
         ) as any
-      ).mockResolvedValue(new MarkdownFileDTO());
+      ).mockResolvedValue('html');
 
       jest
         .spyOn(service, 'createFile')
@@ -1387,34 +1490,41 @@ describe('FileManagerService', () => {
         .mockResolvedValue(new MarkdownFile());
 
       jest
-        .spyOn(usersService, 'findOne')
-        .mockResolvedValue(new UserDTO());
+        .spyOn(service, 'encryptContent')
+        .mockResolvedValue('encrypted');
+
+      jest
+        .spyOn(service, 'decryptContent')
+        .mockResolvedValue('decrypted');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('key');
 
       const response = await service.importFile(
         importDTO,
       );
-      expect(response).toBeInstanceOf(
-        MarkdownFileDTO,
-      );
+
       expect(
-        conversionService.convertFrom,
-      ).toHaveBeenCalledWith(importDTO);
+        conversionService.convertTxtToHtml,
+      ).toHaveBeenCalledWith('decrypted');
     });
 
-    it('should call createFile method', async () => {
+    it('should call convertMdToHtml method for md types', async () => {
       const importDTO = new ImportDTO();
       importDTO.UserID = 0;
       importDTO.ParentFolderID = '1';
       importDTO.Path = 'test/path';
       importDTO.Name = 'test';
       importDTO.Content = 'test';
+      importDTO.Type = 'md';
 
       (
         jest.spyOn(
           conversionService,
-          'convertFrom',
+          'convertMdToHtml',
         ) as any
-      ).mockResolvedValue(new MarkdownFileDTO());
+      ).mockResolvedValue('md');
 
       jest
         .spyOn(service, 'createFile')
@@ -1425,38 +1535,87 @@ describe('FileManagerService', () => {
         .mockResolvedValue(new MarkdownFile());
 
       jest
-        .spyOn(usersService, 'findOne')
-        .mockResolvedValue(new UserDTO());
+        .spyOn(service, 'encryptContent')
+        .mockResolvedValue('encrypted');
+
+      jest
+        .spyOn(service, 'decryptContent')
+        .mockResolvedValue('decrypted');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('key');
 
       const response = await service.importFile(
         importDTO,
       );
-      expect(response).toBeInstanceOf(
-        MarkdownFileDTO,
+
+      expect(
+        conversionService.convertMdToHtml,
+      ).toHaveBeenCalledWith('decrypted');
+    });
+
+    it('should call relevant db methods', async () => {
+      const importDTO = new ImportDTO();
+      importDTO.UserID = 0;
+      importDTO.ParentFolderID = '1';
+      importDTO.Path = 'test/path';
+      importDTO.Name = 'test';
+      importDTO.Content = 'test';
+      importDTO.Type = 'txt';
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertTxtToHtml',
+        ) as any
+      ).mockResolvedValue('txt');
+
+      jest
+        .spyOn(service, 'createFile')
+        .mockResolvedValue(new MarkdownFileDTO());
+
+      jest
+        .spyOn(service, 'saveFile')
+        .mockResolvedValue(new MarkdownFile());
+
+      jest
+        .spyOn(service, 'encryptContent')
+        .mockResolvedValue('encrypted');
+
+      jest
+        .spyOn(service, 'decryptContent')
+        .mockResolvedValue('decrypted');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('key');
+
+      const response = await service.importFile(
+        importDTO,
       );
+
       expect(
         service.createFile,
       ).toHaveBeenCalled();
+      expect(service.saveFile).toHaveBeenCalled();
     });
 
-    it('should call saveFile method', async () => {
+    it('should encrypt and decrypt the contents', async () => {
       const importDTO = new ImportDTO();
       importDTO.UserID = 0;
       importDTO.ParentFolderID = '1';
       importDTO.Path = 'test/path';
       importDTO.Name = 'test';
       importDTO.Content = 'test';
+      importDTO.Type = 'txt';
 
       (
         jest.spyOn(
           conversionService,
-          'convertFrom',
+          'convertTxtToHtml',
         ) as any
-      ).mockResolvedValue(new MarkdownFileDTO());
-
-      jest
-        .spyOn(usersService, 'findOne')
-        .mockResolvedValue(new UserDTO());
+      ).mockResolvedValue('txt');
 
       jest
         .spyOn(service, 'createFile')
@@ -1466,13 +1625,157 @@ describe('FileManagerService', () => {
         .spyOn(service, 'saveFile')
         .mockResolvedValue(new MarkdownFile());
 
+      jest
+        .spyOn(service, 'encryptContent')
+        .mockResolvedValue('encrypted');
+
+      jest
+        .spyOn(service, 'decryptContent')
+        .mockResolvedValue('decrypted');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('key');
+
       const response = await service.importFile(
         importDTO,
       );
-      expect(response).toBeInstanceOf(
-        MarkdownFileDTO,
-      );
-      expect(service.saveFile).toHaveBeenCalled();
+
+      expect(response.Content).toBe('encrypted');
+      expect(
+        service.encryptContent,
+      ).toHaveBeenCalled();
+      expect(
+        service.decryptContent,
+      ).toHaveBeenCalled();
+      expect(
+        service.getEncryptionKey,
+      ).toHaveBeenCalled();
+    });
+  });
+
+  // describe('exportFile', () => {
+  //   it('should throw an error if MarkdownID is undefined', async () => {
+  //     const exportDTO = new ExportDTO();
+  //     exportDTO.UserID = 0;
+  //     exportDTO.Content = 'test';
+
+  //     try {
+  //       await service.exportFile(exportDTO);
+  //       expect(true).toBe(false);
+  //     } catch (error) {
+  //       expect(error).toBeInstanceOf(
+  //         HttpException,
+  //       );
+  //       expect(error.message).toBe(
+  //         'MarkdownID cannot be undefined',
+  //       );
+  //       expect(error.status).toBe(
+  //         HttpStatus.BAD_REQUEST,
+  //       );
+  //     }
+  //   });
+
+  //   it('should throw an error if Content is undefined', async () => {
+  //     const exportDTO = new ExportDTO();
+  //     exportDTO.UserID = 0;
+  //     exportDTO.MarkdownID = '1';
+
+  //     try {
+  //       await service.exportFile(exportDTO);
+  //       expect(true).toBe(false);
+  //     } catch (error) {
+  //       expect(error).toBeInstanceOf(
+  //         HttpException,
+  //       );
+  //       expect(error.message).toBe(
+  //         'Content cannot be undefined',
+  //       );
+  //       expect(error.status).toBe(
+  //         HttpStatus.BAD_REQUEST,
+  //       );
+  //     }
+  //   });
+
+  //   it('should call convertTo method', async () => {
+  //     const exportDTO = new ExportDTO();
+  //     exportDTO.UserID = 0;
+  //     exportDTO.MarkdownID = '1';
+  //     exportDTO.Content = 'test';
+
+  //     (
+  //       jest.spyOn(
+  //         conversionService,
+  //         'convertTo',
+  //       ) as any
+  //     ).mockResolvedValue(new ExportDTO());
+
+  //     jest
+  //       .spyOn(usersService, 'findOne')
+  //       .mockResolvedValue(new UserDTO());
+
+  //     const response = await service.exportFile(
+  //       exportDTO,
+  //     );
+  //     expect(response).toBeInstanceOf(ExportDTO);
+  //     expect(
+  //       conversionService.convertTo,
+  //     ).toHaveBeenCalledWith(exportDTO);
+  //   });
+  // });
+  // describe('decryptContent', () => {
+  //   it('should call decrypt method', async () => {
+  //     const content = 'test';
+  //     const encryptionKey = 'test';
+
+  //     const response =
+  //       await service.decryptContent(
+  //         content,
+  //         encryptionKey,
+  //       );
+
+  //     expect(response).toBe('hashed string');
+  //     expect(
+  //       CryptoJS.AES.decrypt,
+  //     ).toHaveBeenCalledWith(
+  //       content,
+  //       encryptionKey,
+  //     );
+  //   });
+  // });
+  describe('getEncryptionKey', () => {
+    it('should call findOne method', async () => {
+      const userID = 1;
+      const foundUser = new UserDTO();
+      foundUser.Password = 'hashed string';
+
+      jest
+        .spyOn(usersService, 'findOne')
+        .mockResolvedValue(foundUser);
+
+      await service.getEncryptionKey(userID);
+
+      expect(
+        usersService.findOne,
+      ).toHaveBeenCalledWith(userID);
+    });
+
+    it('should return the hashed the password', async () => {
+      const userID = 1;
+      const foundUser = new UserDTO();
+      foundUser.Password = 'test password';
+
+      jest
+        .spyOn(usersService, 'findOne')
+        .mockResolvedValue(foundUser);
+
+      const result =
+        await service.getEncryptionKey(userID);
+
+      expect(result).toBe('hashed string');
+      expect(
+        CryptoJS.SHA256,
+      ).toHaveBeenCalledWith(foundUser.Password);
     });
   });
 
@@ -1519,30 +1822,209 @@ describe('FileManagerService', () => {
       }
     });
 
-    it('should call convertTo method', async () => {
+    it('should throw an error if the type is not supported', async () => {
       const exportDTO = new ExportDTO();
       exportDTO.UserID = 0;
       exportDTO.MarkdownID = '1';
       exportDTO.Content = 'test';
-
-      (
-        jest.spyOn(
-          conversionService,
-          'convertTo',
-        ) as any
-      ).mockResolvedValue(new ExportDTO());
+      exportDTO.Type = '';
 
       jest
-        .spyOn(usersService, 'findOne')
-        .mockResolvedValue(new UserDTO());
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('test');
+
+      try {
+        await service.exportFile(exportDTO);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid export type',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should call generatePDF for pdf Types', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 0;
+      exportDTO.MarkdownID = '1';
+      exportDTO.Content = 'test';
+      exportDTO.Type = 'pdf';
+
+      const buffer = new Buffer('test');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('test');
+
+      jest
+        .spyOn(conversionService, 'generatePdf')
+        .mockResolvedValue(buffer);
 
       const response = await service.exportFile(
         exportDTO,
       );
-      expect(response).toBeInstanceOf(ExportDTO);
+
+      expect(response).toBe(buffer);
       expect(
-        conversionService.convertTo,
-      ).toHaveBeenCalledWith(exportDTO);
+        conversionService.generatePdf,
+      ).toHaveBeenCalledWith(exportDTO.Content);
+    });
+
+    it('should call convertHtmlToTxt for txt types', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 0;
+      exportDTO.MarkdownID = '1';
+      exportDTO.Content = 'test';
+      exportDTO.Type = 'txt';
+
+      const buffer = new Buffer('test');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('test');
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertHtmlToTxt',
+        ) as any
+      ).mockResolvedValue('test');
+
+      jest
+        .spyOn(Buffer, 'from')
+        .mockReturnValue(buffer);
+
+      const response = await service.exportFile(
+        exportDTO,
+      );
+
+      expect(response).toBe(buffer);
+      expect(
+        conversionService.convertHtmlToTxt,
+      ).toHaveBeenCalledWith(exportDTO.Content);
+    });
+
+    it('should call convertHtmlToMarkdown for md types', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.UserID = 0;
+      exportDTO.MarkdownID = '1';
+      exportDTO.Content = 'test';
+      exportDTO.Type = 'md';
+
+      const buffer = new Buffer('test');
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('test');
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertHtmlToMarkdown',
+        ) as any
+      ).mockResolvedValue('test');
+
+      jest
+        .spyOn(Buffer, 'from')
+        .mockReturnValue(buffer);
+
+      const response = await service.exportFile(
+        exportDTO,
+      );
+
+      expect(response).toBe(buffer);
+      expect(
+        conversionService.convertHtmlToMarkdown,
+      ).toBeCalledWith(exportDTO.Content);
+    });
+
+    it('should call convertHtmlToJpeg for jpeg types', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.MarkdownID = '1';
+      exportDTO.Content = 'test';
+      exportDTO.UserID = 0;
+      exportDTO.Type = 'jpeg';
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('test');
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertHtmlToJpeg',
+        ) as any
+      ).mockResolvedValue('test');
+
+      const response = await service.exportFile(
+        exportDTO,
+      );
+
+      expect(response).toBe('test');
+      expect(
+        conversionService.convertHtmlToJpeg,
+      ).toBeCalledWith(exportDTO.Content);
+    });
+
+    it('should call convertHtmlToPng for png types', async () => {
+      const exportDTO = new ExportDTO();
+      exportDTO.MarkdownID = '1';
+      exportDTO.Content = 'test';
+      exportDTO.UserID = 0;
+      exportDTO.Type = 'png';
+
+      jest
+        .spyOn(service, 'getEncryptionKey')
+        .mockResolvedValue('test');
+
+      (
+        jest.spyOn(
+          conversionService,
+          'convertHtmlToPng',
+        ) as any
+      ).mockResolvedValue('test');
+
+      const response = await service.exportFile(
+        exportDTO,
+      );
+
+      expect(response).toBe('test');
+      expect(
+        conversionService.convertHtmlToPng,
+      ).toBeCalledWith(exportDTO.Content);
     });
   });
+
+  // describe('decryptContent', () => {
+  //   it('should decrypt the content', async () => {
+  //     const content = 'Encrypted content';
+  //     const encryptionKey =
+  //       'encryption-secret-key';
+
+  //     const decryptedMessage =
+  //       await service.decryptContent(
+  //         content,
+  //         encryptionKey,
+  //       );
+
+  //     expect(
+  //       CryptoJS.AES.decrypt,
+  //     ).toHaveBeenCalledWith(
+  //       content,
+  //       encryptionKey,
+  //     );
+  //     expect(
+  //       CryptoJS.AES.decrypt().toString,
+  //     ).toHaveBeenCalledWith(CryptoJS.enc.Utf8);
+  //     expect(decryptedMessage).toEqual(
+  //       'Decrypted message',
+  //     );
+  //   });
+  // });
 });

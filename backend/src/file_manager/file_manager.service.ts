@@ -12,12 +12,12 @@ import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { Folder } from '../folders/entities/folder.entity';
 import { S3Service } from '../s3/s3.service';
-import { ImportDTO } from './dto/import.dto';
-import { ConversionService } from '../conversion/conversion.service';
-import { ExportDTO } from './dto/export.dto';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { UsersService } from '../users/users.service';
-import { SHA256 } from 'crypto-js';
+import { ExportDTO } from './dto/export.dto';
 import * as CryptoJS from 'crypto-js';
+import { ConversionService } from '../conversion/conversion.service';
+import { ImportDTO } from './dto/import.dto';
 
 @Injectable()
 export class FileManagerService {
@@ -27,6 +27,7 @@ export class FileManagerService {
     private s3service: S3Service,
     private conversionService: ConversionService,
     private userService: UsersService,
+    private s3ServiceMock: S3ServiceMock,
   ) {}
 
   // File operations: ###########################################################
@@ -37,6 +38,7 @@ export class FileManagerService {
   // Size: number; .. THE SIZE OF THE FILE IN MEGABYTES
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
+    isTest = false,
   ) {
     if (markdownFileDTO.UserID === undefined)
       throw new HttpException(
@@ -47,15 +49,26 @@ export class FileManagerService {
     if (markdownFileDTO.Path === undefined)
       markdownFileDTO.Path = '';
 
+    if (
+      markdownFileDTO.ParentFolderID === undefined
+    )
+      markdownFileDTO.ParentFolderID = '';
+
     if (markdownFileDTO.Name === undefined)
       markdownFileDTO.Name = 'New Document';
 
     if (markdownFileDTO.Size === undefined)
       markdownFileDTO.Size = 0;
 
-    await this.s3service.createFile(
-      markdownFileDTO,
-    );
+    if (isTest) {
+      await this.s3ServiceMock.createFile(
+        markdownFileDTO,
+      );
+    } else {
+      await this.s3service.createFile(
+        markdownFileDTO,
+      );
+    }
 
     return this.markdownFilesService.create(
       markdownFileDTO,
@@ -65,6 +78,7 @@ export class FileManagerService {
   // DB Requires the following fields to be initialised in the DTO:
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
+    isTest = false,
   ) {
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
@@ -72,9 +86,15 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    await this.s3service.retrieveFile(
-      markdownFileDTO,
-    );
+    if (isTest) {
+      await this.s3ServiceMock.retrieveFile(
+        markdownFileDTO,
+      );
+    } else {
+      await this.s3service.retrieveFile(
+        markdownFileDTO,
+      );
+    }
     return markdownFileDTO; // return the file
   }
 
@@ -140,12 +160,6 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    if (markdownFileDTO.Path === undefined)
-      throw new HttpException(
-        'Path cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
     if (markdownFileDTO.Name === undefined)
       throw new HttpException(
         'Name cannot be undefined',
@@ -173,6 +187,14 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
+    if (
+      markdownFileDTO.ParentFolderID === undefined
+    )
+      throw new HttpException(
+        'ParentFolderID cannot be undefined',
+        HttpStatus.BAD_REQUEST,
+      );
+
     if (markdownFileDTO.UserID === undefined)
       throw new HttpException(
         'UserID cannot be undefined',
@@ -187,16 +209,25 @@ export class FileManagerService {
   // DB Requires the following fields to be initialised in the DTO:
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
+    isTest = false,
   ) {
+    markdownFileDTO.Size =
+      markdownFileDTO.Content.length;
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
         'MarkdownID cannot be undefined',
         HttpStatus.BAD_REQUEST,
       );
 
-    await this.s3service.saveFile(
-      markdownFileDTO,
-    );
+    if (isTest) {
+      await this.s3ServiceMock.saveFile(
+        markdownFileDTO,
+      );
+    } else {
+      await this.s3service.saveFile(
+        markdownFileDTO,
+      );
+    }
 
     return this.markdownFilesService.updateLastModified(
       markdownFileDTO,
@@ -208,6 +239,7 @@ export class FileManagerService {
   // Name: string; .. TO IDENTIFY THE FILE
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
+    isTest = false,
   ) {
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
@@ -215,9 +247,15 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
 
-    await this.s3service.deleteFile(
-      markdownFileDTO,
-    );
+    if (isTest) {
+      await this.s3ServiceMock.deleteFile(
+        markdownFileDTO,
+      );
+    } else {
+      await this.s3service.deleteFile(
+        markdownFileDTO,
+      );
+    }
 
     return this.markdownFilesService.remove(
       markdownFileDTO,
@@ -225,7 +263,6 @@ export class FileManagerService {
   }
 
   // Folder operations: #########################################################
-
   createFolder(folderDTO: FolderDTO) {
     if (folderDTO.FolderName === undefined)
       throw new HttpException(
@@ -352,25 +389,10 @@ export class FileManagerService {
   }
 
   // Import & Export operations: #########################################################
-  async importFile(importDTO: ImportDTO) {
-    if (importDTO.Path === undefined)
-      throw new HttpException(
-        'Path cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (importDTO.Name === undefined)
-      throw new HttpException(
-        'Name cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (importDTO.Content === undefined)
-      throw new HttpException(
-        'Content cannot be undefined',
-        HttpStatus.BAD_REQUEST,
-      );
-
+  async importFile(
+    importDTO: ImportDTO,
+    isTest = false,
+  ) {
     const encryptionKey =
       await this.getEncryptionKey(
         importDTO.UserID,
@@ -380,42 +402,69 @@ export class FileManagerService {
       importDTO.Content,
       encryptionKey,
     );
-    const convertedMarkdownFileDTO =
-      this.conversionService.convertFrom(
-        importDTO,
-      );
 
-    convertedMarkdownFileDTO.Content =
+    let convertedHtml: string | undefined;
+    // if (importDTO.Type === 'pdf') {
+    //   convertedHtml =
+    //     await this.conversionService.convertPdfToHtml(
+    //       importDTO.Content,
+    //     );
+    // } else
+    if (importDTO.Type === 'txt') {
+      convertedHtml =
+        this.conversionService.convertTxtToHtml(
+          importDTO.Content,
+        );
+    } else if (importDTO.Type === 'md') {
+      convertedHtml =
+        this.conversionService.convertMdToHtml(
+          importDTO.Content,
+        );
+    } else {
+      throw new HttpException(
+        'Invalid file type',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // console.log('convertedHtml: ', convertedHtml);
+
+    const encryptedContent =
       await this.encryptContent(
-        convertedMarkdownFileDTO.Content,
+        convertedHtml,
         encryptionKey,
       );
-    const deltaContent =
-      convertedMarkdownFileDTO.Content;
+
+    const convertedMarkdownFileDTO =
+      new MarkdownFileDTO();
+
+    convertedMarkdownFileDTO.UserID =
+      importDTO.UserID;
+    convertedMarkdownFileDTO.Path =
+      importDTO.Path;
+    convertedMarkdownFileDTO.ParentFolderID =
+      importDTO.ParentFolderID;
+    convertedMarkdownFileDTO.Name =
+      importDTO.Name;
+    convertedMarkdownFileDTO.Content =
+      convertedHtml;
 
     const createdFile = await this.createFile(
       convertedMarkdownFileDTO,
+      isTest,
     );
 
-    createdFile.Content = deltaContent;
+    createdFile.Content = encryptedContent;
 
     const savedFile = await this.saveFile(
       createdFile,
+      isTest,
     );
 
-    const returnedDTO = new MarkdownFileDTO();
-    returnedDTO.MarkdownID = savedFile.MarkdownID;
-    returnedDTO.UserID = savedFile.UserID;
-    returnedDTO.DateCreated =
-      savedFile.DateCreated;
-    returnedDTO.LastModified =
-      savedFile.LastModified;
-    returnedDTO.Name = savedFile.Name;
-    returnedDTO.Path = savedFile.Path;
-    returnedDTO.Size = savedFile.Size;
-    returnedDTO.ParentFolderID =
-      savedFile.ParentFolderID;
-    returnedDTO.Content = deltaContent;
+    const returnedDTO: MarkdownFileDTO = {
+      ...savedFile,
+      Content: encryptedContent,
+    };
 
     return returnedDTO;
   }
@@ -451,7 +500,7 @@ export class FileManagerService {
       UserID,
     );
 
-    const encryptionKey = SHA256(
+    const encryptionKey = CryptoJS.SHA256(
       user.Password,
     ).toString();
 
@@ -488,22 +537,81 @@ export class FileManagerService {
       );
 
     // decrypt content
-    exportDTO.Content = await this.decryptContent(
-      exportDTO.Content,
-      encryptionKey,
-    );
+    // exportDTO.Content = await this.decryptContent(
+    //   exportDTO.Content,
+    //   encryptionKey,
+    // );
 
     // convert
-    const convertedDTO =
-      this.conversionService.convertTo(exportDTO);
-
-    // re-encrypt content
-    convertedDTO.Content =
-      await this.encryptContent(
-        convertedDTO.Content,
-        encryptionKey,
+    if (exportDTO.Type === 'pdf') {
+      const pdfBuffer =
+        await this.conversionService.generatePdf(
+          exportDTO.Content,
+        );
+      return pdfBuffer;
+    } else if (exportDTO.Type === 'txt') {
+      const txt =
+        this.conversionService.convertHtmlToTxt(
+          exportDTO.Content,
+        );
+      const txtBuffer = Buffer.from(txt);
+      return txtBuffer;
+    } else if (exportDTO.Type === 'md') {
+      const md =
+        this.conversionService.convertHtmlToMarkdown(
+          exportDTO.Content,
+        );
+      const mdBuffer = Buffer.from(md);
+      return mdBuffer;
+    } else if (exportDTO.Type === 'jpeg') {
+      const jpegBuffer =
+        await this.conversionService.convertHtmlToJpeg(
+          exportDTO.Content,
+        );
+      return jpegBuffer;
+    } else if (exportDTO.Type === 'png') {
+      const pngBuffer =
+        await this.conversionService.convertHtmlToPng(
+          exportDTO.Content,
+        );
+      return pngBuffer;
+    } else {
+      throw new HttpException(
+        'Invalid export type',
+        HttpStatus.BAD_REQUEST,
       );
-
-    return convertedDTO;
+    }
+    // re-encrypt content
+    // const converted = await this.encryptContent(
+    //   (await pdfBuffer).toString(),
+    //   encryptionKey,
+    // );
   }
+
+  // async generatePdf(html: string) {
+  //   const browser = await puppeteer.launch();
+  //   const page = await browser.newPage();
+
+  //   // Emulate a screen to apply CSS styles correctly
+  //   await page.setViewport({
+  //     width: 1920,
+  //     height: 1080,
+  //   });
+
+  //   await page.setContent(html, {
+  //     waitUntil: 'networkidle0',
+  //   });
+
+  //   // Set a higher scale to improve quality (e.g., 2 for Retina displays)
+  //   const pdf = await page.pdf({
+  //     format: 'A4',
+  //     scale: 1,
+  //     printBackground: true,
+  //   });
+
+  //   await browser.close();
+
+  //   // Send the generated PDF as a response
+  //   return pdf;
+  // }
 }
