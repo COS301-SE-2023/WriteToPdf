@@ -627,31 +627,39 @@ describe('S3Service', () => {
       expect(responseBody).toBe('hello world');
     });
 
-    // it('should throw error if readFile fails', async () => {
-    //   const assetDTO = new AssetDTO();
-    //   assetDTO.AssetID = '1';
-    //   assetDTO.UserID = 1;
+    it('should throw error if readFile fails', async () => {
+      const assetDTO = new AssetDTO();
+      assetDTO.AssetID = '1';
+      assetDTO.UserID = 1;
 
-    //   // Spy on fs/promises readFile to throw error
-    //   jest
-    //     .spyOn(fs, 'access')
-    //     .mockResolvedValue(undefined);
-    //   jest
-    //     .spyOn(fs, 'readFile')
-    //     .mockImplementation(() => {
-    //       throw new Error('Directory Test Error');
-    //     });
+      // mockS3Client
+      //   .on(GetObjectCommand)
+      //   .rejects(
+      //     new Error('GetObjectCommand Error'),
+      //   );
 
-    //   const responseBody =
-    //     await s3Service.retrieveAssetByID(
-    //       assetDTO.AssetID,
-    //       assetDTO.UserID,
-    //       'textractResponse',
-    //     );
+      mockS3Client.on(GetObjectCommand).rejects();
 
-    //   console.log('responseBody', responseBody);
-    //   expect(responseBody).toBeUndefined();
-    // });
+      // Spy on fs/promises readFile to throw error
+      jest
+        .spyOn(fs, 'access')
+        .mockResolvedValue(undefined);
+      jest
+        .spyOn(fs, 'readFile')
+        .mockImplementation(() => {
+          throw new Error('Directory Test Error');
+        });
+
+      const responseBody =
+        await s3Service.retrieveAssetByID(
+          assetDTO.AssetID,
+          assetDTO.UserID,
+          'textractResponse',
+        );
+
+      console.log('responseBody', responseBody);
+      expect(responseBody).toBeUndefined();
+    });
   });
 
   describe('retrieveAsset', () => {
