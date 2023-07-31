@@ -59,13 +59,6 @@ export class S3Service {
           Key: filePath,
         }),
       );
-      await fs.unlink(`./storage/${filePath}`);
-      /*const response = */ await this.s3Client.send(
-        new DeleteObjectCommand({
-          Bucket: this.awsS3BucketName,
-          Key: filePath,
-        }),
-      );
     } catch (err) {
       console.log('Delete Error: ' + err);
       return undefined;
@@ -115,13 +108,6 @@ export class S3Service {
           Body: new Uint8Array(Buffer.from('')),
         }),
       );
-      /*const response = */ await this.s3Client.send(
-        new PutObjectCommand({
-          Bucket: this.awsS3BucketName,
-          Key: `${filePath}/${markdownFileDTO.MarkdownID}`,
-          Body: new Uint8Array(Buffer.from('')),
-        }),
-      );
     } catch (err) {
       console.log('Write File Error: ' + err);
       return undefined;
@@ -163,13 +149,6 @@ export class S3Service {
         `./storage/${filePath}`,
         fileData,
         'utf-8',
-      );
-      /*const response = */ await this.s3Client.send(
-        new PutObjectCommand({
-          Bucket: this.awsS3BucketName,
-          Key: filePath,
-          Body: fileData,
-        }),
       );
       /*const response = */ await this.s3Client.send(
         new PutObjectCommand({
@@ -246,24 +225,7 @@ export class S3Service {
 
     const filePath = `${assetDTO.UserID}`;
 
-    // try {
-    //   await mkdir(`./storage/${filePath}`, {
-    //     recursive: true,
-    //   });
-    // } catch (err) {
-    //   console.log(
-    //     'Directory Creation Error:' + err,
-    //   );
-    //   return undefined;
-    // }
-
     try {
-      // await writeFile(
-      //   `./storage/${filePath}/${assetDTO.AssetID}`,
-      //   '',
-      //   'utf-8',
-      // );
-      /*const response = */
       await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
@@ -276,9 +238,6 @@ export class S3Service {
       return undefined;
     }
 
-    // const fileStats = await stat(
-    //   `./storage/${filePath}`,
-    // );
     newAssetDTO.Content = '';
     newAssetDTO.DateCreated = new Date();
     newAssetDTO.Size = 0;
@@ -314,35 +273,19 @@ export class S3Service {
         fileData,
         'utf-8',
       );
-      // console.log(
-      //   'S3.saveAsset.filePath',
-      //   filePath,
-      // );
-      const response = await this.s3Client.send(
+
+      await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
           Key: filePath,
           Body: fileData,
         }),
       );
-
-      // console.log(
-      //   'S3 Save Asset Response: ',
-      //   response,
-      // );
     } catch (err) {
       console.log('Write File Error: ' + err);
       return undefined;
     }
-
-    // const fileStats = await stat(
-    //   `./storage/${filePath}`,
-    // );
-    // console.log(fileStats);
-    // saveAssetDTO.DateCreated = fileStats.mtime;
     saveAssetDTO.DateCreated = new Date();
-    // saveAssetDTO.Size =
-    //   fileData.buffer.byteLength; // TODO: Change to s3 return object
     saveAssetDTO.Size =
       saveAssetDTO.Content.length;
     saveAssetDTO.Content = '';
@@ -376,7 +319,7 @@ export class S3Service {
         'utf-8',
       );
 
-      const response = await this.s3Client.send(
+      await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
           Key: filePath,
@@ -424,7 +367,7 @@ export class S3Service {
         'utf-8',
       );
 
-      const response = await this.s3Client.send(
+      await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
           Key: filePath,
@@ -560,13 +503,6 @@ export class S3Service {
     filePath += `/${assetDTO.AssetID}`;
 
     try {
-      await fs.unlink(`./storage/${filePath}`);
-      /*const response = */ await this.s3Client.send(
-        new DeleteObjectCommand({
-          Bucket: this.awsS3BucketName,
-          Key: filePath,
-        }),
-      );
       await fs.unlink(`./storage/${filePath}`);
       /*const response = */ await this.s3Client.send(
         new DeleteObjectCommand({
