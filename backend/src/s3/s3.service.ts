@@ -44,15 +44,15 @@ export class S3Service {
     else
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
 
-    try {
-      await fs.access(`./storage/${filePath}`);
-    } catch (err) {
-      console.log('Access Error: ' + err);
-      return undefined;
-    }
+    // try {
+    //   await fs.access(`./storage/${filePath}`);
+    // } catch (err) {
+    //   console.log('Access Error: ' + err);
+    //   return undefined;
+    // }
 
     try {
-      await fs.unlink(`./storage/${filePath}`);
+      // await fs.unlink(`./storage/${filePath}`);
       /*const response = */ await this.s3Client.send(
         new DeleteObjectCommand({
           Bucket: this.awsS3BucketName,
@@ -84,23 +84,23 @@ export class S3Service {
       filePath = `${markdownFileDTO.UserID}`;
     else filePath = `${markdownFileDTO.UserID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
 
-    try {
-      await fs.mkdir(`./storage/${filePath}`, {
-        recursive: true,
-      });
-    } catch (err) {
-      console.log(
-        'Directory Creation Error: ' + err,
-      );
-      return undefined;
-    }
+    // try {
+    //   await fs.mkdir(`./storage/${filePath}`, {
+    //     recursive: true,
+    //   });
+    // } catch (err) {
+    //   console.log(
+    //     'Directory Creation Error: ' + err,
+    //   );
+    //   return undefined;
+    // }
 
     try {
-      await fs.writeFile(
-        `./storage/${filePath}/${markdownFileDTO.MarkdownID}`,
-        '',
-        'utf-8',
-      );
+      // await fs.writeFile(
+      //   `./storage/${filePath}/${markdownFileDTO.MarkdownID}`,
+      //   '',
+      //   'utf-8',
+      // );
       /*const response = */ await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
@@ -133,23 +133,23 @@ export class S3Service {
     else
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
 
-    try {
-      await fs.access(`./storage/${filePath}`);
-    } catch (err) {
-      console.log('Access Error: ' + err);
-      return undefined;
-    }
+    // try {
+    //   await fs.access(`./storage/${filePath}`);
+    // } catch (err) {
+    //   console.log('Access Error: ' + err);
+    //   return undefined;
+    // }
 
     const fileData = new Uint8Array(
       Buffer.from(markdownFileDTO.Content),
     );
 
     try {
-      await fs.writeFile(
-        `./storage/${filePath}`,
-        fileData,
-        'utf-8',
-      );
+      // await fs.writeFile(
+      //   `./storage/${filePath}`,
+      //   fileData,
+      //   'utf-8',
+      // );
       /*const response = */ await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
@@ -179,22 +179,22 @@ export class S3Service {
     else
       filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
 
-    try {
-      await fs.access(`./storage/${filePath}`);
-    } catch (err) {
-      console.log('Access Error: ' + err);
-      return undefined;
-    }
+    // try {
+    //   await fs.access(`./storage/${filePath}`);
+    // } catch (err) {
+    //   console.log('Access Error: ' + err);
+    //   return undefined;
+    // }
 
     try {
-      markdownFileDTO.Content = await fs.readFile(
-        `./storage/${filePath}`,
-        {
-          encoding: 'utf-8',
-        },
-      );
-      markdownFileDTO.Size =
-        markdownFileDTO.Content.length;
+      // markdownFileDTO.Content = await fs.readFile(
+      //   `./storage/${filePath}`,
+      //   {
+      //     encoding: 'utf-8',
+      //   },
+      // );
+      // markdownFileDTO.Size =
+      //   markdownFileDTO.Content.length;
 
       const response = await this.s3Client.send(
         new GetObjectCommand({
@@ -250,16 +250,16 @@ export class S3Service {
   ) {
     let filePath = `${saveAssetDTO.UserID}`;
 
-    try {
-      await fs.mkdir(`./storage/${filePath}`, {
-        recursive: true,
-      });
-    } catch (err) {
-      // console.log(
-      //   'Directory Creation Error: ' + err,
-      // );
-      return undefined;
-    }
+    // try {
+    //   await fs.mkdir(`./storage/${filePath}`, {
+    //     recursive: true,
+    //   });
+    // } catch (err) {
+    //   // console.log(
+    //   //   'Directory Creation Error: ' + err,
+    //   // );
+    //   return undefined;
+    // }
 
     const fileData = JSON.stringify(
       textractResponse,
@@ -268,11 +268,11 @@ export class S3Service {
     filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.TextID}`;
 
     try {
-      await fs.writeFile(
-        `./storage/${filePath}`,
-        fileData,
-        'utf-8',
-      );
+      // await fs.writeFile(
+      //   `./storage/${filePath}`,
+      //   fileData,
+      //   'utf-8',
+      // );
 
       await this.s3Client.send(
         new PutObjectCommand({
@@ -295,16 +295,16 @@ export class S3Service {
   async saveImageAsset(saveAssetDTO: AssetDTO) {
     let filePath = `${saveAssetDTO.UserID}`;
 
-    try {
-      await fs.mkdir(`./storage/${filePath}`, {
-        recursive: true,
-      });
-    } catch (err) {
-      // console.log(
-      //   'Directory Creation Error: ' + err,
-      // );
-      return undefined;
-    }
+    // try {
+    //   await fs.mkdir(`./storage/${filePath}`, {
+    //     recursive: true,
+    //   });
+    // } catch (err) {
+    //   // console.log(
+    //   //   'Directory Creation Error: ' + err,
+    //   // );
+    //   return undefined;
+    // }
 
     const fileData = new Uint8Array(
       Buffer.from(saveAssetDTO.Content),
@@ -313,11 +313,11 @@ export class S3Service {
     filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.AssetID}`;
 
     try {
-      await fs.writeFile(
-        `./storage/${filePath}`,
-        fileData,
-        'utf-8',
-      );
+      // await fs.writeFile(
+      //   `./storage/${filePath}`,
+      //   fileData,
+      //   'utf-8',
+      // );
 
       await this.s3Client.send(
         new PutObjectCommand({
@@ -343,16 +343,16 @@ export class S3Service {
   ) {
     let filePath = `${saveAssetDTO.UserID}`;
 
-    try {
-      await fs.mkdir(`./storage/${filePath}`, {
-        recursive: true,
-      });
-    } catch (err) {
-      console.log(
-        'Directory Creation Error: ' + err,
-      );
-      return undefined;
-    }
+    // try {
+    //   await fs.mkdir(`./storage/${filePath}`, {
+    //     recursive: true,
+    //   });
+    // } catch (err) {
+    //   console.log(
+    //     'Directory Creation Error: ' + err,
+    //   );
+    //   return undefined;
+    // }
 
     const fileData = new Uint8Array(
       saveAssetDTO.ImageBuffer,
@@ -361,11 +361,11 @@ export class S3Service {
     filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.AssetID}`;
 
     try {
-      await fs.writeFile(
-        `./storage/${filePath}`,
-        fileData,
-        'utf-8',
-      );
+      // await fs.writeFile(
+      //   `./storage/${filePath}`,
+      //   fileData,
+      //   'utf-8',
+      // );
 
       await this.s3Client.send(
         new PutObjectCommand({
@@ -396,12 +396,12 @@ export class S3Service {
 
     // console.log('S3.retrieveAssetByID', assetID);
 
-    try {
-      await fs.access(`./storage/${filePath}`);
-    } catch (err) {
-      console.log('Access Error: ' + err);
-      return undefined;
-    }
+    // try {
+    //   await fs.access(`./storage/${filePath}`);
+    // } catch (err) {
+    //   console.log('Access Error: ' + err);
+    //   return undefined;
+    // }
 
     filePath += `/${assetID}`;
 
@@ -423,7 +423,10 @@ export class S3Service {
         }),
       );
     } catch (err) {
-      console.log('Read File Error: ' + err);
+      console.log(
+        'retrieveAssetByID Read File Error: ' +
+          err,
+      );
       return undefined;
     }
     if (type === 'textractResponse') {
@@ -442,12 +445,12 @@ export class S3Service {
     console.log('Retrieve Asset (s3)');
     let filePath = `${retrieveAssetDTO.UserID}`;
 
-    try {
-      await fs.access(`./storage/${filePath}`);
-    } catch (err) {
-      console.log('Access Error: ' + err);
-      return undefined;
-    }
+    // try {
+    //   await fs.access(`./storage/${filePath}`);
+    // } catch (err) {
+    //   console.log('Access Error: ' + err);
+    //   return undefined;
+    // }
 
     filePath += `/${retrieveAssetDTO.AssetID}`;
 
@@ -474,7 +477,9 @@ export class S3Service {
       retrieveAssetDTO.Size =
         retrieveAssetDTO.Content.length;
     } catch (err) {
-      console.log('Read File Error: ' + err);
+      console.log(
+        'retriveAsset Read File Error: ' + err,
+      );
       return undefined;
     }
 
@@ -485,17 +490,17 @@ export class S3Service {
     console.log('Delete Asset (s3)');
     let filePath = `${assetDTO.UserID}`;
 
-    try {
-      await fs.access(`./storage/${filePath}`);
-    } catch (err) {
-      console.log('Access Error: ' + err);
-      return undefined;
-    }
+    // try {
+    //   await fs.access(`./storage/${filePath}`);
+    // } catch (err) {
+    //   console.log('Access Error: ' + err);
+    //   return undefined;
+    // }
 
     filePath += `/${assetDTO.AssetID}`;
 
     try {
-      await fs.unlink(`./storage/${filePath}`);
+      // await fs.unlink(`./storage/${filePath}`);
       /*const response = */ await this.s3Client.send(
         new DeleteObjectCommand({
           Bucket: this.awsS3BucketName,
