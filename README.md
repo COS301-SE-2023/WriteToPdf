@@ -26,12 +26,6 @@
 
 WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritten notes into structured documents that can be edited and shared with others.
 
-## Demo 3 Important Links
-
-[Link to automated integration tests](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-integration.yml)  
-[Link to Architecture Document](https://docs.google.com/document/d/1FTGkhilcBonjeJdZc6e2ykf3x_l8cgZlwjZvC8O_KZ8/edit?usp=drive_link)  
-Any other documentation can be found in the readme of our repository.
-
 ## Demos
 - [Demo 1](https://drive.google.com/drive/folders/1D8awdHGBDuI7PGQYF_jtX9iGq_9PWY3x?usp=sharing)
 - [Demo 2](https://drive.google.com/drive/folders/1QVIrOEi5PJAhG8DMwNrwjIcF7Gocu8LK?usp=sharing)
