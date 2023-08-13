@@ -368,5 +368,25 @@ export class NodeService {
     return false;
   }
 
+  public getFoldersByParentID(parentID: string | undefined): FolderDTO[] {
+    let folders: FolderDTO[] = [];
+    for (let folder of this.folders) {
+      if (folder.ParentFolderID === parentID) {
+        folders.push(folder);
+      }
+    }
+    return folders;
+  }
+
+  public getFilesByParentID(parentID: string | undefined): MarkdownFileDTO[] {
+    let files: MarkdownFileDTO[] = [];
+    for (let file of this.files) {
+      if (file.ParentFolderID === parentID) {
+        files.push(file);
+      }
+    }
+    return files;
+  }
+
 
 }
