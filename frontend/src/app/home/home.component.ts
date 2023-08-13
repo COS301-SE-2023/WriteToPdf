@@ -94,7 +94,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   currentFiles: any[] = []; //Holds an array of objects representing files.
   folderIDHistory: string[] = [];
   folderIDHistoryPosition: number = 0;
-  
+
 
   public loading: boolean = false;
   @ViewChild('myTreeTable') treeTable!: TreeTable;
@@ -133,7 +133,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
       {
         label: 'Delete',
         icon: 'pi pi-trash',
-        command: () => this.deleteSelectedEntity(this.currentDirectory)
+        command: () => {
+
+          const selected = this.getSelected();
+          console.log(selected);
+          if (selected.length === 1) {
+            this.deleteSelectedEntity(selected[0]);
+          }
+
+        }
       },
     ];
   }
@@ -576,18 +584,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   delete(event: any) {
-    if (event.data.type == 'folder') {
-      this.deleteAllChildren(this.nodeService.getFolderDTOByID(event.key));
+    if (event.Type == 'folder') {
+      this.deleteAllChildren(this.nodeService.getFolderDTOByID(event.FolderID));
 
       this.refreshTree();
       this.currentDirectory = null;
     } else {
-      this.fileService.deleteDocument(event.key);
-      this.deleteEntryByKey(this.filesDirectoryTree, event.key);
-      this.deleteEntryByKey(this.filesDirectoryTreeTable, event.key);
-      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.key);
-      this.filterTable('', 3);
-      this.nodeService.removeFile(event.key);
+      this.fileService.deleteDocument(event.MarkdownID);
+      this.deleteEntryByKey(this.filesDirectoryTree, event.MarkdownID);
+      this.deleteEntryByKey(this.filesDirectoryTreeTable, event.MarkdownID);
+      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.MarkdownID);
+      this.nodeService.removeFile(event.MarkdownID);
       this.refreshTree();
       this.currentDirectory = null;
     }
@@ -604,7 +611,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.filteredFilesDirectoryTreeTable,
         file.MarkdownID
       );
-      this.filterTable('', 3);
       this.nodeService.removeFile(file.MarkdownID);
     }
     for (const folder of folders) {
@@ -616,14 +622,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.filteredFilesDirectoryTreeTable,
         folder.FolderID
       );
-      this.filterTable('', 3);
       this.nodeService.removeFolder(folder.FolderID);
     }
     this.folderService.deleteFolder(event.FolderID);
     this.deleteEntryByKey(this.filesDirectoryTree, event.FolderID);
     this.deleteEntryByKey(this.filesDirectoryTreeTable, event.FolderID);
     this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.FolderID);
-    this.filterTable('', 3);
     this.nodeService.removeFolder(event.FolderID);
   }
 
@@ -672,9 +676,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
             label: 'Open',
             icon: 'pi pi-fw pi-folder',
             command: () => {
-              if (this.currentDirectory != null)
-                this.onOpenFileSelect(this.currentDirectory);
-              else {
+              const selected = this.getSelected();
+
+              console.log(selected);
+              if (selected.length === 1) {
+                if (selected[0].Type == 'folder') {
+                  this.openFolder(selected[0].FolderID);
+                } else if (selected[0].Type == 'file') {
+                  this.onOpenFileSelect(selected[0].MarkdownID);
+                }
+              }
+              else if (selected.length === 0) {
                 this.messageService.add({
                   severity: 'warn',
                   summary: 'Please Select a Folder or File to Open',
@@ -702,9 +714,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
             label: 'Delete',
             icon: 'pi pi-fw pi-trash',
             command: () => {
-              if (this.currentDirectory != null)
-                this.deleteSelectedEntity(this.currentDirectory);
-              else {
+              const selected = this.getSelected();
+              console.log(selected);
+              if (selected.length === 1) {
+                this.deleteSelectedEntity(selected[0]);
+              } else if (selected.length === 0) {
                 this.messageService.add({
                   severity: 'warn',
                   summary: 'Please select a folder or File to Delete',
@@ -878,43 +892,62 @@ export class HomeComponent implements OnInit, AfterViewInit {
       { field: 'size', header: 'Size' },
       { field: 'type', header: 'Type' },
     ];
-    this.filterTable('', 3);
+  }
+
+  @HostListener('document:keydown.enter', ['$event'])
+  handleEnterKeyPress(event: KeyboardEvent) {
+    const selected = this.getSelected();
+    console.log(selected);
+    if (selected.length === 1) {
+      if (selected[0].Type === 'file') {
+        this.onOpenFileSelect(selected[0].MarkdownID);
+      }
+      else if (selected[0].Type === 'folder') {
+        this.openFolder(selected[0].FolderID);
+      }
+    }
+  }
+
+  @HostListener('document:keydown.delete', ['$event'])
+  handleDeleteKeyPress(event: KeyboardEvent) {
+    const selected = this.getSelected();
+    console.log(selected);
+    if (selected.length === 1) {
+      this.deleteSelectedEntity(selected[0]);
+    }
   }
 
   openFileEnter(event: any): void {
-    if (this.currentNode != null) this.onOpenFileSelect(this.currentNode);
-    else {
-    }
+
   }
 
   deleteSelectedEntity(event: any): void {
-    if (this.currentDirectory != null) {
-      let message = `Are you sure that you want to delete '${this.removeUniqueID(this.currentDirectory.data.name)}'?`;
-      const type = this.currentDirectory.data.type;
-      if (type === 'folder') {
-        message = `Are you sure that you want to delete '${this.removeUniqueID(this.currentDirectory.data.name)}' and all of its contents?`;
-      }
-      this.confirmationService.confirm({
-        message: message,
-        header: 'Delete Confirmation',
-        icon: 'pi pi-exclamation-triangle',
-        accept: async () => {
-          await this.delete(this.currentDirectory);
 
-          if (type === 'folder')
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Folder deleted successfully',
-            });
-          else
-            this.messageService.add({
-              severity: 'success',
-              summary: 'File deleted successfully',
-            });
-        },
-        reject: () => { },
-      });
+    let message = `Are you sure that you want to delete '${event.Name}'?`;
+    const type = event.Type;
+    if (type === 'folder') {
+      message = `Are you sure that you want to delete '${event.FolderName}' and all of its contents?`;
     }
+    this.confirmationService.confirm({
+      message: message,
+      header: 'Delete Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: async () => {
+        await this.delete(event);
+
+        if (type === 'folder')
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Folder deleted successfully',
+          });
+        else
+          this.messageService.add({
+            severity: 'success',
+            summary: 'File deleted successfully',
+          });
+      },
+      reject: () => { },
+    });
   }
 
   openFileDoubleClick() {
@@ -1080,7 +1113,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   openFolder(parentID: string) {
-    if(this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
+    if (this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
       this.folderIDHistory.splice(this.folderIDHistoryPosition + 1, this.folderIDHistory.length - this.folderIDHistoryPosition - 1);
     }
     this.folderIDHistory.push(parentID);
@@ -1096,7 +1129,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.loadByParentID(parentID);
     }
   }
-  
+
   redoFolder() {
 
     if (this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
@@ -1104,6 +1137,52 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.folderIDHistoryPosition++;
       this.loadByParentID(parentID);
     }
+  }
+
+  renameFolder(folderID: string, path: string, $event: any) {
+    if ($event.target.value === '') return;
+    this.folderService.renameFolder(folderID, path, $event.target.value).then((data) => {
+      this.nodeService.renameFolder(folderID, $event.target.value);
+    });
+  }
+
+  renameFile(fileID: string, path: string, $event: any, n: any) {
+    if ($event.target.value === '') return;
+    this.fileService.renameDocument(fileID, $event.target.value, path).then((data) => {
+      console.log(data);
+      this.nodeService.renameFile(fileID, $event.target.value);
+    });
+  }
+
+  selectOnlyOne(node: any) {
+    node.Selected = true;
+    this.currentFolders.forEach((element: any) => {
+      if (element !== node) {
+        element.Selected = false;
+      }
+    });
+    this.currentFiles.forEach((element: any) => {
+      if (element !== node) {
+        element.Selected = false;
+      }
+    });
+  }
+
+  getSelected() {
+    let selected: any = [];
+    this.currentFolders.forEach((element: any) => {
+      if (element.Selected) {
+        element.Type = 'folder';
+        selected.push(element);
+      }
+    });
+    this.currentFiles.forEach((element: any) => {
+      if (element.Selected) {
+        element.Type = 'file';
+        selected.push(element);
+      }
+    });
+    return selected;
   }
   protected readonly focus = focus;
 }

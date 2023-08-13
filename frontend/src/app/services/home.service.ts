@@ -388,5 +388,21 @@ export class NodeService {
     return files;
   }
 
+  public renameFolder(folderID: string, newName: string) {
+    for (let folder of this.folders) {
+      if (folder.FolderID === folderID) {
+        folder.FolderName = newName;
+      }
+    }
+  }
+
+  public renameFile(fileID: string, newName: string) {
+    for (let file of this.files) {
+      if (file.MarkdownID === fileID) {
+        file.Name = newName;
+      }
+    }
+  }
+
 
 }
