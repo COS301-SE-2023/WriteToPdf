@@ -209,8 +209,13 @@
       </p-treeTable>-->
       <div class="directoryHeader">
         <div class="iconSpacing">
-          <img class="icon" src="assets/Icons/editIcons/undo.svg" alt="" (click)="undoFolder()"/>
-          <img class="icon" src="assets/Icons/editIcons/redo.svg" alt="" (click)="redoFolder()"/>
+
+          <img class="icon" src="assets/Icons/editIcons/undo.svg" alt="" (click)="undoFolder()" 
+          [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" />
+
+          <img class="icon" src="assets/Icons/editIcons/redo.svg" alt="" (click)="redoFolder()" 
+          [ngClass]="{'hover': this.folderIDHistory.length > this.folderIDHistoryPosition + 1}"/>
+
         </div>
         <div class="nameHeader">
           <span>Name</span>
@@ -224,18 +229,21 @@
       </div>
 
       <!-- Folders Start -->
-      <div *ngFor="let obj of currentFolders" class="fileItem" (dblclick) = "openFolder(obj.FolderID)">
+      <div *ngFor="let obj of currentFolders" class="fileItem" (dblclick) = "openFolder(obj.FolderID)"
+      (click)="selectOnlyOne(obj)" 
+      [ngClass]="obj.Selected ? 'selectedFile' : 'defaultFile'">
         <div class="iconSpacing">
           <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/folder.png" alt=""/>
         </div>
-        <div class="nameHeader">
+        <div class="nameHeader" title="{{obj.FolderName}}">
           <input
-            type="text"
-            editable="true"
-            class="fileName"
-            value="{{obj.FolderName}}"
-            maxlength="50"
-            placeholder = "rename"
+          type="text"
+          editable="true"
+          class="fileName"
+          value="{{obj.FolderName}}"
+          maxlength="50"
+          placeholder = "rename"
+          (blur)="renameFolder(obj.FolderID, obj.Path, $event)"
           />
         </div>
         <div class="sizeHeader">
@@ -246,20 +254,23 @@
         </div>
       </div>
       <!-- Folders End -->
-
+      
       <!-- Files Start -->
-      <div *ngFor="let obj of currentFiles" class="fileItem" (dblclick) = "onOpenFileSelect(obj.MarkdownID)">
+      <div *ngFor="let obj of currentFiles" class="fileItem" (dblclick) = "onOpenFileSelect(obj.MarkdownID)" 
+      (click)="selectOnlyOne(obj)" 
+      [ngClass]="obj.Selected ? 'selectedFile' : 'defaultFile'">
         <div class="iconSpacing">
           <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/doc.png" alt=""/>
         </div>
-        <div class="nameHeader">
+        <div class="nameHeader" title="{{obj.Name}}">
           <input
-            type="text"
-            editable="true"
-            class="fileName"
-            value="{{obj.Name}}"
-            maxlength="50"
-            placeholder = "rename"
+          type="text"
+          editable="true"
+          class="fileName"
+          value="{{obj.Name}}"
+          maxlength="50"
+          placeholder = "rename"
+          (blur)="renameFile(obj.MarkdownID, obj.Path, $event, obj)"
           />
         </div>
         <div class="sizeHeader">

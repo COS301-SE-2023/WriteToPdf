@@ -347,7 +347,18 @@ textarea {
   width: 70vw;
   height: $file-height;
   background-image: linear-gradient(to right, #f6f6f6, #f7f9fc, #f6f6f6);
-  border-bottom:1px #ccc solid;
+  border-bottom: 1px #ccc solid;
+
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -ms-user-drag: none;
+  user-drag: none;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .fileItem {
@@ -355,33 +366,47 @@ textarea {
   width: 70vw;
   height: $file-height;
   background-color: lighten($light-grey, 10%);
-  border-bottom:1px #ccc solid;
+  border-bottom: 1px #ccc solid;
+
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -ms-user-drag: none;
+  user-drag: none;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
-.fileItem:hover {
+.defaultFile:hover {
   cursor: pointer;
   background-color: $light-grey;
+}
 
+.selected:hover {
+  cursor: pointer;
 }
 
 .iconSpacing {
   flex: 1;
-    /* Distribute available space equally */
-    display: flex;
-    /* Nested flex containers for alignment */
-    align-items: center;
-    /* Align items vertically */
-    justify-content: left;
-    /* Align items horizontally */
-    // border: 1px solid #ccc;
-    /* Just for visualization, remove in production */
-    overflow: hidden;
+  /* Distribute available space equally */
+  display: flex;
+  /* Nested flex containers for alignment */
+  align-items: center;
+  /* Align items vertically */
+  justify-content: left;
+  /* Align items horizontally */
+  // border: 1px solid #ccc;
+  /* Just for visualization, remove in production */
+  overflow: hidden;
 }
 
 .fileItemIcon {
-  width:30px;
-  height:30px;
-  margin:auto;
+  width: 30px;
+  height: 30px;
+  margin: auto;
 }
 
 .nameHeader,
@@ -417,15 +442,19 @@ textarea {
 }
 
 .iconSpacing .icon {
-  margin:auto;
+  margin: auto;
   width: 42px;
   height: 42px;
   padding: 4px;
   border-radius: 5px;
-  cursor: pointer;
 }
 
-.iconSpacing .icon:hover {
+.iconSpacing .hover:hover {
+  cursor: pointer;
   background-color: darken($light-grey, 10%);
   transition: 0.5s;
+}
+
+.selectedFile {
+  background-color: #b4e4ff;
 }

@@ -161,6 +161,7 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
+          console.log(response);
           if (response.status === 200) {
             resolve(true);
           } else {
