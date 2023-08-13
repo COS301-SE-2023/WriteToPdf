@@ -89,6 +89,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
   uploadedFiles: any[] = [];
   contextMenuItems: any[];
 
+  currentFolders: any[] = []; //Holds an array of objects representing folders.
+  currentFiles: any[] = []; //Holds an array of objects representing files.
+  folderIDHistory: string[] = [];
+  folderIDHistoryPosition: number = 0;
+  
+
   public loading: boolean = false;
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
@@ -262,6 +268,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // Call the function to set the component width initially
       this.updateMenubarWidth();
       // Below is the function that initially populates the fileTree
+
+      this.nodeService.getFilesAndFolders().then(() => {
+        this.folderIDHistory.push('');
+        this.loadByParentID("");
+      });
       this.nodeService.getFilesAndFolders().then(() => {
         const data = this.nodeService.getTreeTableNodesData();
         this.filesDirectoryTree = this.generateTreeNodes(data);
@@ -470,8 +481,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
   }
 
-  onOpenFileSelect(event: any): void {
-    const file = this.nodeService.getFileDTOByID(event.key);
+  onOpenFileSelect(MarkdownID: string | undefined | null): void {
+    const file = this.nodeService.getFileDTOByID(MarkdownID);
     this.loading = true;
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
@@ -980,5 +991,63 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return name.split('!#$')[0];
   }
 
+  loadByParentID(parentID: string) {
+
+    console.log("Pos: ", this.folderIDHistoryPosition);
+    console.log("Hist: ", this.folderIDHistory);
+
+    this.currentFolders = [];
+    this.currentFiles = [];
+    const folders = this.nodeService.getFoldersByParentID(parentID);
+    const files = this.nodeService.getFilesByParentID(parentID);
+
+    for (let i = 0; i < folders.length; i++) {
+      this.currentFolders.push(folders[i]);
+    }
+    for (let i = 0; i < files.length; i++) {
+      this.currentFiles.push(files[i]);
+    }
+  }
+
+  getSize(size: number) {
+    if (size > 1000000000) {
+      return (size / 1000000000).toFixed(2) + ' GB';
+    } else if (size > 1000000) {
+      return (size / 1000000).toFixed(2) + ' MB';
+    }
+    else if (size > 1000) {
+      return (size / 1000).toFixed(2) + ' KB';
+    }
+    else {
+      return size + ' B';
+    }
+  }
+
+  openFolder(parentID: string) {
+    if(this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
+      this.folderIDHistory.splice(this.folderIDHistoryPosition + 1, this.folderIDHistory.length - this.folderIDHistoryPosition - 1);
+    }
+    this.folderIDHistory.push(parentID);
+    this.folderIDHistoryPosition++;
+    this.loadByParentID(parentID);
+  }
+
+  undoFolder() {
+
+    if (this.folderIDHistoryPosition > 0) {
+      const parentID = this.folderIDHistory[this.folderIDHistory.length - 2];
+      this.folderIDHistoryPosition--;
+      this.loadByParentID(parentID);
+    }
+  }
+  
+  redoFolder() {
+
+    if (this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
+      const parentID = this.folderIDHistory[this.folderIDHistoryPosition + 1];
+      this.folderIDHistoryPosition++;
+      this.loadByParentID(parentID);
+    }
+  }
   protected readonly focus = focus;
 }
