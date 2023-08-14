@@ -33,9 +33,7 @@ export class AuthController {
     }
 
     if (
-      !refreshTokenDTO.Email ||
       !refreshTokenDTO.Token ||
-      !refreshTokenDTO.ExpiresAt ||
       !refreshTokenDTO.UserID
     ) {
       throw new HttpException(
