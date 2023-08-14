@@ -55,6 +55,16 @@ export class AuthGuard implements CanActivate {
         await this.jwtService.verifyAsync(token, {
           secret: jwtConstants.secret,
         });
+
+      if (
+        payload.UserID !== request.body.UserID ||
+        payload.ExpiresAt < new Date(Date.now())
+      ) {
+        throw new UnauthorizedException(
+          'Invalid token',
+        );
+      }
+
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException(
