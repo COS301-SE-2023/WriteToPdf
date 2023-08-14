@@ -486,7 +486,7 @@ describe('UsersService', () => {
         );
         expect(e.getResponse()).toEqual({
           status: HttpStatus.UNAUTHORIZED,
-          error: 'User not found',
+          error: 'Invalid credentials',
         });
       }
     });
@@ -515,15 +515,14 @@ describe('UsersService', () => {
         );
         expect(e.getResponse()).toEqual({
           status: HttpStatus.UNAUTHORIZED,
-          error: 'Incorrect password',
+          error: 'Invalid credentials',
         });
       }
     });
 
     it('should return token if credentials are correct', async () => {
       const loginDto = new UserDTO();
-      loginDto.Email = 'test';
-      loginDto.Password = 'pass';
+      loginDto.UserID = 1;
 
       const returnedUser = new User();
       returnedUser.UserID = 1;
@@ -539,13 +538,9 @@ describe('UsersService', () => {
         FirstName: returnedUser.FirstName,
         EncryptionKey: 'pepperedPassword',
         Token: 'token',
-        ExpiresAt: 3600,
       };
 
-      const authToken = {
-        access_token: 'token',
-        expires_at: 3600,
-      };
+      const authToken = 'token';
 
       jest
         .spyOn(service, 'findOneByEmail')
@@ -574,10 +569,7 @@ describe('UsersService', () => {
       ).toBeCalledWith(loginDto.Password);
       expect(
         authService.generateToken,
-      ).toBeCalledWith(
-        returnedUser.Email,
-        returnedUser.Password,
-      );
+      ).toBeCalledWith(returnedUser);
     });
   });
 
