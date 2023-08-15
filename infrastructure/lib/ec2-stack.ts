@@ -89,7 +89,7 @@ export class EC2Stack extends Stack {
     // The actual Web EC2 Instance for the web server
     const webServer = new Instance(this, "WriteToPDFWebServer", {
       vpc,
-      instanceType: InstanceType.of(InstanceClass.T2, InstanceSize.MICRO),
+      instanceType: InstanceType.of(InstanceClass.T3, InstanceSize.MICRO),
       machineImage: ubuntu,
       securityGroup: webSg,
       role: webServerRole,
