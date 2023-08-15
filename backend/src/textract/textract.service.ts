@@ -28,6 +28,7 @@ export class TextractService {
     process.env.AWS_S3_ACCESS_KEY_ID;
   awsS3SecretAccessKey =
     process.env.AWS_S3_SECRET_ACCESS_KEY;
+  awsTextractRegion = 'eu-central-1';
   snsTopicArn =
     process.env.AWS_TEXTRACT_SNS_TOPIC_ARN;
   roleArn = process.env.AWS_S3_TEXTRACT_ROLE_ARN;
@@ -41,7 +42,7 @@ export class TextractService {
         secretAccessKey:
           this.awsS3SecretAccessKey,
       },
-      region: this.awsS3BucketRegion,
+      region: this.awsTextractRegion,
     });
 
   private readonly sqsClient = new SQSClient({
