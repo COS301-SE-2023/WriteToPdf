@@ -16,6 +16,7 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   emailForgot: string = '';
+  passwordForgot: string = '';
 
   forgotPasswordPopup: boolean = false;
   constructor(
@@ -69,9 +70,11 @@ export class LoginComponent {
     this.login();
   }
 
-  forgotPassword(): void {
+  async forgotPassword(): Promise<void> {
     //todo implement
-    console.log('TODO: forgotPassword');
+    // console.log('TODO: forgotPassword');
+    await this.userService.forgotPassword(this.emailForgot, this.passwordForgot);
+    this.forgotPasswordPopup = false;
   }
   movemouse(event: MouseEvent) {
     // const windowWidth = window.innerWidth;

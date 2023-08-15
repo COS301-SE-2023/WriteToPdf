@@ -149,6 +149,10 @@ export class UsersService {
     const user = await this.findOneByEmail(
       loginUserDTO.Email,
     );
+    console.log(
+      'salted password: ',
+      loginUserDTO.Password,
+    );
     if (
       user?.Password !==
       this.getPepperedPassword(
@@ -241,5 +245,39 @@ export class UsersService {
       returnedUser.Salt = user.Salt;
     }
     return returnedUser; // returns user with salt
+  }
+
+  async resetPassword(userDTO: UserDTO) {
+    const user = await this.findOneByEmail(
+      userDTO.Email,
+    );
+    if (!user) {
+      this.throwHttpException(
+        HttpStatus.NOT_FOUND,
+        'User not found',
+      );
+    }
+
+    // const salt = this.getSalt(userDTO);
+
+    // user.Password = CryptoJS.SHA256(
+    //   userDTO.Password + salt,
+    //   10,
+    // ).toString(); // salt the password
+
+    // const pepper = process.env.PEPPER;
+    // if (!pepper) {
+    //   throw new Error(
+    //     'Pepper value is not defined in the environment variables.',
+    //   );
+    // }
+    // user.Password = CryptoJS.SHA256(
+    //   user.Password + pepper,
+    //   10,
+    // ).toString(); // pepper the password
+    user.Password = this.getPepperedPassword(
+      userDTO.Password,
+    );
+    return this.usersRepository.save(user); // update user with new password
   }
 }

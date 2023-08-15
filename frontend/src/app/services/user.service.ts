@@ -167,6 +167,46 @@ export class UserService {
     this.navigateToPage('/login');
   }
 
+  async forgotPassword(email : string, newPassword:string){
+    const salt = await this.retrieveSalt(email);
+    this.sendForgotPasswordData(email, this.hashPassword(newPassword, salt)).subscribe({
+      next: (response: HttpResponse<any>) => {
+        console.log('forgotPass response: ', response);
+        if (response.status === 200) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: `Password changed successfully`,
+          });
+          this.navigateToPage('/login');
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: `Password change failed`,
+          });
+        }
+      },
+      error: (error) => {
+        console.error(error); // Handle error if any
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `${error.error.error}`,
+        });
+      },
+    });
+  }
+
+  sendForgotPasswordData(email: string, password : string): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}users/reset_password`;
+    const body = new UserDTO();
+    body.Email = email;
+    body.Password = password;
+    return this.http.post(url, body, { observe: 'response' });
+  }
+
   isAuthenticatedUser(): boolean {
     // Return the authentication status
     return this.isAuthenticated;
