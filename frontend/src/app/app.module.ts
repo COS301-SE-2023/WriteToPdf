@@ -63,6 +63,10 @@ export function tokenGetter() {
   return localStorage.getItem('authToken');
 }
 
+export function tokenGetter() {
+  return localStorage.getItem('authToken');
+}
+
 @NgModule({
   declarations: [
     AppComponent,
