@@ -176,19 +176,13 @@ export class UserService {
     this.router.navigate(['/login']).then(() => window.location.reload());
   }
 
-  revokeToken(): Observable<any> {
+  revokeToken(): void {
     // return this.http.delete(this.path + "RevokeToken/" + this.username.value, { headers: header, withCredentials: true });
     
-    const environmentURL = environment.apiURL;
-    const url = `${environmentURL}users/revoke_token`;
-    const body = new UserDTO();
-    body.UserID = this.userID;
-        
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      'Bearer ' + this.getAuthToken()
-    );
-    return this.http.post(url, body, { headers, observe: 'response' });
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.navigateToPage('/login');
   }
 
   isAuthenticatedUser(): boolean {
