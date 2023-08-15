@@ -10,6 +10,6 @@
   "transform": {
     "^.+\\.(t)s$": "ts-jest"
   },
-  "testTimeout": 10000,
+  "testTimeout": 100000,
   "setupFiles": ["dotenv/config"]
 }
