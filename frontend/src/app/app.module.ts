@@ -55,6 +55,13 @@ import {MatTableModule} from "@angular/material/table";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
+import { JwtModule } from "@auth0/angular-jwt";
+import { environment } from 'src/environments/environment';
+
+
+export function tokenGetter() {
+  return localStorage.getItem('authToken');
+}
 
 @NgModule({
   declarations: [
@@ -110,7 +117,14 @@ import {MatButtonModule} from "@angular/material/button";
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: [environment.apiURL],
+        disallowedRoutes: ["http://example.com/examplebadroute/"],
+      },
+    }),
   ],
   providers: [NodeService, UserService, MessageService, DialogService, ConfirmationService],
   bootstrap: [AppComponent],
