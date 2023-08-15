@@ -63,6 +63,11 @@ export class AuthGuard implements CanActivate {
         'Invalid token',
       );
     }
+    if (!request.body.UserID) {
+      throw new UnauthorizedException(
+        'Missing UserID',
+      );
+    }
     if (
       payload.UserID != request.body.UserID ||
       payload.ExpiresAt < new Date(Date.now())
