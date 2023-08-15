@@ -36,7 +36,6 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { FileManagerPopupComponent } from './file-manager-popup/file-manager-popup.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ContextMenu, ContextMenuModule } from 'primeng/contextmenu';
@@ -48,7 +47,6 @@ import { ClickAtCoordinateDirective } from './click-at-coordinate.directive';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ImageUploadPopupComponent } from './image-upload-popup/image-upload-popup.component';
-import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   declarations: [
@@ -60,7 +58,6 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     SignupComponent,
     EditComponent,
     FileUploadPopupComponent,
-    FileManagerPopupComponent,
     ClickAtCoordinateDirective,
     ImageUploadPopupComponent,
   ],

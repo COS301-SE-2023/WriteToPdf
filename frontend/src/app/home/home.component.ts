@@ -21,7 +21,6 @@ import { NodeService } from '../services/home.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { UserService } from '../services/user.service';
-import { FileManagerPopupComponent } from '../file-manager-popup/file-manager-popup.component';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
 import { ViewChild } from '@angular/core';
 import { EditService } from '../services/edit.service';
@@ -227,18 +226,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  //TODO Implement breadcrumb
-  updateBreadcrumb(selectedNode: TreeNode | undefined) {
-    // Clear the existing breadcrumb items
-    this.activeDirectoryItems = [];
-    // Traverse the selected node's ancestors to generate the breadcrumb items
-    let currentNode = selectedNode;
-    while (currentNode) {
-      this.activeDirectoryItems.unshift({ label: currentNode.label });
-      currentNode = currentNode.parent;
-    }
-    return false;
-  }
 
   sendEditedRowLabel(event: any, key: string, type: string): void {
     if (type === 'folder') {
@@ -446,50 +433,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
    *
    * @param options, must be "folder" || "move" || "document"
    */
-  showFileManagerPopup(options: string): void {
-    if (options === 'folder') {
-      //TODO communicate intentions to file manager pop-up
-      const ref = this.dialogService.open(FileManagerPopupComponent, {
-        header: 'Folder Creation: Select location',
-        showHeader: true,
-        closable: true,
-        closeOnEscape: true,
-        dismissableMask: true,
-      });
-      ref.onClose.subscribe(() => {
-        //If the user creates a new folder we want it to be reflected in our home page,
-        //So we need to call ngOnInit once more to update the homepage after closing.
-        this.ngOnInit();
-        // Handle any actions after the dialog is closed
-      });
-    }
-    if (options === 'move') {
-      //TODO communicate intentions to file manager pop-up
-      const ref = this.dialogService.open(FileManagerPopupComponent, {
-        header: 'Select new location',
-        showHeader: true,
-        closable: true,
-        closeOnEscape: true,
-        dismissableMask: true,
-      });
-      ref.onClose.subscribe(() => {
-        // Handle any actions after the dialog is closed
-      });
-    }
-    if (options === 'document') {
-      //TODO communicate intentions to file manager pop-up
-      const ref = this.dialogService.open(FileManagerPopupComponent, {
-        header: 'Select document location',
-        showHeader: true,
-        closable: true,
-        closeOnEscape: true,
-        dismissableMask: true,
-      });
-      ref.onClose.subscribe(() => {
-        // Handle any actions after the dialog is closed
-      });
-    }
-  }
+
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
