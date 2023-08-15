@@ -255,8 +255,16 @@
       <div *ngFor="let obj of currentFolders" class="fileItem" (dblclick) = "openFolder(obj.FolderID)"
       (click)="selectOnlyOne(obj)"
       (contextmenu) ="selectOnlyOne(obj)" 
-      [ngClass]="obj.Selected ? 'selectedFile' : 'defaultFile'"
-      draggable="true">
+      [ngClass]="{
+        'selectedFile': obj.Selected,
+        'defaultFile': !obj.Selected,
+        'drag-hover': obj.DraggedOver
+      }"
+      [draggable]="obj.Selected"
+      (dragstart)="onDragStart($event, obj)"
+      (dragover)="onDragOver($event, obj)"
+      (dragleave)="onDragLeave($event, obj)"
+      (drop)="onDrop($event, obj)">
         <div class="iconSpacing">
           <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/folder.png" alt=""/>
         </div>
@@ -275,11 +283,13 @@
       <!-- Folders End -->
       
       <!-- Files Start -->
-      <div #file *ngFor="let obj of currentFiles" class="fileItem" (dblclick) = "onOpenFileSelect(obj.MarkdownID)" 
+      <div *ngFor="let obj of currentFiles" class="fileItem" (dblclick) = "onOpenFileSelect(obj.MarkdownID)" 
       (click)="selectOnlyOne(obj)" 
       (contextmenu) ="selectOnlyOne(obj)"
       [ngClass]="obj.Selected ? 'selectedFile' : 'defaultFile'" 
-      draggable="true">
+      [draggable]="obj.Selected"
+      (dragstart)="onDragStart($event, obj)"
+      (drop)="onDrop($event, obj)">
         <div class="iconSpacing">
           <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/doc.png" alt=""/>
         </div>
@@ -293,11 +303,12 @@
           <span>{{formatDate(obj.DateCreated)}}</span>
         </div>
         <div class="iconSpacing">
-          <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/lock.png" alt=""/>
+          <img class="fileItemIcon lockIcon" (click)="lockClick($event, obj)" (contextmenu)="lockRightClick($event, obj)" src="assets/Icons/homeIcons/mainWindow/lock.png" alt=""/>
         </div>
       </div>
       <!-- Files End -->
-            </div>
+
+      </div>
     </div>
   </div>
   <p-contextMenu
@@ -307,4 +318,5 @@
   <!-- file-upload-popup.component.html -->
   <p-confirmDialog [style]="{width: '50vw', minWidth:'300px'}"></p-confirmDialog>
 
+  
 </div>

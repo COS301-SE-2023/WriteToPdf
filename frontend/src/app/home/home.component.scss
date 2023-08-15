@@ -243,8 +243,9 @@ textarea {
   display: flex;
 }
 
-.drag-hover:hover {
-  // background-color: lightgray !important;
+.drag-hover {
+  background-color: rgb(174, 172, 255) !important;
+  border: #000000 dashed 1px !important;
   /* Add other styles as needed */
   // z-index: 1;
 }
@@ -368,10 +369,10 @@ textarea {
   background-color: lighten($light-grey, 10%);
   border-bottom: 1px #ccc solid;
 
-  -webkit-user-drag: none;
-  -moz-user-drag: none;
-  -ms-user-drag: none;
-  user-drag: none;
+  // -webkit-user-drag: none;
+  //   -moz-user-drag: none;
+  //   -ms-user-drag: none;
+  //   user-drag: none;
 
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -457,4 +458,17 @@ textarea {
 
 .selectedFile {
   background-color: #b4e4ff;
+}
+
+.lockIcon {
+  transition: 0.5s;
+  width: 40px;
+  height: 40px;
+  padding: 4px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.lockIcon:hover {
+  background-color: darken($light-grey, 10%);
 }
