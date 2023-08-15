@@ -87,6 +87,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public createNewFolderDialogueVisible: boolean = false;
   renameDialogueVisible: boolean = false;
   public entityName: string = '';
+  entityRename: string = '';
   uploadedFiles: any[] = [];
   contextMenuItems: any[];
 
@@ -130,6 +131,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
       //   icon: 'pi pi-folder-plus',
       //   // command: () => this.encloseSelectionInFolder()
       // },
+      {
+        label: 'Rename',
+        icon: 'pi pi-pencil',
+        command: () => {
+
+          const selected = this.getSelected();
+          console.log(selected);
+          if (selected.length === 1) {
+            this.renameDialogueVisible = true;
+          }
+
+        }
+      },
       {
         label: 'Delete',
         icon: 'pi pi-trash',
@@ -1126,6 +1140,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   selectOnlyOne(node: any) {
+    if (node.Selected) return;
     node.Selected = true;
     this.currentFolders.forEach((element: any) => {
       if (element !== node) {
@@ -1179,9 +1194,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const selected = this.getSelected();
     if (selected.length === 1) {
       if (selected[0].Type == 'folder')
-        this.renameFolder(selected[0].FolderID, selected[0].Path, this.entityName);
+        this.renameFolder(selected[0].FolderID, selected[0].Path, this.entityRename);
       else
-        this.renameFile(selected[0].MarkdownID, selected[0].Path, this.entityName);
+        this.renameFile(selected[0].MarkdownID, selected[0].Path, this.entityRename);
     }
   }
   protected readonly focus = focus;
