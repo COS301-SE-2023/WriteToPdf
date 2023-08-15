@@ -233,7 +233,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       if (this.sidebarVisible) {
         //then hide the sidebar
         editor.setAttribute('style', 'left:0px;width:100%;margin:auto;');
-        sidebar.setAttribute('style', 'display:none');
+        sidebar.setAttribute('style', 'left:-400px');
         showAssetSidebar.setAttribute('style', 'display:block');
         this.sidebarVisible = false;
       } else {
@@ -241,7 +241,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
         editor.setAttribute('style', 'padding-right: 0px;left:260px');
         sidebar.setAttribute('style', 'display:block');
-        showAssetSidebar.setAttribute('style', 'display:none');
+        showAssetSidebar.setAttribute('style', 'left:-10px');
         this.sidebarVisible = true;
       }
     }

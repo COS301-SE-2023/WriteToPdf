@@ -169,6 +169,7 @@ $page-height: 29.7cm;
 }
 
 .editor {
+    transition: 0.5s;
     display: flex;
     position: absolute;
     top: $header-height;
@@ -191,6 +192,7 @@ $page-height: 29.7cm;
 
 
 .assetSidebar {
+    transition: 0.5s;
     position: fixed;
     top: $header-height;
     left: 0;
@@ -384,6 +386,7 @@ div[contenteditable="true"]:focus {
 // }
 
 .showAssetSidebar {
+    transition: 0.5s;
     position: fixed;
     top: $header-height;
     left: 0;
