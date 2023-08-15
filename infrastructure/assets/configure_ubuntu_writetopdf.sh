@@ -12,7 +12,7 @@ npm install pm2 -g &&
 git clone https://github.com/COS301-SE-2023/WriteToPdf &&
 cd WriteToPdf &&
 cd backend &&
-git switch dev/devOps &&
+git switch main &&
 npm ci &&
 npm run pm2:deploy:app
 
