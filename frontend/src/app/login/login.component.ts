@@ -21,6 +21,7 @@ export class LoginComponent {
   // popupWindow: Window | null = null;
 
   emailForgot: string = '';
+  passwordForgot: string = '';
 
   private clientId = environment.clientId;
 
@@ -100,9 +101,11 @@ export class LoginComponent {
     this.login();
   }
 
-  forgotPassword(): void {
+  async forgotPassword(): Promise<void> {
     //todo implement
-    console.log('TODO: forgotPassword');
+    // console.log('TODO: forgotPassword');
+    await this.userService.forgotPassword(this.emailForgot, this.passwordForgot);
+    this.forgotPasswordPopup = false;
   }
   movemouse(event: MouseEvent) {
     // const windowWidth = window.innerWidth;
