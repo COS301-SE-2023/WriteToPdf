@@ -306,8 +306,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // Below is the function that initially populates the fileTree
 
       this.nodeService.getFilesAndFolders().then(() => {
-        this.folderIDHistory.push('');
-        this.loadByParentID("");
+        const hist = localStorage.getItem('folderIDHistory');
+        const pos = localStorage.getItem('folderIDHistoryPosition');
+
+        if(hist != null && pos != null){
+          this.folderIDHistory = JSON.parse(hist);
+          this.folderIDHistoryPosition = JSON.parse(pos);
+          this.loadByParentID(this.folderIDHistory[this.folderIDHistoryPosition]);
+        } else {
+          this.folderIDHistory.push('');
+          this.loadByParentID("");
+        }
+
         const data = this.nodeService.getTreeTableNodesData();
         this.filesDirectoryTree = this.generateTreeNodes(data);
 
@@ -383,8 +393,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   removeUniqueIDRecursive(node: any) {
-    node.data.name = this.removeUniqueID(node.data.name);
-    node.label = this.removeUniqueID(node.label);
     if (node.children) {
       for (let i = 0; i < node.children.length; i++) {
         this.removeUniqueIDRecursive(node.children[i]);
@@ -804,23 +812,52 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.entityName = 'New Folder';
     }
 
-    if (this.currentDirectory != null) {
-      if (this.currentDirectory.data.type === 'folder') {
-        const folder = this.nodeService.getFolderDTOByID(
-          this.currentDirectory.key
-        );
-        path = folder.Path;
-        if (folder.Path !== '') path += `/${this.currentDirectory.data.name}`;
-        else path += `${this.currentDirectory.data.name}`;
-      } else {
-        const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
-        path = file.Path;
-      }
+    // if (this.currentDirectory != null) {
+    //   if (this.currentDirectory.data.type === 'folder') {
+    //     const folder = this.nodeService.getFolderDTOByID(
+    //       this.currentDirectory.key
+    //     );
+    //     path = folder.Path;
+    //     if (folder.Path !== '') path += `/${this.currentDirectory.data.name}`;
+    //     else path += `${this.currentDirectory.data.name}`;
+    //   } else {
+    //     const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
+    //     path = file.Path;
+    //   }
 
-      parentFolderID = this.currentDirectory.key;
-      if (this.currentDirectory.data.type !== 'folder') {
-        const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
-        parentFolderID = file.ParentFolderID;
+    //   parentFolderID = this.currentDirectory.key;
+    //   if (this.currentDirectory.data.type !== 'folder') {
+    //     const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
+    //     parentFolderID = file.ParentFolderID;
+    //   }
+    // }
+
+    const selected = this.getSelected();
+    if (selected.length === 1) {
+      if (selected[0].Type === 'folder') {
+        parentFolderID = selected[0].FolderID;
+        path = selected[0].Path + '/' + selected[0].Name;
+        console.log(path);
+      }
+      else {
+        if(this.folderIDHistoryPosition == 0){
+          path = '';
+          parentFolderID = '';
+        } else{
+          const currentFolder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
+          parentFolderID = this.folderIDHistory[this.folderIDHistoryPosition];
+          path = currentFolder.Path+'/'+currentFolder.FolderName;
+        }
+      }
+    }
+    else {
+      if (this.folderIDHistoryPosition == 0) {
+        path = '';
+        parentFolderID = '';
+      } else {
+        const currentFolder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
+        parentFolderID = this.folderIDHistory[this.folderIDHistoryPosition];
+        path = currentFolder.Path + '/' + currentFolder.FolderName;
       }
     }
 
@@ -868,23 +905,52 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.entityName = 'New Document';
     }
 
-    if (this.currentDirectory != null) {
-      if (this.currentDirectory.data.type === 'folder') {
-        const folder = this.nodeService.getFolderDTOByID(
-          this.currentDirectory.key
-        );
-        path = folder.Path;
-        if (folder.Path !== '') path += `/${this.currentDirectory.data.name}`;
-        else path += `${this.currentDirectory.data.name}`;
-      } else {
-        const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
-        path = file.Path;
-      }
+    // if (this.currentDirectory != null) {
+    //   if (this.currentDirectory.data.type === 'folder') {
+    //     const folder = this.nodeService.getFolderDTOByID(
+    //       this.currentDirectory.key
+    //     );
+    //     path = folder.Path;
+    //     if (folder.Path !== '') path += `/${this.currentDirectory.data.name}`;
+    //     else path += `${this.currentDirectory.data.name}`;
+    //   } else {
+    //     const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
+    //     path = file.Path;
+    //   }
 
-      parentFolderID = this.currentDirectory.key;
-      if (this.currentDirectory.data.type !== 'folder') {
-        const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
-        parentFolderID = file.ParentFolderID;
+    //   parentFolderID = this.currentDirectory.key;
+    //   if (this.currentDirectory.data.type !== 'folder') {
+    //     const file = this.nodeService.getFileDTOByID(this.currentDirectory.key);
+    //     parentFolderID = file.ParentFolderID;
+    //   }
+    // }
+
+    const selected = this.getSelected();
+    if (selected.length === 1) {
+      if (selected[0].Type === 'folder') {
+        parentFolderID = selected[0].FolderID;
+        path = selected[0].Path + '/' + selected[0].Name;
+        console.log(path);
+      }
+      else {
+        if (this.folderIDHistoryPosition == 0) {
+          path = '';
+          parentFolderID = '';
+        } else {
+          const currentFolder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
+          parentFolderID = this.folderIDHistory[this.folderIDHistoryPosition];
+          path = currentFolder.Path + '/' + currentFolder.FolderName;
+        }
+      }
+    }
+    else {
+      if (this.folderIDHistoryPosition == 0) {
+        path = '';
+        parentFolderID = '';
+      } else {
+        const currentFolder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
+        parentFolderID = this.folderIDHistory[this.folderIDHistoryPosition];
+        path = currentFolder.Path + '/' + currentFolder.FolderName;
       }
     }
 
@@ -1106,11 +1172,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
         });
     }
   }
-  removeUniqueID(name: string): string {
-    return name.split('!#$')[0];
-  }
 
   loadByParentID(parentID: string) {
+    this.unselectAll();
 
     console.log("Pos: ", this.folderIDHistoryPosition);
     console.log("Hist: ", this.folderIDHistory);
@@ -1154,13 +1218,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
 
   openFolder(parentID: string) {
-    this.unselectAll();
+
 
     if (this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
       this.folderIDHistory.splice(this.folderIDHistoryPosition + 1, this.folderIDHistory.length - this.folderIDHistoryPosition - 1);
     }
     this.folderIDHistory.push(parentID);
     this.folderIDHistoryPosition++;
+
+    localStorage.setItem('folderIDHistory', JSON.stringify(this.folderIDHistory));
+    localStorage.setItem('folderIDHistoryPosition', JSON.stringify(this.folderIDHistoryPosition));
     this.loadByParentID(parentID);
   }
 
@@ -1169,6 +1236,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.folderIDHistoryPosition > 0) {
       const parentID = this.folderIDHistory[--this.folderIDHistoryPosition];
       this.loadByParentID(parentID);
+      localStorage.setItem('folderIDHistory', JSON.stringify(this.folderIDHistory));
+      localStorage.setItem('folderIDHistoryPosition', JSON.stringify(this.folderIDHistoryPosition));
     }
   }
 
@@ -1177,6 +1246,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
       const parentID = this.folderIDHistory[++this.folderIDHistoryPosition];
       this.loadByParentID(parentID);
+      localStorage.setItem('folderIDHistory', JSON.stringify(this.folderIDHistory));
+      localStorage.setItem('folderIDHistoryPosition', JSON.stringify(this.folderIDHistoryPosition));
     }
   }
 
@@ -1287,7 +1358,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       console.log('On: ', obj);
 
       if (obj.FolderID) {
-        if (JSON.parse(data).Type == 'folder'){
+        if (JSON.parse(data).Type == 'folder') {
           this.moveByKey(JSON.parse(data).FolderID, obj.FolderID);
         } else {
           this.moveByKey(JSON.parse(data).MarkdownID, obj.FolderID);

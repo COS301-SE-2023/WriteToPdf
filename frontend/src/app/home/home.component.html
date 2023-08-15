@@ -16,7 +16,7 @@
         (keydown.enter)="moveEntity()" (keydown.escape)="moveDialogVisible = false">
         <div class="fileOperations">
           <p>
-            Move {{ removeUniqueID(getEntityToMoveName()) }} to: {{ removeUniqueID(getCurrentDirectoryName()) }}
+            Move {{ getEntityToMoveName() }} to: {{ getCurrentDirectoryName() }}
           </p>
           <!-- <input type="text" pInputText [(ngModel)]="folderTo" /> -->
         </div>

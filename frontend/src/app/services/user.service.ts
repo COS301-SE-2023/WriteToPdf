@@ -148,13 +148,7 @@ export class UserService {
     this.expiresAt = undefined;
     this.doExpirationCheck = false;
 
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userID');
-    localStorage.removeItem('expiresAt');
-    localStorage.removeItem('email');
-    localStorage.removeItem('firstName');
-    localStorage.removeItem('encryptionKey');
+    localStorage.clear();
     
     this.navigateToPage('/login');
     if (this.timer) {
