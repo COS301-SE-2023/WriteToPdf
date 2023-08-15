@@ -36,7 +36,7 @@ export class AmplifyStack extends Stack {
                 commands: [
                   // Fix envirmonment vars
                   "npm ci",
-                  "echo \"export const environment = { production: false,apiURL: 'http://$WRITETOPDF_API:3000/',DEV_USER_EMAIL: 'secret',DEV_USER_PASSWORD: 'secret',};\" >> src/environments/environment.staging.ts",
+                  "echo \"export const environment = { production: false,apiURL:'http://$WRITETOPDF_API:3000/',DEV_USER_EMAIL:'secret',DEV_USER_PASSWORD:'secret',};\" >> src/environments/environment.staging.ts",
                 ],
               },
               build: {
