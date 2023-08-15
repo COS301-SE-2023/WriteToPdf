@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  HostListener,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -52,10 +53,20 @@ export class EditComponent implements AfterViewInit, OnInit {
     private editService: EditService,
     private assetService: AssetService,
     private clipboard: Clipboard,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) { }
 
-
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHandler(event: BeforeUnloadEvent) {
+    this.editService.setContent(this.editor.getData());
+    
+    this.fileService.saveDocument(
+      this.editor.getData(),
+      this.editService.getMarkdownID(),
+      this.editService.getPath()
+    );
+  }
+  
   showImageUploadPopup(): void {
     const ref = this.dialogService.open(ImageUploadPopupComponent, {
       header: 'Upload Images',
@@ -106,6 +117,15 @@ export class EditComponent implements AfterViewInit, OnInit {
         icon: 'pi pi-external-link',
       },
     ];
+
+    const c = localStorage.getItem('content');
+    const m = localStorage.getItem('markdownID');
+    const n = localStorage.getItem('name');
+    const p = localStorage.getItem('path');
+    const pf = localStorage.getItem('parentFolderID');
+
+    if(c!=null && m!=null && n!=null && p!=null && pf!=null)
+      this.editService.setAll(c, m, n, p, pf);
     this.fileName = this.editService.getName();
   }
 

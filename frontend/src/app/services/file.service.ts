@@ -120,12 +120,14 @@ export class FileService {
               summary: 'File created successfully',
             });
 
-            this.editService.setMarkdownID(response.body.MarkdownID);
-            this.editService.setPath(response.body.Path);
-            this.editService.setName(response.body.Name);
-            this.editService.setParentFolderID(response.body.ParentFolderID);
-            this.editService.setContent('');
-
+            this.editService.setAll(
+              '',
+              response.body.MarkdownID,
+              response.body.Name,
+              response.body.Path,
+              response.body.ParentFolderID
+            );
+            
             resolve(true);
           } else {
             resolve(false);
