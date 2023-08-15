@@ -517,11 +517,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
-        this.editService.setContent(data);
-        this.editService.setName(file.Name);
-        this.editService.setMarkdownID(file.MarkdownID);
-        this.editService.setParentFolderID(file.ParentFolderID);
-        this.editService.setPath(file.Path);
+
+        this.editService.setAll(
+          data,
+          file.MarkdownID,
+          file.Name,
+          file.Path,
+          file.ParentFolderID
+        );
+        
         this.loading = false;
         this.navigateToPage('edit');
       });
