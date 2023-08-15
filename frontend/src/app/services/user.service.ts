@@ -161,10 +161,10 @@ export class UserService {
     localStorage.removeItem('firstName');
     localStorage.removeItem('encryptionKey');
     
-    this.navigateToPage('/login');
     if (this.timer) {
       clearInterval(this.timer);
     }
+    this.navigateToPage('/login');
   }
 
   isAuthenticatedUser(): boolean {
@@ -283,6 +283,7 @@ export class UserService {
   }
 
   public restartTimer() {
+    this.doExpirationCheck = true;
     if (this.timer) {
       clearInterval(this.timer);
     }
@@ -306,16 +307,15 @@ export class UserService {
 
       const expiresAtDate = new Date(this.expiresAt); // Assuming expiresAt is a string
       const currentDate = new Date();
-      const notificationTime = new Date(expiresAtDate.getTime() - 60000); // Subtract 1 minute (60000 milliseconds) from the expiration time
+      const notificationTime = new Date(expiresAtDate.getTime() - 600000 + 15000); // Subtract 1 minute (60000 milliseconds) from the expiration time
 
       if (currentDate >= notificationTime && currentDate < expiresAtDate) {
         // Send the expiration notification
         this.sendRefreshTokenRequest().subscribe({
           next: (response: HttpResponse<any>) => {
-
             if (response.status === 200) {
               this.authToken = response.body.Token;
-              this.expiresAt = response.body.ExpiresAt;
+              this.expiresAt = this.jwtHelper.decodeToken(response.body.Token).ExpiresAt;
             } else {
             }
           },
