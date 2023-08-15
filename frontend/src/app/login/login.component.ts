@@ -99,7 +99,7 @@ export class LoginComponent {
     this.password = environment.DEV_USER_PASSWORD;
     this.login();
   }
-  
+
   forgotPassword(): void {
     //todo implement
     console.log('TODO: forgotPassword');
