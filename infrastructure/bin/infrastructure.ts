@@ -7,7 +7,7 @@ import { EC2Stack } from "../lib/ec2-stack";
 const app = new App();
 
 new S3Stack(app, "WriteToPDFS3Stack", {
-  env: { region: "eu-north-1" },
+  env: { region: "eu-central-1" },
   description: "Stack with resources needed to deploy WriteToPDF's S3 Bucket",
 });
 

@@ -43,8 +43,13 @@ export class S3Stack extends Stack {
     });
 
     const policy = new PolicyStatement({
-      actions: ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"],
-      resources: [bucket.bucketArn + "/*"],
+      actions: [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "textract:*",
+      ],
+      resources: ["*"],
     });
 
     user.addToPolicy(policy);
