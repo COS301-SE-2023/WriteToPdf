@@ -1068,17 +1068,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
   undoFolder() {
 
     if (this.folderIDHistoryPosition > 0) {
-      const parentID = this.folderIDHistory[this.folderIDHistory.length - 2];
-      this.folderIDHistoryPosition--;
+      const parentID = this.folderIDHistory[--this.folderIDHistoryPosition];
       this.loadByParentID(parentID);
     }
   }
-
+  
   redoFolder() {
-
+    
     if (this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
-      const parentID = this.folderIDHistory[this.folderIDHistoryPosition + 1];
-      this.folderIDHistoryPosition++;
+      const parentID = this.folderIDHistory[++this.folderIDHistoryPosition];
       this.loadByParentID(parentID);
     }
   }
