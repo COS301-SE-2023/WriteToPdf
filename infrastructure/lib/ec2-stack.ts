@@ -15,6 +15,12 @@ import {
   MachineImage,
   OperatingSystemType,
 } from "aws-cdk-lib/aws-ec2";
+import {
+  ApplicationLoadBalancer,
+  ApplicationTargetGroup,
+  ListenerAction,
+} from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import { InstanceTarget } from "aws-cdk-lib/aws-elasticloadbalancingv2-targets";
 import { Role, ServicePrincipal, ManagedPolicy } from "aws-cdk-lib/aws-iam";
 import { readFileSync } from "fs";
 
@@ -95,6 +101,27 @@ export class EC2Stack extends Stack {
       role: webServerRole,
     });
 
+    // Create Application Load Balancer
+    const loadBalancer = new ApplicationLoadBalancer(this, "writetopdf-alb", {
+      vpc,
+      securityGroup: webSg,
+      internetFacing: true,
+    });
+
+    const albTargetGroup = new ApplicationTargetGroup(
+      this,
+      "writetopdf-api-targets",
+      {
+        port: 3000,
+        targets: [new InstanceTarget(webServer, 3000)],
+      }
+    );
+
+    const albListener = loadBalancer.addListener("writetopdf-alb-listener", {
+      port: 80,
+      defaultAction: ListenerAction.forward([albTargetGroup]),
+    });
+
     // User data - used for bootstrapping
     const webSGUserData = readFileSync(
       "./assets/configure_ubuntu_writetopdf.sh",
@@ -106,8 +133,8 @@ export class EC2Stack extends Stack {
     Tags.of(webServer).add("stage", "prod");
 
     // Output the public IP address of the EC2 instance
-    new CfnOutput(this, "IP Address", {
-      value: webServer.instancePublicIp,
+    new CfnOutput(this, "API DNS Name", {
+      value: loadBalancer.loadBalancerDnsName,
     });
   }
 }

@@ -39,7 +39,7 @@ export class S3Stack extends Stack {
     topic.grantPublish(role);
 
     const user = new User(this, "MyIAMUser", {
-      userName: "writetopdf-webapp-test",
+      userName: "writetopdf-webapp-prod",
     });
 
     const policy = new PolicyStatement({
