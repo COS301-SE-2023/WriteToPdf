@@ -40,7 +40,7 @@ export class AuthService {
     }
 
     if (
-      oldPayload.UserID !==
+      oldPayload.UserID !=
         refreshTokenDTO.UserID ||
       oldPayload.ExpiresAt < new Date(Date.now())
     ) {
