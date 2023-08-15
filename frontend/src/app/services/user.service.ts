@@ -165,19 +165,7 @@ export class UserService {
     this.expiresAt = undefined;
     this.doExpirationCheck = false;
 
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userID');
-    localStorage.removeItem('expiresAt');
-    localStorage.removeItem('email');
-    localStorage.removeItem('firstName');
-    localStorage.removeItem('encryptionKey');
-
-    this.router.navigate(['/login']).then(() => window.location.reload());
-  }
-
-  revokeToken(): void {
-    // return this.http.delete(this.path + "RevokeToken/" + this.username.value, { headers: header, withCredentials: true });
+    localStorage.clear();
     
     if (this.timer) {
       clearInterval(this.timer);
