@@ -48,6 +48,7 @@ export class UserService {
       this.sendLoginData(email, password, salt).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
+            //TODO this needs to change to read from token payload
             this.isAuthenticated = true;
             this.authToken = response.body.Token;
             this.userID = response.body.UserID;
@@ -319,6 +320,7 @@ export class UserService {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}auth/refresh_token`;
     const body = new RefreshTokenDTO();
+    //TODO change here since RefreshDTO is changed
     body.UserID = this.userID;
     body.Token = this.authToken;
     body.Email = this.email;
