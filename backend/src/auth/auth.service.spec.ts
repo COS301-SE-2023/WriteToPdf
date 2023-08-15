@@ -5,6 +5,7 @@ import {
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenDTO } from './dto/refresh_token.dto';
+import { UserDTO } from '../users/dto/user.dto';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -35,15 +36,11 @@ describe('AuthService', () => {
 
   describe('generateToken', () => {
     it('should return an access token', async () => {
-      const username = 'testuser';
-      const password = 'testpassword';
+      const userDTO = new UserDTO();
+      userDTO.UserID = 1;
       const expectedPayload = {
-        username,
-        password,
-      };
-      const expectedToken = {
-        access_token: 'mockToken',
-        expires_at: expect.any(Date),
+        UserID: userDTO.UserID,
+        ExpiresAt: expect.any(Date),
       };
 
       jest
@@ -51,13 +48,10 @@ describe('AuthService', () => {
         .mockResolvedValue('mockToken');
 
       const actualToken =
-        await service.generateToken(
-          username,
-          password,
-        );
+        await service.generateToken(userDTO);
 
       expect(actualToken).toStrictEqual(
-        expectedToken,
+        'mockToken',
       );
       expect(
         jwtService.signAsync,
@@ -70,18 +64,13 @@ describe('AuthService', () => {
       const refreshTokenDTO =
         new RefreshTokenDTO();
       refreshTokenDTO.UserID = 1;
-      refreshTokenDTO.Email = 'testuser';
       refreshTokenDTO.Token = 'testtoken';
 
       const expectedPayload =
         new RefreshTokenDTO();
       expectedPayload.UserID =
         refreshTokenDTO.UserID;
-      expectedPayload.Email =
-        refreshTokenDTO.Email;
       expectedPayload.Token = 'newtoken';
-      expectedPayload.ExpiresAt =
-        expect.any(Date);
 
       jest
         .spyOn(jwtService, 'signAsync')
@@ -89,7 +78,7 @@ describe('AuthService', () => {
 
       jest
         .spyOn(jwtService, 'verifyAsync')
-        .mockResolvedValue({});
+        .mockResolvedValue({ UserID: 1 });
 
       const actualToken =
         await service.refreshToken(
@@ -110,11 +99,35 @@ describe('AuthService', () => {
       );
     });
 
+    it('should throw an error if the token does not match the userID', async () => {
+      const refreshTokenDTO =
+        new RefreshTokenDTO();
+      refreshTokenDTO.UserID = 1;
+      refreshTokenDTO.Token = 'invalidtoken';
+
+      jest
+        .spyOn(jwtService, 'verifyAsync')
+        .mockRejectedValue({ UserID: 2 });
+
+      await expect(
+        service.refreshToken(refreshTokenDTO),
+      ).rejects.toThrow();
+
+      expect(
+        jwtService.verifyAsync,
+      ).toHaveBeenCalledWith(
+        refreshTokenDTO.Token,
+      );
+
+      expect(
+        jwtService.signAsync,
+      ).not.toHaveBeenCalled();
+    });
+
     it('should throw an error if the token is invalid', async () => {
       const refreshTokenDTO =
         new RefreshTokenDTO();
       refreshTokenDTO.UserID = 1;
-      refreshTokenDTO.Email = 'testuser';
       refreshTokenDTO.Token = 'invalidtoken';
 
       jest

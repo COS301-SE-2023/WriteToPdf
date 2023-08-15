@@ -158,19 +158,13 @@ export class UsersService {
       throw new HttpException(
         {
           status: HttpStatus.UNAUTHORIZED,
-          error:
-            user?.Password === undefined
-              ? 'User not found'
-              : 'Incorrect password',
+          error: 'Invalid credentials',
         },
         HttpStatus.UNAUTHORIZED,
       );
     }
     const token =
-      await this.authService.generateToken(
-        loginUserDTO.Email,
-        loginUserDTO.Password,
-      );
+      await this.authService.generateToken(user);
     //Create Derived Encryption Key
     const EncryptionKey = CryptoJS.SHA256(
       user.Password,
@@ -180,8 +174,7 @@ export class UsersService {
       UserID: user.UserID,
       Email: user.Email,
       FirstName: user.FirstName,
-      Token: token.access_token,
-      ExpiresAt: token.expires_at,
+      Token: token,
       EncryptionKey: EncryptionKey,
     };
     return response;

@@ -48,7 +48,13 @@ import { ClickAtCoordinateDirective } from './click-at-coordinate.directive';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ImageUploadPopupComponent } from './image-upload-popup/image-upload-popup.component';
+import { JwtModule } from "@auth0/angular-jwt";
+import { environment } from 'src/environments/environment';
 import { NgxSpinnerModule } from 'ngx-spinner';
+
+export function tokenGetter() {
+  return localStorage.getItem('authToken');
+}
 
 @NgModule({
   declarations: [
@@ -97,6 +103,13 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     DragDropModule,
     CheckboxModule,
     ConfirmDialogModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: [environment.apiURL],
+        disallowedRoutes: ["http://example.com/examplebadroute/"],
+      },
+    }),
   ],
   providers: [NodeService, UserService, MessageService, DialogService, ConfirmationService],
   bootstrap: [AppComponent],

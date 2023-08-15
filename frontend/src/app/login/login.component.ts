@@ -15,6 +15,9 @@ import { environment } from 'src/environments/environment';
 export class LoginComponent {
   email: string = '';
   password: string = '';
+  emailForgot: string = '';
+
+  forgotPasswordPopup: boolean = false;
   constructor(
     @Inject(Router) private router: Router,
     private elementRef: ElementRef,
@@ -66,6 +69,10 @@ export class LoginComponent {
     this.login();
   }
 
+  forgotPassword(): void {
+    //todo implement
+    console.log('TODO: forgotPassword');
+  }
   movemouse(event: MouseEvent) {
     // const windowWidth = window.innerWidth;
     // const windowHeight = window.innerHeight;

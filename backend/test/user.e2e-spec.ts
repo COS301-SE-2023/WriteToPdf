@@ -49,53 +49,53 @@ describe('UserController (integration)', () => {
         'Email',
       );
     });
-  });
 
-  it('/users/login/ (POST) - incorrect password', async () => {
-    const requestUser = new UserDTO();
-    requestUser.Email = process.env.TEST_EMAIL; // correct credential
-    requestUser.Password = 'incorrectPassword'; // incorrect credential
+    it('/users/login/ (POST) - incorrect password', async () => {
+      const requestUser = new UserDTO();
+      requestUser.Email = process.env.TEST_EMAIL; // correct credential
+      requestUser.Password = 'incorrectPassword'; // incorrect credential
 
-    const response = await request(
-      app.getHttpServer(),
-    )
-      .post('/users/login/')
-      .send(requestUser);
-    expect(response.status).toBe(
-      HttpStatus.UNAUTHORIZED,
-    );
-    expect(response.body.error).toBe(
-      'Incorrect password',
-    );
-  });
+      const response = await request(
+        app.getHttpServer(),
+      )
+        .post('/users/login/')
+        .send(requestUser);
+      expect(response.status).toBe(
+        HttpStatus.UNAUTHORIZED,
+      );
+      expect(response.body.error).toBe(
+        'Invalid credentials',
+      );
+    });
 
-  it('/users/login/ (POST) - incorrect email', async () => {
-    const requestUser = new UserDTO();
-    requestUser.Email = 'incorrectEmail'; // incorrect credential
-    requestUser.Password =
-      process.env.TEST_PASSWORD; // correct credential
+    it('/users/login/ (POST) - incorrect email', async () => {
+      const requestUser = new UserDTO();
+      requestUser.Email = 'incorrectEmail'; // incorrect credential
+      requestUser.Password =
+        process.env.TEST_PASSWORD; // correct credential
 
-    const response = await request(
-      app.getHttpServer(),
-    )
-      .post('/users/login/')
-      .send(requestUser);
-    expect(response.status).toBe(
-      HttpStatus.UNAUTHORIZED,
-    );
-    expect(response.body.error).toBe(
-      'User not found',
-    );
-  });
+      const response = await request(
+        app.getHttpServer(),
+      )
+        .post('/users/login/')
+        .send(requestUser);
+      expect(response.status).toBe(
+        HttpStatus.UNAUTHORIZED,
+      );
+      expect(response.body.error).toBe(
+        'Invalid credentials',
+      );
+    });
 
-  it('/users/get_salt/ (POST)', async () => {
-    const userDTO = new UserDTO();
-    userDTO.Email = process.env.TEST_EMAIL;
-    const response = await request(
-      app.getHttpServer(),
-    )
-      .post('/users/get_salt/')
-      .send(userDTO);
-    expect(response.status).toBe(HttpStatus.OK);
+    it('/users/get_salt/ (POST)', async () => {
+      const userDTO = new UserDTO();
+      userDTO.Email = process.env.TEST_EMAIL;
+      const response = await request(
+        app.getHttpServer(),
+      )
+        .post('/users/get_salt/')
+        .send(userDTO);
+      expect(response.status).toBe(HttpStatus.OK);
+    });
   });
 });

@@ -11,6 +11,7 @@ import { PrimeIcons } from 'primeng/api';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { Inject } from '@angular/core';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { set } from 'cypress/types/lodash';
 
 @Injectable({
@@ -30,7 +31,8 @@ export class UserService {
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
-    @Inject(Router) private router: Router
+    @Inject(Router) private router: Router,
+    private jwtHelper: JwtHelperService,
   ) { }
 
   async login(email: string, password: string): Promise<boolean> {
@@ -47,11 +49,14 @@ export class UserService {
     return new Promise<boolean>(async (resolve, reject) => {
       this.sendLoginData(email, password, salt).subscribe({
         next: (response: HttpResponse<any>) => {
+
           if (response.status === 200) {
+
+            //TODO this needs to change to read from token payload
             this.isAuthenticated = true;
             this.authToken = response.body.Token;
             this.userID = response.body.UserID;
-            this.expiresAt = response.body.ExpiresAt;
+            this.expiresAt = this.jwtHelper.decodeToken(response.body.Token).ExpiresAt;
             this.email = email;
             this.firstName = response.body.FirstName;
             this.doExpirationCheck = true;
@@ -156,10 +161,10 @@ export class UserService {
     localStorage.removeItem('firstName');
     localStorage.removeItem('encryptionKey');
     
-    this.navigateToPage('/login');
     if (this.timer) {
       clearInterval(this.timer);
     }
+    this.navigateToPage('/login');
   }
 
   isAuthenticatedUser(): boolean {
@@ -277,6 +282,14 @@ export class UserService {
     });
   }
 
+  public restartTimer() {
+    this.doExpirationCheck = true;
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.startExpirationCheck();
+  }
+  
   private startExpirationCheck() {
     const checkInterval = 30000;
 
@@ -294,16 +307,15 @@ export class UserService {
 
       const expiresAtDate = new Date(this.expiresAt); // Assuming expiresAt is a string
       const currentDate = new Date();
-      const notificationTime = new Date(expiresAtDate.getTime() - 60000); // Subtract 1 minute (60000 milliseconds) from the expiration time
+      const notificationTime = new Date(expiresAtDate.getTime() - 600000 + 15000); // Subtract 1 minute (60000 milliseconds) from the expiration time
 
       if (currentDate >= notificationTime && currentDate < expiresAtDate) {
         // Send the expiration notification
         this.sendRefreshTokenRequest().subscribe({
           next: (response: HttpResponse<any>) => {
-
             if (response.status === 200) {
               this.authToken = response.body.Token;
-              this.expiresAt = response.body.ExpiresAt;
+              this.expiresAt = this.jwtHelper.decodeToken(response.body.Token).ExpiresAt;
             } else {
             }
           },
@@ -319,6 +331,7 @@ export class UserService {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}auth/refresh_token`;
     const body = new RefreshTokenDTO();
+    //TODO change here since RefreshDTO is changed
     body.UserID = this.userID;
     body.Token = this.authToken;
     body.Email = this.email;
