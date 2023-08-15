@@ -295,8 +295,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.nodeService.getFilesAndFolders().then(() => {
         this.folderIDHistory.push('');
         this.loadByParentID("");
-      });
-      this.nodeService.getFilesAndFolders().then(() => {
         const data = this.nodeService.getTreeTableNodesData();
         this.filesDirectoryTree = this.generateTreeNodes(data);
 
@@ -358,6 +356,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // Below are the functions that implement intelligent routing of the directory tree on the left side of the home page
       // it routes the relevant directory to the main window
     }
+
   }
 
   iterateNodeIDRemoval(node: any[]) {
@@ -856,6 +855,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const directory = this.nodeService.getTreeTableNodesData();
     this.filesDirectoryTree = this.generateTreeNodes(directory);
     this.nodeService.getTreeTableNodes().then((data) => {
+      this.loadByParentID(this.folderIDHistory[this.folderIDHistoryPosition]);
       this.filesDirectoryTreeTable = data;
     });
     this.nodeService
@@ -939,58 +939,58 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.previousNode = $event.node;
   }
 
-  onNodeDrag($event: any) {
-    this.isDraggingNode = true;
-    const key = $event.source.element.nativeElement?.getAttribute('data-key');
-    this.originalPosition = {
-      x: $event.source._dragRef._passiveTransform.x,
-      y: $event.source._dragRef._passiveTransform.y,
-    };
-    this.currentlyDraggedNode = this.getParentElement($event.event.srcElement);
-    this.currentlyDraggedNode.style.pointerEvents = 'none';
-    this.currentlyDraggedNode.classList.add('dragging');
-  }
+  // onNodeDrag($event: any) {
+  //   this.isDraggingNode = true;
+  //   const key = $event.source.element.nativeElement?.getAttribute('data-key');
+  //   this.originalPosition = {
+  //     x: $event.source._dragRef._passiveTransform.x,
+  //     y: $event.source._dragRef._passiveTransform.y,
+  //   };
+  //   this.currentlyDraggedNode = this.getParentElement($event.event.srcElement);
+  //   this.currentlyDraggedNode.style.pointerEvents = 'none';
+  //   this.currentlyDraggedNode.classList.add('dragging');
+  // }
 
-  onDragReleased($event: any) {
-    this.currentlyDraggedNode.style.pointerEvents = 'auto';
-    this.isDraggingNode = false;
-    this.originalPosition = {
-      x: $event.source._dragRef._passiveTransform.x,
-      y: $event.source._dragRef._passiveTransform.y,
-    };
+  // onDragReleased($event: any) {
+  //   this.currentlyDraggedNode.style.pointerEvents = 'auto';
+  //   this.isDraggingNode = false;
+  //   this.originalPosition = {
+  //     x: $event.source._dragRef._passiveTransform.x,
+  //     y: $event.source._dragRef._passiveTransform.y,
+  //   };
 
-    // Reset the draggable element's position back to its original position
-    $event.source._dragRef.reset();
-    setTimeout(async () => {
-      const keyOfDragged = this.currentlyDraggedNode.getAttribute('data-key');
-      const keyOfDropped = this.getParentElement(
-        this.coordinateService.getElementAtCoordinate()
-      )?.getAttribute('data-key');
-      await this.moveByKey(keyOfDragged, keyOfDropped);
-      if (this.currentlyDraggedNode) {
-        this.currentlyDraggedNode.classList.remove('dragging');
-      }
-    }, 10);
-  }
+  //   // Reset the draggable element's position back to its original position
+  //   $event.source._dragRef.reset();
+  //   setTimeout(async () => {
+  //     const keyOfDragged = this.currentlyDraggedNode.getAttribute('data-key');
+  //     const keyOfDropped = this.getParentElement(
+  //       this.coordinateService.getElementAtCoordinate()
+  //     )?.getAttribute('data-key');
+  //     await this.moveByKey(keyOfDragged, keyOfDropped);
+  //     if (this.currentlyDraggedNode) {
+  //       this.currentlyDraggedNode.classList.remove('dragging');
+  //     }
+  //   }, 10);
+  // }
 
-  getElementAtCoordinate(x: number, y: number): HTMLElement | null {
-    return document.elementFromPoint(x, y) as HTMLElement;
-  }
+  // getElementAtCoordinate(x: number, y: number): HTMLElement | null {
+  //   return document.elementFromPoint(x, y) as HTMLElement;
+  // }
 
-  getParentElement(currentElement: HTMLElement | null) {
-    if (currentElement == null) return null;
-    const parentElement: HTMLElement | null = currentElement.parentElement;
+  // getParentElement(currentElement: HTMLElement | null) {
+  //   if (currentElement == null) return null;
+  //   const parentElement: HTMLElement | null = currentElement.parentElement;
 
-    if (parentElement) {
-      return parentElement;
-    } else {
-      return null;
-    }
-  }
+  //   if (parentElement) {
+  //     return parentElement;
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
-  getData(rowData: any) {
-    return rowData.key;
-  }
+  // getData(rowData: any) {
+  //   return rowData.key;
+  // }
 
   async moveByKey(
     keyOfDragged: string | undefined | null,
@@ -1199,5 +1199,62 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.renameFile(selected[0].MarkdownID, selected[0].Path, this.entityRename);
     }
   }
+
+  lockClick($event: any, file: any) {
+    $event.stopPropagation();
+    console.log(file);
+  }
+  lockRightClick($event: any, file: any) {
+    $event.stopPropagation();
+    console.log(file);
+  }
+
+
+  onDragStart(event: DragEvent, obj: any) {
+    // Prevent the default drag behavior
+    console.log(event);
+
+    // Set data to be transferred as plain text
+    const data = JSON.stringify(obj);
+    event.dataTransfer?.setData('text/plain', data);
+  }
+
+
+  onDrop(event: DragEvent, obj: any): void {
+
+    const data = event.dataTransfer?.getData('text/plain');
+    if (data) {
+      // Handle the dropped data and use the drop target as needed
+
+
+      console.log('Dropped ', JSON.parse(data));
+      console.log('On: ', obj);
+
+      if (obj.FolderID) {
+        if (JSON.parse(data).Type == 'folder'){
+          this.moveByKey(JSON.parse(data).FolderID, obj.FolderID);
+        } else {
+          this.moveByKey(JSON.parse(data).MarkdownID, obj.FolderID);
+        }
+      }
+    }
+    obj.DraggedOver = false;
+  }
+
+  onDragOver(event: DragEvent, obj: any): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    obj.DraggedOver = true;
+
+  }
+  onDragLeave(event: DragEvent, obj: any): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    obj.DraggedOver = false;
+
+  }
+
   protected readonly focus = focus;
 }
