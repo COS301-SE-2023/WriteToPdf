@@ -16,11 +16,7 @@ import { EditService } from '../services/edit.service';
 import { AssetService } from '../services/asset.service';
 import { Inject } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { set } from 'cypress/types/lodash';
-import { PageBreak } from '@ckeditor/ckeditor5-page-break';
-
-import html2pdf from 'html2pdf.js/dist/html2pdf';
-
+import {OCRDialogService} from "../ocr-popup/ocr-popup.service";
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 import { parse } from 'path';
 
@@ -52,10 +48,13 @@ export class EditComponent implements AfterViewInit, OnInit {
     private editService: EditService,
     private assetService: AssetService,
     private clipboard: Clipboard,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private OCRDialog: OCRDialogService
   ) { }
 
-
+  showOCRPopup(): void {
+    this.OCRDialog.openDialog();
+  }
   showImageUploadPopup(): void {
     const ref = this.dialogService.open(ImageUploadPopupComponent, {
       header: 'Upload Images',
@@ -374,7 +373,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
 
     this.assets[currAssetIndex].Deleted=true;
-    
+
     if (await this.assetService.deleteAsset(assetId)) {
       this.messageService.add({
         severity: 'success',

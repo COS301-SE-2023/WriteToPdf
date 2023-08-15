@@ -1,0 +1,130 @@
+.container {
+  margin:auto;
+  display: flex;
+  //justify-content: center;
+  justify-content: flex-start; /* Align content to the top */
+  align-items: center;
+  flex-direction: column;
+  border-radius: 8px;
+  box-shadow: 5px 5px 10px lightblue;
+  height:100%;
+}
+
+.popup-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Adjust as needed */
+  padding: 10px 20px;
+  //border-bottom: 1px solid #ccc; /* Add a separator line */
+}
+
+.popup-heading h2 {
+  margin-left: 12%;
+  font-size: 1.5rem;
+  flex-grow: 1; /* Allow the heading to take available space and center it */
+  text-align: center; /* Center the heading text */
+}
+
+.popup-heading .backButton {
+  background-color: transparent;
+  cursor: pointer;
+  outline: none;
+  margin-left: auto; /* Push the button to the right */
+}
+
+.dialog-container {
+  display: flex;
+  height: auto;
+  width: 90%; /* Adjust as needed */
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid black;
+}
+.vertical-line{
+  border-left: 1px solid black;
+  height: 100%;
+}
+.left-section {
+  flex: 1;
+  height:100%;
+  padding: 20px;
+}
+
+.left-section img {
+  max-width: 100%;
+  height: 100%;
+}
+
+.right-section {
+  height: 100%;
+  flex: 1;
+  //margin-top: -; /* Adjust the margin-top as needed */
+  padding: 5px 20px 20px 20px;
+  border-left: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align content to the top */
+}
+
+.centered-tabs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  padding:20px;
+  height:auto;
+}
+
+.editableForm{
+  padding-top:14px;
+  padding-left:14px;
+  padding-right:14px;
+  width:100%;
+  height:auto;
+}
+
+.styled-table thead tr {
+  background-color: #f0f0f0;
+  padding-top:7px;
+}
+
+.styled-table th, .styled-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.mat-tab-header {
+  padding-bottom:20px;
+  border-bottom: 1px solid #ccc;
+  top:10px;
+}
+
+.mat-tab-header .mat-tab-label {
+  border-right: 1px solid #ccc;
+  width:100%;
+  padding: 10px 15px;
+}
+
+.mat-tab-header .mat-tab-label:last-child {
+  border-right: none;
+}
+
+/* Active tab styles */
+.mat-tab-header .mat-tab-label.mat-tab-label-active {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+
+/* Adjust margin between tab content and labels */
+.mat-tab-group .mat-tab-body-wrapper {
+  margin-top: 10px; /* Adjust the value as needed */
+}
+

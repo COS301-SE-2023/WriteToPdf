@@ -38,6 +38,7 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import {MatDialogModule} from "@angular/material/dialog";
 import { ContextMenu, ContextMenuModule } from 'primeng/contextmenu';
 import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
 import EssentialsPlugin from '@ckeditor/ckeditor5-essentials/src/essentials';
@@ -47,6 +48,9 @@ import { ClickAtCoordinateDirective } from './click-at-coordinate.directive';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ImageUploadPopupComponent } from './image-upload-popup/image-upload-popup.component';
+import { OcrPopupComponent } from './ocr-popup/ocr-popup.component';
+import {MatTabsModule} from "@angular/material/tabs";
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
   declarations: [
@@ -60,6 +64,7 @@ import { ImageUploadPopupComponent } from './image-upload-popup/image-upload-pop
     FileUploadPopupComponent,
     ClickAtCoordinateDirective,
     ImageUploadPopupComponent,
+    OcrPopupComponent,
   ],
   imports: [
     CKEditorModule,
@@ -94,6 +99,9 @@ import { ImageUploadPopupComponent } from './image-upload-popup/image-upload-pop
     DragDropModule,
     CheckboxModule,
     ConfirmDialogModule,
+    MatTabsModule,
+    MatDialogModule,
+    MatIconModule
   ],
   providers: [NodeService, UserService, MessageService, DialogService, ConfirmationService],
   bootstrap: [AppComponent],

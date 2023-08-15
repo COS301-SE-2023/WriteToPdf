@@ -1,0 +1,40 @@
+<div class="container">
+  <div class="popup-heading">
+    <h2>Extracted Features</h2>
+      <p-button class="backButton" icon="pi pi-times" label="Back" styleClass="p-button-rounded"
+                (click)="closeDialog()"></p-button>
+    </div>
+  <div class="dialog-container">
+    <div class="left-section">
+      <img alt="Image" src="../../assets/MockData/doodle.jpg"/>
+    </div>
+ <div>
+ <div class="vertical-line"></div>
+ </div>
+    <div class="right-section">
+      <mat-tab-group class="centered-tabs">
+        <mat-tab label="Text">
+          <br>
+          <textarea class ="editableForm" [(ngModel)]="paragraphText" cols="40" rows="6"></textarea>
+        </mat-tab>
+        <mat-tab label="Tables">
+          <br>
+          <table class="styled-table">
+            <thead>
+            <tr>
+              <th>Demo</th>
+              <th>Table Data</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let row of tableData; let i = index;">
+              <td [(ngModel)]="tableData[i].name" contenteditable="true"></td>
+              <td [(ngModel)]="tableData[i].email" contenteditable="true"></td>
+            </tr>
+            </tbody>
+          </table>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</div>
