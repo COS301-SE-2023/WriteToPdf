@@ -97,6 +97,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   folderIDHistory: string[] = [];
   folderIDHistoryPosition: number = 0;
 
+  shiftClickStart: any = null;
 
   public loading: boolean = false;
   @ViewChild('myTreeTable') treeTable!: TreeTable;
@@ -309,7 +310,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         const hist = localStorage.getItem('folderIDHistory');
         const pos = localStorage.getItem('folderIDHistoryPosition');
 
-        if(hist != null && pos != null){
+        if (hist != null && pos != null) {
           this.folderIDHistory = JSON.parse(hist);
           this.folderIDHistoryPosition = JSON.parse(pos);
           this.loadByParentID(this.folderIDHistory[this.folderIDHistoryPosition]);
@@ -581,7 +582,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           file.Path,
           file.ParentFolderID
         );
-        
+
         this.loading = false;
         this.navigateToPage('edit');
       });
@@ -844,13 +845,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.log(path);
       }
       else {
-        if(this.folderIDHistoryPosition == 0){
+        if (this.folderIDHistoryPosition == 0) {
           path = '';
           parentFolderID = '';
-        } else{
+        } else {
           const currentFolder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
           parentFolderID = this.folderIDHistory[this.folderIDHistoryPosition];
-          path = currentFolder.Path+'/'+currentFolder.FolderName;
+          path = currentFolder.Path + '/' + currentFolder.FolderName;
         }
       }
     }
@@ -994,28 +995,28 @@ export class HomeComponent implements OnInit, AfterViewInit {
     ];
   }
 
-  @HostListener('document:keydown.enter', ['$event'])
-  handleEnterKeyPress(event: KeyboardEvent) {
-    const selected = this.getSelected();
-    console.log(selected);
-    if (selected.length === 1) {
-      if (selected[0].Type === 'file') {
-        this.onOpenFileSelect(selected[0].MarkdownID);
-      }
-      else if (selected[0].Type === 'folder') {
-        this.openFolder(selected[0].FolderID);
-      }
-    }
-  }
+  // @HostListener('document:keydown.enter', ['$event'])
+  // handleEnterKeyPress(event: KeyboardEvent) {
+  //   const selected = this.getSelected();
+  //   console.log(selected);
+  //   if (selected.length === 1) {
+  //     if (selected[0].Type === 'file') {
+  //       this.onOpenFileSelect(selected[0].MarkdownID);
+  //     }
+  //     else if (selected[0].Type === 'folder') {
+  //       this.openFolder(selected[0].FolderID);
+  //     }
+  //   }
+  // }
 
-  @HostListener('document:keydown.delete', ['$event'])
-  handleDeleteKeyPress(event: KeyboardEvent) {
-    const selected = this.getSelected();
-    console.log(selected);
-    if (selected.length === 1) {
-      this.deleteSelectedEntity(selected[0]);
-    }
-  }
+  // @HostListener('document:keydown.delete', ['$event'])
+  // handleDeleteKeyPress(event: KeyboardEvent) {
+  //   const selected = this.getSelected();
+  //   console.log(selected);
+  //   if (selected.length === 1) {
+  //     this.deleteSelectedEntity(selected[0]);
+  //   }
+  // }
 
   openFileEnter(event: any): void {
 
@@ -1270,8 +1271,24 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
+  handleClick(event: any, node: any) {
+    if (event.ctrlKey) {
+      this.addToSelection(node);
+    } else if (event.shiftKey) {
+      this.selectFromNode(node);
+    } else {
+      this.selectOnlyOne(node);
+    }
+  }
+
+  handleRightClick(event: any, node: any) {
+    if (node.Selected) {
+      return;
+    } else
+      this.selectOnlyOne(node);
+  }
+
   selectOnlyOne(node: any) {
-    if (node.Selected) return;
     node.Selected = true;
     this.currentFolders.forEach((element: any) => {
       if (element !== node) {
@@ -1283,7 +1300,40 @@ export class HomeComponent implements OnInit, AfterViewInit {
         element.Selected = false;
       }
     });
+    this.shiftClickStart = node;
   }
+
+  addToSelection(node: any) {
+    this.shiftClickStart = node;
+    node.Selected = !node.Selected;
+  }
+
+  selectFromNode(node: any) {
+    const selected = this.getSelected();
+    if (selected.length === 0) {
+      this.selectOnlyOne(node);
+      return;
+    }
+    this.unselectAll();
+    if (this.shiftClickStart === node) {
+      node.Selected = true;
+      return;
+    }
+    let startSelecting = false;
+
+    const x = this.currentFolders.concat(this.currentFiles);
+    for (let i = 0; i < x.length; i++) {
+      const element = x[i];
+      if (element === this.shiftClickStart || element === node) {
+        startSelecting = !startSelecting;
+        element.Selected = true;
+      } else if (startSelecting) {
+        element.Selected = true;
+      }
+    }
+
+  }
+
 
   getSelected() {
     let selected: any = [];

@@ -253,8 +253,8 @@
       <div #directory>
       <!-- Folders Start -->
       <div *ngFor="let obj of currentFolders" class="fileItem" (dblclick) = "openFolder(obj.FolderID)"
-      (click)="selectOnlyOne(obj)"
-      (contextmenu) ="selectOnlyOne(obj)" 
+      (click)="handleClick($event, obj)"
+      (contextmenu) ="handleRightClick($event, obj)"
       [ngClass]="{
         'selectedFile': obj.Selected,
         'defaultFile': !obj.Selected,
@@ -284,8 +284,8 @@
       
       <!-- Files Start -->
       <div *ngFor="let obj of currentFiles" class="fileItem" (dblclick) = "onOpenFileSelect(obj.MarkdownID)" 
-      (click)="selectOnlyOne(obj)" 
-      (contextmenu) ="selectOnlyOne(obj)"
+      (click)="handleClick($event, obj)" 
+      (contextmenu) ="handleRightClick($event, obj)"
       [ngClass]="obj.Selected ? 'selectedFile' : 'defaultFile'" 
       [draggable]="obj.Selected"
       (dragstart)="onDragStart($event, obj)"
