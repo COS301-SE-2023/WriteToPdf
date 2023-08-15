@@ -58,6 +58,12 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.saveDocumentContents();
   }
 
+  showOCRPopup(): void{
+    // TODO pass over relevant asset.
+    const dummyAsset = "dummy";
+    this.OCRDialog.openDialog(dummyAsset);
+  }
+
   showImageUploadPopup(): void {
     const ref = this.dialogService.open(ImageUploadPopupComponent, {
       header: 'Upload Images',
