@@ -52,7 +52,6 @@ export class UserService {
         next: (response: HttpResponse<any>) => {
 
           if (response.status === 200) {
-
             //TODO this needs to change to read from token payload
             this.isAuthenticated = true;
             this.authToken = response.body.Token;
