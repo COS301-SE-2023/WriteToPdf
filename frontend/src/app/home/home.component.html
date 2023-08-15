@@ -84,7 +84,7 @@
           <input
             placeholder="{{getSelectedName()}}"
             class="fileOperations-entity"
-            [(ngModel)]="entityName"
+            [(ngModel)]="entityRename"
             label="Name: "
             pInputText
             type="text"
@@ -246,12 +246,17 @@
         <div class="dateHeader">
           <span>Date Created</span>
         </div>
+        <div class="iconSpacing">
+        </div>
       </div>
 
+      <div #directory>
       <!-- Folders Start -->
       <div *ngFor="let obj of currentFolders" class="fileItem" (dblclick) = "openFolder(obj.FolderID)"
-      (click)="selectOnlyOne(obj)" 
-      [ngClass]="obj.Selected ? 'selectedFile' : 'defaultFile'">
+      (click)="selectOnlyOne(obj)"
+      (contextmenu) ="selectOnlyOne(obj)" 
+      [ngClass]="obj.Selected ? 'selectedFile' : 'defaultFile'"
+      draggable="true">
         <div class="iconSpacing">
           <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/folder.png" alt=""/>
         </div>
@@ -264,13 +269,17 @@
         <div class="dateHeader" title="{{formatDate(obj.DateCreated)}}">
           <span>{{formatDate(obj.DateCreated)}}</span>
         </div>
+        <div class="iconSpacing">
+        </div>
       </div>
       <!-- Folders End -->
       
       <!-- Files Start -->
-      <div *ngFor="let obj of currentFiles" class="fileItem" (dblclick) = "onOpenFileSelect(obj.MarkdownID)" 
+      <div #file *ngFor="let obj of currentFiles" class="fileItem" (dblclick) = "onOpenFileSelect(obj.MarkdownID)" 
       (click)="selectOnlyOne(obj)" 
-      [ngClass]="obj.Selected ? 'selectedFile' : 'defaultFile'">
+      (contextmenu) ="selectOnlyOne(obj)"
+      [ngClass]="obj.Selected ? 'selectedFile' : 'defaultFile'" 
+      draggable="true">
         <div class="iconSpacing">
           <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/doc.png" alt=""/>
         </div>
@@ -283,13 +292,16 @@
         <div class="dateHeader" title="{{formatDate(obj.DateCreated)}}">
           <span>{{formatDate(obj.DateCreated)}}</span>
         </div>
+        <div class="iconSpacing">
+          <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/lock.png" alt=""/>
+        </div>
       </div>
       <!-- Files End -->
-            
+            </div>
     </div>
   </div>
   <p-contextMenu
-    #cm
+    [target]="directory"
     [model]="contextMenuItems"
   ></p-contextMenu>
   <!-- file-upload-popup.component.html -->
