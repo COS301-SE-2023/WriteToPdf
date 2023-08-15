@@ -85,6 +85,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public destinationDirectory: any;
   public createNewDocumentDialogueVisible: boolean = false;
   public createNewFolderDialogueVisible: boolean = false;
+  renameDialogueVisible: boolean = false;
   public entityName: string = '';
   uploadedFiles: any[] = [];
   contextMenuItems: any[];
@@ -640,6 +641,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
             },
           },
           {
+            label: 'Rename',
+            icon: 'pi pi-fw pi-pencil',
+            command: () => {
+              if (this.getSelected().length === 1)
+                this.renameDialogueVisible = true;
+              else if (this.getSelected().length === 0) {
+                this.messageService.add({
+                  severity: 'warn',
+                  summary: 'Please Select a Folder or File to Rename',
+                  detail: '',
+                });
+              }
+            },
+          },
+          {
             label: 'Move',
             icon: 'pi pi-fw pi-arrow-right',
             command: () => {
@@ -1056,7 +1072,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
+  formatDate(date: string): string {
+    const dateObj = new Date(date);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+
+
   openFolder(parentID: string) {
+    this.unselectAll();
+
     if (this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
       this.folderIDHistory.splice(this.folderIDHistoryPosition + 1, this.folderIDHistory.length - this.folderIDHistoryPosition - 1);
     }
@@ -1072,27 +1101,27 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.loadByParentID(parentID);
     }
   }
-  
+
   redoFolder() {
-    
+
     if (this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
       const parentID = this.folderIDHistory[++this.folderIDHistoryPosition];
       this.loadByParentID(parentID);
     }
   }
 
-  renameFolder(folderID: string, path: string, $event: any) {
-    if ($event.target.value === '') return;
-    this.folderService.renameFolder(folderID, path, $event.target.value).then((data) => {
-      this.nodeService.renameFolder(folderID, $event.target.value);
+  renameFolder(folderID: string, path: string, newName: string) {
+    if (newName === '') return;
+    this.folderService.renameFolder(folderID, path, newName).then((data) => {
+      this.nodeService.renameFolder(folderID, newName);
     });
   }
 
-  renameFile(fileID: string, path: string, $event: any, n: any) {
-    if ($event.target.value === '') return;
-    this.fileService.renameDocument(fileID, $event.target.value, path).then((data) => {
+  renameFile(fileID: string, path: string, newName: string) {
+    if (newName === '') return;
+    this.fileService.renameDocument(fileID, newName, path).then((data) => {
       console.log(data);
-      this.nodeService.renameFile(fileID, $event.target.value);
+      this.nodeService.renameFile(fileID, newName);
     });
   }
 
@@ -1125,6 +1154,35 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     });
     return selected;
+  }
+
+  unselectAll() {
+    this.currentFolders.forEach((element: any) => {
+      element.Selected = false;
+    });
+    this.currentFiles.forEach((element: any) => {
+      element.Selected = false;
+    });
+  }
+
+  getSelectedName(): string {
+    const selected = this.getSelected();
+    if (selected.length === 1) {
+      if (selected[0].Type == 'folder')
+        return selected[0].FolderName;
+      return selected[0].Name;
+    }
+    return '';
+  }
+
+  renameEntity() {
+    const selected = this.getSelected();
+    if (selected.length === 1) {
+      if (selected[0].Type == 'folder')
+        this.renameFolder(selected[0].FolderID, selected[0].Path, this.entityName);
+      else
+        this.renameFile(selected[0].MarkdownID, selected[0].Path, this.entityName);
+    }
   }
   protected readonly focus = focus;
 }

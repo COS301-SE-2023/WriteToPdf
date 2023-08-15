@@ -75,6 +75,26 @@
         </div>
       </p-dialog>
     </div>
+    <!--    TODO FileManagerPopup below-->
+    <div class="fileOperations-container">
+      <p-dialog [(visible)]="renameDialogueVisible" [modal]="true" [style]="{ width: '50vw' }"
+        header="Rename" [focusOnShow]="true" (keydown.escape)="renameDialogueVisible = false">
+        <div class="fileOperations">
+          <p class="fileOperations-entity">Rename:</p>
+          <input
+            placeholder="{{getSelectedName()}}"
+            class="fileOperations-entity"
+            [(ngModel)]="entityName"
+            label="Name: "
+            pInputText
+            type="text"
+          />
+          <br />
+          <br />
+          <p-button (click)="renameEntity()" (click)="renameDialogueVisible = false" label="Rename"></p-button>
+        </div>
+      </p-dialog>
+    </div>
     <!--    TODO FileManagerPopup above-->
   </div>
   <div class="leftSideBarWrapper" id="scrollingDiv">
@@ -236,21 +256,13 @@
           <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/folder.png" alt=""/>
         </div>
         <div class="nameHeader" title="{{obj.FolderName}}">
-          <input
-          type="text"
-          editable="true"
-          class="fileName"
-          value="{{obj.FolderName}}"
-          maxlength="50"
-          placeholder = "rename"
-          (blur)="renameFolder(obj.FolderID, obj.Path, $event)"
-          />
+          <span>{{obj.FolderName}}</span>
         </div>
-        <div class="sizeHeader">
+        <div class="sizeHeader" title="{{obj.FolderName}}">
           <span></span>
         </div>
-        <div class="dateHeader">
-          <span>18-09-2023</span>
+        <div class="dateHeader" title="{{formatDate(obj.DateCreated)}}">
+          <span>{{formatDate(obj.DateCreated)}}</span>
         </div>
       </div>
       <!-- Folders End -->
@@ -263,21 +275,13 @@
           <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/doc.png" alt=""/>
         </div>
         <div class="nameHeader" title="{{obj.Name}}">
-          <input
-          type="text"
-          editable="true"
-          class="fileName"
-          value="{{obj.Name}}"
-          maxlength="50"
-          placeholder = "rename"
-          (blur)="renameFile(obj.MarkdownID, obj.Path, $event, obj)"
-          />
+          <span>{{obj.Name}}</span>
         </div>
-        <div class="sizeHeader">
+        <div class="sizeHeader" title="{{getSize(obj.Size)}}">
           <span>{{getSize(obj.Size)}}</span>
         </div>
-        <div class="dateHeader">
-          <span>18-09-2023</span>
+        <div class="dateHeader" title="{{formatDate(obj.DateCreated)}}">
+          <span>{{formatDate(obj.DateCreated)}}</span>
         </div>
       </div>
       <!-- Files End -->
