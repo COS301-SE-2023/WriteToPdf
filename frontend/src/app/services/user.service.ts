@@ -282,6 +282,13 @@ export class UserService {
     });
   }
 
+  public restartTimer() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.startExpirationCheck();
+  }
+  
   private startExpirationCheck() {
     const checkInterval = 30000;
 
