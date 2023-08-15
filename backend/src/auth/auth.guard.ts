@@ -51,29 +51,16 @@ export class AuthGuard implements CanActivate {
     }
     let payload: any;
     try {
-      const payload =
-        await this.jwtService.verifyAsync(token, {
-          secret: jwtConstants.secret,
-        });
-
-      if (
-        payload.UserID !== request.body.UserID ||
-        payload.ExpiresAt < new Date(Date.now())
-      ) {
-        throw new UnauthorizedException(
-          'Invalid token',
-        );
-      }
-
+      payload = await this.jwtService.verifyAsync(
+        token,
+        {
+          secret: process.env.JWT_SECRET_KEY,
+        },
+      );
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException(
         'Invalid token',
-      );
-    }
-    if (!request.body.UserID) {
-      throw new UnauthorizedException(
-        'Missing UserID',
       );
     }
     if (
