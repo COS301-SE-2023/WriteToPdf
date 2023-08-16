@@ -12,6 +12,24 @@ import { ExportDTO } from './dto/export.dto';
 import { MessageService } from 'primeng/api';
 import { environment } from '../../environments/environment';
 import * as CryptoJS from 'crypto-js';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+import htmlToPdfMake from 'html-to-pdfmake';
+import TurndownService from 'turndown';
+import html2canvas from 'html2canvas';
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+pdfMake.fonts = {
+  Arial: {
+    normal:
+      'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+    bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+    italics:
+      'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+    bolditalics:
+      'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf',
+  },
+};
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +40,7 @@ export class FileService {
     private userService: UserService,
     private editService: EditService,
     private messageService: MessageService
-  ) { }
+  ) {}
 
   saveDocument(
     content: string | undefined,
@@ -161,7 +179,6 @@ export class FileService {
       this.sendDeleteData(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
-
             resolve(true);
           } else {
             resolve(false);
@@ -391,7 +408,7 @@ export class FileService {
     body.Content = this.encryptDocument(content);
     body.Type = type;
 
-    console.log('body',body);
+    console.log('body', body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -401,42 +418,62 @@ export class FileService {
 
   exportDocumentToNewFileType(
     markdownID: string | undefined,
-    name: string | undefined,
-    content: string | undefined,
+    name: string,
+    content: string,
     type: string | undefined
   ): void {
-    if (type === 'html') {
-      this.downloadAsHtmlFile(content, name);
-      return;
+    let blob: Blob;
+    let fileURL: string;
+    let link: HTMLAnchorElement;
+
+    switch (type) {
+      case 'html':
+        this.downloadAsHtmlFile(content, name);
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export successful',
+        });
+
+        return;
     }
-    this.sendExportData(markdownID, name, content, type).subscribe({
-      next: (response: HttpResponse<any>) => {
-        if (response.status === 200) {
-          const fileData: number[] = response.body.data;
-          const uint8Array = new Uint8Array(fileData);
-          const blob = new Blob([uint8Array], { type: 'application/pdf' });
-
-          // Download the File
-          const fileURL = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = fileURL;
-          link.download = name + '.' + type;
-          link.click();
-          URL.revokeObjectURL(fileURL);
-
-          // Show success message
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Export successful',
-          });
-        } else {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Export failed',
-          });
-        }
-      },
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Export failed',
     });
+
+    // if (type === 'html') {
+    //   this.downloadAsHtmlFile(content, name);
+    //   return;
+    // }
+    // this.sendExportData(markdownID, name, content, type).subscribe({
+    //   next: (response: HttpResponse<any>) => {
+    //     if (response.status === 200) {
+    //       const fileData: number[] = response.body.data;
+    //       const uint8Array = new Uint8Array(fileData);
+    //       const blob = new Blob([uint8Array], { type: 'application/pdf' });
+
+    //       // Download the File
+    //       const fileURL = URL.createObjectURL(blob);
+    //       const link = document.createElement('a');
+    //       link.href = fileURL;
+    //       link.download = name + '.' + type;
+    //       link.click();
+    //       URL.revokeObjectURL(fileURL);
+
+    //       // Show success message
+    //       this.messageService.add({
+    //         severity: 'success',
+    //         summary: 'Export successful',
+    //       });
+    //     } else {
+    //       this.messageService.add({
+    //         severity: 'error',
+    //         summary: 'Export failed',
+    //       });
+    //     }
+    //   },
+    // });
   }
 
   sendExportData(
@@ -460,7 +497,10 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  downloadAsHtmlFile(htmlContent: string | undefined, fileName: string | undefined) {
+  downloadAsHtmlFile(
+    htmlContent: string | undefined,
+    fileName: string | undefined
+  ) {
     if (htmlContent !== undefined && fileName !== undefined) {
       const blob = new Blob([htmlContent], { type: 'text/html' });
       const fileURL = URL.createObjectURL(blob);
