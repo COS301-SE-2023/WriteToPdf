@@ -36,6 +36,21 @@ export class SignupComponent {
 
     this.router.navigate([pageName], { state: data });
   }
+
+  ngOnInit(): void {
+    this.loadGoogleSignInAPI();
+  }
+
+  loadGoogleSignInAPI(): void {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    // script.onload = () => {
+    //   // Google Sign-In API loaded
+    //   window.googleSignIn = this.googleSignIn;
+    // };
+    document.body.appendChild(script);
+  }
+  
   ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#ffffff';
