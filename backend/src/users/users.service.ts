@@ -10,6 +10,7 @@ import { AuthService } from '../auth/auth.service';
 import { UserDTO } from './dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as CryptoJS from 'crypto-js';
+import { hashSync, genSaltSync } from 'bcryptjs';
 import 'dotenv/config';
 
 @Injectable()
@@ -211,10 +212,46 @@ export class UsersService {
       const { email, given_name, family_name } =
         decodedToken;
 
-      console.log('Email:', email);
-      console.log('First Name:', given_name);
-      console.log('Last Name:', family_name);
-      return true;
+      // Check if the user already exists in the database
+      let user = await this.findOneByEmail(email);
+
+      // If the user does not exist, create a new user
+      if (!user) {
+        const newUser = new UserDTO();
+        newUser.Email = email;
+        newUser.FirstName = given_name;
+        newUser.LastName = family_name;
+        const salt = this.generateSalt();
+        const password =
+          this.generateRandomPassword();
+        newUser.Salt = salt;
+        newUser.Password =
+          this.generateHashedPassword(
+            password,
+            salt,
+          );
+        user = await this.create(newUser);
+      }
+
+      // Generate a token for the user
+      const token =
+        await this.authService.generateToken(
+          user,
+        );
+
+      //Create Derived Encryption Key
+      const EncryptionKey = CryptoJS.SHA256(
+        user.Password,
+      ).toString();
+
+      // Return the user information and token
+      return {
+        UserID: user.UserID,
+        Email: user.Email,
+        FirstName: user.FirstName,
+        Token: token,
+        EncryptionKey: EncryptionKey,
+      };
     } else {
       throw new HttpException(
         'Invalid credential',
@@ -247,6 +284,21 @@ export class UsersService {
   //   const user = await this.findOne(UserID);
   //   return this.usersRepository.remove(user); // returns deleted user
   // }
+
+  generateSalt(): string {
+    return genSaltSync(10);
+  }
+
+  generateRandomPassword(): string {
+    return Math.random().toString(36).slice(-8);
+  }
+
+  generateHashedPassword(
+    password: string,
+    salt: string,
+  ): string {
+    return hashSync(password, salt);
+  }
 
   async getSalt(userDTO: UserDTO) {
     const user = await this.findOneByEmail(
