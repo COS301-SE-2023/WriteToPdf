@@ -488,6 +488,22 @@ export class FileService {
           summary: 'Export successful',
         });
         return;
+      case 'jpeg':
+        this.convertHtmlToImage(content, name, type);
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export successful',
+        });
+        return;
+      case 'png':
+        this.convertHtmlToImage(content, name, type);
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export successful',
+        });
+        return;
     }
     this.messageService.add({
       severity: 'error',
