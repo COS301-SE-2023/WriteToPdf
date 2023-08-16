@@ -496,20 +496,22 @@ textarea {
   transition: 0.5s;
 }
 
+$icon-size: 1.5rem;
 :host ::ng-deep {
   .c-icons {
-    width: 20px;
-    height: 20px;
-    --webkit-backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
+    width: $icon-size;
+    height: $icon-size;
+    background-size: $icon-size $icon-size;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: inline-block;
   }
 
-  .pi-folder {
+  .folder-icon {
     background-image: url("/assets/Icons/homeIcons/mainWindow/folder.png") !important;
   }
 
-  .pi-file {
+  .doc-icon {
     background-image: url("/assets/Icons/homeIcons/mainWindow/doc.png");
   }
 }

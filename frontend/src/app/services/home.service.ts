@@ -29,8 +29,8 @@ export class NodeService {
   private folders: FolderDTO[] = [];
   private nameNumber = 0;
 
-  private folderIcon = 'pi pi-folder';
-  private fileIcon = 'pi pi-file';
+  private folderIcon = 'c-icons folder-icon';
+  private fileIcon = 'c-icons doc-icon';
 
   /**
    * @Backend, below is a function with data that showcases the
