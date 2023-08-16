@@ -440,6 +440,23 @@ export class FileService {
         });
 
         return;
+      case 'pdf':
+        const html = htmlToPdfMake(content, {
+          tableAutoSize: true,
+        });
+        const docDefinition = {
+          content: [html],
+        };
+
+        var pdfDocGenerator = pdfMake.createPdf(docDefinition);
+        pdfDocGenerator.download(name);
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export successful',
+        });
+
+        return;
     }
     this.messageService.add({
       severity: 'error',
