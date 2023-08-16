@@ -1478,5 +1478,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getCurrentFolderName(): string {
+    if (this.folderIDHistoryPosition == 0)
+      return 'Root';
+    else {
+      const folder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
+      if(folder.FolderName)
+        return folder.FolderName;
+      else
+        return '';
+    }
+  }
+
   protected readonly focus = focus;
 }

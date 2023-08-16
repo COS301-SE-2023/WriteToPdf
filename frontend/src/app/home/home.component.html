@@ -180,6 +180,9 @@
       <img alt="searchIcon" src="assets/Icons/homeIcons/mainWindow/searchIcon.png" />
       <input (input)="filterTable($event, 0)" class="search-input" placeholder="Search..." type="text" />
     </div>
+    <div class="folderNameWrapper">
+      <h2 class="folderName">{{getCurrentFolderName()}}</h2>
+    </div>
     <div class="directoryContents">
       <!--      The Current directory variable below in the main view is used to allow for intelligent file placement-->
       
