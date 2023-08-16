@@ -22,7 +22,7 @@ export class FileService {
     private userService: UserService,
     private editService: EditService,
     private messageService: MessageService
-  ) { }
+  ) {}
 
   saveDocument(
     content: string | undefined,
@@ -148,6 +148,7 @@ export class FileService {
     body.Path = path;
     body.Name = name;
     body.ParentFolderID = parentFolderID;
+    body.SafeLock = false;
 
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -161,7 +162,6 @@ export class FileService {
       this.sendDeleteData(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
-
             resolve(true);
           } else {
             resolve(false);
@@ -391,7 +391,7 @@ export class FileService {
     body.Content = this.encryptDocument(content);
     body.Type = type;
 
-    console.log('body',body);
+    console.log('body', body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -460,7 +460,10 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  downloadAsHtmlFile(htmlContent: string | undefined, fileName: string | undefined) {
+  downloadAsHtmlFile(
+    htmlContent: string | undefined,
+    fileName: string | undefined
+  ) {
     if (htmlContent !== undefined && fileName !== undefined) {
       const blob = new Blob([htmlContent], { type: 'text/html' });
       const fileURL = URL.createObjectURL(blob);
@@ -479,8 +482,7 @@ export class FileService {
   }
 
   encryptDocument(content: string | undefined): string {
-    if(content)
-      return content;
+    if (content) return content;
     const key = this.userService.getEncryptionKey();
     if (key && content) {
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
@@ -490,8 +492,7 @@ export class FileService {
     }
   }
   decryptDocument(content: string | undefined): string {
-    if (content)
-      return content;
+    if (content) return content;
     const key = this.userService.getEncryptionKey();
     if (key && content) {
       const decryptedMessage = CryptoJS.AES.decrypt(content, key)

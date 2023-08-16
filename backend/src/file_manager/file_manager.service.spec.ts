@@ -827,6 +827,7 @@ describe('FileManagerService', () => {
         DateCreated: new Date(),
         ParentFolderID: '1',
         Size: 100,
+        SafeLock: false,
       };
       const file2: MarkdownFile = {
         MarkdownID: '2',
@@ -837,6 +838,7 @@ describe('FileManagerService', () => {
         DateCreated: new Date(),
         ParentFolderID: '1',
         Size: 100,
+        SafeLock: false,
       };
       const files = [file1, file2];
 
@@ -946,6 +948,7 @@ describe('FileManagerService', () => {
           DateCreated: new Date(),
           ParentFolderID: '1',
           Size: 100,
+          SafeLock: false,
         },
         {
           MarkdownID: '2',
@@ -956,6 +959,7 @@ describe('FileManagerService', () => {
           DateCreated: new Date(),
           ParentFolderID: '1',
           Size: 100,
+          SafeLock: false,
         },
       ];
 
