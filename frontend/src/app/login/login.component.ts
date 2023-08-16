@@ -18,9 +18,6 @@ export class LoginComponent {
   password: string = '';
   // popupWindow: Window | null = null;
 
-  emailForgot: string = '';
-
-  forgotPasswordPopup: boolean = false;
   constructor(
     @Inject(Router) private router: Router,
     private elementRef: ElementRef,
@@ -109,10 +106,6 @@ export class LoginComponent {
   //   }
   // }
 
-  forgotPassword(): void {
-    //todo implement
-    console.log('TODO: forgotPassword');
-  }
   movemouse(event: MouseEvent) {
     // const windowWidth = window.innerWidth;
     // const windowHeight = window.innerHeight;
