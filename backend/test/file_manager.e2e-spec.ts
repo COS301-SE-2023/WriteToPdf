@@ -141,6 +141,7 @@ describe('FileManagerController (integration)', () => {
       createFileDTO.Name = 'Test File';
       createFileDTO.Size = 0;
       createFileDTO.ParentFolderID = '';
+      createFileDTO.SafeLock = false;
 
       const s3Response =
         await s3Service.createFile(createFileDTO);
@@ -154,7 +155,7 @@ describe('FileManagerController (integration)', () => {
       // console.log('s3Response: ', s3Response);
 
       await markdownFileRepository.query(
-        'INSERT INTO MARKDOWN_FILES (MarkdownID, Name, Path, Size, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?, ?)',
+        'INSERT INTO MARKDOWN_FILES (MarkdownID, Name, Path, Size, ParentFolderID, UserID, SafeLock) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [
           s3Response.MarkdownID,
           createFileDTO.Name,
@@ -162,6 +163,7 @@ describe('FileManagerController (integration)', () => {
           createFileDTO.Size,
           createFileDTO.ParentFolderID,
           createFileDTO.UserID,
+          createFileDTO.SafeLock,
         ],
       );
     }
