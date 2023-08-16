@@ -453,6 +453,41 @@ export class FileService {
         });
 
         return;
+      case 'txt':
+        blob = this.convertHtmlToPlainText(content, type);
+
+        // Download the File
+        fileURL = URL.createObjectURL(blob);
+        link = document.createElement('a');
+        link.href = fileURL;
+        link.download = name + '.' + type;
+        link.click();
+        URL.revokeObjectURL(fileURL);
+
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export successful',
+        });
+
+        return;
+      case 'md':
+        blob = this.convertHtmlToPlainText(content, type);
+
+        // Download the File
+        fileURL = URL.createObjectURL(blob);
+        link = document.createElement('a');
+        link.href = fileURL;
+        link.download = name + '.' + type;
+        link.click();
+        URL.revokeObjectURL(fileURL);
+
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export successful',
+        });
+        return;
     }
     this.messageService.add({
       severity: 'error',
