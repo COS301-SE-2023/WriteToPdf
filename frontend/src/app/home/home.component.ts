@@ -146,7 +146,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           const selected = this.getSelected();
           console.log(selected);
           if (selected.length === 1) {
-            if(!(this.entityRename = this.getSelected()[0].Name))
+            if (!(this.entityRename = this.getSelected()[0].Name))
               this.entityRename = this.getSelected()[0].FolderName;
             this.renameDialogueVisible = true;
           }
@@ -278,6 +278,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         key: item.key,
         label: item.data.name,
         data: item.data,
+        icon: item.icon,
         children: this.generateTreeNodes(item.children || []),
       };
       return node;
@@ -285,95 +286,95 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
-    {
-      // Get a reference to the menubar element with the specific class
-      this.menubarElement = this.elementRef.nativeElement.querySelector('.p-menubar.custom-menubar');
 
-      // Call the function to set the component width initially
-      this.updateMenubarWidth();
-      // Below is the function that initially populates the fileTree
+    // Get a reference to the menubar element with the specific class
+    this.menubarElement = this.elementRef.nativeElement.querySelector('.p-menubar.custom-menubar');
 
-      this.nodeService.getFilesAndFolders().then(() => {
-        const hist = localStorage.getItem('folderIDHistory');
-        const pos = localStorage.getItem('folderIDHistoryPosition');
+    // Call the function to set the component width initially
+    this.updateMenubarWidth();
+    // Below is the function that initially populates the fileTree
 
-        if (hist != null && pos != null) {
-          this.folderIDHistory = JSON.parse(hist);
-          this.folderIDHistoryPosition = JSON.parse(pos);
-          this.loadByParentID(this.folderIDHistory[this.folderIDHistoryPosition]);
-        } else {
-          this.folderIDHistory.push('');
-          this.loadByParentID("");
-        }
+    this.nodeService.getFilesAndFolders().then(() => {
+      const hist = localStorage.getItem('folderIDHistory');
+      const pos = localStorage.getItem('folderIDHistoryPosition');
 
-        const data = this.nodeService.getTreeTableNodesData();
-        this.filesDirectoryTree = this.generateTreeNodes(data);
+      if (hist != null && pos != null) {
+        this.folderIDHistory = JSON.parse(hist);
+        this.folderIDHistoryPosition = JSON.parse(pos);
+        this.loadByParentID(this.folderIDHistory[this.folderIDHistoryPosition]);
+      } else {
+        this.folderIDHistory.push('');
+        this.loadByParentID("");
+      }
 
-        // Below is the function that populates the treeTable
-        // Note, both filtered and non-filtered needs to be made and kept up to date,
-        // as the non-filtered serves as the filter for the filters for the logic in the filter function
-        // below
-        this.nodeService.getTreeTableNodes().then((data) => {
+      const data = this.nodeService.getTreeTableNodesData();
+      this.filesDirectoryTree = this.generateTreeNodes(data);
+
+      // Below is the function that populates the treeTable
+      // Note, both filtered and non-filtered needs to be made and kept up to date,
+      // as the non-filtered serves as the filter for the filters for the logic in the filter function
+      // below
+      this.nodeService
+      .getTreeTableNodes()
+      .then((data) => {
           this.filesDirectoryTreeTable = data;
+          this.filteredFilesDirectoryTreeTable = data;
         });
-        this.nodeService
-          .getTreeTableNodes()
-          .then((data) => (this.filteredFilesDirectoryTreeTable = data));
-        this.treeTableColumns = [
-          { field: 'name', header: 'Name' },
-          { field: 'size', header: 'Size' },
-          { field: 'type', header: 'Type' },
-        ];
-      });
-      //Below is the code that populates the directoryPath
-      // this.activeDirectoryItems = [{ label: 'Computer' }, { label: 'Notebook' }, { label: 'Accessories' }, { label: 'Backpacks' }, { label: 'Item' }];
-      this.directoryHome = { icon: 'pi pi-home', routerLink: '/' };
-      //Below is the code that populates the menu items, can be done intelligently with regards to current selection
-      //in main window.
-      document.getElementsByClassName('menubar');
-      this.menuBarItems = this.getMenuItemsData();
-      //Below is the code that populates the directories accordingly via the helper function, load directory
-      //Below is the code for the speed dial menu
-      //Can be done intelligently with that which is in focus in the main window
-      this.speedDialItems = [
-        {
-          icon: 'pi pi-pencil',
-          command: async () => {
-            this.createNewDocumentDialogueVisible = true;
-          },
-        },
-        {
-          icon: 'pi pi-refresh',
-          command: () => {
-            // this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
-          },
-        },
-        {
-          icon: 'pi pi-trash',
-          command: () => {
-            // this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
-          },
-        },
-        {
-          icon: 'pi pi-upload',
-          command: () => {
-            this.showFileUploadPopup();
-          },
-        },
-        {
-          icon: 'pi pi-external-link',
-        },
+      this.treeTableColumns = [
+        { field: 'name', header: 'Name' },
+        { field: 'size', header: 'Size' },
+        { field: 'type', header: 'Type' },
       ];
-      // Below are the functions that implement intelligent routing of the directory tree on the left side of the home page
-      // it routes the relevant directory to the main window
+    });
+    //Below is the code that populates the directoryPath
+    // this.activeDirectoryItems = [{ label: 'Computer' }, { label: 'Notebook' }, { label: 'Accessories' }, { label: 'Backpacks' }, { label: 'Item' }];
+    this.directoryHome = { icon: 'pi pi-home', routerLink: '/' };
+    //Below is the code that populates the menu items, can be done intelligently with regards to current selection
+    //in main window.
+    document.getElementsByClassName('menubar');
+    this.menuBarItems = this.getMenuItemsData();
+    //Below is the code that populates the directories accordingly via the helper function, load directory
+    //Below is the code for the speed dial menu
+    //Can be done intelligently with that which is in focus in the main window
+    this.speedDialItems = [
+      {
+        icon: 'pi pi-pencil',
+        command: async () => {
+          this.createNewDocumentDialogueVisible = true;
+        },
+      },
+      {
+        icon: 'pi pi-refresh',
+        command: () => {
+          // this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
+        },
+      },
+      {
+        icon: 'pi pi-trash',
+        command: () => {
+          // this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+        },
+      },
+      {
+        icon: 'pi pi-upload',
+        command: () => {
+          this.showFileUploadPopup();
+        },
+      },
+      {
+        icon: 'pi pi-external-link',
+      },
+    ];
+    // Below are the functions that implement intelligent routing of the directory tree on the left side of the home page
+    // it routes the relevant directory to the main window
 
-      this.rootFolder.FolderID = '';
-      this.rootFolder.FolderName = 'Root';
-      this.rootFolder.Path = '';
-      this.rootFolder.Selected = false;
-      this.rootFolder.MoveSelected = false;
-      this.rootFolder.Type = 'folder';
-    }
+    this.rootFolder.FolderID = '';
+    this.rootFolder.FolderName = 'Root';
+    this.rootFolder.Path = '';
+    this.rootFolder.Selected = false;
+    this.rootFolder.MoveSelected = false;
+    this.rootFolder.Type = 'folder';
+
 
   }
 
@@ -396,24 +397,24 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   onNodeSelect(event: any): void {
-      //Open folder on click
-      if (event.node.data.type === 'folder') {
-        this.openFolder(event.node.key);
-      }
-      //Open file's folder on click
-      else if (event.node.data.type === 'file') {
-        console.log(event.node);
-        if (!event.node.parent){
-          this.openFolder('');
-        } else
-          this.openFolder(event.node.parent.key);
+    //Open folder on click
+    if (event.node.data.type === 'folder') {
+      this.openFolder(event.node.key);
+    }
+    //Open file's folder on click
+    else if (event.node.data.type === 'file') {
+      console.log(event.node);
+      if (!event.node.parent) {
+        this.openFolder('');
+      } else
+        this.openFolder(event.node.parent.key);
 
-        for(let i = 0; i < this.currentFiles.length; i++){
-          if(this.currentFiles[i].MarkdownID == event.node.key){
-            this.currentFiles[i].Selected = true;
-          }
+      for (let i = 0; i < this.currentFiles.length; i++) {
+        if (this.currentFiles[i].MarkdownID == event.node.key) {
+          this.currentFiles[i].Selected = true;
         }
       }
+    }
   }
 
   // end of functions implementing routing of directory tree to the main window
@@ -672,7 +673,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             label: 'Rename',
             icon: 'pi pi-fw pi-pencil',
             command: () => {
-              if (this.getSelected().length === 1){
+              if (this.getSelected().length === 1) {
                 if (!(this.entityRename = this.getSelected()[0].Name))
                   this.entityRename = this.getSelected()[0].FolderName;
                 this.renameDialogueVisible = true;
@@ -1203,7 +1204,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   openFolder(parentID: string) {
 
-    if(this.folderIDHistory[this.folderIDHistoryPosition] === parentID) return;
+    if (this.folderIDHistory[this.folderIDHistoryPosition] === parentID) return;
 
     if (this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
       this.folderIDHistory.splice(this.folderIDHistoryPosition + 1, this.folderIDHistory.length - this.folderIDHistoryPosition - 1);
@@ -1217,7 +1218,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   toRoot() {
-    if(this.folderIDHistoryPosition == 0) return;
+    if (this.folderIDHistoryPosition == 0) return;
     this.folderIDHistory = [];
     this.folderIDHistory.push('');
     this.folderIDHistoryPosition = 0;
