@@ -362,11 +362,14 @@ textarea {
   user-select: none;
 }
 
-.fileItem {
+.fileItem,
+.moveFileItem {
   display: flex;
+  box-sizing: content-box;
   width: 70vw;
   height: $file-height;
   background-color: lighten($light-grey, 10%);
+  border: 1px solid #00000000;
   border-bottom: 1px #ccc solid;
 
   // -webkit-user-drag: none;
@@ -379,6 +382,10 @@ textarea {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.moveFileItem {
+  width: 40vw !important;
 }
 
 .defaultFile:hover {

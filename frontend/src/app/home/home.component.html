@@ -12,16 +12,34 @@
     </div>
     <!--    TODO FileManagerPopup below-->
     <div class="fileOperations-container">
-      <p-dialog [(visible)]="moveDialogVisible" [style]="{ width: '50vw' }" header="Export File" [focusOnShow]="true"
+
+      <p-dialog [(visible)]="moveDialogVisible" [modal]="true" [style]="{ width: '50vw' }" header="Select a Destination Folder" [focusOnShow]="true"
         (keydown.enter)="moveEntity()" (keydown.escape)="moveDialogVisible = false">
-        <div class="fileOperations">
-          <p>
-            Move {{ getEntityToMoveName() }} to: {{ getCurrentDirectoryName() }}
-          </p>
-          <!-- <input type="text" pInputText [(ngModel)]="folderTo" /> -->
-        </div>
-        <p-button class="fileOperations-entity" (click)="moveEntity()" label="Move"></p-button>
+
+              <div *ngFor="let obj of getAllFolders()" class="moveFileItem" (dblclick)="moveEntity()"
+                (click)="handleMoveClick($event, obj)" [ngClass]="{
+                      'selectedFile': obj.MoveSelected,
+                      'defaultFile': !obj.MoveSelected,
+                    }" >
+                <div class="iconSpacing">
+                  <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/folder.png" alt="" />
+                </div>
+                <div class="nameHeader" title="{{obj.FolderName}}">
+                  <span>{{obj.FolderName}}</span>
+                </div>
+                <div class="sizeHeader" title="{{obj.FolderName}}">
+                  <span></span>
+                </div>
+                <div class="dateHeader" title="{{formatDate(obj.DateCreated)}}">
+                  <span>{{formatDate(obj.DateCreated)}}</span>
+                </div>
+                <div class="iconSpacing">
+                </div>
+              </div>
+
+        <p-button class="fileOperations-entity" [style]="{ marginTop: '20px' }" (click)="moveEntity()" label="Move"></p-button>
       </p-dialog>
+
     </div>
     <!--    TODO FileManagerPopup above-->
     <!-- <div class="speedDialEditMenu">
