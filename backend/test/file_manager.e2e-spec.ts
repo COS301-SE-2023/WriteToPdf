@@ -141,6 +141,7 @@ describe('FileManagerController (integration)', () => {
       createFileDTO.Name = 'Test File';
       createFileDTO.Size = 0;
       createFileDTO.ParentFolderID = '';
+      createFileDTO.SafeLock = false;
 
       const s3Response =
         await s3Service.createFile(createFileDTO);
@@ -154,7 +155,7 @@ describe('FileManagerController (integration)', () => {
       // console.log('s3Response: ', s3Response);
 
       await markdownFileRepository.query(
-        'INSERT INTO MARKDOWN_FILES (MarkdownID, Name, Path, Size, ParentFolderID, UserID) VALUES (?, ?, ?, ?, ?, ?)',
+        'INSERT INTO MARKDOWN_FILES (MarkdownID, Name, Path, Size, ParentFolderID, UserID, SafeLock) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [
           s3Response.MarkdownID,
           createFileDTO.Name,
@@ -162,6 +163,7 @@ describe('FileManagerController (integration)', () => {
           createFileDTO.Size,
           createFileDTO.ParentFolderID,
           createFileDTO.UserID,
+          createFileDTO.SafeLock,
         ],
       );
     }
@@ -210,7 +212,7 @@ describe('FileManagerController (integration)', () => {
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -219,10 +221,10 @@ describe('FileManagerController (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data',
+          'Missing UserID',
         );
       });
 
@@ -306,7 +308,7 @@ describe('FileManagerController (integration)', () => {
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -315,10 +317,10 @@ describe('FileManagerController (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data',
+          'Missing UserID',
         );
       });
 
@@ -413,7 +415,7 @@ describe('FileManagerController (integration)', () => {
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -422,10 +424,10 @@ describe('FileManagerController (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data',
+          'Missing UserID',
         );
       });
 
@@ -576,7 +578,7 @@ describe('FileManagerController (integration)', () => {
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -585,10 +587,10 @@ describe('FileManagerController (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data',
+          'Missing UserID',
         );
       });
 
@@ -789,7 +791,7 @@ describe('FileManagerController (integration)', () => {
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -798,10 +800,10 @@ describe('FileManagerController (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data',
+          'Missing UserID',
         );
       });
 
@@ -956,7 +958,7 @@ describe('FileManagerController (integration)', () => {
           .send(requestMarkdownFileDTO);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -965,10 +967,10 @@ describe('FileManagerController (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data',
+          'Missing UserID',
         );
       });
 
@@ -1072,7 +1074,7 @@ describe('FileManagerController (integration)', () => {
           .send(requestDirectoryFilesDTO);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -1081,10 +1083,10 @@ describe('FileManagerController (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data',
+          'Missing UserID',
         );
       });
 
@@ -1153,7 +1155,7 @@ describe('FileManagerController (integration)', () => {
           .send(requestFolder);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -1162,10 +1164,10 @@ describe('FileManagerController (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data',
+          'Missing UserID',
         );
       });
 
@@ -1321,7 +1323,7 @@ describe('FileManagerController (integration)', () => {
           .send(requestFolder);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -1330,10 +1332,10 @@ describe('FileManagerController (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data',
+          'Missing UserID',
         );
       });
 
@@ -1416,7 +1418,7 @@ describe('FileManagerController (integration)', () => {
           .send(requestFolder);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -1425,10 +1427,10 @@ describe('FileManagerController (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data',
+          'Missing UserID',
         );
       });
 
@@ -1559,7 +1561,7 @@ describe('FileManagerController (integration)', () => {
           .send(requestFolder);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -1568,10 +1570,10 @@ describe('FileManagerController (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data',
+          'Missing UserID',
         );
       });
 
@@ -1752,7 +1754,7 @@ describe('FileManagerController (integration)', () => {
           .send(requestDirectoryFoldersDTO);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -1761,10 +1763,10 @@ describe('FileManagerController (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data',
+          'Missing UserID',
         );
       });
 

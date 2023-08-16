@@ -48,6 +48,8 @@ export class AuthGuard {
     }
     if (this.userService.isAuthenticatedUser()) {
       // User is authenticated, allow access
+      //Restart the timer
+      this.userService.restartTimer();
       return true;
     } else {
       // User is not authenticated, redirect to login page or a restricted access page
