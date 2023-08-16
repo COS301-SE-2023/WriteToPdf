@@ -64,7 +64,7 @@ export class TextManagerService {
       await this.textractService.extractDocument(
         'sync',
         savedAssetDTO,
-        'text',
+        'table',
       );
 
     this.s3Service.saveTextractResponse(
