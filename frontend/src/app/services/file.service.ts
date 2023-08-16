@@ -497,6 +497,25 @@ export class FileService {
     // });
   }
 
+  stringToHTMLElement(htmlString: string): HTMLElement {
+    const div = document.createElement('div');
+    div.innerHTML = htmlString.trim();
+    return div; // Note: this is a div element containing your content
+  }
+
+  convertHtmlToPlainText(htmlString: string, type: string) {
+    if (type === 'txt') {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlString;
+      const plainText = tempDiv.textContent || tempDiv.innerText || '';
+      return new Blob([plainText], { type: 'text/plain' });
+    } else {
+      const turndownService = new TurndownService();
+      const markdown = turndownService.turndown(htmlString);
+      return new Blob([markdown], { type: 'text/plain' });
+    }
+  }
+
   sendExportData(
     markdownID: string | undefined,
     name: string | undefined,
