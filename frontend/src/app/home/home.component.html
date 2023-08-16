@@ -180,15 +180,21 @@
     <div class="folderNameWrapper">
       <h2 class="folderName">{{getCurrentFolderName()}}</h2>
               
-      <img class="icon" src="assets/Icons/homeIcons/navbar/homeIcon.png" alt="" (click)="toRoot()"
+      <div class="imgWrapper">
+        <img class="icon" src="assets/Icons/homeIcons/navbar/homeIcon.png" alt="" (click)="toRoot()"
         [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="To Root Directory" />
-    
-      <img class="icon" src="assets/Icons/editIcons/undo.svg" alt="" (click)="undoFolder()"
+      </div>
+
+      <div class="imgWrapper">
+        <img class="icon" src="assets/Icons/editIcons/undo.svg" alt="" (click)="undoFolder()"
         [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="Back one Directory" />
-    
-      <img class="icon" src="assets/Icons/editIcons/redo.svg" alt="" (click)="redoFolder()"
+      </div>
+
+      <div class="imgWrapper">
+        <img class="icon" src="assets/Icons/editIcons/redo.svg" alt="" (click)="redoFolder()"
         [ngClass]="{'hover': this.folderIDHistory.length > this.folderIDHistoryPosition + 1}"
         title="Forward one Directory" />
+      </div>
               
     </div>
     <div class="directoryContents">
