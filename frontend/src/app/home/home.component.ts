@@ -155,15 +155,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       {
         label: 'Delete',
         icon: 'pi pi-trash',
-        command: () => {
-
-          const selected = this.getSelected();
-          console.log(selected);
-          if (selected.length === 1) {
-            this.deleteSelectedEntity(selected[0]);
-          }
-
-        }
+        command: () => this.deleteSelectedEntities()
       },
     ];
   }
@@ -737,14 +729,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
             label: 'Delete',
             icon: 'pi pi-fw pi-trash',
             command: () => {
+
               const selected = this.getSelected();
-              console.log(selected);
-              if (selected.length === 1) {
-                this.deleteSelectedEntity(selected[0]);
-              } else if (selected.length === 0) {
+              if (selected.length > 0) {
+                this.deleteSelectedEntities();
+              } else {
                 this.messageService.add({
                   severity: 'warn',
-                  summary: 'Please select a folder or File to Delete',
+                  summary: 'Please select a Folder or File to Delete',
                   detail: '',
                 });
               }
@@ -1033,29 +1025,40 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   }
 
-  deleteSelectedEntity(event: any): void {
+  deleteSelectedEntities(): void {
 
-    let message = `Are you sure that you want to delete '${event.Name}'?`;
-    const type = event.Type;
-    if (type === 'folder') {
-      message = `Are you sure that you want to delete '${event.FolderName}' and all of its contents?`;
+    const selected = this.getSelected();
+    let entities = '';
+    for (const entity of selected) {
+      if (entity.Type == 'folder')
+        entities += '"' + entity.FolderName + '", ';
+      else
+        entities += '"' + entity.Name + '", ';
     }
+    entities = entities.substring(0, entities.length - 2);
+
+    let message = `Are you sure that you want to delete ${entities} and all of its contents?`;
+    if (selected.length > 1)
+      message = `Are you sure that you want to delete ${entities} and all of their contents?`;
+
     this.confirmationService.confirm({
       message: message,
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: async () => {
-        await this.delete(event);
+        for (const entity of selected) {
+          this.delete(entity);
+        }
 
-        if (type === 'folder')
+        if (selected.length === 1)
           this.messageService.add({
             severity: 'success',
-            summary: 'Folder deleted successfully',
+            summary: 'Item deleted successfully',
           });
         else
           this.messageService.add({
             severity: 'success',
-            summary: 'File deleted successfully',
+            summary: 'Items deleted successfully',
           });
       },
       reject: () => { },
@@ -1232,8 +1235,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return `${year}-${month}-${day}`;
   }
 
-
-
   openFolder(parentID: string) {
 
 
@@ -1246,6 +1247,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     localStorage.setItem('folderIDHistory', JSON.stringify(this.folderIDHistory));
     localStorage.setItem('folderIDHistoryPosition', JSON.stringify(this.folderIDHistoryPosition));
     this.loadByParentID(parentID);
+  }
+
+  toRoot() {
+    this.folderIDHistory = [];
+    this.folderIDHistory.push('');
+    this.folderIDHistoryPosition = 0;
+    localStorage.setItem('folderIDHistory', JSON.stringify(this.folderIDHistory));
+    localStorage.setItem('folderIDHistoryPosition', JSON.stringify(this.folderIDHistoryPosition));
+    this.loadByParentID('');
   }
 
   undoFolder() {
@@ -1483,7 +1493,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       return 'Root';
     else {
       const folder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
-      if(folder.FolderName)
+      if (folder.FolderName)
         return folder.FolderName;
       else
         return '';
