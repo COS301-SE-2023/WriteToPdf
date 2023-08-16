@@ -29,6 +29,9 @@ export class NodeService {
   private folders: FolderDTO[] = [];
   private nameNumber = 0;
 
+  private folderIcon = 'pi pi-folder';
+  private fileIcon = 'pi pi-file';
+
   /**
    * @Backend, below is a function with data that showcases the
    * format we need the TreeTable information to be delivered to us for seamless integration
@@ -74,6 +77,7 @@ export class NodeService {
   getTreeTableNodesData(): any {
     let directoryObject: {
       key: string | undefined;
+      icon: string | undefined;
       data: {
         name: string | undefined;
         size: string | undefined;
@@ -104,6 +108,7 @@ export class NodeService {
     for (let file of rootFiles) {
       directoryObject.push({
         key: file.MarkdownID,
+        icon: this.fileIcon,
         data: {
           name: file.Name,
           size: this.getSize(file.Size),
@@ -126,6 +131,7 @@ export class NodeService {
     if (folders.length + files.length === 0) {
       return {
         key: folder.FolderID,
+        icon: this.folderIcon,
         data: {
           name: folder.FolderName,
           size: '-',
@@ -136,6 +142,7 @@ export class NodeService {
     } else {
       let folderObject = {
         key: folder.FolderID,
+        icon: this.folderIcon,
         data: {
           name: folder.FolderName,
           size: '-',
@@ -150,6 +157,7 @@ export class NodeService {
       for (let file of files) {
         folderObject.children.push({
           key: file.MarkdownID,
+          icon: this.fileIcon,
           data: {
             name: file.Name,
             size: this.getSize(file.Size),

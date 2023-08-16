@@ -20,7 +20,7 @@ $file-height: 50px;
 
 .fileOperations-entity {
   padding: 8px;
-  margin:0;
+  margin: 0;
   justify-content: center;
   align-items: center;
 }
@@ -35,8 +35,7 @@ $file-height: 50px;
   grid-auto-flow: column;
   //overflow-x: auto;
   background-image: linear-gradient(to left, #ffffff, #f7f9fc);
-  border-bottom: 1px solid #ccc;
-  //box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
   width: 100%;
   height: 112px;
@@ -111,6 +110,7 @@ to co-operate.
   left: 0px;
   top: 112px;
   // Colour
+  background-image: linear-gradient(to right, #ffffff, #f7f9fc);
   overflow: auto;
   opacity: 100%;
   box-shadow: 3px 0px 5px rgba(0, 0, 0, 0.1);
@@ -472,16 +472,17 @@ textarea {
   background-color: darken($light-grey, 10%);
 }
 
-.folderNameWrapper{
+.folderNameWrapper {
   display: flex;
 }
-.folderName{
-  margin:10px 0 5px 10px ;
-  flex:4;
+
+.folderName {
+  margin: 10px 0 5px 10px;
+  flex: 4;
 }
 
 .folderNameWrapper .icon {
-  flex:1;
+  flex: 1;
   margin: auto;
   width: 42px;
   height: 42px;
@@ -493,4 +494,22 @@ textarea {
   cursor: pointer;
   background-color: darken($light-grey, 10%);
   transition: 0.5s;
+}
+
+:host ::ng-deep {
+  .c-icons {
+    width: 20px;
+    height: 20px;
+    --webkit-backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+  }
+
+  .pi-folder {
+    background-image: url("/assets/Icons/homeIcons/mainWindow/folder.png") !important;
+  }
+
+  .pi-file {
+    background-image: url("/assets/Icons/homeIcons/mainWindow/doc.png");
+  }
 }
