@@ -177,10 +177,6 @@ to co-operate.
   overflow-x: hidden;
 }
 
-.mainWindowHome .directoryContents {
-  padding-top: 20px;
-}
-
 //Below is the styling for the directory path
 
 .directoryPath {
@@ -478,4 +474,8 @@ textarea {
 
 .lockIcon:hover {
   background-color: darken($light-grey, 10%);
+}
+
+.folderName{
+  margin:20px 10px 0;
 }
