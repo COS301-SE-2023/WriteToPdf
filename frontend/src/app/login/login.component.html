@@ -41,12 +41,7 @@
           Login With Google
         </button>
       </div>
-
-      <div class="formElement noAccount">
-        <p (click)="forgotPasswordPopup = true" class="noAccountText">
-          Forgot Password?
-        </p>
-      </div>
+      
       <div class="formElement noAccount">
         <p (click)="navigateToPage('signup')" class="noAccountText">
           Don't have an Account?
@@ -54,22 +49,5 @@
       </div>
     </form>
   </div>
-
-
-  <p-dialog [(visible)]="forgotPasswordPopup" [style]="{ width: '50vw' }" header="Reset Password" [focusOnShow]="true"
-    (keydown.escape)="forgotPasswordPopup = false" [modal]="true">
-    <div class="forgotPasswordForm">
-
-      <div class="labelElement">
-        <label for="emailForgot">Email</label>
-      </div>
-      <div class="formElement">
-        <input pInputText type="email" name="emailForgot" id="emailForgot" placeholder="" class="textBox" [(ngModel)]="emailForgot" />
-      </div>
-
-    </div>
-    <p-button class="fileOperations-entity" (click)="forgotPassword()" label="Reset Password"></p-button>
-  </p-dialog>
-
 
 </div>
