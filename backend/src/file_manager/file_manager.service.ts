@@ -118,6 +118,7 @@ export class FileManagerService {
         Size: file.Size,
         ParentFolderID: file.ParentFolderID,
         Content: '',
+        SafeLock: file.SafeLock,
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
