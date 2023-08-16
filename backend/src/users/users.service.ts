@@ -8,6 +8,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { UserDTO } from './dto/user.dto';
+import { JwtService } from '@nestjs/jwt';
 import * as CryptoJS from 'crypto-js';
 import 'dotenv/config';
 
@@ -17,6 +18,7 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private authService: AuthService,
+    private jwtService: JwtService,
   ) {}
 
   create(createUserDTO: UserDTO): Promise<User> {
@@ -200,6 +202,32 @@ export class UsersService {
       password + pepper,
       10,
     ).toString();
+  }
+
+  async googleSignIn(credential: string) {
+    // Decode the ID token using JwtService
+    const decodedToken = this.jwtService.decode(
+      credential,
+    ) as {
+      email: string;
+      given_name: string;
+      family_name: string;
+    };
+
+    if (decodedToken) {
+      const { email, given_name, family_name } =
+        decodedToken;
+
+      console.log('Email:', email);
+      console.log('First Name:', given_name);
+      console.log('Last Name:', family_name);
+      return true;
+    } else {
+      throw new HttpException(
+        'Invalid credential',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
   }
 
   // async update(
