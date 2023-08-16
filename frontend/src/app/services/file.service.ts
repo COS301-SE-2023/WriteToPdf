@@ -547,6 +547,33 @@ export class FileService {
     }
   }
 
+  async convertHtmlToImage(htmlString: string, name: string, type: string) {
+    const container = document.createElement('div');
+
+    container.innerHTML = htmlString;
+
+    document.body.appendChild(container);
+
+    const canvas = await html2canvas(container, {
+      logging: true,
+      windowWidth: 794,
+      windowHeight: 1122,
+    });
+    container.style.display = 'none';
+    console.log('Canvas: ', canvas);
+    const fileURL = canvas.toDataURL('image/' + type);
+
+    document.body.removeChild(container);
+
+    const link = document.createElement('a');
+    link.href = fileURL;
+    link.download = name + '.' + type;
+    link.click();
+    URL.revokeObjectURL(fileURL);
+
+    return;
+  }
+
   sendExportData(
     markdownID: string | undefined,
     name: string | undefined,
