@@ -52,10 +52,9 @@
 
     <!--    TODO FileManagerPopup below-->
     <div class="fileOperations-container">
-      <p-dialog [(visible)]="createNewDocumentDialogueVisible" [modal]="true" [style]="{ width: '50vw' }"
+      <p-dialog [(visible)]="createNewDocumentDialogueVisible" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
         header="Create Document" [focusOnShow]="true" (keydown.escape)="createNewDocumentDialogueVisible = false">
-        <div class="fileOperations">
-          <p>Document Name:</p>
+        <div class="fileOperations" style="display:grid; width:80%;">
           <input
             placeholder="Document Name"
             [(ngModel)]="entityName"
@@ -64,8 +63,8 @@
             type="text"
             (keydown.enter)="createNewDocument()"
             (keydown.enter)="createNewDocumentDialogueVisible = false"
+            [style]="{width: '100%', marginTop: '20px'}"
           />
-          <br />
           <br />
           <p-button (click)="createNewDocument()" (click)="createNewDocumentDialogueVisible = false" label="Create"></p-button>
         </div>
@@ -73,10 +72,9 @@
     </div>
     <!--    TODO FileManagerPopup below-->
     <div class="fileOperations-container">
-      <p-dialog [(visible)]="createNewFolderDialogueVisible" [modal]="true" [style]="{ width: '50vw' }"
+      <p-dialog [(visible)]="createNewFolderDialogueVisible" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
         header="Create Folder" [focusOnShow]="true" (keydown.escape)="createNewFolderDialogueVisible = false">
-        <div class="fileOperations">
-          <p class="fileOperations-entity">Folder Name:</p>
+        <div class="fileOperations" style="display:grid; width:80%;">
           <input
           placeholder="Folder Name"
             class="fileOperations-entity"
@@ -86,8 +84,8 @@
             type="text"
             (keydown.enter)="createNewFolder()"
             (keydown.enter)="createNewFolderDialogueVisible = false"
+            [style]="{width: '100%', marginTop: '20px'}"
           />
-          <br />
           <br />
           <p-button (click)="createNewFolder()" (click)="createNewFolderDialogueVisible = false" label="Create"></p-button>
         </div>
@@ -95,10 +93,9 @@
     </div>
     <!--    TODO FileManagerPopup below-->
     <div class="fileOperations-container">
-      <p-dialog [(visible)]="renameDialogueVisible" [modal]="true" [style]="{ width: '50vw' }"
+      <p-dialog [(visible)]="renameDialogueVisible" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
         header="Rename" [focusOnShow]="true" (keydown.escape)="renameDialogueVisible = false">
-        <div class="fileOperations">
-          <p class="fileOperations-entity">Rename:</p>
+        <div class="fileOperations" style="display: grid; width:80%;">
           <input
             placeholder="{{getSelectedName()}}"
             class="fileOperations-entity"
@@ -106,8 +103,8 @@
             label="Name: "
             pInputText
             type="text"
+            [style]="{width: '100%', marginTop: '20px'}"
           />
-          <br />
           <br />
           <p-button (click)="renameEntity()" (click)="renameDialogueVisible = false" label="Rename"></p-button>
         </div>
@@ -182,6 +179,17 @@
     </div>
     <div class="folderNameWrapper">
       <h2 class="folderName">{{getCurrentFolderName()}}</h2>
+              
+      <img class="icon" src="assets/Icons/homeIcons/navbar/homeIcon.png" alt="" (click)="toRoot()"
+        [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="To Root Directory" />
+    
+      <img class="icon" src="assets/Icons/editIcons/undo.svg" alt="" (click)="undoFolder()"
+        [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="Back one Directory" />
+    
+      <img class="icon" src="assets/Icons/editIcons/redo.svg" alt="" (click)="redoFolder()"
+        [ngClass]="{'hover': this.folderIDHistory.length > this.folderIDHistoryPosition + 1}"
+        title="Forward one Directory" />
+              
     </div>
     <div class="directoryContents">
       <!--      The Current directory variable below in the main view is used to allow for intelligent file placement-->
@@ -252,14 +260,14 @@
         <div class="iconSpacing">
 
 
-          <img class="icon" src="assets/Icons/homeIcons/navbar/homeIcon.png" alt="" (click)="toRoot()" 
+          <!-- <img class="icon" src="assets/Icons/homeIcons/navbar/homeIcon.png" alt="" (click)="toRoot()" 
           [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="To Root Directory"/>
 
           <img class="icon" src="assets/Icons/editIcons/undo.svg" alt="" (click)="undoFolder()" 
           [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="Back one Directory"/>
 
           <img class="icon" src="assets/Icons/editIcons/redo.svg" alt="" (click)="redoFolder()" 
-          [ngClass]="{'hover': this.folderIDHistory.length > this.folderIDHistoryPosition + 1}" title="Forward one Directory"/>
+          [ngClass]="{'hover': this.folderIDHistory.length > this.folderIDHistoryPosition + 1}" title="Forward one Directory"/> -->
 
         </div>
         <div class="nameHeader">
