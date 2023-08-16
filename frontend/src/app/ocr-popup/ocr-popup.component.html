@@ -16,25 +16,46 @@
         <mat-tab label="Text">
           <br>
           <textarea class ="editableForm" [(ngModel)]="paragraphText" cols="40" rows="6"></textarea>
+          <p-button class ="copyFormData" icon="pi pi-copy" label="Copy" styleClass="p-button-rounded"
+                    (click)="copyFormData()"></p-button>
         </mat-tab>
         <mat-tab label="Tables">
           <br>
-          <table class="styled-table">
-            <thead>
-            <tr>
-              <th>Demo</th>
-              <th>Table Data</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let row of tableData; let i = index;">
-              <td [(ngModel)]="tableData[i].name" contenteditable="true"></td>
-              <td [(ngModel)]="tableData[i].email" contenteditable="true"></td>
-            </tr>
-            </tbody>
+          <p-button class="editButton" icon="pi pi-edit" label="Edit Table" styleClass="p-button-rounded"
+                    (click)="renderTableEditable()"></p-button>
+          <br>
+          <table mat-table [dataSource]="dataSource">
+            <ng-container [matColumnDef]="col.key" *ngFor="let col of columnsSchema">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ col.label }}
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <div [ngSwitch]="col.key">
+                  <div *ngSwitchCase="'isEdit'">
+                    <button mat-button (click)="element.isEdit = !element.isEdit">Edit</button>
+                  </div>
+                  <ng-container *ngSwitchDefault>
+                    <div *ngIf="element.isEdit; else dataField">
+                      <mat-form-field>
+                        <input [type]="col.type" matInput [(ngModel)]="element[col.key]" />
+                      </mat-form-field>
+                    </div>
+                    <ng-template #dataField>
+                      {{ element[col.key] }}
+                    </ng-template>
+                  </ng-container>
+                </div>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
           </table>
+          <br>
+          <p-button class="copyButton" icon="pi pi-copy" label="Copy" styleClass="p-button-rounded"
+                    (click)="copyTableHtml()"></p-button>
         </mat-tab>
       </mat-tab-group>
     </div>
+    <div class ="buttons"></div>
   </div>
 </div>

@@ -89,6 +89,34 @@
   width:100%;
   height:auto;
 }
+// Below is the code for the angular material table
+/* Style for editable cells */
+td.mat-cell {
+  display: flex;
+  align-items: center;
+}
+
+/* Style for input fields in editable cells */
+.mat-form-field {
+  margin: 0;
+  flex: 1;
+  width:5%;
+}
+
+/* Style for buttons in editable cells */
+.btn-edit {
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Style for non-editable cells */
+td.mat-cell > div[ngSwitchDefault] {
+  display: flex;
+  align-items: center;
+}
+//Above is the code for the angular material table.
+
 
 .styled-table thead tr {
   background-color: #f0f0f0;

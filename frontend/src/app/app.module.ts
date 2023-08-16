@@ -13,7 +13,7 @@ import { WebcamModule } from 'ngx-webcam';
 import { SignupComponent } from './signup/signup.component';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { TreeModule } from 'primeng/tree';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { NodeService } from './services/home.service';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
@@ -51,6 +51,10 @@ import { ImageUploadPopupComponent } from './image-upload-popup/image-upload-pop
 import { OcrPopupComponent } from './ocr-popup/ocr-popup.component';
 import {MatTabsModule} from "@angular/material/tabs";
 import {MatIconModule} from "@angular/material/icon";
+import {MatTableModule} from "@angular/material/table";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -64,7 +68,7 @@ import {MatIconModule} from "@angular/material/icon";
     FileUploadPopupComponent,
     ClickAtCoordinateDirective,
     ImageUploadPopupComponent,
-    OcrPopupComponent,
+    OcrPopupComponent
   ],
   imports: [
     CKEditorModule,
@@ -101,7 +105,12 @@ import {MatIconModule} from "@angular/material/icon";
     ConfirmDialogModule,
     MatTabsModule,
     MatDialogModule,
-    MatIconModule
+    MatIconModule,
+    ReactiveFormsModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
   ],
   providers: [NodeService, UserService, MessageService, DialogService, ConfirmationService],
   bootstrap: [AppComponent],
