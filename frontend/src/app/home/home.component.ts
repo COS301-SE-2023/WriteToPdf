@@ -29,6 +29,7 @@ import { Inject } from '@angular/core';
 import { CoordinateService } from '../services/coordinate-service.service';
 import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
 import { NgxSpinnerService } from "ngx-spinner";
+import { start } from 'repl';
 
 interface Column {
   field: string;
@@ -97,7 +98,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   folderIDHistoryPosition: number = 0;
 
   shiftClickStart: any = null;
-
+  rootFolder: any = {};
   public loading: boolean = false;
   @ViewChild('myTreeTable') treeTable!: TreeTable;
 
@@ -126,6 +127,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
         label: 'Create New File',
         icon: 'pi pi-file',
         command: () => this.createNewDocumentDialogueVisible = true
+      },
+      {
+        label: 'Move',
+        icon: 'pi pi-fw pi-arrow-right',
+        command: () => this.startMove()
       },
       // {
       //   label: 'Enclose in Folder',
@@ -366,6 +372,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
       ];
       // Below are the functions that implement intelligent routing of the directory tree on the left side of the home page
       // it routes the relevant directory to the main window
+
+      this.rootFolder.FolderID = '';
+      this.rootFolder.FolderName = 'Root';
+      this.rootFolder.Path = '';
+      this.rootFolder.Selected = false;
+      this.rootFolder.MoveSelected = false;
+      this.rootFolder.Type = 'folder';
     }
 
   }
@@ -532,28 +545,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       });
   }
 
-  onMoveFileSelect(
-    event: any,
-    newPath: string,
-    newParentFolderID: string
-  ): void {
-    const file = this.nodeService.getFileDTOByID(event.key);
-    this.entityToMove = event;
-    // this.showFileManagerPopup('move');
-    this.moveDialogVisible = true;
-  }
-
-  //TODO - implement the move folder function
-  onMoveFolderSelect(
-    event: any,
-    newPath: string,
-    newParentFolderID: string
-  ): void {
-    const folder = this.nodeService.getFolderDTOByID(event.key);
-    this.entityToMove = event;
-    this.moveDialogVisible = true;
-  }
-
   delete(event: any) {
     if (event.Type == 'folder') {
       this.deleteAllChildren(this.nodeService.getFolderDTOByID(event.FolderID));
@@ -684,17 +675,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           {
             label: 'Move',
             icon: 'pi pi-fw pi-arrow-right',
-            command: () => {
-              if (this.currentDirectory != null)
-                this.onMoveFileSelect(this.currentDirectory, '', '');
-              else {
-                this.messageService.add({
-                  severity: 'warn',
-                  summary: 'Please Select a Folder or File to Move',
-                  detail: '',
-                });
-              }
-            },
+            command: () => this.startMove(),
           },
           {
             label: 'Delete',
@@ -841,8 +822,38 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return 'Pick A Directory';
   }
 
-  moveEntity() {
-    this.moveByKey(this.entityToMove.data.key, this.currentDirectory.key);
+  startMove() {
+    if (this.getSelected().length > 0)
+      this.moveDialogVisible = true;
+    else {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Please Select a Folder or File to Move',
+        detail: '',
+      });
+    }
+
+  }
+
+  async moveEntity() {
+    const selected = this.getSelected();
+    const movePromises = []; // Array to store all the move promises
+
+    for (const entity of selected) {
+      const key = entity.Type === 'folder' ? entity.FolderID : entity.MarkdownID;
+      const targetFolderID = this.getMoveSelectedFolder().FolderID;
+
+      // Create a promise for each entity's move
+      const movePromise = entity.Type === 'folder'
+        ? this.moveByKey(key, targetFolderID)
+        : this.moveByKey(key, targetFolderID);
+
+      movePromises.push(movePromise); // Store the promise in the array
+    }
+
+    // Await all the move promises to complete
+    await Promise.all(movePromises);
+
     this.moveDialogVisible = false;
   }
 
@@ -1156,6 +1167,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   formatDate(date: string): string {
+    if (!date) return '';
     const dateObj = new Date(date);
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -1223,6 +1235,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
     } else {
       this.selectOnlyOne(node);
     }
+  }
+
+  handleMoveClick(event: any, node: any) {
+    node.MoveSelected = true;
+    console.log(node);
+    this.getAllFolders().forEach((element: any) => {
+      if (element !== node) {
+        element.MoveSelected = false;
+      }
+    });
   }
 
   handleRightClick(event: any, node: any) {
@@ -1351,15 +1373,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (data) {
       // Handle the dropped data and use the drop target as needed
 
+      const selected = this.getSelected();
 
-      console.log('Dropped ', JSON.parse(data));
-      console.log('On: ', obj);
-
-      if (obj.FolderID) {
-        if (JSON.parse(data).Type == 'folder') {
-          this.moveByKey(JSON.parse(data).FolderID, obj.FolderID);
+      for (let i = 0; i < selected.length; i++) {
+        if (selected[i].Type == 'folder') {
+          this.moveByKey(selected[i].FolderID, obj.FolderID);
         } else {
-          this.moveByKey(JSON.parse(data).MarkdownID, obj.FolderID);
+          this.moveByKey(selected[i].MarkdownID, obj.FolderID);
         }
       }
     }
@@ -1379,6 +1399,27 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     obj.DraggedOver = false;
 
+  }
+
+  getAllFolders(): any[] {
+
+    let folders: any[] = [];
+
+    if (this.folderIDHistoryPosition != 0)
+      folders.push(this.rootFolder);
+    this.nodeService.getFolders().forEach((element: any) => {
+      if (!element.Selected && element.FolderID != this.folderIDHistory[this.folderIDHistoryPosition])
+        folders.push(element);
+    });
+    return folders;
+  }
+
+  getMoveSelectedFolder(): any {
+    let folders = this.getAllFolders();
+    for (let i = 0; i < folders.length; i++) {
+      if (folders[i].MoveSelected)
+        return folders[i];
+    }
   }
 
   protected readonly focus = focus;
