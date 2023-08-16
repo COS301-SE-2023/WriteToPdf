@@ -396,7 +396,24 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   onNodeSelect(event: any): void {
-    this.filterTable(event, 2);
+      //Open folder on click
+      if (event.node.data.type === 'folder') {
+        this.openFolder(event.node.key);
+      }
+      //Open file's folder on click
+      else if (event.node.data.type === 'file') {
+        console.log(event.node);
+        if (!event.node.parent){
+          this.openFolder('');
+        } else
+          this.openFolder(event.node.parent.key);
+
+        for(let i = 0; i < this.currentFiles.length; i++){
+          if(this.currentFiles[i].MarkdownID == event.node.key){
+            this.currentFiles[i].Selected = true;
+          }
+        }
+      }
   }
 
   // end of functions implementing routing of directory tree to the main window
@@ -1186,6 +1203,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   openFolder(parentID: string) {
 
+    if(this.folderIDHistory[this.folderIDHistoryPosition] === parentID) return;
 
     if (this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
       this.folderIDHistory.splice(this.folderIDHistoryPosition + 1, this.folderIDHistory.length - this.folderIDHistoryPosition - 1);
