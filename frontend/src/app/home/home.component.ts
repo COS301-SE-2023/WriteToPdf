@@ -147,6 +147,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
           const selected = this.getSelected();
           console.log(selected);
           if (selected.length === 1) {
+            if(!(this.entityRename = this.getSelected()[0].Name))
+              this.entityRename = this.getSelected()[0].FolderName;
             this.renameDialogueVisible = true;
           }
 
@@ -709,8 +711,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
             label: 'Rename',
             icon: 'pi pi-fw pi-pencil',
             command: () => {
-              if (this.getSelected().length === 1)
+              if (this.getSelected().length === 1){
+                if (!(this.entityRename = this.getSelected()[0].Name))
+                  this.entityRename = this.getSelected()[0].FolderName;
                 this.renameDialogueVisible = true;
+              }
               else if (this.getSelected().length === 0) {
                 this.messageService.add({
                   severity: 'warn',
@@ -1250,6 +1255,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   toRoot() {
+    if(this.folderIDHistoryPosition == 0) return;
     this.folderIDHistory = [];
     this.folderIDHistory.push('');
     this.folderIDHistoryPosition = 0;
