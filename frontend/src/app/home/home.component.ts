@@ -409,6 +409,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       } else
         this.openFolder(event.node.parent.key);
 
+      this.unselectAll();
       for (let i = 0; i < this.currentFiles.length; i++) {
         if (this.currentFiles[i].MarkdownID == event.node.key) {
           this.currentFiles[i].Selected = true;
@@ -1458,7 +1459,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   getCurrentFolderName(): string {
-    if (this.folderIDHistoryPosition == 0)
+    if (this.folderIDHistory[this.folderIDHistoryPosition]==='')
       return 'Root';
     else {
       const folder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
