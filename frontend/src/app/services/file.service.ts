@@ -498,21 +498,27 @@ export class FileService {
   ): void {
     //Applying CSS stylings to html page to allow for table conversion
     const txtContent = content;
-    const tableStyling = 'style="border-collapse: collapse #bfbfbf;" ';
+    const tableStyling = 'style="border-collapse: collapse; border:1px solid #bfbfbf;" ';
     const tdThStyling ='style="border: 1px solid #bfbfbf; padding: 8px; text-align: left; width:32px;" ';
 
     if(content.includes('<table')) {
       console.log('contains table');
     }
     //more work needs to be done to get conversion better
+    //NB Try to use document selector to select by class and apply all relevant styling
+    //See conversion to JPEG and PNG for details
     content = content.replace(/<table/g, `<table ${tableStyling}`);
     content = content.replace(/<td/g, `<td ${tdThStyling}`);
     content = content.replace(/<th/g, `<th ${tdThStyling}`);
-    content = content.replace(/class="text-huge"/g, `style="font-size: 1.8em;"`);
-    content = content.replace(/class="text-big"/g, `style="font-size: 1.4em;"`);
-    content = content.replace(/class="text-small"/g, `style="font-size: 0.85em;"`);
-    content = content.replace(/class="text-tiny"/g, `style="font-size: 0.7em;"`);
 
+    content = `<head><style>
+    .text-huge {font-size: 1.8em;}
+    .text-big {font-size: 1.4em;}
+    .text-small {font-size: 0.85em;}
+    .text-tiny {font-size: 0.7em;}
+    figure {display: block;margin-block-start: 1em;margin-block-end: 1em;margin-inline-start: 40px;margin-inline-end: 40px;}
+    .table {display: table;margin: 0.9em auto;}
+    </style></head>` + content;
     console.log(content);
 
     let blob: Blob;
@@ -565,7 +571,7 @@ export class FileService {
 
         return;
       case 'md':
-        blob = this.convertHtmlToPlainText(content, type);
+        blob = this.convertHtmlToPlainText(txtContent, type);
 
         // Download the File
         fileURL = URL.createObjectURL(blob);
@@ -793,9 +799,10 @@ export class FileService {
 
   async convertHtmlToImage(htmlString: string, name: string, type: string) {
     const container = document.createElement('div');
-
+    
+    container.style.position = 'absolute';
+    container.style.left = '99999px';
     container.innerHTML = htmlString;
-
     document.body.appendChild(container);
 
     const canvas = await html2canvas(container, {
@@ -803,7 +810,6 @@ export class FileService {
       windowWidth: 794,
       windowHeight: 1122,
     });
-    container.style.display = 'none';
     console.log('Canvas: ', canvas);
     const fileURL = canvas.toDataURL('image/' + type);
 
@@ -823,6 +829,7 @@ export class FileService {
     fileName: string | undefined
   ) {
     if (htmlContent !== undefined && fileName !== undefined) {
+      htmlContent = '<body style="background-color:lightGrey">'+htmlContent+'</body>';
       const blob = new Blob([htmlContent], { type: 'text/html' });
       const fileURL = URL.createObjectURL(blob);
       const link = document.createElement('a');
