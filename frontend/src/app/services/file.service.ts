@@ -499,6 +499,25 @@ export class FileService {
     content: string,
     type: string | undefined
   ): void {
+    //Applying CSS stylings to html page to allow for table conversion
+    const txtContent = content;
+    const tableStyling = 'style="border-collapse: collapse #bfbfbf;" ';
+    const tdThStyling ='style="border: 1px solid #bfbfbf; padding: 8px; text-align: left; width:32px;" ';
+
+    if(content.includes('<table')) {
+      console.log('contains table');
+    }
+    //more work needs to be done to get conversion better
+    content = content.replace(/<table/g, `<table ${tableStyling}`);
+    content = content.replace(/<td/g, `<td ${tdThStyling}`);
+    content = content.replace(/<th/g, `<th ${tdThStyling}`);
+    content = content.replace(/class="text-huge"/g, `style="font-size: 1.8em;"`);
+    content = content.replace(/class="text-big"/g, `style="font-size: 1.4em;"`);
+    content = content.replace(/class="text-small"/g, `style="font-size: 0.85em;"`);
+    content = content.replace(/class="text-tiny"/g, `style="font-size: 0.7em;"`);
+
+    console.log(content);
+
     let blob: Blob;
     let fileURL: string;
     let link: HTMLAnchorElement;
@@ -509,7 +528,7 @@ export class FileService {
         // Show success message
         this.messageService.add({
           severity: 'success',
-          summary: 'Export successful',
+          summary: 'Export to html successful',
         });
 
         return;
@@ -526,12 +545,12 @@ export class FileService {
         // Show success message
         this.messageService.add({
           severity: 'success',
-          summary: 'Export successful',
+          summary: 'Export to pdf successful',
         });
 
         return;
       case 'txt':
-        blob = this.convertHtmlToPlainText(content, type);
+        blob = this.convertHtmlToPlainText(txtContent, type);
 
         // Download the File
         fileURL = URL.createObjectURL(blob);
@@ -544,7 +563,7 @@ export class FileService {
         // Show success message
         this.messageService.add({
           severity: 'success',
-          summary: 'Export successful',
+          summary: 'Export to txt successful',
         });
 
         return;
@@ -562,7 +581,7 @@ export class FileService {
         // Show success message
         this.messageService.add({
           severity: 'success',
-          summary: 'Export successful',
+          summary: 'Export to md successful',
         });
         return;
       case 'jpeg':
@@ -570,7 +589,7 @@ export class FileService {
         // Show success message
         this.messageService.add({
           severity: 'success',
-          summary: 'Export successful',
+          summary: 'Export to jpeg successful',
         });
         return;
       case 'png':
@@ -578,7 +597,7 @@ export class FileService {
         // Show success message
         this.messageService.add({
           severity: 'success',
-          summary: 'Export successful',
+          summary: 'Export to png successful',
         });
         return;
     }
@@ -641,7 +660,7 @@ export class FileService {
     }
   }
 
-  removeImages(html:string): string {
+  removeImages(html: string): string {
     const images = html.match(/<figure\s+class="image"[^>]*>[\s\S]*?<\/figure>/g);
     if (images) {
       for (let i = 0; i < images.length; i++) {
@@ -654,7 +673,7 @@ export class FileService {
   renderTable(htmlString: string): string {
     const tableRegex = /<figure\s+class="table"[^>]*>[\s\S]*?<\/figure>/g;
     const matchedTables = htmlString.match(tableRegex);
-  
+
     if (matchedTables) {
       for (const table of matchedTables) {
         const tableContent = table.match(/<tbody>[\s\S]*?<\/tbody>/);
@@ -662,7 +681,7 @@ export class FileService {
           const rows = tableContent[0].match(/<tr>[\s\S]*?<\/tr>/g);
           if (rows) {
             let renderedTable = '';
-  
+
             for (const row of rows) {
               const cells = row.match(/<td>[\s\S]*?<\/td>/g);
               if (cells) {
@@ -674,21 +693,21 @@ export class FileService {
                 renderedTable += `${renderedRow}\n`;
               }
             }
-  
+
             const horizontalLine = renderedTable
               .split('\n')[0]
               .replace(/[^|]/g, '-')
               .replace(/-/g, '_');
-  
+
             renderedTable = `${horizontalLine}\n${renderedTable}${horizontalLine}\n`;
             renderedTable = this.improveTableSpacing(renderedTable);
-  
+
             htmlString = htmlString.replace(table, renderedTable);
           }
         }
       }
     }
-  
+
     const nonTableHtml = htmlString.replace(/<figure\s+class="table"[^>]*>[\s\S]*?<\/figure>/g, '');
     return nonTableHtml;
   }
@@ -696,12 +715,12 @@ export class FileService {
   improveTableSpacing(inputTable: string): string {
     // Split the input table into lines
     const lines = inputTable.trim().split('\n');
-    
+
     let maxCellWidth = 0;
     const numColumns = lines[0].split('|').length;
-    for (const line in lines){
+    for (const line in lines) {
       const cells = lines[line].split('|');
-      for (const cell in cells){
+      for (const cell in cells) {
         if (cells[cell].length > maxCellWidth) {
           maxCellWidth = cells[cell].length;
         }
@@ -709,41 +728,39 @@ export class FileService {
     }
 
     let outputTable = '';
-    for (const line in lines){
+    for (const line in lines) {
       const cells = lines[line].split('|');
-      for (const cell in cells){
+      for (const cell in cells) {
         if (cell === '0')
           continue;
         const cellLength = cells[cell].length;
         if ((line === (lines.length - 1).toString()) && cell !== (numColumns - 1).toString()) {
-          const hyphens = '_'.repeat(maxCellWidth+1);
+          const hyphens = '_'.repeat(maxCellWidth + 1);
           outputTable += `|${hyphens}`;
           continue;
         } else if (line === '0' && cell !== (numColumns - 1).toString()) {
-          const hyphens = '_'.repeat(maxCellWidth+2);
+          const hyphens = '_'.repeat(maxCellWidth + 2);
           outputTable += `${hyphens}`;
           continue;
-        } else if ( cell === (numColumns - 1).toString() && line === '0') {
+        } else if (cell === (numColumns - 1).toString() && line === '0') {
           outputTable += `_`;
         }
         else {
           const numSpaces = maxCellWidth - cellLength;
           const spaces = ' '.repeat(numSpaces);
-        outputTable += `| ${cells[cell]}${spaces}`;
+          outputTable += `| ${cells[cell]}${spaces}`;
         }
       }
       outputTable += '\n';
     }
 
     return outputTable;
-}
-  
- 
+  }
 
   addNewLines(htmlString: string): string {
     const tagsRegex = /<(p|h[1-6])[^>]*>[\s\S]*?<\/\1>/g;
     const matchedTags = htmlString.match(tagsRegex);
-    
+
     if (matchedTags) {
       for (const tag of matchedTags) {
         const newlineTag = tag.replace(/<\/(p|h[1-6])>/, '\n');
@@ -751,10 +768,10 @@ export class FileService {
       }
       return this.addNewLines(htmlString);
     }
-    
+
     return htmlString;
   }
- 
+
   removeAllTags(htmlString: string): string {
     const tagsRegex = /<[^>]*>/g;
     const matchedTags = htmlString.match(tagsRegex);
@@ -804,27 +821,6 @@ export class FileService {
     return;
   }
 
-  sendExportData(
-    markdownID: string | undefined,
-    name: string | undefined,
-    content: string | undefined,
-    type: string | undefined
-  ): Observable<HttpResponse<any>> {
-    const environmentURL = environment.apiURL;
-    const url = `${environmentURL}file_manager/export`;
-    const body = new ExportDTO();
-    body.MarkdownID = markdownID;
-    body.Name = name;
-    body.Content = content;
-    body.UserID = this.userService.getUserID();
-    body.Type = type;
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      'Bearer ' + this.userService.getAuthToken()
-    );
-    return this.http.post(url, body, { headers, observe: 'response' });
-  }
-
   downloadAsHtmlFile(
     htmlContent: string | undefined,
     fileName: string | undefined
@@ -837,12 +833,6 @@ export class FileService {
       link.download = fileName + '.html';
       link.click();
       URL.revokeObjectURL(fileURL);
-
-      // Show success message
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Export successful',
-      });
     }
   }
 
