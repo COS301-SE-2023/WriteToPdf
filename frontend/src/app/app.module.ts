@@ -4,10 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { HomeComponent } from './home/home.component';
-import { EditComponent } from './edit/edit.component';
 import { EditorModule } from 'primeng/editor';
-import { CameraComponent } from './camera/camera.component';
 import { EditAssetComponent } from './edit-asset/edit-asset.component';
 import { WebcamModule } from 'ngx-webcam';
 import { SignupComponent } from './signup/signup.component';
@@ -17,7 +14,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { NodeService } from './services/home.service';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
-import { TreeTableModule } from 'primeng/treetable';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -58,11 +54,6 @@ import {MatButtonModule} from "@angular/material/button";
 import { JwtModule } from "@auth0/angular-jwt";
 import { environment } from 'src/environments/environment';
 
-
-export function tokenGetter() {
-  return localStorage.getItem('authToken');
-}
-
 export function tokenGetter() {
   return localStorage.getItem('authToken');
 }
@@ -71,11 +62,8 @@ export function tokenGetter() {
   declarations: [
     AppComponent,
     LoginComponent,
-    HomeComponent,
-    CameraComponent,
     EditAssetComponent,
     SignupComponent,
-    EditComponent,
     FileUploadPopupComponent,
     ClickAtCoordinateDirective,
     ImageUploadPopupComponent,
