@@ -490,7 +490,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   //Functions for exporting from HTML
   convertToFileType(fileType: string) {
-    let contents = `<body style="word-break: normal; font-family: Arial, Helvetica, sans-serif; padding:35px 75px 75px; width:794px;">${this.editor.getData()}</body>`;
+    let contents = `<div style="word-break: normal; font-family: Arial, Helvetica, sans-serif; padding:35px 75px 75px; width:794px; margin:auto; background-color:white;">${this.editor.getData()}</div>`;
     const markdownID = this.editService.getMarkdownID();
     const name = this.editService.getName();
     if (markdownID && name) {
