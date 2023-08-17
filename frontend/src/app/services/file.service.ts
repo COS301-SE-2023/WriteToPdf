@@ -628,10 +628,8 @@ export class FileService {
     if (type === 'txt') {
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = htmlString;
-      console.log('innerHTML: ', tempDiv.innerHTML);
       // const plainText = tempDiv.textContent || tempDiv.innerText || '';
-      const plainText = this.replaceSpecialCharacters(this.removeAllTags(this.addNewLines(this.removeFigures(tempDiv.innerHTML))));
-      console.log('plainText: ', plainText);
+      const plainText = this.removeAllTags(this.addNewLines(this.renderTable(this.replaceSpecialCharacters(this.removeImages(tempDiv.innerHTML)))));
       return new Blob([plainText], { type: 'text/plain' });
     } else {
       const turndownService = new TurndownService();
@@ -640,15 +638,104 @@ export class FileService {
     }
   }
 
-  removeFigures(html:string): string {
-    const figures = html.match(/<figure[^>]*>[\s\S]*?<\/figure>/g);
-    if (figures) {
-      for (let i = 0; i < figures.length; i++) {
-        html = html.replace(figures[i], '');
+  removeImages(html:string): string {
+    const images = html.match(/<figure\s+class="image"[^>]*>[\s\S]*?<\/figure>/g);
+    if (images) {
+      for (let i = 0; i < images.length; i++) {
+        html = html.replace(images[i], '');
       }
     }
     return html;
   }
+
+  renderTable(htmlString: string): string {
+    const tableRegex = /<figure\s+class="table"[^>]*>[\s\S]*?<\/figure>/g;
+    const matchedTables = htmlString.match(tableRegex);
+  
+    if (matchedTables) {
+      for (const table of matchedTables) {
+        const tableContent = table.match(/<tbody>[\s\S]*?<\/tbody>/);
+        if (tableContent) {
+          const rows = tableContent[0].match(/<tr>[\s\S]*?<\/tr>/g);
+          if (rows) {
+            let renderedTable = '';
+  
+            for (const row of rows) {
+              const cells = row.match(/<td>[\s\S]*?<\/td>/g);
+              if (cells) {
+                let renderedRow = '|';
+                for (const cell of cells) {
+                  const cellContent = cell.replace(/<\/?td>/g, '').trim();
+                  renderedRow += ` ${cellContent} |`;
+                }
+                renderedTable += `${renderedRow}\n`;
+              }
+            }
+  
+            const horizontalLine = renderedTable
+              .split('\n')[0]
+              .replace(/[^|]/g, '-')
+              .replace(/-/g, '_');
+  
+            renderedTable = `${horizontalLine}\n${renderedTable}${horizontalLine}\n`;
+            renderedTable = this.improveTableSpacing(renderedTable);
+  
+            htmlString = htmlString.replace(table, renderedTable);
+          }
+        }
+      }
+    }
+  
+    const nonTableHtml = htmlString.replace(/<figure\s+class="table"[^>]*>[\s\S]*?<\/figure>/g, '');
+    return nonTableHtml;
+  }
+
+  improveTableSpacing(inputTable: string): string {
+    // Split the input table into lines
+    const lines = inputTable.trim().split('\n');
+    
+    let maxCellWidth = 0;
+    const numColumns = lines[0].split('|').length;
+    for (const line in lines){
+      const cells = lines[line].split('|');
+      for (const cell in cells){
+        if (cells[cell].length > maxCellWidth) {
+          maxCellWidth = cells[cell].length;
+        }
+      }
+    }
+
+    let outputTable = '';
+    for (const line in lines){
+      const cells = lines[line].split('|');
+      for (const cell in cells){
+        if (cell === '0')
+          continue;
+        const cellLength = cells[cell].length;
+        if ((line === (lines.length - 1).toString()) && cell !== (numColumns - 1).toString()) {
+          const hyphens = '_'.repeat(maxCellWidth+1);
+          outputTable += `|${hyphens}`;
+          continue;
+        } else if (line === '0' && cell !== (numColumns - 1).toString()) {
+          const hyphens = '_'.repeat(maxCellWidth+2);
+          outputTable += `${hyphens}`;
+          continue;
+        } else if ( cell === (numColumns - 1).toString() && line === '0') {
+          outputTable += `_`;
+        }
+        else {
+          const numSpaces = maxCellWidth - cellLength;
+          const spaces = ' '.repeat(numSpaces);
+        outputTable += `| ${cells[cell]}${spaces}`;
+        }
+      }
+      outputTable += '\n';
+    }
+
+    return outputTable;
+}
+  
+ 
 
   addNewLines(htmlString: string): string {
     const tagsRegex = /<(p|h[1-6])[^>]*>[\s\S]*?<\/\1>/g;
