@@ -137,6 +137,7 @@ to co-operate.
 
 .leftSideBarHeading {
   padding-top: 15px;
+  font-size: 20px;
   display: flex;
   justify-content: center;
   //  padding-left: 50px;
@@ -150,6 +151,15 @@ to co-operate.
   cursor: pointer;
 }
 
+.leftSideBarTools hr{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid #ccc;
+  width: 90%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
 .leftSideBarTools .icon:hover {
   background-color: darken($light-grey, 10%);
   transition: 0.5s;
@@ -193,14 +203,13 @@ to co-operate.
 
 // Below is the styling for the searchBar
 .searchBar {
-  margin-top: 18px;
-  margin-left: 15px;
-  margin-right: 15px;
+  margin: auto;
   box-sizing: border-box;
   position: relative;
   padding: 10px;
-  margin-left: 8px;
-  width: auto;
+  width: 40vw;
+  min-width: 300px;
+  height: 40px;
   background: #F7F7F7;
   /* Main Colours/Dark Gray */
   border: 1px solid #6F6F6F;
@@ -224,7 +233,7 @@ textarea {
 }
 
 .searchBar input {
-  padding: 5px;
+  // padding: 5px;
 }
 
 .searchBar:focus-within {
@@ -481,7 +490,7 @@ textarea {
   flex: 4;
 }
 
-.folderNameWrapper .icon {
+.directoryOperations .icon {
   flex: 1;
   margin: auto;
   width: 42px;
@@ -490,13 +499,20 @@ textarea {
   border-radius: 5px;
 }
 
-.folderNameWrapper .hover:hover {
+.directoryOperations .hover:hover {
   cursor: pointer;
   background-color: darken($light-grey, 10%);
   transition: 0.5s;
 }
 
+.directoryOperations{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+}
 $icon-size: 1.5rem;
+
 :host ::ng-deep {
   .c-icons {
     width: $icon-size;
@@ -515,3 +531,4 @@ $icon-size: 1.5rem;
     background-image: url("/assets/Icons/homeIcons/mainWindow/doc.png");
   }
 }
+
