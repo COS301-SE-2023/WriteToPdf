@@ -457,6 +457,10 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.reCenterPage();
   }
 
+  getZoom(){
+    return `${Math.floor(this.currentZoom*100)}%`;
+  }
+
   reCenterPage() {
     const element = document.getElementsByClassName(
       'center-page'
