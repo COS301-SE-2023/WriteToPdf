@@ -4,20 +4,17 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { HomeComponent } from './home/home.component';
-import { EditComponent } from './edit/edit.component';
 import { EditorModule } from 'primeng/editor';
-import { CameraComponent } from './camera/camera.component';
 import { EditAssetComponent } from './edit-asset/edit-asset.component';
 import { WebcamModule } from 'ngx-webcam';
 import { SignupComponent } from './signup/signup.component';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { TreeModule } from 'primeng/tree';
+import { TreeTableModule } from 'primeng/treetable';
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { NodeService } from './services/home.service';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
-import { TreeTableModule } from 'primeng/treetable';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -39,18 +36,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { FileManagerPopupComponent } from './file-manager-popup/file-manager-popup.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { ContextMenu, ContextMenuModule } from 'primeng/contextmenu';
-import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
-import EssentialsPlugin from '@ckeditor/ckeditor5-essentials/src/essentials';
-import ImagePlugin from '@ckeditor/ckeditor5-image/src/image';
-import ImageUploadPlugin from '@ckeditor/ckeditor5-image/src/imageupload';
+import {  ContextMenuModule } from 'primeng/contextmenu';
 import { ClickAtCoordinateDirective } from './click-at-coordinate.directive';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ImageUploadPopupComponent } from './image-upload-popup/image-upload-popup.component';
 import { JwtModule } from "@auth0/angular-jwt";
 import { environment } from 'src/environments/environment';
-import { NgxSpinnerModule } from 'ngx-spinner';
 
 export function tokenGetter() {
   return localStorage.getItem('authToken');
@@ -60,11 +52,8 @@ export function tokenGetter() {
   declarations: [
     AppComponent,
     LoginComponent,
-    HomeComponent,
-    CameraComponent,
     EditAssetComponent,
     SignupComponent,
-    EditComponent,
     FileUploadPopupComponent,
     FileManagerPopupComponent,
     ClickAtCoordinateDirective,
