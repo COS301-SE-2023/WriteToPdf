@@ -46,11 +46,13 @@ export class FileUploadPopupComponent {
           if (response.MarkdownID != undefined)
             this.nodeService.addFile(response);
 
-          this.editService.setMarkdownID(response.MarkdownID);
-          this.editService.setPath(response.Path);
-          this.editService.setName(response.Name);
-          this.editService.setParentFolderID(response.ParentFolderID);
-          this.editService.setContent(response.Content);
+          this.editService.setAll(
+            response.Content,
+            response.MarkdownID,
+            response.Name,
+            response.Path,
+            response.ParentFolderID
+          );
 
           this.navigateToPage('edit');
         });

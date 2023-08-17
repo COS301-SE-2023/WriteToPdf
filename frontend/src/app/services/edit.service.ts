@@ -14,6 +14,10 @@ export class EditService {
 
   setContent(content: string | undefined) {
     this.content = content;
+    if(this.content == undefined) {
+      this.content = '';
+    }
+    localStorage.setItem('content', this.content);
   }
 
   getContent(): string | undefined {
@@ -22,6 +26,10 @@ export class EditService {
 
   setMarkdownID(markdownID: string | undefined) {
     this.markdownID = markdownID;
+    if(this.markdownID == undefined) {
+      this.markdownID = '';
+    }
+    localStorage.setItem('markdownID', this.markdownID);
   }
 
   getMarkdownID(): string | undefined {
@@ -30,6 +38,10 @@ export class EditService {
 
   setName(name: string | undefined) {
     this.name = name;
+    if(this.name == undefined) {
+      this.name = '';
+    }
+    localStorage.setItem('name', this.name);
   }
 
   getName(): string | undefined {
@@ -38,6 +50,10 @@ export class EditService {
 
   setPath(path: string | undefined) {
     this.path = path;
+    if(this.path == undefined) {
+      this.path = '';
+    }
+    localStorage.setItem('path', this.path);
   }
 
   getPath(): string | undefined {
@@ -46,10 +62,51 @@ export class EditService {
 
   setParentFolderID(parentFolderID: string | undefined) {
     this.parentFolderID = parentFolderID;
+    if(this.parentFolderID == undefined) {
+      this.parentFolderID = '';
+    }
+    localStorage.setItem('parentFolderID', this.parentFolderID);
   }
 
   getParentFolderID(): string | undefined {
     return this.parentFolderID;
+  }
+
+  setAll(
+    content: string | undefined,
+    markdownID: string | undefined,
+    name: string | undefined,
+    path: string | undefined,
+    parentFolderID: string | undefined
+  ) {
+    this.content = content;
+    this.markdownID = markdownID;
+    this.name = name;
+    this.path = path;
+    this.parentFolderID = parentFolderID;
+
+    if(this.content == undefined) {
+      this.content = '';
+    }
+    if(this.markdownID == undefined) {
+      this.markdownID = '';
+    }
+    if(this.name == undefined) {
+      this.name = '';
+    }
+    if(this.path == undefined) {
+      this.path = '';
+    }
+    if(this.parentFolderID == undefined) {
+      this.parentFolderID = '';
+    }
+    
+    localStorage.setItem('content', this.content);
+    localStorage.setItem('markdownID', this.markdownID);
+    localStorage.setItem('name', this.name);
+    localStorage.setItem('path', this.path);
+    localStorage.setItem('parentFolderID', this.parentFolderID);
+
   }
 
   reset() {
@@ -58,5 +115,12 @@ export class EditService {
     this.name = '';
     this.path = '';
     this.parentFolderID = '';
+
+    localStorage.setItem('content', this.content);
+    localStorage.setItem('markdownID', this.markdownID);
+    localStorage.setItem('name', this.name);
+    localStorage.setItem('path', this.path);
+    localStorage.setItem('parentFolderID', this.parentFolderID);
+    
   }
 }

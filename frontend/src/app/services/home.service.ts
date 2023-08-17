@@ -29,6 +29,9 @@ export class NodeService {
   private folders: FolderDTO[] = [];
   private nameNumber = 0;
 
+  private folderIcon = 'c-icons folder-icon';
+  private fileIcon = 'c-icons doc-icon';
+
   /**
    * @Backend, below is a function with data that showcases the
    * format we need the TreeTable information to be delivered to us for seamless integration
@@ -74,6 +77,7 @@ export class NodeService {
   getTreeTableNodesData(): any {
     let directoryObject: {
       key: string | undefined;
+      icon: string | undefined;
       data: {
         name: string | undefined;
         size: string | undefined;
@@ -104,8 +108,9 @@ export class NodeService {
     for (let file of rootFiles) {
       directoryObject.push({
         key: file.MarkdownID,
+        icon: this.fileIcon,
         data: {
-          name: file.Name + '!#$' + (this.nameNumber++),
+          name: file.Name,
           size: this.getSize(file.Size),
           type: 'file',
           key: file.MarkdownID,
@@ -126,8 +131,9 @@ export class NodeService {
     if (folders.length + files.length === 0) {
       return {
         key: folder.FolderID,
+        icon: this.folderIcon,
         data: {
-          name: folder.FolderName + '!#$' + (this.nameNumber++),
+          name: folder.FolderName,
           size: '-',
           type: 'folder',
           key: folder.FolderID,
@@ -136,8 +142,9 @@ export class NodeService {
     } else {
       let folderObject = {
         key: folder.FolderID,
+        icon: this.folderIcon,
         data: {
-          name: folder.FolderName + '!#$' + (this.nameNumber++),
+          name: folder.FolderName,
           size: '-',
           type: 'folder',
           key: folder.FolderID,
@@ -150,8 +157,9 @@ export class NodeService {
       for (let file of files) {
         folderObject.children.push({
           key: file.MarkdownID,
+          icon: this.fileIcon,
           data: {
-            name: file.Name + '!#$' + (this.nameNumber++),
+            name: file.Name,
             size: this.getSize(file.Size),
             type: 'file',
             key: file.MarkdownID,
@@ -366,6 +374,42 @@ export class NodeService {
       }
     }
     return false;
+  }
+
+  public getFoldersByParentID(parentID: string | undefined): FolderDTO[] {
+    let folders: FolderDTO[] = [];
+    for (let folder of this.folders) {
+      if (folder.ParentFolderID === parentID) {
+        folders.push(folder);
+      }
+    }
+    return folders;
+  }
+
+  public getFilesByParentID(parentID: string | undefined): MarkdownFileDTO[] {
+    let files: MarkdownFileDTO[] = [];
+    for (let file of this.files) {
+      if (file.ParentFolderID === parentID) {
+        files.push(file);
+      }
+    }
+    return files;
+  }
+
+  public renameFolder(folderID: string, newName: string) {
+    for (let folder of this.folders) {
+      if (folder.FolderID === folderID) {
+        folder.FolderName = newName;
+      }
+    }
+  }
+
+  public renameFile(fileID: string, newName: string) {
+    for (let file of this.files) {
+      if (file.MarkdownID === fileID) {
+        file.Name = newName;
+      }
+    }
   }
 
 

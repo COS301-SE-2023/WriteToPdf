@@ -120,12 +120,14 @@ export class FileService {
               summary: 'File created successfully',
             });
 
-            this.editService.setMarkdownID(response.body.MarkdownID);
-            this.editService.setPath(response.body.Path);
-            this.editService.setName(response.body.Name);
-            this.editService.setParentFolderID(response.body.ParentFolderID);
-            this.editService.setContent('');
-
+            this.editService.setAll(
+              '',
+              response.body.MarkdownID,
+              response.body.Name,
+              response.body.Path,
+              response.body.ParentFolderID
+            );
+            
             resolve(true);
           } else {
             resolve(false);
@@ -161,6 +163,7 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
+          console.log(response);
           if (response.status === 200) {
             resolve(true);
           } else {

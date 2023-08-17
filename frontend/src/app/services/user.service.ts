@@ -153,14 +153,8 @@ export class UserService {
     this.expiresAt = undefined;
     this.doExpirationCheck = false;
 
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userID');
-    localStorage.removeItem('expiresAt');
-    localStorage.removeItem('email');
-    localStorage.removeItem('firstName');
-    localStorage.removeItem('encryptionKey');
-    
+    localStorage.clear();
+
     if (this.timer) {
       clearInterval(this.timer);
     }
@@ -329,7 +323,7 @@ export class UserService {
     }
     this.startExpirationCheck();
   }
-  
+
   private startExpirationCheck() {
     const checkInterval = 30000;
 
@@ -347,15 +341,21 @@ export class UserService {
 
       const expiresAtDate = new Date(this.expiresAt); // Assuming expiresAt is a string
       const currentDate = new Date();
-      const notificationTime = new Date(expiresAtDate.getTime() - 600000 + 15000); // Subtract 1 minute (60000 milliseconds) from the expiration time
+      const notificationTime = new Date(expiresAtDate.getTime() - 60000); // Subtract 1 minute (60000 milliseconds) from the expiration time
 
       if (currentDate >= notificationTime && currentDate < expiresAtDate) {
         // Send the expiration notification
         this.sendRefreshTokenRequest().subscribe({
           next: (response: HttpResponse<any>) => {
             if (response.status === 200) {
+              console.log(response);
               this.authToken = response.body.Token;
               this.expiresAt = this.jwtHelper.decodeToken(response.body.Token).ExpiresAt;
+
+              if (this.authToken && this.expiresAt) {
+                localStorage.setItem('authToken', this.authToken);
+                localStorage.setItem('expiresAt', this.expiresAt.toString());
+              }
             } else {
             }
           },
