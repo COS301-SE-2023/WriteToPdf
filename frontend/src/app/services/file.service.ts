@@ -631,13 +631,63 @@ export class FileService {
     if (type === 'txt') {
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = htmlString;
-      const plainText = tempDiv.textContent || tempDiv.innerText || '';
+      console.log('innerHTML: ', tempDiv.innerHTML);
+      // const plainText = tempDiv.textContent || tempDiv.innerText || '';
+      const plainText = this.replaceSpecialCharacters(this.removeAllTags(this.addNewLines(this.removeFigures(tempDiv.innerHTML))));
+      console.log('plainText: ', plainText);
       return new Blob([plainText], { type: 'text/plain' });
     } else {
       const turndownService = new TurndownService();
       const markdown = turndownService.turndown(htmlString);
       return new Blob([markdown], { type: 'text/plain' });
     }
+  }
+
+  removeFigures(html:string): string {
+    const figures = html.match(/<figure[^>]*>[\s\S]*?<\/figure>/g);
+    if (figures) {
+      for (let i = 0; i < figures.length; i++) {
+        html = html.replace(figures[i], '');
+      }
+    }
+    return html;
+  }
+
+  addNewLines(htmlString: string): string {
+    const tagsRegex = /<(p|h[1-6])[^>]*>[\s\S]*?<\/\1>/g;
+    const matchedTags = htmlString.match(tagsRegex);
+    
+    if (matchedTags) {
+      for (const tag of matchedTags) {
+        const newlineTag = tag.replace(/<\/(p|h[1-6])>/, '\n');
+        htmlString = htmlString.replace(tag, newlineTag);
+      }
+      return this.addNewLines(htmlString);
+    }
+    
+    return htmlString;
+  }
+ 
+  removeAllTags(htmlString: string): string {
+    const tagsRegex = /<[^>]*>/g;
+    const matchedTags = htmlString.match(tagsRegex);
+
+    if (matchedTags) {
+      for (const tag of matchedTags) {
+        htmlString = htmlString.replace(tag, '');
+      }
+      return this.removeAllTags(htmlString);
+    }
+    return htmlString;
+  }
+
+  replaceSpecialCharacters(htmlString: string): string {
+    htmlString = htmlString.replace(/&nbsp;/g, ' ');
+    htmlString = htmlString.replace(/&amp;/g, '&');
+    htmlString = htmlString.replace(/&lt;/g, '<');
+    htmlString = htmlString.replace(/&gt;/g, '>');
+
+    return htmlString;
   }
 
   async convertHtmlToImage(htmlString: string, name: string, type: string) {
