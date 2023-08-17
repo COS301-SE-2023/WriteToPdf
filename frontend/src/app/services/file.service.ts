@@ -166,6 +166,7 @@ export class FileService {
     body.Path = path;
     body.Name = name;
     body.ParentFolderID = parentFolderID;
+    body.SafeLock = false;
 
     const headers = new HttpHeaders().set(
       'Authorization',
@@ -633,6 +634,7 @@ export class FileService {
   }
 
   encryptDocument(content: string | undefined): string {
+    if (content) return content;
     const key = this.userService.getEncryptionKey();
     if (key && content) {
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
@@ -642,6 +644,7 @@ export class FileService {
     }
   }
   decryptDocument(content: string | undefined): string {
+    if (content) return content;
     const key = this.userService.getEncryptionKey();
     if (key && content) {
       const decryptedMessage = CryptoJS.AES.decrypt(content, key)

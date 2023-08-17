@@ -152,7 +152,7 @@ describe('AssetManager (integration)', () => {
           .send(assetDTO);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body).toHaveProperty(
           'statusCode',
@@ -160,11 +160,11 @@ describe('AssetManager (integration)', () => {
         expect(response.body).toHaveProperty(
           'message',
         );
-        expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
-        );
         expect(response.body.message).toEqual(
-          'Invalid request data: UserID missing',
+          'Missing UserID',
+        );
+        expect(response.body.statusCode).toEqual(
+          HttpStatus.UNAUTHORIZED,
         );
       });
 
@@ -190,6 +190,9 @@ describe('AssetManager (integration)', () => {
           .set('isTest', 'true')
           .send(assetDTO);
 
+        expect(response.body.message).toEqual(
+          'Invalid request data: ParentFolderID missing',
+        );
         expect(response.status).toBe(
           HttpStatus.BAD_REQUEST,
         );
@@ -201,9 +204,6 @@ describe('AssetManager (integration)', () => {
         );
         expect(response.body.statusCode).toEqual(
           HttpStatus.BAD_REQUEST,
-        );
-        expect(response.body.message).toEqual(
-          'Invalid request data: ParentFolderID missing',
         );
       });
 
@@ -285,7 +285,7 @@ describe('AssetManager (integration)', () => {
           .send(requestDTO);
 
         expect(response.status).toBe(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
 
         expect(response.body).toHaveProperty(
@@ -295,10 +295,10 @@ describe('AssetManager (integration)', () => {
           'message',
         );
         expect(response.body.statusCode).toEqual(
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNAUTHORIZED,
         );
         expect(response.body.message).toEqual(
-          'Invalid request data: UserID missing',
+          'Missing UserID',
         );
       });
 

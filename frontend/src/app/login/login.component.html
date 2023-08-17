@@ -5,7 +5,7 @@
 
   <div class="loginWrapper">
     <form action="" class="loginForm">
-      <div class="logoWrapper">
+      <div class="logoWrapper" (click)="autoLogin()">
         <hr />
         <img src="assets/Logos/WriteToPdf_Logo_white.svg" alt="" class="logo" />
         <hr />
@@ -41,7 +41,7 @@
           Login With Google
         </button>
       </div>
-
+      
       <div class="formElement noAccount">
         <p (click)="navigateToPage('signup')" class="noAccountText">
           Don't have an Account?
@@ -49,4 +49,5 @@
       </div>
     </form>
   </div>
+
 </div>

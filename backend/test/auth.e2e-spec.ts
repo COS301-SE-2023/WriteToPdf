@@ -30,13 +30,10 @@ describe('AuthController (integration)', () => {
   });
 
   describe('auth endpoint', () => {
-    it('/auth/login/ (POST) - invalid token', async () => {
+    it('/auth/refresh_token/ (POST) - invalid token', async () => {
       const requestRefreshToken =
         new RefreshTokenDTO();
-      requestRefreshToken.Email =
-        process.env.TEST_EMAIL;
       requestRefreshToken.Token = 'InvalidToken';
-      requestRefreshToken.ExpiresAt = new Date();
       requestRefreshToken.UserID = 123;
 
       const response = await request(
@@ -63,12 +60,11 @@ describe('AuthController (integration)', () => {
     it('/auth/refresh_token/ (POST) - valid credentials', async () => {
       const requestRefreshToken =
         new RefreshTokenDTO();
-      requestRefreshToken.Email =
-        process.env.TEST_EMAIL;
       requestRefreshToken.Token =
         process.env.AUTH_BEARER;
-      requestRefreshToken.ExpiresAt = new Date();
-      requestRefreshToken.UserID = 123;
+      requestRefreshToken.UserID = parseInt(
+        process.env.TEST_USERID,
+      );
 
       const response = await request(
         app.getHttpServer(),
@@ -85,22 +81,10 @@ describe('AuthController (integration)', () => {
       );
       expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toHaveProperty(
-        'Email',
-      );
-      expect(response.body).toHaveProperty(
-        'ExpiresAt',
-      );
-      expect(response.body).toHaveProperty(
         'UserID',
       );
       expect(response.body.Token).not.toEqual(
         requestRefreshToken.Token,
-      );
-      expect(response.body.Email).toEqual(
-        requestRefreshToken.Email,
-      );
-      expect(response.body.ExpiresAt).not.toEqual(
-        requestRefreshToken.ExpiresAt,
       );
       expect(response.body.UserID).toEqual(
         requestRefreshToken.UserID,

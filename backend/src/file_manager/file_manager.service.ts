@@ -118,6 +118,7 @@ export class FileManagerService {
         Size: file.Size,
         ParentFolderID: file.ParentFolderID,
         Content: '',
+        SafeLock: file.SafeLock,
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
@@ -473,6 +474,12 @@ export class FileManagerService {
     content: string | undefined,
     encryptionKey: string,
   ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (content) {
+        resolve(content);
+        return;
+      }
+    });
     const decryptedMessage = CryptoJS.AES.decrypt(
       content,
       encryptionKey,
@@ -486,6 +493,7 @@ export class FileManagerService {
     content: string,
     encryptionKey: string,
   ) {
+    return content;
     const encryptedMessage = CryptoJS.AES.encrypt(
       content,
       encryptionKey,
