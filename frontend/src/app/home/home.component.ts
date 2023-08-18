@@ -1244,6 +1244,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   renameFolder(folderID: string, path: string, newName: string) {
+    console.log(newName);
+    console.log(folderID);
     if (newName === '') return;
     this.folderService.renameFolder(folderID, path, newName).then((data) => {
       this.nodeService.renameFolder(folderID, newName);
@@ -1368,6 +1370,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   renameEntity() {
     const selected = this.getSelected();
+    console.log(selected);
     if (selected.length === 1) {
       if (selected[0].Type == 'folder')
         this.renameFolder(selected[0].FolderID, selected[0].Path, this.entityRename);
