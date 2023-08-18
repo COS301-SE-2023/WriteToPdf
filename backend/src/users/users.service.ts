@@ -11,6 +11,7 @@ import { UserDTO } from './dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as CryptoJS from 'crypto-js';
 import { hashSync, genSaltSync } from 'bcryptjs';
+import { OAuth2Client } from 'google-auth-library';
 import 'dotenv/config';
 
 @Injectable()
@@ -172,7 +173,6 @@ export class UsersService {
     const EncryptionKey = CryptoJS.SHA256(
       user.Password,
     ).toString();
-    //TODO create new DTO for this response
     const response = {
       UserID: user.UserID,
       Email: user.Email,
@@ -200,13 +200,8 @@ export class UsersService {
 
   async googleSignIn(credential: string) {
     // Decode the ID token using JwtService
-    const decodedToken = this.jwtService.decode(
-      credential,
-    ) as {
-      email: string;
-      given_name: string;
-      family_name: string;
-    };
+    const decodedToken =
+      await this.verifyGoogleToken(credential);
 
     if (decodedToken) {
       const { email, given_name, family_name } =
@@ -253,6 +248,25 @@ export class UsersService {
         EncryptionKey: EncryptionKey,
       };
     } else {
+      throw new HttpException(
+        'Invalid credential',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+  }
+
+  async verifyGoogleToken(token: string) {
+    try {
+      const client = new OAuth2Client(
+        process.env.GOOGLE_CLIENT_ID,
+      );
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      return payload;
+    } catch (error) {
       throw new HttpException(
         'Invalid credential',
         HttpStatus.UNAUTHORIZED,
