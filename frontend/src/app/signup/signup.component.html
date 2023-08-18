@@ -69,30 +69,11 @@
       </ng-template>
 
       <div class="formElement">
-        <!-- <button (click)="navigateToPage('home')" type="button" class="googleButton">
-          <img src="assets/Icons/loginIcons/google.png" alt="" class="googleIcon" />
-          Signup With Google
-        </button> -->
-          <div id="g_id_onload"
-            data-client_id="786212216932-qqj4irdo9r0bp0vd6u2rn2dlv5viard0.apps.googleusercontent.com"
-            data-context="signin"
-            data-ux_mode="popup"
-            data-login_uri="http://localhost:3000/users/google_signin"
-            data-auto_select="true"
-            data-itp_support="true">
-          </div>
-
-          <div class="g_id_signin googleButton"
-              data-type="standard"
-              data-shape="pill"
-              data-text="signin_with"
-              data-size="large"
-              data-logo_alignment="left">
-          </div>
+        <div class="googleButton" id="buttonDiv"></div>
       </div>
 
       <div class="formElement noAccount">
-        <p (click)="navigateToPage('login')" class="noAccountText">
+        <p (click)="navigateToLogin()" class="noAccountText">
           Already have an Account?
         </p>
       </div>

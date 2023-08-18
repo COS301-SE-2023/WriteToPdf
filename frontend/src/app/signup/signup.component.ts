@@ -2,8 +2,9 @@ import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { Inject } from '@angular/core';
-import { is } from 'cypress/types/bluebird';
+import { environment } from 'src/environments/environment';
 
+import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -17,6 +18,8 @@ export class SignupComponent {
   confirmPassword: string = '';
 
   value: string = '';
+
+  private clientId = environment.clientId;
 
   constructor(
     @Inject(Router) private router: Router,
@@ -38,7 +41,29 @@ export class SignupComponent {
   }
 
   ngOnInit(): void {
-    this.loadGoogleSignInAPI();
+    // @ts-ignore
+    window.onGoogleLibraryLoad = () => {
+      // @ts-ignore
+      google.accounts.id.initialize({
+        client_id: this.clientId,
+        callback: this.handleCredentialResponse.bind(this),
+        auto_select: false,
+        cancel_on_tap_outside: true
+      });
+      // @ts-ignore
+      console.log(google.accounts.id.renderButton(
+        // @ts-ignore
+        document.getElementById("buttonDiv"),
+        { theme: "outline", size: "large", width: "100%", shape: "pill" }
+      ));
+      // @ts-ignore
+      google.accounts.id.prompt((notification: PromptMomentNotification) => { });
+    };
+  }
+
+  async handleCredentialResponse(response: CredentialResponse) {
+    if (await this.userService.loginWithGoogle(response.credential))
+      this.navigateToPage('home');
   }
 
   loadGoogleSignInAPI(): void {
@@ -117,5 +142,9 @@ export class SignupComponent {
   isValidConfirmPassword(confirmPassword: string): boolean {
     if (confirmPassword != this.password) return false;
     return true;
+  }
+
+  navigateToLogin() {
+    this.router.navigate(['/login']).then(() => window.location.reload());
   }
 }
