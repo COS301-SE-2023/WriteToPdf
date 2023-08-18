@@ -152,10 +152,6 @@ export class UsersService {
     const user = await this.findOneByEmail(
       loginUserDTO.Email,
     );
-    console.log(
-      'salted password: ',
-      loginUserDTO.Password,
-    );
     if (
       user?.Password !==
       this.getPepperedPassword(
