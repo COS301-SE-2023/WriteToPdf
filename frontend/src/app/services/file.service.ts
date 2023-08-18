@@ -517,6 +517,7 @@ export class FileService {
       summary: 'Export failed',
     });
 
+
     // if (type === 'html') {
     //   this.downloadAsHtmlFile(content, name);
     //   return;

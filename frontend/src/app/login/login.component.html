@@ -36,21 +36,23 @@
         <button (click)="login()" type="submit" class="loginButton">Login</button>
       </div>
       <div class="formElement">
-        <button (click)="navigateToPage('home')" type="button" class="googleButton">
-          <img src="assets/Icons/loginIcons/google.png" alt="" class="googleIcon" />
-          Login With Google
-        </button>
+        <div class="googleButton" id="buttonDiv"></div>
       </div>
       
       <div class="formElement noAccount">
-        <p (click)="navigateToPage('signup')" class="noAccountText">
+        <p (click)="forgotPasswordPopup = true" class="noAccountText">
+          Forgot Password?
+        </p>
+      </div>
+      <div class="formElement noAccount">
+        <p (click)="navigateToSignup()" class="noAccountText">
           Don't have an Account?
         </p>
       </div>
     </form>
   </div>
 
-
+  <!--
   <p-dialog [(visible)]="forgotPasswordPopup" [style]="{ width: '50vw' }" header="Reset Password" [focusOnShow]="true"
     (keydown.escape)="forgotPasswordPopup = false" [modal]="true">
     <div class="forgotPasswordForm">
@@ -71,5 +73,5 @@
 
     </div>
     <p-button class="fileOperations-entity" (click)="forgotPassword()" label="Reset Password"></p-button>
-  </p-dialog>
+  </p-dialog> -->
 </div>

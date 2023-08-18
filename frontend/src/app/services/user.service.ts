@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -33,6 +33,7 @@ export class UserService {
     private messageService: MessageService,
     @Inject(Router) private router: Router,
     private jwtHelper: JwtHelperService,
+    private _ngZone: NgZone,
   ) { }
 
   async login(email: string, password: string): Promise<boolean> {
@@ -145,6 +146,17 @@ export class UserService {
 
   logout(): void {
     // Perform logout logic here (e.g., clear authentication token, reset flags)
+    this._ngZone.run(() => {
+      this.revokeToken().subscribe({
+        next: (x: any) => {
+          
+        }
+      })
+    });
+
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
     this.isAuthenticated = false;
     this.authToken = undefined;
     this.userID = undefined;
@@ -155,10 +167,24 @@ export class UserService {
 
     localStorage.clear();
 
-    if (this.timer) {
-      clearInterval(this.timer);
-    }
-    this.navigateToPage('/login');
+    this.router.navigate(['/login']).then(() => window.location.reload());
+  }
+
+
+  revokeToken(): Observable<any> {
+    // return this.http.delete(this.path + "RevokeToken/" + this.username.value, { headers: header, withCredentials: true });
+    
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}users/revoke_token`;
+    const body = new UserDTO();
+    body.UserID = this.userID;
+        
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+
   }
 
   async forgotPassword(email : string, newPassword:string){
@@ -341,7 +367,7 @@ export class UserService {
 
       const expiresAtDate = new Date(this.expiresAt); // Assuming expiresAt is a string
       const currentDate = new Date();
-      const notificationTime = new Date(expiresAtDate.getTime() - 60000); // Subtract 1 minute (60000 milliseconds) from the expiration time
+      const notificationTime = new Date(expiresAtDate.getTime() - 600000 + 15000); // Subtract 1 minute (60000 milliseconds) from the expiration time
 
       if (currentDate >= notificationTime && currentDate < expiresAtDate) {
         // Send the expiration notification
@@ -356,6 +382,7 @@ export class UserService {
                 localStorage.setItem('authToken', this.authToken);
                 localStorage.setItem('expiresAt', this.expiresAt.toString());
               }
+
             } else {
             }
           },
@@ -382,6 +409,62 @@ export class UserService {
       'Bearer ' + this.authToken
     );
     return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  loginWithGoogle(credential: any): Promise<boolean> {
+
+    return new Promise<boolean>(async (resolve, reject) => {
+      this.sendGoogleLoginData(credential).subscribe({
+        next: (response: HttpResponse<any>) => {
+
+          if (response.status === 200) {
+
+            //TODO this needs to change to read from token payload
+            this.isAuthenticated = true;
+            this.authToken = response.body.Token;
+            this.userID = response.body.UserID;
+            this.expiresAt = this.jwtHelper.decodeToken(response.body.Token).ExpiresAt;
+            this.email = response.body.Email;
+            this.firstName = response.body.FirstName;
+            this.doExpirationCheck = true;
+            this.encryptionKey = response.body.EncryptionKey;
+            if (this.authToken && this.userID && this.expiresAt && this.email && this.firstName && this.encryptionKey) {
+              localStorage.setItem('isAuthenticated', 'true');
+              localStorage.setItem('authToken', this.authToken);
+              localStorage.setItem('userID', this.userID.toString());
+              localStorage.setItem('expiresAt', this.expiresAt.toString());
+              localStorage.setItem('email', this.email);
+              localStorage.setItem('firstName', this.firstName);
+              localStorage.setItem('encryptionKey', this.encryptionKey);
+            }
+
+
+            this.startExpirationCheck();
+            resolve(true);
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: `Login failed`,
+            });
+            resolve(false);
+          }
+        },
+        error: (error) => {
+          console.error(error); // Handle error if any
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  sendGoogleLoginData(credentials: any): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}users/google_signin`;
+    const body : any = {};
+    body.credential = credentials;
+
+    return this.http.post(url, body, { observe: 'response' });
   }
 
   private hashPassword(password: string, salt: string): string {

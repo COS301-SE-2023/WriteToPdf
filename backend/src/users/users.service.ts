@@ -8,7 +8,10 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { UserDTO } from './dto/user.dto';
+import { JwtService } from '@nestjs/jwt';
 import * as CryptoJS from 'crypto-js';
+import { hashSync, genSaltSync } from 'bcryptjs';
+import { OAuth2Client } from 'google-auth-library';
 import 'dotenv/config';
 
 @Injectable()
@@ -17,6 +20,7 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private authService: AuthService,
+    private jwtService: JwtService,
   ) {}
 
   create(createUserDTO: UserDTO): Promise<User> {
@@ -149,10 +153,6 @@ export class UsersService {
     const user = await this.findOneByEmail(
       loginUserDTO.Email,
     );
-    console.log(
-      'salted password: ',
-      loginUserDTO.Password,
-    );
     if (
       user?.Password !==
       this.getPepperedPassword(
@@ -173,7 +173,6 @@ export class UsersService {
     const EncryptionKey = CryptoJS.SHA256(
       user.Password,
     ).toString();
-    //TODO create new DTO for this response
     const response = {
       UserID: user.UserID,
       Email: user.Email,
@@ -197,6 +196,82 @@ export class UsersService {
       password + pepper,
       10,
     ).toString();
+  }
+
+  async googleSignIn(credential: string) {
+    // Decode the ID token using JwtService
+    const decodedToken =
+      await this.verifyGoogleToken(credential);
+
+    if (decodedToken) {
+      const { email, given_name, family_name } =
+        decodedToken;
+
+      // Check if the user already exists in the database
+      let user = await this.findOneByEmail(email);
+
+      // If the user does not exist, create a new user
+      if (!user) {
+        const newUser = new UserDTO();
+        newUser.Email = email;
+        newUser.FirstName = given_name;
+        newUser.LastName = family_name;
+        const salt = this.generateSalt();
+        const password =
+          this.generateRandomPassword();
+        newUser.Salt = salt;
+        newUser.Password =
+          this.generateHashedPassword(
+            password,
+            salt,
+          );
+        user = await this.create(newUser);
+      }
+
+      // Generate a token for the user
+      const token =
+        await this.authService.generateToken(
+          user,
+        );
+
+      //Create Derived Encryption Key
+      const EncryptionKey = CryptoJS.SHA256(
+        user.Password,
+      ).toString();
+
+      // Return the user information and token
+      return {
+        UserID: user.UserID,
+        Email: user.Email,
+        FirstName: user.FirstName,
+        Token: token,
+        EncryptionKey: EncryptionKey,
+      };
+    } else {
+      throw new HttpException(
+        'Invalid credential',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+  }
+
+  async verifyGoogleToken(token: string) {
+    try {
+      const client = new OAuth2Client(
+        process.env.GOOGLE_CLIENT_ID,
+      );
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      return payload;
+    } catch (error) {
+      throw new HttpException(
+        'Invalid credential',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
   }
 
   // async update(
@@ -223,6 +298,21 @@ export class UsersService {
   //   const user = await this.findOne(UserID);
   //   return this.usersRepository.remove(user); // returns deleted user
   // }
+
+  generateSalt(): string {
+    return genSaltSync(10);
+  }
+
+  generateRandomPassword(): string {
+    return Math.random().toString(36).slice(-8);
+  }
+
+  generateHashedPassword(
+    password: string,
+    salt: string,
+  ): string {
+    return hashSync(password, salt);
+  }
 
   async getSalt(userDTO: UserDTO) {
     const user = await this.findOneByEmail(
