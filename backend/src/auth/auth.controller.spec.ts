@@ -60,36 +60,7 @@ describe('AuthController', () => {
       const request = { method: 'POST' };
       const refreshTokenDTO =
         new RefreshTokenDTO();
-      refreshTokenDTO.Email = 'test';
       refreshTokenDTO.Token = 'test';
-      refreshTokenDTO.ExpiresAt = new Date();
-
-      try {
-        await controller.refreshToken(
-          refreshTokenDTO,
-          request as any,
-        );
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'Invalid request body',
-        );
-        expect(error.status).toBe(
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    });
-
-    it('should throw an exception if Email is undefined', async () => {
-      const request = { method: 'POST' };
-      const refreshTokenDTO =
-        new RefreshTokenDTO();
-      refreshTokenDTO.UserID = 1;
-      refreshTokenDTO.Token = 'test';
-      refreshTokenDTO.ExpiresAt = new Date();
 
       try {
         await controller.refreshToken(
@@ -115,35 +86,6 @@ describe('AuthController', () => {
       const refreshTokenDTO =
         new RefreshTokenDTO();
       refreshTokenDTO.UserID = 1;
-      refreshTokenDTO.Email = 'test';
-      refreshTokenDTO.ExpiresAt = new Date();
-
-      try {
-        await controller.refreshToken(
-          refreshTokenDTO,
-          request as any,
-        );
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'Invalid request body',
-        );
-        expect(error.status).toBe(
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    });
-
-    it('should throw an exception if ExpiresAt is undefined', async () => {
-      const request = { method: 'POST' };
-      const refreshTokenDTO =
-        new RefreshTokenDTO();
-      refreshTokenDTO.UserID = 1;
-      refreshTokenDTO.Email = 'test';
-      refreshTokenDTO.Token = 'test';
 
       try {
         await controller.refreshToken(
@@ -169,9 +111,7 @@ describe('AuthController', () => {
       const refreshTokenDTO =
         new RefreshTokenDTO();
       refreshTokenDTO.UserID = 1;
-      refreshTokenDTO.Email = 'test';
       refreshTokenDTO.Token = 'test';
-      refreshTokenDTO.ExpiresAt = new Date();
 
       jest
         .spyOn(authService, 'refreshToken')

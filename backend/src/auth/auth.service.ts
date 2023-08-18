@@ -4,57 +4,64 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenDTO } from './dto/refresh_token.dto';
+import { UserDTO } from '../users/dto/user.dto';
 
 @Injectable()
 export class AuthService {
   constructor(private jwtService: JwtService) {}
 
   async generateToken(
-    username: string,
-    password: string,
+    userDTO: UserDTO,
   ): Promise<any> {
     const payload = {
-      username: username,
-      password: password,
-    };
-    return {
-      access_token:
-        await this.jwtService.signAsync(payload),
-      expires_at: new Date(
+      UserID: userDTO.UserID,
+      ExpiresAt: new Date(
         new Date().getTime() + 10 * 60000,
-      ),
+      ), // 10 minutes
     };
+    return await this.jwtService.signAsync(
+      payload,
+    );
   }
 
   async refreshToken(
     refreshTokenDTO: RefreshTokenDTO,
   ): Promise<any> {
+    let oldPayload;
     try {
-      await this.jwtService.verifyAsync(
-        refreshTokenDTO.Token,
-      );
+      oldPayload =
+        await this.jwtService.verifyAsync(
+          refreshTokenDTO.Token,
+        );
     } catch {
       throw new UnauthorizedException(
         'Invalid token',
       );
     }
 
-    const payload = {
-      username: refreshTokenDTO.Email,
-      password: refreshTokenDTO.Token,
+    if (
+      oldPayload.UserID !=
+        refreshTokenDTO.UserID ||
+      oldPayload.ExpiresAt < new Date(Date.now())
+    ) {
+      throw new UnauthorizedException(
+        'Invalid token',
+      );
+    }
+
+    const newPayload = {
+      UserID: refreshTokenDTO.UserID,
+      ExpiresAt: new Date(
+        new Date().getTime() + 10 * 60000,
+      ), // 10 minutes
     };
 
     const newRefreshTokenDTO =
       new RefreshTokenDTO();
     newRefreshTokenDTO.UserID =
       refreshTokenDTO.UserID;
-    newRefreshTokenDTO.Email =
-      refreshTokenDTO.Email;
     newRefreshTokenDTO.Token =
-      await this.jwtService.signAsync(payload);
-    newRefreshTokenDTO.ExpiresAt = new Date(
-      new Date().getTime() + 10 * 60000,
-    );
+      await this.jwtService.signAsync(newPayload);
 
     return newRefreshTokenDTO;
   }

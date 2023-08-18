@@ -39,12 +39,17 @@ export class S3Stack extends Stack {
     topic.grantPublish(role);
 
     const user = new User(this, "MyIAMUser", {
-      userName: "writetopdf-webapp-test",
+      userName: "writetopdf-webapp-prod",
     });
 
     const policy = new PolicyStatement({
-      actions: ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"],
-      resources: [bucket.bucketArn + "/*"],
+      actions: [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "textract:*",
+      ],
+      resources: ["*"],
     });
 
     user.addToPolicy(policy);

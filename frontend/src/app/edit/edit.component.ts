@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  HostListener,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -52,10 +53,20 @@ export class EditComponent implements AfterViewInit, OnInit {
     private editService: EditService,
     private assetService: AssetService,
     private clipboard: Clipboard,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) { }
 
-
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHandler(event: BeforeUnloadEvent) {
+    this.editService.setContent(this.editor.getData());
+    
+    this.fileService.saveDocument(
+      this.editor.getData(),
+      this.editService.getMarkdownID(),
+      this.editService.getPath()
+    );
+  }
+  
   showImageUploadPopup(): void {
     const ref = this.dialogService.open(ImageUploadPopupComponent, {
       header: 'Upload Images',
@@ -106,6 +117,15 @@ export class EditComponent implements AfterViewInit, OnInit {
         icon: 'pi pi-external-link',
       },
     ];
+
+    const c = localStorage.getItem('content');
+    const m = localStorage.getItem('markdownID');
+    const n = localStorage.getItem('name');
+    const p = localStorage.getItem('path');
+    const pf = localStorage.getItem('parentFolderID');
+
+    if(c!=null && m!=null && n!=null && p!=null && pf!=null)
+      this.editService.setAll(c, m, n, p, pf);
     this.fileName = this.editService.getName();
   }
 
@@ -156,6 +176,8 @@ export class EditComponent implements AfterViewInit, OnInit {
             'overflow-x',
             'hidden !important'
           );
+          this.elementRef.nativeElement.ownerDocument.body.style.height = '0';
+
 
           document
             .getElementsByClassName('toolsWrapper')[0]
@@ -212,7 +234,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       if (this.sidebarVisible) {
         //then hide the sidebar
         editor.setAttribute('style', 'left:0px;width:100%;margin:auto;');
-        sidebar.setAttribute('style', 'display:none');
+        sidebar.setAttribute('style', 'left:-400px');
         showAssetSidebar.setAttribute('style', 'display:block');
         this.sidebarVisible = false;
       } else {
@@ -220,7 +242,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
         editor.setAttribute('style', 'padding-right: 0px;left:260px');
         sidebar.setAttribute('style', 'display:block');
-        showAssetSidebar.setAttribute('style', 'display:none');
+        showAssetSidebar.setAttribute('style', 'left:-10px');
         this.sidebarVisible = true;
       }
     }
@@ -437,6 +459,10 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.reCenterPage();
   }
 
+  getZoom(){
+    return `${Math.floor(this.currentZoom*100)}%`;
+  }
+
   reCenterPage() {
     const element = document.getElementsByClassName(
       'center-page'
@@ -465,7 +491,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   //Functions for exporting from HTML
   convertToFileType(fileType: string) {
-    let contents = `<body style="word-break: normal; font-family: Arial, Helvetica, sans-serif; padding:35px 75px 75px;">${this.editor.getData()}</body>`;
+    let contents = `<div style="word-break: normal; font-family: Arial, Helvetica, sans-serif; padding:35px 75px 75px; width:794px; margin:auto; background-color:white;">${this.editor.getData()}</div>`;
     const markdownID = this.editService.getMarkdownID();
     const name = this.editService.getName();
     if (markdownID && name) {

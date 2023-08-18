@@ -1,5 +1,5 @@
 @import '../../styles.scss';
-$header-height: 124px;
+$header-height: 126px;
 $sidebar-content-width: 225px;
 $page-width: 21cm;
 $page-height: 29.7cm;
@@ -76,7 +76,7 @@ $page-height: 29.7cm;
     padding: 5px;
     margin: 5px;
     border-radius: 5px;
-
+    transition: 0.5s;
 }
 
 .tool img {
@@ -169,6 +169,7 @@ $page-height: 29.7cm;
 }
 
 .editor {
+    transition: 0.5s;
     display: flex;
     position: absolute;
     top: $header-height;
@@ -191,6 +192,7 @@ $page-height: 29.7cm;
 
 
 .assetSidebar {
+    transition: 0.5s;
     position: fixed;
     top: $header-height;
     left: 0;
@@ -384,6 +386,7 @@ div[contenteditable="true"]:focus {
 // }
 
 .showAssetSidebar {
+    transition: 0.5s;
     position: fixed;
     top: $header-height;
     left: 0;
@@ -599,7 +602,7 @@ Preserve the relative scale, though. */
 }
 
 .currentZoom {
-    width: 30px;
+    width: 40px;
     text-align: center;
 }
 

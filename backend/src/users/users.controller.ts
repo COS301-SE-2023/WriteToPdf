@@ -99,4 +99,56 @@ export class UsersController {
       createUserDTO,
     );
   }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('google_signin')
+  googleSignIn(
+    @Body() body: any,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
+    if (!body.credential) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return this.usersService.googleSignIn(
+      body.credential,
+    );
+  }
+
+  // @Public()
+  // @HttpCode(HttpStatus.OK)
+  // @Post('reset_password')
+  // resetPassword(
+  //   @Body() resetDTO: UserDTO,
+  //   @Req() request: Request,
+  // ) {
+  //   if (request.method !== 'POST') {
+  //     throw new HttpException(
+  //       'Method Not Allowed',
+  //       HttpStatus.METHOD_NOT_ALLOWED,
+  //     );
+  //   }
+
+  //   if (!resetDTO.Email || !resetDTO.Password) {
+  //     throw new HttpException(
+  //       'Invalid request data',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   }
+
+  //   return this.usersService.resetPassword(
+  //     resetDTO,
+  //   );
+  // }
 }

@@ -8,12 +8,15 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { AuthService } from '../auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { UserDTO } from './dto/user.dto';
 import * as CryptoJS from 'crypto-js';
+import { OAuth2Client } from 'google-auth-library';
+import { hashSync, genSaltSync } from 'bcryptjs';
 
 config();
 
@@ -29,6 +32,19 @@ jest.mock('crypto-js', () => {
   };
 });
 
+jest.mock('bcryptjs', () => {
+  const mockedSalt = jest.fn(() => 'salt');
+
+  const mockedHashSync = jest.fn(
+    () => 'hashedPassword',
+  );
+
+  return {
+    genSaltSync: mockedSalt,
+    hashSync: mockedHashSync,
+  };
+});
+
 describe('UsersService', () => {
   let service: UsersService;
   let authService: AuthService;
@@ -39,6 +55,7 @@ describe('UsersService', () => {
         providers: [
           UsersService,
           AuthService,
+          JwtService,
           {
             provide: getRepositoryToken(User),
             useClass: Repository,
@@ -486,7 +503,7 @@ describe('UsersService', () => {
         );
         expect(e.getResponse()).toEqual({
           status: HttpStatus.UNAUTHORIZED,
-          error: 'User not found',
+          error: 'Invalid credentials',
         });
       }
     });
@@ -515,15 +532,14 @@ describe('UsersService', () => {
         );
         expect(e.getResponse()).toEqual({
           status: HttpStatus.UNAUTHORIZED,
-          error: 'Incorrect password',
+          error: 'Invalid credentials',
         });
       }
     });
 
     it('should return token if credentials are correct', async () => {
       const loginDto = new UserDTO();
-      loginDto.Email = 'test';
-      loginDto.Password = 'pass';
+      loginDto.UserID = 1;
 
       const returnedUser = new User();
       returnedUser.UserID = 1;
@@ -539,13 +555,9 @@ describe('UsersService', () => {
         FirstName: returnedUser.FirstName,
         EncryptionKey: 'pepperedPassword',
         Token: 'token',
-        ExpiresAt: 3600,
       };
 
-      const authToken = {
-        access_token: 'token',
-        expires_at: 3600,
-      };
+      const authToken = 'token';
 
       jest
         .spyOn(service, 'findOneByEmail')
@@ -574,10 +586,7 @@ describe('UsersService', () => {
       ).toBeCalledWith(loginDto.Password);
       expect(
         authService.generateToken,
-      ).toBeCalledWith(
-        returnedUser.Email,
-        returnedUser.Password,
-      );
+      ).toBeCalledWith(returnedUser);
     });
   });
 
@@ -686,6 +695,208 @@ describe('UsersService', () => {
         expectedResponse,
       );
       expect(service.findOneByEmail).toBeCalled();
+    });
+  });
+
+  describe('googleSignIn', () => {
+    it('should verify the token and throw an exception if it is not valid', async () => {
+      const credential = 'test';
+
+      jest
+        .spyOn(service, 'verifyGoogleToken')
+        .mockResolvedValue(undefined);
+
+      try {
+        await service.googleSignIn(credential);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.getStatus()).toBe(
+          HttpStatus.UNAUTHORIZED,
+        );
+        expect(error.getResponse()).toEqual(
+          'Invalid credential',
+        );
+        expect(
+          service.verifyGoogleToken,
+        ).toBeCalled();
+      }
+    });
+
+    it('should create a user if it does not exist', async () => {
+      const credential = 'test';
+
+      const decodedToken = {
+        email: 'test',
+        given_name: 'test',
+        family_name: 'test',
+      };
+
+      const expectedUser = new UserDTO();
+      expectedUser.Email = 'test';
+      expectedUser.FirstName = 'test';
+      expectedUser.LastName = 'test';
+      expectedUser.UserID = 1;
+
+      jest
+        .spyOn(service, 'verifyGoogleToken')
+        .mockResolvedValue(decodedToken as any);
+
+      jest
+        .spyOn(service, 'findOneByEmail')
+        .mockResolvedValue(undefined);
+
+      (
+        jest.spyOn(service, 'generateSalt') as any
+      ).mockResolvedValue('salt');
+
+      jest
+        .spyOn(service, 'generateRandomPassword')
+        .mockReturnValue('randomPassword');
+
+      jest
+        .spyOn(service, 'generateHashedPassword')
+        .mockReturnValue('hashedPassword');
+
+      jest
+        .spyOn(service, 'create')
+        .mockResolvedValue(expectedUser);
+
+      jest
+        .spyOn(authService, 'generateToken')
+        .mockResolvedValue('token');
+
+      const result = await service.googleSignIn(
+        credential,
+      );
+
+      expect(result).toEqual({
+        UserID: 1,
+        Email: 'test',
+        FirstName: 'test',
+        Token: 'token',
+        EncryptionKey: 'pepperedPassword',
+      });
+      expect(
+        service.verifyGoogleToken,
+      ).toBeCalled();
+      expect(service.findOneByEmail).toBeCalled();
+      expect(service.create).toBeCalled();
+      expect(
+        authService.generateToken,
+      ).toBeCalled();
+      expect(service.generateSalt).toBeCalled();
+      expect(
+        service.generateRandomPassword,
+      ).toBeCalled();
+      expect(
+        service.generateHashedPassword,
+      ).toBeCalled();
+    });
+  });
+
+  describe('verifyGoogleToken', () => {
+    it('should verify Google token successfully', async () => {
+      const mockIdToken = 'token';
+      const mockPayload = {
+        // Mocked payload object
+        sub: 'test',
+        name: 'test',
+        email: 'test',
+      };
+
+      const verifyIdTokenMock = jest
+        .fn()
+        .mockResolvedValue({
+          getPayload: jest
+            .fn()
+            .mockReturnValue(mockPayload),
+        });
+
+      jest
+        .spyOn(
+          OAuth2Client.prototype,
+          'verifyIdToken',
+        )
+        .mockImplementation(verifyIdTokenMock);
+
+      const result =
+        await service.verifyGoogleToken(
+          mockIdToken,
+        );
+
+      expect(result).toEqual(mockPayload);
+      expect(
+        verifyIdTokenMock,
+      ).toHaveBeenCalledWith({
+        idToken: mockIdToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+    });
+
+    it('should throw an error on invalid token', async () => {
+      const mockIdToken = 'invalidToken';
+
+      const verifyIdTokenMock = jest
+        .fn()
+        .mockRejectedValue(
+          new Error('Invalid token'),
+        );
+
+      jest
+        .spyOn(
+          OAuth2Client.prototype,
+          'verifyIdToken',
+        )
+        .mockImplementation(verifyIdTokenMock);
+
+      await expect(
+        service.verifyGoogleToken(mockIdToken),
+      ).rejects.toThrowError(
+        new HttpException(
+          'Invalid credential',
+          HttpStatus.UNAUTHORIZED,
+        ),
+      );
+    });
+  });
+
+  describe('generateSalt', () => {
+    it('should generate a salt', async () => {
+      const result = await service.generateSalt();
+
+      expect(result).toEqual('salt');
+    });
+  });
+
+  describe('generateRandomPassword', () => {
+    it('should generate a random password', async () => {
+      const result =
+        await service.generateRandomPassword();
+
+      expect(result).toEqual(expect.any(String));
+      expect(result.length).toBe(8);
+    });
+  });
+
+  describe('generateHashedPassword', () => {
+    it('should generate a hashed password', async () => {
+      const password = 'test';
+      const salt = 'salt';
+
+      const result =
+        await service.generateHashedPassword(
+          password,
+          salt,
+        );
+
+      expect(result).toEqual('hashedPassword');
+      expect(hashSync).toHaveBeenCalledWith(
+        password,
+        salt,
+      );
     });
   });
 

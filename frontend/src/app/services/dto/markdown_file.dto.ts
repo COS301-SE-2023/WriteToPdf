@@ -8,6 +8,7 @@ export class MarkdownFileDTO {
   Size: number | undefined;
   DateCreated: Date | undefined;
   ParentFolderID: string | undefined;
+  SafeLock: boolean | undefined;
 
   constructor() {
     this.UserID = undefined;
@@ -19,5 +20,6 @@ export class MarkdownFileDTO {
     this.Size = undefined;
     this.DateCreated = undefined;
     this.ParentFolderID = undefined;
+    this.SafeLock = undefined;
   }
 }
