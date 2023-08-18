@@ -125,7 +125,6 @@ export class UsersController {
       body.credential,
     );
   }
-  
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('reset_password')

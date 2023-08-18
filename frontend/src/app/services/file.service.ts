@@ -23,7 +23,7 @@ export class FileService {
     private http: HttpClient,
     private userService: UserService,
     private editService: EditService,
-    private messageService: MessageService
+    private messageService: MessageService,
     private conversionService: ConversionService
   ) {}
 
