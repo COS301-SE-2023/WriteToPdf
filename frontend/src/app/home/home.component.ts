@@ -144,7 +144,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         command: () => {
 
           const selected = this.getSelected();
-          console.log(selected);
           if (selected.length === 1) {
             if (!(this.entityRename = this.getSelected()[0].Name))
               this.entityRename = this.getSelected()[0].FolderName;
@@ -403,7 +402,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
     //Open file's folder on click
     else if (event.node.data.type === 'file') {
-      console.log(event.node);
       if (!event.node.parent) {
         this.openFolder('');
       } else
@@ -654,7 +652,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
             command: () => {
               const selected = this.getSelected();
 
-              console.log(selected);
               if (selected.length === 1) {
                 if (selected[0].Type == 'folder') {
                   this.openFolder(selected[0].FolderID);
@@ -784,7 +781,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       if (selected[0].Type === 'folder') {
         parentFolderID = selected[0].FolderID;
         path = selected[0].Path + '/' + selected[0].Name;
-        console.log(path);
       }
       else {
         if (this.folderIDHistoryPosition == 0) {
@@ -909,7 +905,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       if (selected[0].Type === 'folder') {
         parentFolderID = selected[0].FolderID;
         path = selected[0].Path + '/' + selected[0].Name;
-        console.log(path);
       }
       else {
         if (this.folderIDHistoryPosition == 0) {
@@ -1166,9 +1161,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   loadByParentID(parentID: string) {
     this.unselectAll();
 
-    console.log("Pos: ", this.folderIDHistoryPosition);
-    console.log("Hist: ", this.folderIDHistory);
-
     this.currentFolders = [];
     this.currentFiles = [];
     const folders = this.nodeService.getFoldersByParentID(parentID);
@@ -1261,7 +1253,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   renameFile(fileID: string, path: string, newName: string) {
     if (newName === '') return;
     this.fileService.renameDocument(fileID, newName, path).then((data) => {
-      console.log(data);
       this.nodeService.renameFile(fileID, newName);
     });
   }
@@ -1278,7 +1269,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   handleMoveClick(event: any, node: any) {
     node.MoveSelected = true;
-    console.log(node);
     this.getAllFolders().forEach((element: any) => {
       if (element !== node) {
         element.MoveSelected = false;
@@ -1388,17 +1378,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   lockClick($event: any, file: any) {
     $event.stopPropagation();
-    console.log(file);
   }
   lockRightClick($event: any, file: any) {
     $event.stopPropagation();
-    console.log(file);
   }
 
 
   onDragStart(event: DragEvent, obj: any) {
     // Prevent the default drag behavior
-    console.log(event);
 
     // Set data to be transferred as plain text
     const data = JSON.stringify(obj);

@@ -105,6 +105,12 @@ export class NodeService {
     const rootFiles = this.getRootFiles();
     const rootFolders = this.getRootFolders();
 
+
+
+    for (let folder of rootFolders) {
+      directoryObject.push(this.getTreeTableNodesDataHelper(folder, 1));
+    }
+
     for (let file of rootFiles) {
       directoryObject.push({
         key: file.MarkdownID,
@@ -116,10 +122,6 @@ export class NodeService {
           key: file.MarkdownID,
         },
       });
-    }
-
-    for (let folder of rootFolders) {
-      directoryObject.push(this.getTreeTableNodesDataHelper(folder, 1));
     }
 
     return directoryObject;
@@ -154,6 +156,13 @@ export class NodeService {
 
       let x = 0;
       folderObject.children.pop();
+      
+      for (let folder of folders) {
+        folderObject.children.push(
+          this.getTreeTableNodesDataHelper(folder, depth + 1)
+        );
+      }
+
       for (let file of files) {
         folderObject.children.push({
           key: file.MarkdownID,
@@ -167,11 +176,7 @@ export class NodeService {
         });
       }
 
-      for (let folder of folders) {
-        folderObject.children.push(
-          this.getTreeTableNodesDataHelper(folder, depth + 1)
-        );
-      }
+
 
       return folderObject;
     }
