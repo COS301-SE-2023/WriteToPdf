@@ -5,7 +5,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from './auth.controller';
@@ -50,13 +49,29 @@ export class AuthGuard implements CanActivate {
         'Missing token',
       );
     }
+    let payload: any;
     try {
-      const payload =
-        await this.jwtService.verifyAsync(token, {
-          secret: jwtConstants.secret,
-        });
+      payload = await this.jwtService.verifyAsync(
+        token,
+        {
+          secret: process.env.JWT_SECRET_KEY,
+        },
+      );
       request['user'] = payload;
     } catch {
+      throw new UnauthorizedException(
+        'Invalid token',
+      );
+    }
+    if (!request.body.UserID) {
+      throw new UnauthorizedException(
+        'Missing UserID',
+      );
+    }
+    if (
+      payload.UserID != request.body.UserID ||
+      payload.ExpiresAt < new Date(Date.now())
+    ) {
       throw new UnauthorizedException(
         'Invalid token',
       );

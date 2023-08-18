@@ -69,6 +69,11 @@ export class ConversionService {
 
     const browser = await puppeteer.launch({
       headless: 'new',
+      executablePath: '/usr/bin/chromium-browser',
+      args: [
+        '--no-sandbox',
+        '--disabled-setupid-sandbox',
+      ],
     });
     const page = await browser.newPage();
     const dataUri = `file://${tempHtmlFilePath}`;
@@ -138,6 +143,11 @@ export class ConversionService {
     // Launch Puppeteer browser and create a new page with new Headless mode
     const browser = await puppeteer.launch({
       headless: 'new',
+      executablePath: '/usr/bin/chromium-browser',
+      args: [
+        '--no-sandbox',
+        '--disabled-setupid-sandbox',
+      ],
     });
     const page = await browser.newPage();
 
@@ -203,6 +213,11 @@ export class ConversionService {
     // Launch Puppeteer browser and create a new page with new Headless mode
     const browser = await puppeteer.launch({
       headless: 'new',
+      executablePath: '/usr/bin/chromium-browser',
+      args: [
+        '--no-sandbox',
+        '--disabled-setupid-sandbox',
+      ],
     });
     const page = await browser.newPage();
 

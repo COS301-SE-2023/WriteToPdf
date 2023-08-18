@@ -28,6 +28,7 @@ export class TextractService {
     process.env.AWS_S3_ACCESS_KEY_ID;
   awsS3SecretAccessKey =
     process.env.AWS_S3_SECRET_ACCESS_KEY;
+  awsTextractRegion = 'eu-central-1';
   snsTopicArn =
     process.env.AWS_TEXTRACT_SNS_TOPIC_ARN;
   roleArn = process.env.AWS_S3_TEXTRACT_ROLE_ARN;
@@ -41,7 +42,7 @@ export class TextractService {
         secretAccessKey:
           this.awsS3SecretAccessKey,
       },
-      region: this.awsS3BucketRegion,
+      region: this.awsTextractRegion,
     });
 
   private readonly sqsClient = new SQSClient({
@@ -218,74 +219,35 @@ export class TextractService {
     return textractResponse;
   }
 
-  _add_children(block, block_dict) {
-    const rels_list = block.Relationships || [];
-    rels_list.forEach((rels) => {
-      if (rels.Type === 'CHILD') {
-        block['Children'] = [];
-        rels.Ids.forEach((relId) => {
-          const kid = block_dict[relId];
-          block['Children'].push(kid);
-          this._add_children(kid, block_dict);
-        });
-      }
-    });
-  }
+  // _add_children(block, block_dict) {
+  //   const rels_list = block.Relationships || [];
+  //   rels_list.forEach((rels) => {
+  //     if (rels.Type === 'CHILD') {
+  //       block['Children'] = [];
+  //       rels.Ids.forEach((relId) => {
+  //         const kid = block_dict[relId];
+  //         block['Children'].push(kid);
+  //         this._add_children(kid, block_dict);
+  //       });
+  //     }
+  //   });
+  // }
 
-  _make_page_hierarchy(blocks) {
-    const block_dict = {};
-    blocks.forEach(
-      (block) => (block_dict[block.Id] = block),
-    );
+  // _make_page_hierarchy(blocks) {
+  //   const block_dict = {};
+  //   blocks.forEach(
+  //     (block) => (block_dict[block.Id] = block),
+  //   );
 
-    const pages = [];
-    blocks.forEach((block) => {
-      if (block.BlockType === 'PAGE') {
-        pages.push(block);
-        this._add_children(block, block_dict);
-      }
-    });
-    return pages;
-  }
-
-  async test_get(jobId: string) {
-    const retVal = await this.textractClient.send(
-      new GetDocumentAnalysisCommand({
-        JobId:
-          '3e8eb41e481cced553bd49108cbf3ec02b6397acfec80b5281118c022ddd91a4',
-      }),
-    );
-
-    return retVal;
-  }
-
-  async test_msg() {
-    const { Messages } =
-      await this.sqsClient.send(
-        new ReceiveMessageCommand({
-          QueueUrl: this.queueUrl,
-          MaxNumberOfMessages: 10,
-        }),
-      );
-
-    return Messages;
-  }
-
-  async test_del() {
-    const { Messages } =
-      await this.sqsClient.send(
-        new ReceiveMessageCommand({
-          QueueUrl: this.queueUrl,
-          MaxNumberOfMessages: 10,
-        }),
-      );
-    await this.sqsClient.send(
-      new DeleteMessageCommand({
-        QueueUrl: this.queueUrl,
-        ReceiptHandle: Messages[0].ReceiptHandle,
-      }),
-    );
-  }
+  //   const pages = [];
+  //   blocks.forEach((block) => {
+  //     if (block.BlockType === 'PAGE') {
+  //       pages.push(block);
+  //       this._add_children(block, block_dict);
+  //     }
+  //   });
+  //   return pages;
+  // }
 
   async extractDocument(
     syncType: string,

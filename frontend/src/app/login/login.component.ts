@@ -1,10 +1,13 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { Inject } from '@angular/core';
 import { environment } from 'src/environments/environment';
+
+import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
+
+// import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 
 @Component({
@@ -15,12 +18,19 @@ import { environment } from 'src/environments/environment';
 export class LoginComponent {
   email: string = '';
   password: string = '';
+
+  emailForgot: string = '';
+  passwordForgot: string = '';
+
+  private clientId = environment.clientId;
+
+  forgotPasswordPopup: boolean = false;
   constructor(
     @Inject(Router) private router: Router,
     private elementRef: ElementRef,
     private userService: UserService,
     @Inject(ActivatedRoute) private route: ActivatedRoute,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) { }
   ngOnInit(): void {
     const data = history.state;
@@ -28,6 +38,30 @@ export class LoginComponent {
       this.email = data['Email'];
       this.password = data['Password'];
     }
+    
+    // @ts-ignore
+    window.onGoogleLibraryLoad = () => {
+      // @ts-ignore
+      google.accounts.id.initialize({
+        client_id: this.clientId,
+        callback: this.handleCredentialResponse.bind(this),
+        auto_select: false,
+        cancel_on_tap_outside: true
+      });
+      // @ts-ignore
+      google.accounts.id.renderButton(
+        // @ts-ignore
+        document.getElementById("buttonDiv"),
+        { theme: "outline", size: "large", width: "100%", shape: "pill" }
+      );
+      // @ts-ignore
+      google.accounts.id.prompt((notification: PromptMomentNotification) => { });
+    };
+  }
+
+  async handleCredentialResponse(response: CredentialResponse) {
+    if(await this.userService.loginWithGoogle(response.credential))
+      this.navigateToPage('home');
   }
 
   navigateToPage(pageName: string) {
@@ -66,6 +100,11 @@ export class LoginComponent {
     this.login();
   }
 
+  async forgotPassword(): Promise<void> {
+    await this.userService.forgotPassword(this.emailForgot, this.passwordForgot);
+    this.forgotPasswordPopup = false;
+  }
+  
   movemouse(event: MouseEvent) {
     // const windowWidth = window.innerWidth;
     // const windowHeight = window.innerHeight;
@@ -82,5 +121,9 @@ export class LoginComponent {
     // (document.getElementsByClassName('backgroundImage')[0] as HTMLElement).style.backgroundImage = 
     // 'radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, rgb(100 100 100 / 70%), rgb(100 100 100 / 70%)), url(/assets/MockData/BGIW.jpg)';
     // console.log('radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, rgb(100 100 100 / 70%), rgb(100 100 100 / 70%)), url(/assets/MockData/BGIW.jpg)');
+  }
+
+  navigateToSignup(): void {
+    this.router.navigate(['/signup']).then(() => window.location.reload());
   }
 }

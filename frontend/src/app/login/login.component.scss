@@ -175,21 +175,10 @@
 }
 
 .googleButton {
+    height:38px;
     font-family: Cabin;
-    display: inline-flex;
-    align-items: center;
-    border: none;
-    border-radius: 90px;
-
-    background-color: $text-box-color;
-
-    height: 4vh;
-    max-height: 40px;
-    min-height: 30px;
-
     font-size: clamp(12px, 2vh, 16px);
-
-    width: 50%;
+    border-radius: 90px;
     margin: auto;
     transition: 0.3s;
 }
@@ -203,11 +192,6 @@
 .googleButton:active {
     box-shadow: 0 0px #666;
     transform: translateY(4px);
-}
-
-.googleIcon {
-    height: 100%;
-    margin-left: 12px;
 }
 
 hr {
@@ -226,6 +210,7 @@ hr {
 }
 
 .noAccountText {
+    transition: 0.3s;
     margin: auto;
     font-size: 16px;
     font-weight: regular;

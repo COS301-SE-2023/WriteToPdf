@@ -57,6 +57,9 @@ export class FileManagerServiceMock {
     if (markdownFileDTO.Size === undefined)
       markdownFileDTO.Size = 0;
 
+    if (markdownFileDTO.SafeLock === undefined)
+      markdownFileDTO.SafeLock = false;
+
     await this.s3service.createFile(
       markdownFileDTO,
     );
@@ -102,6 +105,7 @@ export class FileManagerServiceMock {
         Size: file.Size,
         ParentFolderID: file.ParentFolderID,
         Content: '',
+        SafeLock: false,
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
@@ -418,6 +422,8 @@ export class FileManagerServiceMock {
       importDTO.Name;
     convertedMarkdownFileDTO.Content =
       convertedHtml;
+
+    convertedMarkdownFileDTO.SafeLock = false;
 
     const createdFile = await this.createFile(
       convertedMarkdownFileDTO,
