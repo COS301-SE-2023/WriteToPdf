@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { UserDTO } from './dto/user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -26,6 +27,7 @@ describe('UsersController', () => {
         controllers: [UsersController],
         providers: [
           UsersService,
+          JwtService,
           {
             provide: getRepositoryToken(User),
             useClass: Repository,
