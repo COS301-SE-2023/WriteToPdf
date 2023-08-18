@@ -405,4 +405,88 @@ describe('UsersController', () => {
       ).toBe(expectedResult);
     });
   });
+
+  describe('google_signin', () => {
+    it('should be decorated with @Public', () => {
+      const isPublic = Reflect.getMetadata(
+        'isPublic',
+        controller.googleSignIn,
+      );
+      expect(isPublic).toBe(true);
+    });
+
+    it('should throw exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const payload: any = {
+        credential: 'test',
+      };
+
+      try {
+        await controller.googleSignIn(
+          payload,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw exception if password is missing', async () => {
+      const request = { method: 'POST' };
+      const payload: any = {
+        NOTcredential: 'test',
+      };
+
+      try {
+        await controller.signup(
+          payload,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should return the newly registered user', async () => {
+      const request = { method: 'POST' };
+      const payload: any = {
+        credential: 'test',
+      };
+
+      const expectedResult = {
+        message: 'User created successfully',
+      };
+
+      jest
+        .spyOn(usersService, 'googleSignIn')
+        .mockImplementation(
+          async () => expectedResult as any,
+        );
+
+      expect(
+        await controller.googleSignIn(
+          payload,
+          request as any,
+        ),
+      ).toBe(expectedResult);
+    });
+  });
 });
