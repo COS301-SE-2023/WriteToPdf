@@ -15,7 +15,6 @@ import {
 } from '@nestjs/common';
 import { UserDTO } from './dto/user.dto';
 import * as CryptoJS from 'crypto-js';
-import { JwtService } from '@nestjs/jwt';
 
 config();
 
