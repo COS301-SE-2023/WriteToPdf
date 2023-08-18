@@ -3,14 +3,14 @@ import 'zone.js/dist/zone-testing.js'; // Must add both these imports
 import { TestBed } from '@angular/core/testing';
 import { expect } from '@jest/globals';
 
-import { CoordinateService } from './coordinate-service.service';
+import { ConversionService } from './conversion.service';
 
-describe('CoordinateServiceService', () => {
-  let service: CoordinateService;
+describe('ConversionService', () => {
+  let service: ConversionService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(CoordinateService);
+    service = TestBed.inject(ConversionService);
   });
 
   it('should be created', () => {

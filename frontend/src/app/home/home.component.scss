@@ -1,5 +1,7 @@
 @import '../../styles.scss';
 
+$file-height: 50px;
+
 .container {
   width: 100%;
   z-index: -4;
@@ -18,6 +20,7 @@
 
 .fileOperations-entity {
   padding: 8px;
+  margin: 0;
   justify-content: center;
   align-items: center;
 }
@@ -32,8 +35,7 @@
   grid-auto-flow: column;
   //overflow-x: auto;
   background-image: linear-gradient(to left, #ffffff, #f7f9fc);
-  border-bottom: 1px solid #ccc;
-  //box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
   width: 100%;
   height: 112px;
@@ -108,6 +110,7 @@ to co-operate.
   left: 0px;
   top: 112px;
   // Colour
+  background-image: linear-gradient(to right, #ffffff, #f7f9fc);
   overflow: auto;
   opacity: 100%;
   box-shadow: 3px 0px 5px rgba(0, 0, 0, 0.1);
@@ -134,6 +137,7 @@ to co-operate.
 
 .leftSideBarHeading {
   padding-top: 15px;
+  font-size: 20px;
   display: flex;
   justify-content: center;
   //  padding-left: 50px;
@@ -147,6 +151,15 @@ to co-operate.
   cursor: pointer;
 }
 
+.leftSideBarTools hr{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid #ccc;
+  width: 90%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
 .leftSideBarTools .icon:hover {
   background-color: darken($light-grey, 10%);
   transition: 0.5s;
@@ -160,11 +173,6 @@ to co-operate.
   justify-content: center;
 }
 
-
-
-
-
-
 .mainWindowHome {
   margin-left: 250px;
   margin-right: 150px;
@@ -173,10 +181,6 @@ to co-operate.
   z-index: 0;
   position: absolute;
   overflow-x: hidden;
-}
-
-.mainWindowHome .directoryContents {
-  padding-top: 20px;
 }
 
 //Below is the styling for the directory path
@@ -199,14 +203,13 @@ to co-operate.
 
 // Below is the styling for the searchBar
 .searchBar {
-  margin-top: 18px;
-  margin-left: 15px;
-  margin-right: 15px;
+  margin: auto;
   box-sizing: border-box;
   position: relative;
   padding: 10px;
-  margin-left: 8px;
-  width: auto;
+  width: 40vw;
+  min-width: 300px;
+  height: 40px;
   background: #F7F7F7;
   /* Main Colours/Dark Gray */
   border: 1px solid #6F6F6F;
@@ -230,7 +233,7 @@ textarea {
 }
 
 .searchBar input {
-  padding: 5px;
+  // padding: 5px;
 }
 
 .searchBar:focus-within {
@@ -241,8 +244,9 @@ textarea {
   display: flex;
 }
 
-.drag-hover:hover {
-  // background-color: lightgray !important;
+.drag-hover {
+  background-color: rgb(174, 172, 255) !important;
+  border: #000000 dashed 1px !important;
   /* Add other styles as needed */
   // z-index: 1;
 }
@@ -330,12 +334,201 @@ textarea {
 
 .spinner {
   margin: auto;
-  height:50px;
+  height: 50px;
 }
 
 .spinnerWrapper {
   position: absolute;
   display: flex;
   margin: auto;
-  height:50px;
+  height: 50px;
 }
+
+.directoryHeader {
+  display: flex;
+  width: 70vw;
+  height: $file-height;
+  background-image: linear-gradient(to right, #f6f6f6, #f7f9fc, #f6f6f6);
+  border-bottom: 1px #ccc solid;
+
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -ms-user-drag: none;
+  user-drag: none;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.fileItem,
+.moveFileItem {
+  display: flex;
+  box-sizing: content-box;
+  width: 70vw;
+  height: $file-height;
+  background-color: lighten($light-grey, 10%);
+  border: 1px solid #00000000;
+  border-bottom: 1px #ccc solid;
+
+  // -webkit-user-drag: none;
+  //   -moz-user-drag: none;
+  //   -ms-user-drag: none;
+  //   user-drag: none;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.moveFileItem {
+  width: 99% !important;
+}
+
+.defaultFile:hover {
+  cursor: pointer;
+  background-color: $light-grey;
+}
+
+.selected:hover {
+  cursor: pointer;
+}
+
+.iconSpacing {
+  flex: 1;
+  /* Distribute available space equally */
+  display: flex;
+  /* Nested flex containers for alignment */
+  align-items: center;
+  /* Align items vertically */
+  justify-content: left;
+  /* Align items horizontally */
+  // border: 1px solid #ccc;
+  /* Just for visualization, remove in production */
+  overflow: hidden;
+}
+
+.fileItemIcon {
+  width: 30px;
+  height: 30px;
+  margin: auto;
+}
+
+.nameHeader,
+.sizeHeader,
+.dateHeader {
+  flex: 2;
+  /* Distribute available space equally */
+  display: flex;
+  /* Nested flex containers for alignment */
+  align-items: center;
+  /* Align items vertically */
+  justify-content: left;
+  /* Align items horizontally */
+  // border: 0px solid #ccc;
+  /* Just for visualization, remove in production */
+  overflow: hidden;
+}
+
+.fileName {
+  font-weight: bold;
+  border: 1px solid #00000000;
+  border-radius: 5px;
+  transition: 0.3s;
+  background-color: #00000000;
+}
+
+.fileName:hover {
+  border: 1px solid #000000;
+}
+
+.fileName:focus {
+  border: 1px solid #000000 !important;
+}
+
+.iconSpacing .icon {
+  margin: auto;
+  width: 42px;
+  height: 42px;
+  padding: 4px;
+  border-radius: 5px;
+}
+
+.iconSpacing .hover:hover {
+  cursor: pointer;
+  background-color: darken($light-grey, 10%);
+  transition: 0.5s;
+}
+
+.selectedFile {
+  background-color: #b4e4ff;
+}
+
+.lockIcon {
+  transition: 0.5s;
+  width: 40px;
+  height: 40px;
+  padding: 4px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.lockIcon:hover {
+  background-color: darken($light-grey, 10%);
+}
+
+.folderNameWrapper {
+  display: flex;
+}
+
+.folderName {
+  margin: 10px 0 5px 10px;
+  flex: 4;
+}
+
+.directoryOperations .icon {
+  flex: 1;
+  margin: auto;
+  width: 42px;
+  height: 42px;
+  padding: 4px;
+  border-radius: 5px;
+}
+
+.directoryOperations .hover:hover {
+  cursor: pointer;
+  background-color: darken($light-grey, 10%);
+  transition: 0.5s;
+}
+
+.directoryOperations{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+}
+$icon-size: 1.5rem;
+
+:host ::ng-deep {
+  .c-icons {
+    width: $icon-size;
+    height: $icon-size;
+    background-size: $icon-size $icon-size;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: inline-block;
+  }
+
+  .folder-icon {
+    background-image: url("/assets/Icons/homeIcons/mainWindow/folder.png") !important;
+  }
+
+  .doc-icon {
+    background-image: url("/assets/Icons/homeIcons/mainWindow/doc.png");
+  }
+}
+

@@ -165,16 +165,11 @@ export class UserService {
     this.expiresAt = undefined;
     this.doExpirationCheck = false;
 
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userID');
-    localStorage.removeItem('expiresAt');
-    localStorage.removeItem('email');
-    localStorage.removeItem('firstName');
-    localStorage.removeItem('encryptionKey');
+    localStorage.clear();
 
     this.router.navigate(['/login']).then(() => window.location.reload());
   }
+
 
   revokeToken(): Observable<any> {
     // return this.http.delete(this.path + "RevokeToken/" + this.username.value, { headers: header, withCredentials: true });
@@ -189,6 +184,47 @@ export class UserService {
       'Bearer ' + this.getAuthToken()
     );
     return this.http.post(url, body, { headers, observe: 'response' });
+
+  }
+
+  async forgotPassword(email : string, newPassword:string){
+    const salt = await this.retrieveSalt(email);
+    this.sendForgotPasswordData(email, this.hashPassword(newPassword, salt)).subscribe({
+      next: (response: HttpResponse<any>) => {
+        console.log('forgotPass response: ', response);
+        if (response.status === 200) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: `Password changed successfully`,
+          });
+          this.navigateToPage('/login');
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: `Password change failed`,
+          });
+        }
+      },
+      error: (error) => {
+        console.error(error); // Handle error if any
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `${error.error.error}`,
+        });
+      },
+    });
+  }
+
+  sendForgotPasswordData(email: string, password : string): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}users/reset_password`;
+    const body = new UserDTO();
+    body.Email = email;
+    body.Password = password;
+    return this.http.post(url, body, { observe: 'response' });
   }
 
   isAuthenticatedUser(): boolean {
@@ -313,7 +349,7 @@ export class UserService {
     }
     this.startExpirationCheck();
   }
-  
+
   private startExpirationCheck() {
     const checkInterval = 30000;
 
@@ -338,8 +374,15 @@ export class UserService {
         this.sendRefreshTokenRequest().subscribe({
           next: (response: HttpResponse<any>) => {
             if (response.status === 200) {
+              console.log(response);
               this.authToken = response.body.Token;
               this.expiresAt = this.jwtHelper.decodeToken(response.body.Token).ExpiresAt;
+
+              if (this.authToken && this.expiresAt) {
+                localStorage.setItem('authToken', this.authToken);
+                localStorage.setItem('expiresAt', this.expiresAt.toString());
+              }
+
             } else {
             }
           },

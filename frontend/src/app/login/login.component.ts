@@ -18,9 +18,9 @@ import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
 export class LoginComponent {
   email: string = '';
   password: string = '';
-  // popupWindow: Window | null = null;
 
   emailForgot: string = '';
+  passwordForgot: string = '';
 
   private clientId = environment.clientId;
 
@@ -99,11 +99,12 @@ export class LoginComponent {
     this.password = environment.DEV_USER_PASSWORD;
     this.login();
   }
-  
-  forgotPassword(): void {
-    //todo implement
-    console.log('TODO: forgotPassword');
+
+  async forgotPassword(): Promise<void> {
+    await this.userService.forgotPassword(this.emailForgot, this.passwordForgot);
+    this.forgotPasswordPopup = false;
   }
+  
   movemouse(event: MouseEvent) {
     // const windowWidth = window.innerWidth;
     // const windowHeight = window.innerHeight;
