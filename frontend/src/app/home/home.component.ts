@@ -592,6 +592,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#FFFFFF';
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
+    this.elementRef.nativeElement.ownerDocument.body.style.height = '100svh';
   }
 
   onOpenFileSelect(MarkdownID: string | undefined | null): void {
@@ -895,8 +896,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   startMove() {
-    if (this.getSelected().length > 0)
+    if (this.getSelected().length > 0){
+      this.unselectAllMoveSelected();
       this.moveDialogVisible = true;
+    }
     else {
       this.messageService.add({
         severity: 'warn',
@@ -1180,7 +1183,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const movingNode = this.nodeService.getFileDTOByID(keyOfDragged);
       if (movingNode.ParentFolderID === parentFolderID) return;
       this.loading = true;
-      await this.fileService
+      this.fileService
         .moveDocument(movingNode.MarkdownID, path, parentFolderID)
         .then((data) => {
           this.nodeService.removeFile(movingNode.MarkdownID);
@@ -1203,7 +1206,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         return;
       }
       this.loading = true;
-      await this.folderService
+      this.folderService
         .moveFolder(movingNode.FolderID, path, parentFolderID)
         .then((data) => {
           this.nodeService.removeFolder(movingNode.FolderID);
@@ -1504,6 +1507,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
         folders.push(element);
     });
     return folders;
+  }
+
+  unselectAllMoveSelected(): void {
+    this.getAllFolders().forEach((element: any) => {
+      element.MoveSelected = false;
+    });
   }
 
   getMoveSelectedFolder(): any {

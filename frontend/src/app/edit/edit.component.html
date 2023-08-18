@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="toolsWrapper">
-        <div class="tool" (click)="showDialog()" label="Show">
+        <div class="tool" (click)="showDialog()" label="Show" title="Download Document">
           <!-- Download -->
           <img src="assets/Icons/editIcons/download.svg" alt="" />
         </div>
@@ -77,23 +77,23 @@
           </div>
         </p-dialog>
 
-        <div class="tool" (click)="saveDocumentContents()">
+        <div class="tool" (click)="saveDocumentContents()" title="Save Document">
           <!-- Save -->
           <img src="assets/Icons/editIcons/save.png" alt="" />
         </div>
         <!-- <div class="tool" (click)="delete()">
           <img src="assets/Icons/editIcons/delete.png" alt="" />
         </div> -->
-        <div class="tool" (click)="pageBreak()">
-          <!-- Share -->
+        <!-- <div class="tool" (click)="pageBreak()">
+
           <img src="assets/Icons/editIcons/share.svg" alt="" />
-        </div>
-        <div class="tool" (click)="zoomOut()">
+        </div> -->
+        <div class="tool" (click)="zoomOut()" title="Zoom Out">
           <!-- Zoom Out -->
           <img src="assets/Icons/editIcons/zoom-out.png" alt="" />
         </div>
-        <p class="currentZoom">{{ getZoom() }}</p>
-        <div class="tool" (click)="zoomIn()">
+        <p class="currentZoom" title="Current Zoom">{{ getZoom() }}</p>
+        <div class="tool" (click)="zoomIn()" title="Zoom In">
           <!-- Zoom In -->
           <img src="assets/Icons/editIcons/zoom-in.png" alt="" />
         </div>
