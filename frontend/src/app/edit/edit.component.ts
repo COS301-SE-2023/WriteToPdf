@@ -176,6 +176,8 @@ export class EditComponent implements AfterViewInit, OnInit {
             'overflow-x',
             'hidden !important'
           );
+          this.elementRef.nativeElement.ownerDocument.body.style.height = '0';
+
 
           document
             .getElementsByClassName('toolsWrapper')[0]
