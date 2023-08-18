@@ -13,6 +13,7 @@ import * as CryptoJS from 'crypto-js';
 import { hashSync, genSaltSync } from 'bcryptjs';
 import { OAuth2Client } from 'google-auth-library';
 import 'dotenv/config';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class UsersService {
@@ -304,7 +305,12 @@ export class UsersService {
   }
 
   generateRandomPassword(): string {
-    return Math.random().toString(36).slice(-8);
+    const randomBytesCount = 4; // 8 string characters
+    const randomBytesBuffer = randomBytes(
+      randomBytesCount,
+    );
+
+    return randomBytesBuffer.toString('hex');
   }
 
   generateHashedPassword(
