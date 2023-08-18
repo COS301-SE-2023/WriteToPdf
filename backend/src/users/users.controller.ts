@@ -6,11 +6,11 @@ import {
   HttpStatus,
   HttpException,
   HttpCode,
-  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDTO } from './dto/user.dto';
 import { Public } from '../auth/auth.controller';
+import { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
