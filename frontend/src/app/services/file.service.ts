@@ -7,11 +7,13 @@ import { UserService } from './user.service';
 import { EditService } from './edit.service';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ImportDTO } from './dto/import.dto';
-import { resolve } from 'path';
-import { ExportDTO } from './dto/export.dto';
+// import { resolve } from 'path';
+// import { ExportDTO } from './dto/export.dto';
 import { MessageService } from 'primeng/api';
 import { environment } from '../../environments/environment';
 import * as CryptoJS from 'crypto-js';
+
+import { ConversionService } from './conversion.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +23,8 @@ export class FileService {
     private http: HttpClient,
     private userService: UserService,
     private editService: EditService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private conversionService: ConversionService
   ) {}
 
   saveDocument(
@@ -404,84 +407,148 @@ export class FileService {
 
   exportDocumentToNewFileType(
     markdownID: string | undefined,
-    name: string | undefined,
-    content: string | undefined,
+    name: string,
+    content: string,
     type: string | undefined
   ): void {
-    if (type === 'html') {
-      this.downloadAsHtmlFile(content, name);
-      return;
+    //Applying CSS stylings to html page to allow for table conversion
+    const txtContent = content;
+    const tableStyling = 'style="border-collapse: collapse; border:1px solid #bfbfbf;" ';
+    const tdThStyling ='style="border: 1px solid #bfbfbf; padding: 8px; text-align: left; width:32px;" ';
+
+    if(content.includes('<table')) {
+      console.log('contains table');
     }
-    this.sendExportData(markdownID, name, content, type).subscribe({
-      next: (response: HttpResponse<any>) => {
-        if (response.status === 200) {
-          const fileData: number[] = response.body.data;
-          const uint8Array = new Uint8Array(fileData);
-          const blob = new Blob([uint8Array], { type: 'application/pdf' });
+    //more work needs to be done to get conversion better
+    //NB Try to use document selector to select by class and apply all relevant styling
+    //See conversion to JPEG and PNG for details
+    content = content.replace(/<table/g, `<table ${tableStyling}`);
+    content = content.replace(/<td/g, `<td ${tdThStyling}`);
+    content = content.replace(/<th/g, `<th ${tdThStyling}`);
 
-          // Download the File
-          const fileURL = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = fileURL;
-          link.download = name + '.' + type;
-          link.click();
-          URL.revokeObjectURL(fileURL);
+    content = `<head><style>
+    .text-huge {font-size: 1.8em;}
+    .text-big {font-size: 1.4em;}
+    .text-small {font-size: 0.85em;}
+    .text-tiny {font-size: 0.7em;}
+    figure {display: block;margin-block-start: 1em;margin-block-end: 1em;margin-inline-start: 40px;margin-inline-end: 40px;}
+    .table {display: table;margin: 0.9em auto;}
+    </style></head>` + content;
+    console.log(content);
 
-          // Show success message
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Export successful',
-          });
-        } else {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Export failed',
-          });
-        }
-      },
+    let blob: Blob;
+    let fileURL: string;
+    let link: HTMLAnchorElement;
+
+    switch (type) {
+      case 'html':
+        this.conversionService.downloadAsHtmlFile(content, name);
+
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export to html successful',
+        });
+
+        return;
+      case 'pdf':
+        this.conversionService.downloadAsPdfFile(content, name);
+
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export to pdf successful',
+        });
+        return;
+      case 'txt':
+        blob = this.conversionService.convertHtmlToPlainText(txtContent, type);
+
+        // Download the File
+        fileURL = URL.createObjectURL(blob);
+        link = document.createElement('a');
+        link.href = fileURL;
+        link.download = name + '.' + type;
+        link.click();
+        URL.revokeObjectURL(fileURL);
+
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export to txt successful',
+        });
+
+        return;
+      case 'md':
+        blob = this.conversionService.convertHtmlToPlainText(txtContent, type);
+
+        // Download the File
+        fileURL = URL.createObjectURL(blob);
+        link = document.createElement('a');
+        link.href = fileURL;
+        link.download = name + '.' + type;
+        link.click();
+        URL.revokeObjectURL(fileURL);
+
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export to md successful',
+        });
+        return;
+      case 'jpeg':
+        this.conversionService.convertHtmlToImage(content, name, type);
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export to jpeg successful',
+        });
+        return;
+      case 'png':
+        this.conversionService.convertHtmlToImage(content, name, type);
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export to png successful',
+        });
+        return;
+    }
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Export failed',
     });
-  }
 
-  sendExportData(
-    markdownID: string | undefined,
-    name: string | undefined,
-    content: string | undefined,
-    type: string | undefined
-  ): Observable<HttpResponse<any>> {
-    const environmentURL = environment.apiURL;
-    const url = `${environmentURL}file_manager/export`;
-    const body = new ExportDTO();
-    body.MarkdownID = markdownID;
-    body.Name = name;
-    body.Content = content;
-    body.UserID = this.userService.getUserID();
-    body.Type = type;
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      'Bearer ' + this.userService.getAuthToken()
-    );
-    return this.http.post(url, body, { headers, observe: 'response' });
-  }
+    // if (type === 'html') {
+    //   this.downloadAsHtmlFile(content, name);
+    //   return;
+    // }
+    // this.sendExportData(markdownID, name, content, type).subscribe({
+    //   next: (response: HttpResponse<any>) => {
+    //     if (response.status === 200) {
+    //       const fileData: number[] = response.body.data;
+    //       const uint8Array = new Uint8Array(fileData);
+    //       const blob = new Blob([uint8Array], { type: 'application/pdf' });
 
-  downloadAsHtmlFile(
-    htmlContent: string | undefined,
-    fileName: string | undefined
-  ) {
-    if (htmlContent !== undefined && fileName !== undefined) {
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      const fileURL = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = fileURL;
-      link.download = fileName + '.html';
-      link.click();
-      URL.revokeObjectURL(fileURL);
+    //       // Download the File
+    //       const fileURL = URL.createObjectURL(blob);
+    //       const link = document.createElement('a');
+    //       link.href = fileURL;
+    //       link.download = name + '.' + type;
+    //       link.click();
+    //       URL.revokeObjectURL(fileURL);
 
-      // Show success message
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Export successful',
-      });
-    }
+    //       // Show success message
+    //       this.messageService.add({
+    //         severity: 'success',
+    //         summary: 'Export successful',
+    //       });
+    //     } else {
+    //       this.messageService.add({
+    //         severity: 'error',
+    //         summary: 'Export failed',
+    //       });
+    //     }
+    //   },
+    // });
   }
 
   encryptDocument(content: string | undefined): string {

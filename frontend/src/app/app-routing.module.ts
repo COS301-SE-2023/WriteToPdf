@@ -11,9 +11,21 @@ import { AuthGuard } from './auth.guard';
 const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'edit', component: EditComponent, canActivate: [AuthGuard] },
-  { path: 'camera', component: CameraComponent, canActivate: [AuthGuard] },
+  {
+    path: 'home',
+    loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'edit',
+    loadChildren: () => import('./edit/edit.module').then(m => m.EditModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'camera',
+    loadChildren: () => import('./camera/camera.module').then(m => m.CameraModule),
+    canActivate: [AuthGuard]
+  },
   {
     path: 'edit-asset',
     component: EditAssetComponent, canActivate: [AuthGuard],
