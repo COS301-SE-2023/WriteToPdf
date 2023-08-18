@@ -10,106 +10,7 @@
           [style]="{backgroundColor: '#00000000', border: 'none', minWidth: '200px'}"></p-menubar>
       </div>
     </div>
-    <!--    TODO FileManagerPopup below-->
-    <div class="fileOperations-container">
-      <p-dialog [(visible)]="moveDialogVisible" [modal]="true" [style]="{ width: '50vw' }" header="Select a Destination Folder" [focusOnShow]="true"
-        (keydown.enter)="moveEntity()" (keydown.escape)="moveDialogVisible = false">
 
-              <div *ngFor="let obj of getAllFolders()" class="moveFileItem" (dblclick)="moveEntity()"
-                (click)="handleMoveClick($event, obj)" [ngClass]="{
-                      'selectedFile': obj.MoveSelected,
-                      'defaultFile': !obj.MoveSelected,
-                    }" >
-                <div class="iconSpacing">
-                  <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/folder.png" alt="" />
-                </div>
-                <div class="nameHeader" title="{{obj.FolderName}}">
-                  <span>{{obj.FolderName}}</span>
-                </div>
-                <div class="sizeHeader" title="{{obj.FolderName}}">
-                  <span></span>
-                </div>
-                <div class="dateHeader" title="{{formatDate(obj.DateCreated)}}">
-                  <span>{{formatDate(obj.DateCreated)}}</span>
-                </div>
-                <div class="iconSpacing">
-                </div>
-              </div>
-
-        <p-button class="fileOperations-entity" [style]="{ marginTop: '20px' }" (click)="moveEntity()" label="Move"></p-button>
-      </p-dialog>
-
-    </div>
-    <!--    TODO FileManagerPopup above-->
-    <!-- <div class="speedDialEditMenu">
-      <p-speedDial
-        [model]="speedDialItems"
-        class="speedDial"
-        direction="down"
-      ></p-speedDial>
-    </div> -->
-
-    <!--    TODO FileManagerPopup below-->
-    <div class="fileOperations-container">
-      <p-dialog [(visible)]="createNewDocumentDialogueVisible" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
-        header="Create Document" [focusOnShow]="true" (keydown.escape)="createNewDocumentDialogueVisible = false">
-        <div class="fileOperations" style="display:grid; width:80%;">
-          <input
-            placeholder="Document Name"
-            [(ngModel)]="entityName"
-            label="Document Name: "
-            pInputText
-            type="text"
-            (keydown.enter)="createNewDocument()"
-            (keydown.enter)="createNewDocumentDialogueVisible = false"
-            [style]="{width: '100%', marginTop: '20px'}"
-          />
-          <br />
-          <p-button (click)="createNewDocument()" (click)="createNewDocumentDialogueVisible = false" label="Create"></p-button>
-        </div>
-      </p-dialog>
-    </div>
-    <!--    TODO FileManagerPopup below-->
-    <div class="fileOperations-container">
-      <p-dialog [(visible)]="createNewFolderDialogueVisible" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
-        header="Create Folder" [focusOnShow]="true" (keydown.escape)="createNewFolderDialogueVisible = false">
-        <div class="fileOperations" style="display:grid; width:80%;">
-          <input
-          placeholder="Folder Name"
-            class="fileOperations-entity"
-            [(ngModel)]="entityName"
-            label="Folder Name: "
-            pInputText
-            type="text"
-            (keydown.enter)="createNewFolder()"
-            (keydown.enter)="createNewFolderDialogueVisible = false"
-            [style]="{width: '100%', marginTop: '20px'}"
-          />
-          <br />
-          <p-button (click)="createNewFolder()" (click)="createNewFolderDialogueVisible = false" label="Create"></p-button>
-        </div>
-      </p-dialog>
-    </div>
-    <!--    TODO FileManagerPopup below-->
-    <div class="fileOperations-container">
-      <p-dialog [(visible)]="renameDialogueVisible" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
-        header="Rename" [focusOnShow]="true" (keydown.escape)="renameDialogueVisible = false">
-        <div class="fileOperations" style="display: grid; width:80%;">
-          <input
-            placeholder="{{getSelectedName()}}"
-            class="fileOperations-entity"
-            [(ngModel)]="entityRename"
-            label="Name: "
-            pInputText
-            type="text"
-            [style]="{width: '100%', marginTop: '20px'}"
-          />
-          <br />
-          <p-button (click)="renameEntity()" (click)="renameDialogueVisible = false" label="Rename"></p-button>
-        </div>
-      </p-dialog>
-    </div>
-    <!--    TODO FileManagerPopup above-->
   </div>
   <div class="leftSideBarWrapper" id="scrollingDiv" (click)="unselectAll()">
     <div class="leftSideBarHeading">{{ getUserFirstName() }}'s Files</div>
@@ -296,9 +197,94 @@
   <p-contextMenu
     [target]="directory"
     [model]="contextMenuItems"
+     (click)="$event.stopPropagation()"
   ></p-contextMenu>
   <!-- file-upload-popup.component.html -->
-  <p-confirmDialog [style]="{width: '50vw', minWidth:'300px'}"></p-confirmDialog>
+  <p-confirmDialog [style]="{width: '50vw', minWidth:'300px'}" (click)="$event.stopPropagation()"></p-confirmDialog>
 
+      <!--    TODO FileManagerPopup below-->
+      <div class="fileOperations-container">
+        <p-dialog [(visible)]="moveDialogVisible" [modal]="true" [style]="{ width: '50vw' }"
+          header="Select a Destination Folder" [focusOnShow]="true" (keydown.enter)="moveEntity()"
+          (keydown.escape)="moveDialogVisible = false" (click)="$event.stopPropagation()">
+      
+          <div *ngFor="let obj of getAllFolders()" class="moveFileItem" (dblclick)="moveEntity()"
+            (click)="handleMoveClick($event, obj)" [ngClass]="{
+                            'selectedFile': obj.MoveSelected,
+                            'defaultFile': !obj.MoveSelected,
+                          }">
+            <div class="iconSpacing">
+              <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/folder.png" alt="" />
+            </div>
+            <div class="nameHeader" title="{{obj.FolderName}}">
+              <span>{{obj.FolderName}}</span>
+            </div>
+            <div class="sizeHeader" title="{{obj.FolderName}}">
+              <span></span>
+            </div>
+            <div class="dateHeader" title="{{formatDate(obj.DateCreated)}}">
+              <span>{{formatDate(obj.DateCreated)}}</span>
+            </div>
+            <div class="iconSpacing">
+            </div>
+          </div>
+      
+          <p-button class="fileOperations-entity" [style]="{ marginTop: '20px' }" (click)="moveEntity()"
+            label="Move"></p-button>
+        </p-dialog>
+      
+      </div>
+      <!--    TODO FileManagerPopup above-->
+      <!-- <div class="speedDialEditMenu">
+            <p-speedDial
+              [model]="speedDialItems"
+              class="speedDial"
+              direction="down"
+            ></p-speedDial>
+          </div> -->
+      
+      <!--    TODO FileManagerPopup below-->
+      <div class="fileOperations-container">
+        <p-dialog [(visible)]="createNewDocumentDialogueVisible" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
+          header="Create Document" [focusOnShow]="true" (keydown.escape)="createNewDocumentDialogueVisible = false"
+          (click)="$event.stopPropagation()">
+          <div class="fileOperations" style="display:grid; width:80%;">
+            <input placeholder="Document Name" [(ngModel)]="entityName" label="Document Name: " pInputText type="text"
+              (keydown.enter)="createNewDocument()" (keydown.enter)="createNewDocumentDialogueVisible = false"
+              [style]="{width: '100%', marginTop: '20px'}" />
+            <br />
+            <p-button (click)="createNewDocument()" (click)="createNewDocumentDialogueVisible = false"
+              label="Create"></p-button>
+          </div>
+        </p-dialog>
+      </div>
+      <!--    TODO FileManagerPopup below-->
+      <div class="fileOperations-container">
+        <p-dialog [(visible)]="createNewFolderDialogueVisible" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
+          header="Create Folder" [focusOnShow]="true" (keydown.escape)="createNewFolderDialogueVisible = false"
+          (click)="$event.stopPropagation()">
+          <div class="fileOperations" style="display:grid; width:80%;">
+            <input placeholder="Folder Name" class="fileOperations-entity" [(ngModel)]="entityName" label="Folder Name: "
+              pInputText type="text" (keydown.enter)="createNewFolder()"
+              (keydown.enter)="createNewFolderDialogueVisible = false" [style]="{width: '100%', marginTop: '20px'}" />
+            <br />
+            <p-button (click)="createNewFolder()" (click)="createNewFolderDialogueVisible = false" label="Create"></p-button>
+          </div>
+        </p-dialog>
+      </div>
+      <!--    TODO FileManagerPopup below-->
+      <div class="fileOperations-container">
+        <p-dialog [(visible)]="renameDialogueVisible" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
+          header="Rename" [focusOnShow]="true" (keydown.escape)="renameDialogueVisible = false"
+          (click)="$event.stopPropagation()">
+          <div class="fileOperations" style="display: grid; width:80%;">
+            <input placeholder="{{getSelectedName()}}" class="fileOperations-entity" [(ngModel)]="entityRename" label="Name: "
+              pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" />
+            <br />
+            <p-button (click)="renameEntity()" (click)="renameDialogueVisible = false" label="Rename"></p-button>
+          </div>
+        </p-dialog>
+      </div>
+      <!--    TODO FileManagerPopup above-->
   
 </div>
