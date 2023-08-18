@@ -11,7 +11,6 @@ import {
 import { UsersService } from './users.service';
 import { UserDTO } from './dto/user.dto';
 import { Public } from '../auth/auth.controller';
-import { Response } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -107,7 +106,6 @@ export class UsersController {
   googleSignIn(
     @Body() body: any,
     @Req() request: Request,
-    @Res() response: Response,
   ) {
     if (request.method !== 'POST') {
       throw new HttpException(
@@ -122,10 +120,6 @@ export class UsersController {
         HttpStatus.BAD_REQUEST,
       );
     }
-
-    response.redirect(
-      'http://localhost:4200/home',
-    );
 
     return this.usersService.googleSignIn(
       body.credential,
