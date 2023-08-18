@@ -1,10 +1,12 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { Inject } from '@angular/core';
 import { environment } from 'src/environments/environment';
+
+import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
+
 // import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 
@@ -20,13 +22,15 @@ export class LoginComponent {
 
   emailForgot: string = '';
 
+  private clientId = environment.clientId;
+
   forgotPasswordPopup: boolean = false;
   constructor(
     @Inject(Router) private router: Router,
     private elementRef: ElementRef,
     private userService: UserService,
     @Inject(ActivatedRoute) private route: ActivatedRoute,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) { }
   ngOnInit(): void {
     const data = history.state;
@@ -34,31 +38,31 @@ export class LoginComponent {
       this.email = data['Email'];
       this.password = data['Password'];
     }
-    this.loadGoogleSignInAPI();
-    // this.setCrossOriginOpenerPolicyHeader();
-// // Popup window tests
-//     this.popupWindow = window.open('...', 'popupName', '...');
-//     if (this.popupWindow) {
-//       this.popupWindow.postMessage('Hello from parent window!', '*');
-//       window.addEventListener('message', this.receiveMessage.bind(this));
-//     }
+    
+    // @ts-ignore
+    window.onGoogleLibraryLoad = () => {
+      // @ts-ignore
+      google.accounts.id.initialize({
+        client_id: this.clientId,
+        callback: this.handleCredentialResponse.bind(this),
+        auto_select: false,
+        cancel_on_tap_outside: true
+      });
+      // @ts-ignore
+      google.accounts.id.renderButton(
+        // @ts-ignore
+        document.getElementById("buttonDiv"),
+        { theme: "outline", size: "large", width: "100%", shape: "pill" }
+      );
+      // @ts-ignore
+      google.accounts.id.prompt((notification: PromptMomentNotification) => { });
+    };
   }
 
-  loadGoogleSignInAPI(): void {
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    // script.onload = () => {
-    //   // Google Sign-In API loaded
-    //   window.googleSignIn = this.googleSignIn;
-    // };
-    document.body.appendChild(script);
+  async handleCredentialResponse(response: CredentialResponse) {
+    if(await this.userService.loginWithGoogle(response.credential))
+      this.navigateToPage('home');
   }
-
-  // setCrossOriginOpenerPolicyHeader(): void {
-  //   const headers = new HttpHeaders({
-  //     'Cross-Origin-Opener-Policy': 'same-origin-allow-popups'
-  //   });
-  // }
 
   navigateToPage(pageName: string) {
     this.router.navigate([`/${pageName}`]);
@@ -95,20 +99,7 @@ export class LoginComponent {
     this.password = environment.DEV_USER_PASSWORD;
     this.login();
   }
-
-  // googleSignIn(): void {
-  //   console.log('Google Sign-In completed.');
-  //   // Additional logic for handling the sign-in result
-  // }
-
-  // // Part of popup window tests
-  // receiveMessage(event: MessageEvent): void {
-  //   // Make sure to verify the origin of the event to ensure security
-  //   if (event.origin === 'http://your-popup-origin') {
-  //     console.log('Message received from popup window:', event.data);
-  //   }
-  // }
-
+  
   forgotPassword(): void {
     //todo implement
     console.log('TODO: forgotPassword');
@@ -129,5 +120,9 @@ export class LoginComponent {
     // (document.getElementsByClassName('backgroundImage')[0] as HTMLElement).style.backgroundImage = 
     // 'radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, rgb(100 100 100 / 70%), rgb(100 100 100 / 70%)), url(/assets/MockData/BGIW.jpg)';
     // console.log('radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, rgb(100 100 100 / 70%), rgb(100 100 100 / 70%)), url(/assets/MockData/BGIW.jpg)');
+  }
+
+  navigateToSignup(): void {
+    this.router.navigate(['/signup']).then(() => window.location.reload());
   }
 }
