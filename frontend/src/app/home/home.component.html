@@ -1,11 +1,11 @@
-<div class="container" data-testid="home-page">
+<div class="container" data-testid="home-page" (click)="unselectAll()">
   <p-toast></p-toast>
-  <div class="header">
+  <div class="header" >
     <div (click)="navigateToPage('home')" class="logoWrapper">
       <img alt="Home Page" class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" />
     </div>
     <div class="headerNavigation">
-      <div class="p-menubar custom-menubar">
+      <div class="p-menubar custom-menubar" (click)="$event.stopPropagation()">
         <p-menubar [autoZIndex]="false" [style.min-width]="componentWidth" [model]="menuBarItems"
           [style]="{backgroundColor: '#00000000', border: 'none', minWidth: '200px'}"></p-menubar>
       </div>
@@ -112,7 +112,7 @@
     </div>
     <!--    TODO FileManagerPopup above-->
   </div>
-  <div class="leftSideBarWrapper" id="scrollingDiv">
+  <div class="leftSideBarWrapper" id="scrollingDiv" (click)="unselectAll()">
     <div class="leftSideBarHeading">{{ getUserFirstName() }}'s Files</div>
     <div class="leftSideBarTools">
       <hr/>
@@ -152,7 +152,7 @@
       </div> -->
 
     </div>
-    <div class="directoryTree">
+    <div class="directoryTree" (click)="$event.stopPropagation()">
       <p-tree class="leftTree" (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile" [value]="iterateNodeIDRemoval(filesDirectoryTree)"
         class="w-full md:w-30rem" selectionMode="single" [style]="{'border':'none','padding':'0', 'backgroundColor':'#00000000'}"></p-tree>
     </div>
@@ -176,25 +176,25 @@
     </div> -->
     <div class="directoryOperations">
 
-    <div class="imgWrapper">
-      <img class="icon" src="assets/Icons/homeIcons/navbar/homeIcon.png" alt="" (click)="toRoot()"
-            [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="To Root Directory" />
-        </div>
+      <div class="imgWrapper" (click)="$event.stopPropagation()">
+        <img class="icon" src="assets/Icons/homeIcons/navbar/homeIcon.png" alt="" (click)="toRoot()"
+              [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="To Root Directory" />
+      </div>
         
-      <div class="imgWrapper">
+      <div class="imgWrapper" (click)="$event.stopPropagation()">
         <img class="icon" src="assets/Icons/editIcons/undo.svg" alt="" (click)="undoFolder()"
           [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="Back one Directory" />
-        </div>
+      </div>
         
-      <div class="imgWrapper">
+      <div class="imgWrapper" (click)="$event.stopPropagation()">
         <img class="icon" src="assets/Icons/editIcons/redo.svg" alt="" (click)="redoFolder()"
           [ngClass]="{'hover': this.folderIDHistory.length > this.folderIDHistoryPosition + 1}"
           title="Forward one Directory" />
-        </div>
-        <div class="searchBar">
+      </div>
+        <!-- <div class="searchBar" (click)="$event.stopPropagation()">
           <img alt="searchIcon" src="assets/Icons/homeIcons/mainWindow/searchIcon.png" />
           <input (input)="filterTable($event, 0)" class="search-input" placeholder="Search..." type="text" />
-        </div>
+        </div> -->
       </div>
     <div class="folderNameWrapper">
               
@@ -202,7 +202,7 @@
       <h2 class="folderName">{{getCurrentFolderName()}}</h2>
               
     </div>
-    <div class="directoryContents">
+    <div class="directoryContents" (click)="$event.stopPropagation()">
 
       <div class="directoryHeader">
         <div class="iconSpacing">

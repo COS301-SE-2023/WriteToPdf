@@ -11,6 +11,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { DialogService } from 'primeng/dynamicdialog';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({
     declarations: [CameraComponent],
@@ -25,6 +26,7 @@ import { DialogService } from 'primeng/dynamicdialog';
         ToastModule,
         CommonModule,
         FormsModule,
+        InputTextModule,
     ],
     providers: [DialogService],
 })

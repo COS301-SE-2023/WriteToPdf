@@ -4,6 +4,7 @@ $file-height: 50px;
 
 .container {
   width: 100%;
+  height: 100%;
   z-index: -4;
   // overflow-x: auto;
   // white-space: nowrap;
@@ -507,9 +508,11 @@ textarea {
 
 .directoryOperations{
   display: flex;
-  justify-content: center;
-  align-items: center;
+  // justify-content: center;
+  // align-items: center;
   width: 80%;
+  margin-left:0;
+
 }
 $icon-size: 1.5rem;
 
