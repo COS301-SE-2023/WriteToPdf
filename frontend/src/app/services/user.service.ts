@@ -367,7 +367,7 @@ export class UserService {
 
       const expiresAtDate = new Date(this.expiresAt); // Assuming expiresAt is a string
       const currentDate = new Date();
-      const notificationTime = new Date(expiresAtDate.getTime() - 600000 + 15000); // Subtract 1 minute (60000 milliseconds) from the expiration time
+      const notificationTime = new Date(expiresAtDate.getTime() - 60000); // Subtract 1 minute (60000 milliseconds) from the expiration time
 
       if (currentDate >= notificationTime && currentDate < expiresAtDate) {
         // Send the expiration notification
