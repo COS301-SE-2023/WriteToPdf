@@ -30,6 +30,7 @@ import { ExportDTO } from './dto/export.dto';
 import { User } from '../users/entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import exp from 'constants';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -978,6 +979,12 @@ describe('FileManagerController', () => {
         expect(error).toBeInstanceOf(
           HttpException,
         );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
       }
     });
 
@@ -994,6 +1001,12 @@ describe('FileManagerController', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(
           HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
         );
       }
     });
@@ -1012,6 +1025,12 @@ describe('FileManagerController', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(
           HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
         );
       }
     });
