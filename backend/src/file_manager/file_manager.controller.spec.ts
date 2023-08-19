@@ -997,6 +997,24 @@ describe('FileManagerController', () => {
         );
       }
     });
+
+    it('should throw an exception if UserID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '123';
+      try {
+        await controller.updateSafeLockStatus(
+          markdownFileDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+      }
+    });
   });
 
   // Folder operations ################################################
