@@ -1658,6 +1658,33 @@ describe('FileManagerService', () => {
     });
   });
 
+  describe('updateSafeLockStatus', () => {
+    it('should call markdowFilesService updateSafeLockStatus method', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.SafeLock = true;
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'updateSafeLockStatus',
+        )
+        .mockResolvedValue(new MarkdownFile());
+
+      const response =
+        await service.updateSafeLockStatus(
+          markdownFileDTO,
+        );
+      expect(response).toBeInstanceOf(
+        MarkdownFile,
+      );
+      expect(
+        markdownFilesService.updateSafeLockStatus,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+    });
+  });
+
   // describe('exportFile', () => {
   //   it('should throw an error if MarkdownID is undefined', async () => {
   //     const exportDTO = new ExportDTO();
