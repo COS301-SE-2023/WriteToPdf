@@ -230,6 +230,44 @@ export class FileManagerController {
     );
   }
 
+  @Post('update_safelock_status')
+  @HttpCode(HttpStatus.OK)
+  updateSafeLockStatus(
+    @Body()
+    markdownFileDTO: MarkdownFileDTO,
+    @Req() request: Request,
+    // @Headers('isTest') isTest: string, // For using mocked out services
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
+    // TODO - verify that the user is the owner of the
+    // file before updating the safelock status
+
+    // TODO - filter requests in frontend such that
+    // a user may not send an update request with the
+    // same safelock status as the current safelock status
+
+    if (
+      !markdownFileDTO.UserID ||
+      !markdownFileDTO.MarkdownID ||
+      markdownFileDTO.SafeLock === undefined
+    ) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return this.fileManagerService.updateSafeLockStatus(
+      markdownFileDTO,
+    );
+  }
+
   // Folder operations #################################################
   @Post('create_folder')
   @HttpCode(HttpStatus.OK)
