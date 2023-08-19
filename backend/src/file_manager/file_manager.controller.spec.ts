@@ -963,6 +963,25 @@ describe('FileManagerController', () => {
     });
   });
 
+  describe('update_safelock_status', () => {
+    it('should throw an exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      try {
+        await controller.updateSafeLockStatus(
+          markdownFileDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+      }
+    });
+  });
+
   // Folder operations ################################################
   describe('create_folder', () => {
     it('should throw an exception if request method is not POST', async () => {
