@@ -25,6 +25,7 @@ import { User } from './users/entities/user.entity';
 import { AssetManagerModule } from './asset_manager/asset_manager.module';
 import { ConversionService } from './conversion/conversion.service';
 import { TextractService } from './textract/textract.service';
+import { MailService } from './mail/mail.service';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { TextractService } from './textract/textract.service';
     S3ServiceMock,
     ConversionService,
     TextractService,
+    MailService,
   ],
 })
 export class AppModule {}

@@ -12,6 +12,7 @@ import { AuthService } from '../auth/auth.service';
 import { FileManagerController } from './file_manager.controller';
 import { ConversionService } from '../conversion/conversion.service';
 import { S3ServiceMock } from '../s3/__mocks__/s3.service';
+import { MailService } from '../mail/mail.service';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { S3ServiceMock } from '../s3/__mocks__/s3.service';
     AuthService,
     ConversionService,
     S3ServiceMock,
+    MailService,
   ],
 })
 export class FileManagerModule {}

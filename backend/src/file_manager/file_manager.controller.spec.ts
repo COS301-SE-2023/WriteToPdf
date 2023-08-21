@@ -30,6 +30,7 @@ import { ExportDTO } from './dto/export.dto';
 import { User } from '../users/entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { MailService } from '../mail/mail.service';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -49,6 +50,7 @@ describe('FileManagerController', () => {
           UsersService,
           AuthService,
           JwtService,
+          MailService,
           {
             provide: 'FileManagerService',
             useValue: {

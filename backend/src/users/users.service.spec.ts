@@ -17,6 +17,7 @@ import { UserDTO } from './dto/user.dto';
 import * as CryptoJS from 'crypto-js';
 import { OAuth2Client } from 'google-auth-library';
 import { hashSync, genSaltSync } from 'bcryptjs';
+import { MailService } from '../mail/mail.service';
 
 config();
 
@@ -56,6 +57,7 @@ describe('UsersService', () => {
           UsersService,
           AuthService,
           JwtService,
+          MailService,
           {
             provide: getRepositoryToken(User),
             useClass: Repository,

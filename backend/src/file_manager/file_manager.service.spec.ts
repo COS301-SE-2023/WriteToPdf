@@ -34,6 +34,7 @@ import { testDBOptions } from '../../db/data-source';
 import { UserDTO } from '../users/dto/user.dto';
 import * as CryptoJS from 'crypto-js';
 import { S3 } from '@aws-sdk/client-s3';
+import { MailService } from '../mail/mail.service';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -79,6 +80,7 @@ describe('FileManagerService', () => {
           UsersService,
           AuthService,
           JwtService,
+          MailService,
           {
             provide: 'FileManagerService',
             useValue: {

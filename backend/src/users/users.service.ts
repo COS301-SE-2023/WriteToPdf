@@ -14,6 +14,7 @@ import { hashSync, genSaltSync } from 'bcryptjs';
 import { OAuth2Client } from 'google-auth-library';
 import 'dotenv/config';
 import { randomBytes } from 'crypto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +22,7 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private authService: AuthService,
-    private jwtService: JwtService,
+    private mailService: MailService,
   ) {}
 
   create(createUserDTO: UserDTO): Promise<User> {
@@ -343,19 +344,34 @@ export class UsersService {
     return returnedUser; // returns user with salt
   }
 
-  // async resetPassword(userDTO: UserDTO) {
-  //   const user = await this.findOneByEmail(
-  //     userDTO.Email,
-  //   );
-  //   if (!user) {
-  //     this.throwHttpException(
-  //       HttpStatus.NOT_FOUND,
-  //       'User not found',
-  //     );
-  //   }
-  //   user.Password = this.getPepperedPassword(
-  //     userDTO.Password,
-  //   );
-  //   return this.usersRepository.save(user); // update user with new password
-  // }
+  async resetPassword(userDTO: UserDTO) {
+    const user = await this.findOneByEmail(
+      userDTO.Email,
+    );
+    if (!user) {
+      this.throwHttpException(
+        HttpStatus.NOT_FOUND,
+        'User not found',
+      );
+    }
+
+    try {
+      await this.mailService.sendEmail(
+        userDTO.Email,
+        'Password Reset',
+        `This is a test email sent to ${userDTO.Email}`,
+      );
+      console.log(
+        `Password reset email sent to ${userDTO.Email}`,
+      );
+      return {
+        message: 'Password reset email sent',
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Password reset email failed',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+  }
 }
