@@ -78,18 +78,23 @@
 
       <div class="imgWrapper" (click)="$event.stopPropagation()">
         <img class="icon" src="assets/Icons/homeIcons/navbar/homeIcon.png" alt="" (click)="toRoot()"
-              [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="To Root Directory" />
+              [ngClass]="{'hover': this.folderIDHistory[this.folderIDHistoryPosition] !== ''}" title="To Root Directory" />
       </div>
         
       <div class="imgWrapper" (click)="$event.stopPropagation()">
         <img class="icon" src="assets/Icons/editIcons/undo.svg" alt="" (click)="undoFolder()"
-          [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="Back one Directory" />
+          [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="Previous" />
       </div>
         
       <div class="imgWrapper" (click)="$event.stopPropagation()">
         <img class="icon" src="assets/Icons/editIcons/redo.svg" alt="" (click)="redoFolder()"
           [ngClass]="{'hover': this.folderIDHistory.length > this.folderIDHistoryPosition + 1}"
-          title="Forward one Directory" />
+          title="Forward" />
+      </div>
+      <div class="imgWrapper" (click)="$event.stopPropagation()">
+        <img class="icon" src="assets/Icons/homeIcons/mainWindow/up.png" alt="" (click)="upFolder()"
+          [ngClass]="{'hover': this.folderIDHistory[this.folderIDHistoryPosition] !== ''}"
+          title="To Enclosing Folder" />
       </div>
         <!-- <div class="searchBar" (click)="$event.stopPropagation()">
           <img alt="searchIcon" src="assets/Icons/homeIcons/mainWindow/searchIcon.png" />
