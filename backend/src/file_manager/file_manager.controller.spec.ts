@@ -30,6 +30,7 @@ import { ExportDTO } from './dto/export.dto';
 import { User } from '../users/entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import exp from 'constants';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -960,6 +961,78 @@ describe('FileManagerController', () => {
       expect(
         fileManagerService.retrieveAllFiles,
       ).toHaveBeenCalledWith(directoryFilesDTO);
+    });
+  });
+
+  describe('update_safelock_status', () => {
+    it('should throw an exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      try {
+        await controller.updateSafeLockStatus(
+          markdownFileDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an exception if MarkdownID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      try {
+        await controller.updateSafeLockStatus(
+          markdownFileDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an exception if UserID is undefined', async () => {
+      const request = { method: 'POST' };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '123';
+      try {
+        await controller.updateSafeLockStatus(
+          markdownFileDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request data',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
     });
   });
 
