@@ -11,6 +11,7 @@ import { UsersService } from './users.service';
 import { UserDTO } from './dto/user.dto';
 import { Public } from '../auth/auth.controller';
 import { Request } from 'express';
+import { ResetPasswordRequestDTO } from '../reset_password/dto/reset_password_request.dto';
 
 @Controller('users')
 export class UsersController {
@@ -130,6 +131,32 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @Post('reset_password')
   resetPassword(
+    @Body() resetDTO: ResetPasswordRequestDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
+    if (!resetDTO.Token || !resetDTO.Password) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return this.usersService.resetPassword(
+      resetDTO,
+    );
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('request_reset_password')
+  requestResetPassword(
     @Body() resetDTO: UserDTO,
     @Req() request: Request,
   ) {
@@ -147,7 +174,7 @@ export class UsersController {
       );
     }
 
-    return this.usersService.resetPassword(
+    return this.usersService.requestResetPassword(
       resetDTO,
     );
   }
