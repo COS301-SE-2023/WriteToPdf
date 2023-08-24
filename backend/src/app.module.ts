@@ -26,6 +26,7 @@ import { AssetManagerModule } from './asset_manager/asset_manager.module';
 import { ConversionService } from './conversion/conversion.service';
 import { TextractService } from './textract/textract.service';
 import { ResetPasswordModule } from './reset_password/reset_password.module';
+import { ResetPasswordRequest } from './reset_password/entities/reset_password_request.entity';
 
 @Module({
   imports: [
@@ -36,6 +37,9 @@ import { ResetPasswordModule } from './reset_password/reset_password.module';
     TypeOrmModule.forFeature([MarkdownFile]),
     TypeOrmModule.forFeature([Folder]),
     TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([
+      ResetPasswordRequest,
+    ]),
     MarkdownFilesModule,
     FoldersModule,
     S3Module,
