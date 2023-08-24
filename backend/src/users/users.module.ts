@@ -4,11 +4,22 @@ import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { AuthService } from '../auth/auth.service';
+import { ResetPasswordService } from '../reset_password/reset_password.service';
+import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([
+      ResetPasswordRequest,
+    ]),
+  ],
   controllers: [UsersController],
-  providers: [UsersService, AuthService],
+  providers: [
+    UsersService,
+    AuthService,
+    ResetPasswordService,
+  ],
   exports: [UsersService],
 })
 export class UsersModule {}

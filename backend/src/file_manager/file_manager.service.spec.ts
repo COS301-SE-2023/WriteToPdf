@@ -33,7 +33,8 @@ import { User } from '../users/entities/user.entity';
 import { testDBOptions } from '../../db/data-source';
 import { UserDTO } from '../users/dto/user.dto';
 import * as CryptoJS from 'crypto-js';
-import { S3 } from '@aws-sdk/client-s3';
+import { ResetPasswordService } from '../reset_password/reset_password.service';
+import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -79,6 +80,7 @@ describe('FileManagerService', () => {
           UsersService,
           AuthService,
           JwtService,
+          ResetPasswordService,
           {
             provide: 'FileManagerService',
             useValue: {
@@ -146,6 +148,12 @@ describe('FileManagerService', () => {
           },
           {
             provide: getRepositoryToken(User),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(
+              ResetPasswordRequest,
+            ),
             useClass: Repository,
           },
         ],
