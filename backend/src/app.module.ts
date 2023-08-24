@@ -26,6 +26,7 @@ import { AssetManagerModule } from './asset_manager/asset_manager.module';
 import { ConversionService } from './conversion/conversion.service';
 import { TextractService } from './textract/textract.service';
 import { MailService } from './mail/mail.service';
+import { ResetPasswordModule } from './reset_password/reset_password.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { MailService } from './mail/mail.service';
     S3Module,
     FileManagerModule,
     AssetManagerModule,
+    ResetPasswordModule,
   ],
   controllers: [
     AuthController,
