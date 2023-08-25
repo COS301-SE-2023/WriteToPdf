@@ -51,7 +51,8 @@ export class FileUploadPopupComponent {
             response.MarkdownID,
             response.Name,
             response.Path,
-            response.ParentFolderID
+            response.ParentFolderID,
+            response.SafeLock
           );
 
           this.navigateToPage('edit');

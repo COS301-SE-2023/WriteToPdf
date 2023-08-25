@@ -9,6 +9,7 @@ export class EditService {
   private name: string | undefined = '';
   private path: string | undefined = '';
   private parentFolderID: string | undefined = '';
+  private safeLock: boolean | undefined = false;
 
   constructor() {}
 
@@ -72,18 +73,24 @@ export class EditService {
     return this.parentFolderID;
   }
 
+  getSafeLock(): boolean | undefined {
+    return this.safeLock;
+  }
+
   setAll(
     content: string | undefined,
     markdownID: string | undefined,
     name: string | undefined,
     path: string | undefined,
-    parentFolderID: string | undefined
+    parentFolderID: string | undefined,
+    safeLock: boolean | undefined
   ) {
     this.content = content;
     this.markdownID = markdownID;
     this.name = name;
     this.path = path;
     this.parentFolderID = parentFolderID;
+    this.safeLock = safeLock;
 
     if(this.content == undefined) {
       this.content = '';
@@ -100,13 +107,16 @@ export class EditService {
     if(this.parentFolderID == undefined) {
       this.parentFolderID = '';
     }
+    if(this.safeLock == undefined) {
+      this.safeLock = false;
+    }
     
     localStorage.setItem('content', this.content);
     localStorage.setItem('markdownID', this.markdownID);
     localStorage.setItem('name', this.name);
     localStorage.setItem('path', this.path);
     localStorage.setItem('parentFolderID', this.parentFolderID);
-
+    localStorage.setItem('safeLock', this.safeLock.toString());
   }
 
   reset() {

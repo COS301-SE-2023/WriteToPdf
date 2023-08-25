@@ -31,7 +31,7 @@ export class FileService {
     content: string | undefined,
     markdownID: string | undefined,
     path: string | undefined,
-    safeLock: string | undefined
+    safeLock: boolean | undefined
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSaveData(content, markdownID, path, safeLock).subscribe({
@@ -54,7 +54,7 @@ export class FileService {
     content: string | undefined,
     markdownID: string | undefined,
     path: string | undefined,
-    safeLock: string | undefined
+    safeLock: boolean | undefined
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/save_file`;
@@ -130,7 +130,8 @@ export class FileService {
               response.body.MarkdownID,
               response.body.Name,
               response.body.Path,
-              response.body.ParentFolderID
+              response.body.ParentFolderID,
+              response.body.SafeLock
             );
 
             resolve(true);

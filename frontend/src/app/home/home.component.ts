@@ -599,7 +599,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
           file.MarkdownID,
           file.Name,
           file.Path,
-          file.ParentFolderID
+          file.ParentFolderID,
+          file.SafeLock
         );
 
         this.loading = false;
@@ -1548,18 +1549,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   updateSafeLockStatus(): void {
-    // retrive file data from s3 asynchronously
-    const content = this.fileService.retrieveDocument(
-      this.markdownFileDTO.markdownID,
-      this.markdownFileDTO.path
-    );
-    // collect userDocumentPassword
-    this.fileService.saveDocument(
-      content,
-      markdownFileDTO.markdownID,
-      markdownFileDTO.path,
-      this.getUserDocumentPassword()
-    );
+
   }
 
   out(x: number) {

@@ -62,7 +62,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.fileService.saveDocument(
       this.editor.getData(),
       this.editService.getMarkdownID(),
-      this.editService.getPath()
+      this.editService.getPath(),
+      this.editService.getSafeLock()
     );
   }
 
@@ -122,9 +123,10 @@ export class EditComponent implements AfterViewInit, OnInit {
     const n = localStorage.getItem('name');
     const p = localStorage.getItem('path');
     const pf = localStorage.getItem('parentFolderID');
+    const sl = localStorage.getItem('safeLock');
 
-    if (c != null && m != null && n != null && p != null && pf != null)
-      this.editService.setAll(c, m, n, p, pf);
+    if (c != null && m != null && n != null && p != null && pf != null && sl != null)
+      this.editService.setAll(c, m, n, p, pf, sl === 'true');
     this.fileName = this.editService.getName();
   }
 
@@ -237,7 +239,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.fileService.saveDocument(
       contents,
       this.editService.getMarkdownID(),
-      this.editService.getPath()
+      this.editService.getPath(),
+      this.editService.getSafeLock()
     );
   }
 
