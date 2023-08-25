@@ -21,13 +21,13 @@ export class MailService {
   async sendEmail(
     to: string,
     subject: string,
-    text: string,
+    html: string,
   ): Promise<void> {
     await this.transporter.sendMail({
       from: process.env.SYSTEM_EMAIL,
       to: to,
       subject: subject,
-      text: text,
+      html: html,
     });
   }
 }
