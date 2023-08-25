@@ -29,7 +29,6 @@ import { ResetPasswordModule } from './reset_password/reset_password.module';
 import { ResetPasswordRequest } from './reset_password/entities/reset_password_request.entity';
 import { MailService } from './mail/mail.service';
 
-
 @Module({
   imports: [
     AuthModule,
