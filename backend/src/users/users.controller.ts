@@ -11,6 +11,7 @@ import { UsersService } from './users.service';
 import { UserDTO } from './dto/user.dto';
 import { Public } from '../auth/auth.controller';
 import { Request } from 'express';
+import { ResetPasswordRequestDTO } from '../reset_password/dto/reset_password_request.dto';
 
 @Controller('users')
 export class UsersController {

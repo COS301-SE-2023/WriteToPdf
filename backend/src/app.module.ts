@@ -25,6 +25,8 @@ import { User } from './users/entities/user.entity';
 import { AssetManagerModule } from './asset_manager/asset_manager.module';
 import { ConversionService } from './conversion/conversion.service';
 import { TextractService } from './textract/textract.service';
+import { ResetPasswordModule } from './reset_password/reset_password.module';
+import { ResetPasswordRequest } from './reset_password/entities/reset_password_request.entity';
 
 @Module({
   imports: [
@@ -35,11 +37,15 @@ import { TextractService } from './textract/textract.service';
     TypeOrmModule.forFeature([MarkdownFile]),
     TypeOrmModule.forFeature([Folder]),
     TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([
+      ResetPasswordRequest,
+    ]),
     MarkdownFilesModule,
     FoldersModule,
     S3Module,
     FileManagerModule,
     AssetManagerModule,
+    ResetPasswordModule,
   ],
   controllers: [
     AuthController,

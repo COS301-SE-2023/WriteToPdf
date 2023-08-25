@@ -17,6 +17,8 @@ import { UserDTO } from './dto/user.dto';
 import * as CryptoJS from 'crypto-js';
 import { OAuth2Client } from 'google-auth-library';
 import { hashSync, genSaltSync } from 'bcryptjs';
+import { ResetPasswordService } from '../reset_password/reset_password.service';
+import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
 
 config();
 
@@ -56,8 +58,15 @@ describe('UsersService', () => {
           UsersService,
           AuthService,
           JwtService,
+          ResetPasswordService,
           {
             provide: getRepositoryToken(User),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(
+              ResetPasswordRequest,
+            ),
             useClass: Repository,
           },
           {
@@ -183,11 +192,10 @@ describe('UsersService', () => {
     it('should return a user', async () => {
       const email = 'test';
       const user1 = new UserDTO();
-      const user2 = new UserDTO();
 
       jest
-        .spyOn(Repository.prototype, 'query')
-        .mockResolvedValue([user1, user2]);
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValue(user1);
 
       const result = await service.findOneByEmail(
         email,
@@ -195,11 +203,12 @@ describe('UsersService', () => {
 
       expect(result).toEqual(user1);
       expect(
-        Repository.prototype.query,
-      ).toHaveBeenCalledWith(
-        'SELECT * FROM USERS WHERE Email = ?',
-        [email],
-      );
+        Repository.prototype.findOne,
+      ).toHaveBeenCalledWith({
+        where: {
+          Email: email,
+        },
+      });
     });
   });
   describe('signup', () => {
