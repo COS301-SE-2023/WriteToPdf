@@ -1299,6 +1299,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
+  upFolder() {
+    if (this.folderIDHistoryPosition == 0) return;
+    const parentID = this.folderIDHistory[this.folderIDHistoryPosition];
+    const currDir = this.nodeService.getFolderDTOByID(parentID);
+    if(currDir.ParentFolderID == null) return;
+    this.openFolder(currDir.ParentFolderID);
+  }
+
   renameFolder(folderID: string, path: string, newName: string) {
     console.log(newName);
     console.log(folderID);
@@ -1524,6 +1532,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
         return '';
     }
   }
+
+out(x:number){
+  console.log(x);
+}
 
   protected readonly focus = focus;
 }

@@ -245,4 +245,58 @@ describe('MarkdownFilesService', () => {
       ).toBeCalled();
     });
   });
+
+  describe('updateSafeLockStatus', () => {
+    it('should throw error if markdown file not found in database', async () => {
+      const markdownFile = new MarkdownFileDTO();
+      markdownFile.MarkdownID = '1';
+      markdownFile.SafeLock = true;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(null);
+
+      await expect(
+        service.updateSafeLockStatus(
+          markdownFile,
+        ),
+      ).rejects.toThrow(
+        'Markdown file not found',
+      );
+    });
+
+    it('should find the markdown file and update the safe lock status', async () => {
+      const markdownFile = new MarkdownFileDTO();
+      markdownFile.MarkdownID = '1';
+      markdownFile.SafeLock = true;
+
+      const updatedMarkdownFile =
+        new MarkdownFileDTO();
+      updatedMarkdownFile.MarkdownID = '1';
+      updatedMarkdownFile.SafeLock = true;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(markdownFile);
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockResolvedValue(updatedMarkdownFile);
+
+      const result =
+        await service.updateSafeLockStatus(
+          markdownFile,
+        );
+
+      expect(result).toBe(updatedMarkdownFile);
+      expect(
+        Repository.prototype.findOneBy,
+      ).toBeCalledWith({
+        MarkdownID: markdownFile.MarkdownID,
+      });
+      expect(
+        Repository.prototype.save,
+      ).toBeCalled();
+    });
+  });
 });

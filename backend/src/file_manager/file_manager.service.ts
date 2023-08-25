@@ -263,6 +263,14 @@ export class FileManagerService {
     );
   }
 
+  updateSafeLockStatus(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    return this.markdownFilesService.updateSafeLockStatus(
+      markdownFileDTO,
+    );
+  }
+
   // Folder operations: #########################################################
   createFolder(folderDTO: FolderDTO) {
     if (folderDTO.FolderName === undefined)

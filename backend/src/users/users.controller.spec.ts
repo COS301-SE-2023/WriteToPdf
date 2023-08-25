@@ -15,6 +15,8 @@ import {
 import { AuthService } from '../auth/auth.service';
 import { UserDTO } from './dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ResetPasswordService } from '../reset_password/reset_password.service';
+import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
 import { MailService } from '../mail/mail.service';
 
 describe('UsersController', () => {
@@ -29,9 +31,16 @@ describe('UsersController', () => {
         providers: [
           UsersService,
           JwtService,
+          ResetPasswordService,
           MailService,
           {
             provide: getRepositoryToken(User),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(
+              ResetPasswordRequest,
+            ),
             useClass: Repository,
           },
           {

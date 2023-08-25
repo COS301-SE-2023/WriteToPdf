@@ -14,9 +14,10 @@ import { hashSync, genSaltSync } from 'bcryptjs';
 import { OAuth2Client } from 'google-auth-library';
 import 'dotenv/config';
 import { randomBytes } from 'crypto';
+import { ResetPasswordRequestDTO } from '../reset_password/dto/reset_password_request.dto';
+import { ResetPasswordService } from '../reset_password/reset_password.service';
 import { MailService } from '../mail/mail.service';
 import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
-import { ResetPasswordRequestDTO } from '../reset_password/dto/reset_password_request.dto';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +26,8 @@ export class UsersService {
     private usersRepository: Repository<User>,
     private resetPasswordRepository: Repository<ResetPasswordRequest>,
     private authService: AuthService,
+    private resetPasswordService: ResetPasswordService,
+    // private mailService: MailService,
     private mailService: MailService,
     private jwtService: JwtService,
   ) {}
@@ -75,14 +78,12 @@ export class UsersService {
   }
 
   async findOneByToken(
-    Token: string,
+    token: string,
   ): Promise<User> {
     const result =
-      await this.resetPasswordRepository.findOne({
-        where: {
-          Token: Token,
-        },
-      });
+      await this.resetPasswordService.findOneByToken(
+        token,
+      );
     if (!result) {
       this.throwHttpException(
         HttpStatus.NOT_FOUND,
@@ -393,12 +394,10 @@ export class UsersService {
     );
 
     const resetRequest =
-      await this.resetPasswordRepository.findOne({
-        where: {
-          UserID: user.UserID,
-          Token: resetPasswordDTO.Token,
-        },
-      });
+      await this.resetPasswordService.findOneByTokenAndUserID(
+        resetPasswordDTO.Token,
+        user.UserID,
+      );
 
     if (!resetRequest) {
       this.throwHttpException(
@@ -436,7 +435,7 @@ export class UsersService {
     ).toString();
 
     await this.usersRepository.save(user);
-    await this.resetPasswordRepository.delete(
+    await this.resetPasswordService.remove(
       resetRequest,
     );
 
@@ -457,41 +456,15 @@ export class UsersService {
     }
 
     const resetPasswordRequest =
-      await this.resetPasswordRepository.create();
-
-    resetPasswordRequest.UserID = user.UserID;
-    resetPasswordRequest.Token =
-      await this.generateToken(
-        userDTO.UserID,
-        resetPasswordRequest.DateExpires,
+      await this.resetPasswordService.create(
+        user.UserID,
       );
-
-    await this.resetPasswordRepository.save(
-      resetPasswordRequest,
-    );
 
     return await this.sendPasswordResetEmail(
       userDTO.Email,
       resetPasswordRequest.Token,
       userDTO.FirstName,
     );
-  }
-
-  async generateToken(
-    UserID: number,
-    DateExpires: Date,
-  ): Promise<string> {
-    const token = await this.jwtService.signAsync(
-      {
-        UserID: UserID,
-        DateExpires: DateExpires,
-      },
-      {
-        secret: process.env.JWT_SECRET,
-        expiresIn: '24h',
-      },
-    );
-    return token;
   }
 
   async sendPasswordResetEmail(
