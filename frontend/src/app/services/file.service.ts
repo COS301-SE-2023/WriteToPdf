@@ -30,10 +30,11 @@ export class FileService {
   saveDocument(
     content: string | undefined,
     markdownID: string | undefined,
-    path: string | undefined
+    path: string | undefined,
+    safeLock: string | undefined
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.sendSaveData(content, markdownID, path).subscribe({
+      this.sendSaveData(content, markdownID, path, safeLock).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
             this.messageService.add({
@@ -52,7 +53,8 @@ export class FileService {
   sendSaveData(
     content: string | undefined,
     markdownID: string | undefined,
-    path: string | undefined
+    path: string | undefined,
+    safeLock: string | undefined
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/save_file`;
@@ -130,7 +132,7 @@ export class FileService {
               response.body.Path,
               response.body.ParentFolderID
             );
-            
+
             resolve(true);
           } else {
             resolve(false);
@@ -413,10 +415,12 @@ export class FileService {
   ): void {
     //Applying CSS stylings to html page to allow for table conversion
     const txtContent = content;
-    const tableStyling = 'style="border-collapse: collapse; border:1px solid #bfbfbf;" ';
-    const tdThStyling ='style="border: 1px solid #bfbfbf; padding: 8px; text-align: left; width:32px;" ';
+    const tableStyling =
+      'style="border-collapse: collapse; border:1px solid #bfbfbf;" ';
+    const tdThStyling =
+      'style="border: 1px solid #bfbfbf; padding: 8px; text-align: left; width:32px;" ';
 
-    if(content.includes('<table')) {
+    if (content.includes('<table')) {
       console.log('contains table');
     }
     //more work needs to be done to get conversion better
@@ -426,7 +430,8 @@ export class FileService {
     content = content.replace(/<td/g, `<td ${tdThStyling}`);
     content = content.replace(/<th/g, `<th ${tdThStyling}`);
 
-    content = `<head><style>
+    content =
+      `<head><style>
     .text-huge {font-size: 1.8em;}
     .text-big {font-size: 1.4em;}
     .text-small {font-size: 0.85em;}
@@ -517,7 +522,6 @@ export class FileService {
       summary: 'Export failed',
     });
 
-
     // if (type === 'html') {
     //   this.downloadAsHtmlFile(content, name);
     //   return;
@@ -562,6 +566,22 @@ export class FileService {
       return '';
     }
   }
+
+  encryptSafeLockDocument(
+    content: string | undefined,
+    userDocumentPassword: string
+  ) {
+    const signature = 'WRITETOPDF-SAFELOCK-SIGNATURE';
+    const key = userDocumentPassword;
+    if (key && content) {
+      content = content + signature;
+      const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
+      return encryptedMessage;
+    } else {
+      return '';
+    }
+  }
+
   decryptDocument(content: string | undefined): string {
     if (content) return content;
     const key = this.userService.getEncryptionKey();
