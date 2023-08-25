@@ -6,6 +6,7 @@ import { ResetPasswordService } from './reset_password.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ResetPasswordRequest } from './entities/reset_password_request.entity';
+import { JwtService } from '@nestjs/jwt';
 
 describe('ResetPasswordService', () => {
   let service: ResetPasswordService;
@@ -15,6 +16,7 @@ describe('ResetPasswordService', () => {
       await Test.createTestingModule({
         providers: [
           ResetPasswordService,
+          JwtService,
           {
             provide: getRepositoryToken(
               ResetPasswordRequest,
