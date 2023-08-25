@@ -19,6 +19,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { hashSync, genSaltSync } from 'bcryptjs';
 import { ResetPasswordService } from '../reset_password/reset_password.service';
 import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
+import { MailService } from '../mail/mail.service';
 
 config();
 
@@ -59,6 +60,7 @@ describe('UsersService', () => {
           AuthService,
           JwtService,
           ResetPasswordService,
+          MailService,
           {
             provide: getRepositoryToken(User),
             useClass: Repository,

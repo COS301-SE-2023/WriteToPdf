@@ -12,5 +12,6 @@ import { JwtService } from '@nestjs/jwt';
   ],
   providers: [ResetPasswordService, JwtService],
   exports: [ResetPasswordService],
+  providers: [ResetPasswordService],
 })
 export class ResetPasswordModule {}

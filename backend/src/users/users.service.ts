@@ -16,15 +16,19 @@ import 'dotenv/config';
 import { randomBytes } from 'crypto';
 import { ResetPasswordRequestDTO } from '../reset_password/dto/reset_password_request.dto';
 import { ResetPasswordService } from '../reset_password/reset_password.service';
+import { MailService } from '../mail/mail.service';
+import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private resetPasswordRepository: Repository<ResetPasswordRequest>,
     private authService: AuthService,
     private resetPasswordService: ResetPasswordService,
     // private mailService: MailService,
+    private mailService: MailService,
     private jwtService: JwtService,
   ) {}
 
@@ -524,21 +528,21 @@ export class UsersService {
     </body>
     </html>
     `;
-    // try {
-    //   await this.mailService.sendEmail(
-    //     email,
-    //     subject,
-    //     html,
-    //   );
-    return {
-      message: 'Password reset email sent',
-    };
-    // } catch (error) {
-    //   throw new HttpException(
-    //     'Password reset email failed: ' +
-    //       error.message,
-    //     HttpStatus.UNAUTHORIZED,
-    //   );
-    // }
+    try {
+      await this.mailService.sendEmail(
+        email,
+        subject,
+        html,
+      );
+      return {
+        message: 'Password reset email sent',
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Password reset email failed: ' +
+          error.message,
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
   }
 }
