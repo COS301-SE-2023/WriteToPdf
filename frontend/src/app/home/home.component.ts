@@ -88,6 +88,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public createNewDocumentDialogueVisible: boolean = false;
   public createNewFolderDialogueVisible: boolean = false;
   renameDialogueVisible: boolean = false;
+  documentLockedPopup: boolean = false;
   public entityName: string = '';
   entityRename: string = '';
   uploadedFiles: any[] = [];
@@ -156,6 +157,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
         label: 'Delete',
         icon: 'pi pi-trash',
         command: () => this.deleteSelectedEntities(),
+      },
+      {
+        label: 'Lock Document',
+        icon: 'pi pi-lock',
+        command: () => this.documentLockedPopup = true,
       },
     ];
   }
@@ -604,9 +610,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
         );
 
         this.loading = false;
-        this.navigateToPage('edit');
+        if(!file.SafeLock)
+          this.navigateToPage('edit');
       });
+      if(file.SafeLock){
+        this.documentLockedPopup = true;
+      }
   }
+
 
   delete(event: any) {
     if (event.Type == 'folder') {
@@ -1465,7 +1476,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   lockClick($event: any, file: any) {
     $event.stopPropagation();
+    console.log(this.getSelected());
   }
+
   lockRightClick($event: any, file: any) {
     $event.stopPropagation();
   }
@@ -1548,13 +1561,31 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  updateSafeLockStatus(): void {
-
-  }
-
   out(x: number) {
     console.log(x);
   }
+
+lockDocument() {
+  const file = this.getSelected();
+
+  this.fileService
+    .retrieveDocument(file.MarkdownID, file.Path)
+    .then((data) => {
+      this.editService.setAll(
+        data,
+        file.MarkdownID,
+        file.Name,
+        file.Path,
+        file.ParentFolderID,
+        file.SafeLock
+      );
+
+
+      this.loading = false;
+      if (!file.SafeLock)
+        this.navigateToPage('edit');
+    });
+}
 
   protected readonly focus = focus;
 }

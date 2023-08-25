@@ -312,6 +312,7 @@ export class FileService {
               fileDTO.ParentFolderID = body.Files[i].ParentFolderID;
               fileDTO.Path = body.Files[i].Path;
               fileDTO.Size = body.Files[i].Size;
+              fileDTO.SafeLock = body.Files[i].SafeLock;
 
               files.push(fileDTO);
             }
