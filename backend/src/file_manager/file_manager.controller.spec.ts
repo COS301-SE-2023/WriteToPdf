@@ -30,7 +30,8 @@ import { ExportDTO } from './dto/export.dto';
 import { User } from '../users/entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
-import exp from 'constants';
+import { ResetPasswordService } from '../reset_password/reset_password.service';
+import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -50,6 +51,7 @@ describe('FileManagerController', () => {
           UsersService,
           AuthService,
           JwtService,
+          ResetPasswordService,
           {
             provide: 'FileManagerService',
             useValue: {
@@ -68,6 +70,12 @@ describe('FileManagerController', () => {
           },
           {
             provide: getRepositoryToken(User),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(
+              ResetPasswordRequest,
+            ),
             useClass: Repository,
           },
         ],

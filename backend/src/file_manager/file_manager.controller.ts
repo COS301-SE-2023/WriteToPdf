@@ -16,7 +16,6 @@ import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ExportDTO } from './dto/export.dto';
 import { ImportDTO } from './dto/import.dto';
-import { ConversionService } from '../conversion/conversion.service';
 
 @Controller('file_manager')
 export class FileManagerController {

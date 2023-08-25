@@ -12,12 +12,17 @@ import { AuthService } from '../auth/auth.service';
 import { FileManagerController } from './file_manager.controller';
 import { ConversionService } from '../conversion/conversion.service';
 import { S3ServiceMock } from '../s3/__mocks__/s3.service';
+import { ResetPasswordService } from '../reset_password/reset_password.service';
+import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([MarkdownFile]),
     TypeOrmModule.forFeature([Folder]),
     TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([
+      ResetPasswordRequest,
+    ]),
   ],
   controllers: [FileManagerController],
   providers: [
@@ -29,6 +34,7 @@ import { S3ServiceMock } from '../s3/__mocks__/s3.service';
     AuthService,
     ConversionService,
     S3ServiceMock,
+    ResetPasswordService,
   ],
 })
 export class FileManagerModule {}
