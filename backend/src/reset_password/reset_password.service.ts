@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ResetPasswordRequest } from './entities/reset_password_request.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -32,6 +32,59 @@ export class ResetPasswordService {
       {
         where: {
           Token: token,
+          UserID: userID,
+        },
+      },
+    );
+  }
+
+  async findOneByUserID(
+    userID: number,
+  ): Promise<ResetPasswordRequest> {
+    // const currentAllRequests =
+    //   await this.resetPasswordRequestRepository.find(
+    //     {
+    //       where: {
+    //         UserID: userID,
+    //       },
+    //     },
+    //   );
+
+    // console.log(
+    //   'All requests before delete: ',
+    //   currentAllRequests,
+    // );
+
+    // First delete all requests that have expired
+    // const deleteResponse =
+    await this.resetPasswordRequestRepository.delete(
+      {
+        UserID: userID,
+        DateExpires: LessThan(new Date()),
+      },
+    );
+    // console.log(
+    //   'deleteResponse: ',
+    //   deleteResponse,
+    // );
+
+    // const currentAllRequestsAfterDelete =
+    //   await this.resetPasswordRequestRepository.find(
+    //     {
+    //       where: {
+    //         UserID: userID,
+    //       },
+    //     },
+    //   );
+
+    // console.log(
+    //   'All requests after delete: ',
+    //   currentAllRequestsAfterDelete,
+    // );
+
+    return await this.resetPasswordRequestRepository.findOne(
+      {
+        where: {
           UserID: userID,
         },
       },
