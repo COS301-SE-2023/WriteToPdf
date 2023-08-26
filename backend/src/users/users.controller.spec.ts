@@ -500,4 +500,183 @@ describe('UsersController', () => {
       ).toBe(expectedResult);
     });
   });
+
+  describe('request_reset_password', () => {
+    it('should be decorated with @Public', () => {
+      const isPublic = Reflect.getMetadata(
+        'isPublic',
+        controller.requestResetPassword,
+      );
+      expect(isPublic).toBe(true);
+    });
+
+    it('should throw exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const payload: any = {
+        Email: 'test',
+      };
+
+      try {
+        await controller.requestResetPassword(
+          payload,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw exception if email is missing', async () => {
+      const request = { method: 'POST' };
+      const payload: any = {};
+
+      try {
+        await controller.requestResetPassword(
+          payload,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+      }
+    });
+
+    it('should return the newly registered user', async () => {
+      const request = { method: 'POST' };
+      const payload: any = {
+        Email: 'test',
+      };
+
+      const expectedResult = {
+        message:
+          'Password reset request created successfully',
+      };
+
+      jest
+        .spyOn(
+          usersService,
+          'requestResetPassword',
+        )
+        .mockImplementation(
+          async () => expectedResult as any,
+        );
+
+      expect(
+        await controller.requestResetPassword(
+          payload,
+          request as any,
+        ),
+      ).toBe(expectedResult);
+    });
+  });
+
+  describe('reset_password', () => {
+    it('should be decorated with @Public', () => {
+      const isPublic = Reflect.getMetadata(
+        'isPublic',
+        controller.resetPassword,
+      );
+      expect(isPublic).toBe(true);
+    });
+
+    it('should throw exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const payload: any = {
+        Token: 'test',
+        Password: 'test',
+      };
+
+      try {
+        await controller.requestResetPassword(
+          payload,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw exception if token is missing', async () => {
+      const request = { method: 'POST' };
+      const payload: any = {
+        Password: 'test',
+      };
+
+      try {
+        await controller.requestResetPassword(
+          payload,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+      }
+    });
+
+    it('should throw exception if password is missing', async () => {
+      const request = { method: 'POST' };
+      const payload: any = {
+        Token: 'test',
+      };
+
+      try {
+        await controller.requestResetPassword(
+          payload,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+      }
+    });
+
+    it('should return a success message', async () => {
+      const request = { method: 'POST' };
+      const payload: any = {
+        Token: 'test',
+        Password: 'test',
+      };
+
+      const expectedResult = {
+        message: 'Password reset successfully',
+      };
+
+      jest
+        .spyOn(usersService, 'resetPassword')
+        .mockImplementation(
+          async () => expectedResult as any,
+        );
+
+      expect(
+        await controller.resetPassword(
+          payload,
+          request as any,
+        ),
+      ).toBe(expectedResult);
+    });
+  });
 });
