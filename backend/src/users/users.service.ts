@@ -452,17 +452,10 @@ export class UsersService {
       );
     }
 
-    // console.log('User being requested: ', user);
-
     const previousRequest =
       await this.resetPasswordService.findOneByUserID(
         user.UserID,
       );
-
-    // console.log(
-    //   'Previous request: ',
-    //   previousRequest,
-    // );
 
     if (previousRequest) {
       this.throwHttpException(
@@ -490,7 +483,7 @@ export class UsersService {
     name: string,
   ) {
     const subject = 'WriteToPdf Password Reset';
-    const url = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    const url = `${process.env.FRONTEND_URL}/?token=${token}`;
     const html = `
     <!DOCTYPE html>
     <html lang="en">
