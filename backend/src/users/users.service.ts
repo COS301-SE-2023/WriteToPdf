@@ -405,7 +405,7 @@ export class UsersService {
 
     if (resetRequest.DateExpires < new Date()) {
       this.throwHttpException(
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.BAD_REQUEST,
         'Reset password request expired',
       );
     }
