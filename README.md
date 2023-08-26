@@ -47,7 +47,7 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 - [User manual v2](https://docs.google.com/document/d/1zs5NqddSAby1zNL-tTCPOdJPDTYQJnAWIyChKixjNN4/edit?usp=sharing)
 
 ### Technical installation document
-- [Technical insallation v1](https://docs.google.com/document/d/1HG9QVSEh2NsHbrRTlXPBjiq3keQMapmmiDbTFK07tNU/edit?usp=sharing)
+- [Technical installation v1](https://docs.google.com/document/d/1HG9QVSEh2NsHbrRTlXPBjiq3keQMapmmiDbTFK07tNU/edit?usp=sharing)
 
 ### Coding standards
 
