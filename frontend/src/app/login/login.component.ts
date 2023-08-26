@@ -138,6 +138,15 @@ export class LoginComponent {
       });
       return;
     }
+    if(this.newPass !== this.confirmNewPass)
+    {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `Passwords do not match`,
+      });
+      return;
+    }
     if(await this.userService.resetPassword(this.token, this.newPass))
     {
       this.resetPasswordPopup = false;
