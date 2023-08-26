@@ -93,7 +93,7 @@ The flow of merging is: dev/feature -> codecov -> test -> main
 
 
 ## Repository Structure
-The repository follows a well-organized structure to meet our client's requirements and ensure efficient development and maintenance. It consists of the following folders:
+The repository follows a well-organised structure to meet our client's requirements and ensures efficient development and maintenance. It consists of the following folders:
 ```
 .
 |-- /frontend
@@ -133,9 +133,9 @@ Janco has experience working as a tutor for the module Data Structures and Algor
 <details>
 <summary>Jake Weatherhead - u04929552</summary>
 <br/>
-<p>Integration Engineer, Data Engineer</p>
+<p>API Engineer, Data Engineer</p>
 <p>
-Jake is a self-motivated and passionate individual who is highly enthusiastic about the practical applications of data science, machine learning and product design. He has experience as a tutor for the module Mathematical Modelling at the University of Pretoria where he tutors students in Pythonic data science. He has experience building, managing and integrating NoSQL databases, such as Google Cloud Firestore and MongoDB. He also has experience building APIs in PHP and Typescript through NestJS. Jake’s other relevant skills include Java, NodeJS, Angular, C++ and LaTeX.
+Jake is a self-motivated and passionate individual who is highly enthusiastic about the practical applications of data science, machine learning and product design. He has experience as a tutor for the module Mathematical Modelling at the University of Pretoria where he tutored students in Pythonic data science. He has experience building, managing and integrating NoSQL databases, such as Google Cloud Firestore and MongoDB. He also has experience building APIs in PHP and Typescript through NestJS. Jake’s other relevant skills include Java, NestJS, Angular, C++ and LaTeX.
 </p>
 <img src="https://user-images.githubusercontent.com/104741835/235907757-81df79c3-b9e8-49ae-a481-c21bbb385913.png" />
 <br/>
