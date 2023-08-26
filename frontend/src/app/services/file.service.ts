@@ -27,6 +27,7 @@ export class FileService {
     private conversionService: ConversionService
   ) {}
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   saveDocument(
     content: string | undefined,
     markdownID: string | undefined,
@@ -50,6 +51,7 @@ export class FileService {
     });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   sendSaveData(
     content: string | undefined,
     markdownID: string | undefined,
@@ -71,7 +73,8 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveDocument(
+  // User does not need to provide userDocumentPassword (SafeLock)
+  async retrieveDocument(
     markdownID: string | undefined,
     path: string | undefined
   ): Promise<any> {
@@ -92,6 +95,7 @@ export class FileService {
     });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   sendRetrieveData(
     markdownID: string | undefined,
     path: string | undefined
@@ -111,6 +115,8 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User must provide userDocumentPassword (SafeLock) IF
+  // they chose to lock the document
   createDocument(
     name: string,
     path: string | undefined,
@@ -143,6 +149,8 @@ export class FileService {
     });
   }
 
+  // User must provide userDocumentPassword (SafeLock) IF
+  // they chose to lock the document
   sendCreateData(
     name: string,
     path: string | undefined,
@@ -165,6 +173,8 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User must provide userDocumentPassword (SafeLock) IF
+  // the document is in SafeLock mode
   deleteDocument(markdownID: string | undefined): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(markdownID).subscribe({
@@ -180,6 +190,8 @@ export class FileService {
     });
   }
 
+  // User must provide userDocumentPassword (SafeLock) IF
+  // the document is in SafeLock mode
   sendDeleteData(
     markdownID: string | undefined
   ): Observable<HttpResponse<any>> {
@@ -198,6 +210,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   renameDocument(
     markdownFileID: string | undefined,
     fileName: string | undefined,
@@ -241,6 +254,8 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
+  // because moving does not modify or compromise the document content
   moveDocument(
     markdownID: string | undefined,
     path: string | undefined,
@@ -274,6 +289,8 @@ export class FileService {
     });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
+  // because moving does not modify or compromise the document content
   sendMoveData(
     markdownID: string | undefined,
     path: string | undefined,
@@ -295,6 +312,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   retrieveAllFiles(): Promise<MarkdownFileDTO[]> {
     return new Promise<MarkdownFileDTO[]>((resolve, reject) => {
       this.sendRetrieveAllFiles().subscribe({
@@ -336,6 +354,7 @@ export class FileService {
     });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   sendRetrieveAllFiles(): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/retrieve_all_files`;
@@ -350,6 +369,8 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock) because
+  // a file on the local machine is not subject to SafeLock... for now
   importDocument(
     name: string,
     path: string,
@@ -383,6 +404,8 @@ export class FileService {
     });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock) because
+  // a file on the local machine is not subject to SafeLock... for now
   sendImportData(
     name: string,
     path: string,
@@ -409,6 +432,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   exportDocumentToNewFileType(
     markdownID: string | undefined,
     name: string,
