@@ -316,15 +316,63 @@ export class UserService {
     return this.http.post(url, body, { observe: 'response' });
   }
 
+  async resetPassword(token: string, password: string): Promise<boolean> {
+    let salt: string;
+    
+    const email = this.jwtHelper.decodeToken(token).Email;
+    await this.retrieveSalt(email)
+      .then((result) => {
+        salt = result;
+        // Continue with the code that depends on the salt value
+      })
+      .catch((error) => {
+        console.error(error); // Handle error if any
+      });
+
+    return new Promise<boolean>(async (resolve, reject) => {
+      this.sendPasswordResetData(token, password, salt).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          if (response.status === 200) {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: `Password reset successful`,
+            });
+            resolve(true);
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: `Password reset failed`,
+            });
+            resolve(false);
+          }
+        },
+        error: (error) => {
+          console.error(error); // Handle error if any
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: `${error.error.error}`,
+          });
+          resolve(false);
+        },
+      });
+    });
+  }
+
   sendPasswordResetData(
     token: string,
-    password: string
+    password: string,
+    salt: string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}users/reset_password`;
     const body = new ResetPasswordRequestDTO();
     body.Token = token;
-    body.Password = password;
+    const hash = this.hashPassword(password, salt);
+    body.Password = hash;
 
     return this.http.post(url, body, { observe: 'response' });
   }

@@ -386,6 +386,10 @@ export class UsersService {
   async resetPassword(
     resetPasswordDTO: ResetPasswordRequestDTO,
   ) {
+    console.log(
+      'Reset password DTO: ',
+      resetPasswordDTO,
+    );
     const user = await this.findOneByToken(
       resetPasswordDTO.Token,
     );

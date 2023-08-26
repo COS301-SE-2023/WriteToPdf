@@ -114,6 +114,13 @@
     display: flex;
 }
 
+.newPassword {
+    width: 80%;
+    margin: auto;
+    margin-left:0;
+    display: flex;
+}
+
 :host ::ng-deep .p-inputtext {
     padding-left: 20px;
     border: 2px solid #ffffff;
