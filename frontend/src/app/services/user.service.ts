@@ -323,6 +323,15 @@ export class UserService {
     return this.http.post(url, body, { observe: 'response' });
   }
 
+  sendPasswordResetRequest(email: string): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}users/reset_password_request`;
+    const body = new UserDTO();
+    body.Email = email;
+
+    return this.http.post(url, body, { observe: 'response' });
+  }
+
   async retrieveSalt(email: string): Promise<string> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}users/get_salt`;
