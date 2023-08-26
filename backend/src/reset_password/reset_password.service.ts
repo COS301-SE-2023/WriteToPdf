@@ -101,12 +101,14 @@ export class ResetPasswordService {
 
   async create(
     userID: number,
+    email: string,
   ): Promise<ResetPasswordRequest> {
     const resetRequest =
       new ResetPasswordRequest();
     resetRequest.UserID = userID;
     resetRequest.Token = await this.generateToken(
       userID,
+      email,
       resetRequest.DateExpires,
     );
     return await this.resetPasswordRequestRepository.save(
@@ -116,11 +118,13 @@ export class ResetPasswordService {
 
   async generateToken(
     userID: number,
+    email: string,
     dateExpires: Date,
   ): Promise<string> {
     const token = await this.jwtService.signAsync(
       {
         UserID: userID,
+        Email: email,
         DateExpires: dateExpires,
       },
       {

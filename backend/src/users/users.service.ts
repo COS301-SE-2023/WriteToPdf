@@ -474,6 +474,7 @@ export class UsersService {
     const resetPasswordRequest =
       await this.resetPasswordService.create(
         user.UserID,
+        user.Email,
       );
 
     return await this.sendPasswordResetEmail(
