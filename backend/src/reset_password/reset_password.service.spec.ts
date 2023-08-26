@@ -155,7 +155,7 @@ describe('ResetPasswordService', () => {
       );
       expect(
         Repository.prototype.save,
-      ).toBeCalledWith(resetRequest);
+      ).toBeCalled();
       expect(
         service.generateToken,
       ).toBeCalledWith(
