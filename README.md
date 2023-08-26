@@ -86,7 +86,7 @@ We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issu
 ## Branching strategy
 The main branch is the live/deployed branch.
 Test branch is used to run all tests. These two branches are the stable branches.
-The codecov branch is used to merge completed features into and is the branch where tests get fixed before being pushed to the Test.
+The codecov branch is used to merge completed features into and is the branch where tests get fixed before being pushed to the Test branch.
 Feature branches get created off of the Test branch and be called dev/feature_name. Once a feature is completed it gets merged into codecov.
 
 The flow of merging is: dev/feature -> codecov -> test -> main
