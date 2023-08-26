@@ -146,6 +146,15 @@
     font-weight: regular;
 }
 
+.labelElement2 {
+    margin-bottom: 10px !important;
+    width: 80%;
+    margin: auto;
+    margin-left:0;
+    font-size: 18px;
+    font-weight: regular;
+}
+
 .loginButton {
     font-family: Cabin;
     border: none;
@@ -216,4 +225,13 @@ hr {
     font-weight: regular;
     -webkit-user-select: none;
     user-select: none;
+}
+
+.forgotPasswordForm {
+    margin: auto;
+    width: 80%;
+}
+
+.forgotEmail {
+    width:100%;
 }
