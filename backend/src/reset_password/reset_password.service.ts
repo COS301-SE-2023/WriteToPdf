@@ -41,46 +41,12 @@ export class ResetPasswordService {
   async findOneByUserID(
     userID: number,
   ): Promise<ResetPasswordRequest> {
-    // const currentAllRequests =
-    //   await this.resetPasswordRequestRepository.find(
-    //     {
-    //       where: {
-    //         UserID: userID,
-    //       },
-    //     },
-    //   );
-
-    // console.log(
-    //   'All requests before delete: ',
-    //   currentAllRequests,
-    // );
-
-    // First delete all requests that have expired
-    // const deleteResponse =
     await this.resetPasswordRequestRepository.delete(
       {
         UserID: userID,
         DateExpires: LessThan(new Date()),
       },
     );
-    // console.log(
-    //   'deleteResponse: ',
-    //   deleteResponse,
-    // );
-
-    // const currentAllRequestsAfterDelete =
-    //   await this.resetPasswordRequestRepository.find(
-    //     {
-    //       where: {
-    //         UserID: userID,
-    //       },
-    //     },
-    //   );
-
-    // console.log(
-    //   'All requests after delete: ',
-    //   currentAllRequestsAfterDelete,
-    // );
 
     return await this.resetPasswordRequestRepository.findOne(
       {
