@@ -40,6 +40,7 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 ### Architecture
 - [Architecture v1](https://docs.google.com/document/d/1skoEPk1VvtO8P9fyWIVFyUuf0ssU1aI8G-wrYYNbeyg/edit?usp=sharing)
 - [Architecture v2](https://docs.google.com/document/d/1FTGkhilcBonjeJdZc6e2ykf3x_l8cgZlwjZvC8O_KZ8/edit?usp=sharing)
+- [Architecture v3](https://docs.google.com/document/d/1vsMHJwqzcz90eAQDmRtiRptpSUpqpPzTstwP2HO-iX4/edit?usp=sharing)
 
 ### User Manual
 - [User manual v1](https://docs.google.com/document/d/1zUkgP6SMe9ti3cEWSjjO4yTOUCb1NZnV1_J4SeadA7A/edit?usp=sharing)
