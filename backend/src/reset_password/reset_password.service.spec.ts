@@ -110,7 +110,7 @@ describe('ResetPasswordService', () => {
         Repository.prototype.delete,
       ).toBeCalledWith({
         UserID: userID,
-        DateExpires: LessThan(new Date()),
+        DateExpires: LessThan(expect.any(Date)),
       });
     });
   });
