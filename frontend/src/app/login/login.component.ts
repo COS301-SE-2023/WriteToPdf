@@ -101,7 +101,8 @@ export class LoginComponent {
   }
 
   async forgotPassword(): Promise<void> {
-    await this.userService.forgotPassword(this.emailForgot, this.passwordForgot);
+    await this.userService.passwordResetRequest(this.emailForgot);
+
     this.forgotPasswordPopup = false;
   }
   
