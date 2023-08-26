@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 import { Inject } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { set } from 'cypress/types/lodash';
+import { ResetPasswordRequestDTO } from './dto/reset_password_request.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -328,6 +329,19 @@ export class UserService {
     const url = `${environmentURL}users/reset_password_request`;
     const body = new UserDTO();
     body.Email = email;
+
+    return this.http.post(url, body, { observe: 'response' });
+  }
+
+  sendPasswordResetData(
+    token: string,
+    password: string
+  ): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}users/reset_password`;
+    const body = new ResetPasswordRequestDTO();
+    body.Token = token;
+    body.Password = password;
 
     return this.http.post(url, body, { observe: 'response' });
   }
