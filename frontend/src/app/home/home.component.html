@@ -191,7 +191,8 @@
           <span>{{formatDate(obj.DateCreated)}}</span>
         </div>
         <div class="iconSpacing">
-          <img *ngIf="obj.SafeLock" class="fileItemIcon lockIcon" (click)="lockClick($event, obj)" (contextmenu)="lockRightClick($event, obj)" src="assets/Icons/homeIcons/mainWindow/lock.png" alt=""/>
+          <img *ngIf="obj.SafeLock" class="fileItemIcon lockIcon" src="assets/Icons/homeIcons/mainWindow/lock.png" alt=""/>
+          <!-- <img *ngIf="obj.SafeLock" class="fileItemIcon lockIcon" (click)="lockClick($event, obj)" (contextmenu)="lockRightClick($event, obj)" src="assets/Icons/homeIcons/mainWindow/lock.png" alt=""/> -->
         </div>
       </div>
       <!-- Files End -->
