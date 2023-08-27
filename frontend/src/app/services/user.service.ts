@@ -144,15 +144,18 @@ export class UserService {
     });
   }
 
+
+  //TODO change here as necessary when merging pull requests
+  //comment in and out as necessary
   logout(): void {
     // Perform logout logic here (e.g., clear authentication token, reset flags)
-    this._ngZone.run(() => {
-      this.revokeToken().subscribe({
-        next: (x: any) => {
-          
-        }
-      })
-    });
+    // this._ngZone.run(() => {
+    //   this.revokeToken().subscribe({
+    //     next: (x: any) => {
+    //
+    //     }
+    //   })
+    // });
 
     if (this.timer) {
       clearInterval(this.timer);

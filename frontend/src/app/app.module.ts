@@ -89,7 +89,6 @@ export function tokenGetter() {
     EditorModule,
     DropdownModule,
     BreadcrumbModule,
-    TreeTableModule,
     SidebarModule,
     ButtonModule,
     BrowserAnimationsModule,
