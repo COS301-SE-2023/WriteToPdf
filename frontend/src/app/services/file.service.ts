@@ -70,7 +70,6 @@ export class FileService {
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
     );
-    console.log('body', body);
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
@@ -180,7 +179,6 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
           if (response.status === 200) {
             resolve(true);
           } else {
@@ -425,7 +423,6 @@ export class FileService {
     body.Content = this.encryptDocument(content);
     body.Type = type;
 
-    console.log('body', body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -447,9 +444,6 @@ export class FileService {
     const tdThStyling =
       'style="border: 1px solid #bfbfbf; padding: 8px; text-align: left; width:32px;" ';
 
-    if (content.includes('<table')) {
-      console.log('contains table');
-    }
     //more work needs to be done to get conversion better
     //NB Try to use document selector to select by class and apply all relevant styling
     //See conversion to JPEG and PNG for details
@@ -466,7 +460,6 @@ export class FileService {
     figure {display: block;margin-block-start: 1em;margin-block-end: 1em;margin-inline-start: 40px;margin-inline-end: 40px;}
     .table {display: table;margin: 0.9em auto;}
     </style></head>` + content;
-    console.log(content);
 
     let blob: Blob;
     let fileURL: string;
@@ -609,14 +602,17 @@ export class FileService {
     body.MarkdownID = markdownID;
     if (safeLock) {
       body.Content = this.encryptSafeLockDocument(content, userDocumentPassword);
-      this.sendSaveData(body.Content, markdownID, path, safeLock);
-      console.log("ENCRYPTED CONTENT: ", body.Content);
+
+      new Promise<boolean>((resolve, reject) => {
+        this.sendSaveData(body.Content, markdownID, path, safeLock).subscribe({
+          next: (response: HttpResponse<any>) => {},
+        });
+      });
     } else {
       body.Content = content;
     }
     body.SafeLock = safeLock;
 
-    console.log('body', body);
 
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
     return this.http.post(url, body, { headers, observe: 'response' });
@@ -641,8 +637,6 @@ export class FileService {
     const key = userDocumentPassword;
     if (key && content) {
       content = content + signature;
-      console.log("CONTENT+SIG: ",content);
-      console.log("KEY: ",key);
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
       return encryptedMessage;
     } else {
@@ -670,12 +664,9 @@ export class FileService {
     const signature = 'WRITETOPDF-SAFELOCK-SIGNATURE';
     const key = userDocumentPassword;
     if (key && content) {
-      console.log("CONTENT: ",content);
-      console.log("KEY: ",key);
       const decryptedMessage = CryptoJS.AES.decrypt(content, key)
         .toString(CryptoJS.enc.Utf8)
         .replace(/^"(.*)"$/, '$1');
-      console.log(decryptedMessage);
         if(decryptedMessage.endsWith(signature)) {
           return decryptedMessage.substring(0, decryptedMessage.length - signature.length);
         }else {

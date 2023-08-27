@@ -1348,8 +1348,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   renameFolder(folderID: string, path: string, newName: string) {
-    console.log(newName);
-    console.log(folderID);
     if (newName === '') return;
     this.folderService.renameFolder(folderID, path, newName).then((data) => {
       this.nodeService.renameFolder(folderID, newName);
@@ -1470,7 +1468,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   renameEntity() {
     const selected = this.getSelected();
-    console.log(selected);
     if (selected.length === 1) {
       if (selected[0].Type == 'folder')
         this.renameFolder(
@@ -1489,7 +1486,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   lockClick($event: any, file: any) {
     $event.stopPropagation();
-    console.log(this.getSelected());
   }
 
   lockRightClick($event: any, file: any) {
@@ -1584,20 +1580,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (selected.length === 1) {
       selected[0].SafeLock = true;
       this.fileService
-        .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, true, selected[0].Path)
-        .then((data) => console.log(data));
+        .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, true, selected[0].Path);
         this.userDocumentPassword = '';
     }
   }
 
   async openLockedDocument() {
     const test=this.fileService.encryptSafeLockDocument("HELLO WORLD!", "password");
-    console.log(test);
     const decrypt = this.fileService.decryptSafeLockDocument(test, "password");
-    console.log(decrypt);
     const selected = this.getSelected();
     if (selected.length === 1) {
-      console.log("Encrypted Document: " + await this.documentPromise);
       const decryptedDocument= this.fileService.decryptSafeLockDocument(await this.documentPromise, this.userDocumentPassword);
       if (decryptedDocument == null) {
           this.messageService.add({
