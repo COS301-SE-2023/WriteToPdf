@@ -212,6 +212,7 @@ export class FileManagerService {
     markdownFileDTO: MarkdownFileDTO,
     isTest = false,
   ) {
+    console.log('saveFile: ', markdownFileDTO);
     markdownFileDTO.Size =
       markdownFileDTO.Content.length;
     if (markdownFileDTO.MarkdownID === undefined)

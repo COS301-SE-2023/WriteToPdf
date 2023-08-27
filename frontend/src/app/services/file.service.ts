@@ -25,7 +25,7 @@ export class FileService {
     private editService: EditService,
     private messageService: MessageService,
     private conversionService: ConversionService
-  ) {}
+  ) { }
 
   // User does not need to provide userDocumentPassword (SafeLock)
   saveDocument(
@@ -70,6 +70,7 @@ export class FileService {
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
     );
+    console.log('body', body);
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
@@ -582,6 +583,45 @@ export class FileService {
     // });
   }
 
+  updateLockDocument(markdownID: string, content: string, userDocumentPassword: string, safeLock: boolean, path: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendUpdateLockData(markdownID, content, userDocumentPassword, safeLock, path).subscribe({
+        next: (response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'File locked successfully',
+            });
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+      });
+    });
+  }
+
+  sendUpdateLockData(markdownID: string, content: string, userDocumentPassword: string, safeLock: boolean, path: string): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/update_safelock_status`;
+    const body = new MarkdownFileDTO();
+    body.UserID = this.userService.getUserID();
+    body.MarkdownID = markdownID;
+    if (safeLock) {
+      body.Content = this.encryptSafeLockDocument(content, userDocumentPassword);
+      this.sendSaveData(body.Content, markdownID, path, safeLock);
+      console.log("ENCRYPTED CONTENT: ", body.Content);
+    } else {
+      body.Content = content;
+    }
+    body.SafeLock = safeLock;
+
+    console.log('body', body);
+
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
   encryptDocument(content: string | undefined): string {
     if (content) return content;
     const key = this.userService.getEncryptionKey();
@@ -601,6 +641,8 @@ export class FileService {
     const key = userDocumentPassword;
     if (key && content) {
       content = content + signature;
+      console.log("CONTENT+SIG: ",content);
+      console.log("KEY: ",key);
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
       return encryptedMessage;
     } else {
@@ -618,6 +660,29 @@ export class FileService {
       return decryptedMessage;
     } else {
       return '';
+    }
+  }
+
+  decryptSafeLockDocument(
+    content: string | undefined,
+    userDocumentPassword: string
+  ) {
+    const signature = 'WRITETOPDF-SAFELOCK-SIGNATURE';
+    const key = userDocumentPassword;
+    if (key && content) {
+      console.log("CONTENT: ",content);
+      console.log("KEY: ",key);
+      const decryptedMessage = CryptoJS.AES.decrypt(content, key)
+        .toString(CryptoJS.enc.Utf8)
+        .replace(/^"(.*)"$/, '$1');
+      console.log(decryptedMessage);
+        if(decryptedMessage.endsWith(signature)) {
+          return decryptedMessage.substring(0, decryptedMessage.length - signature.length);
+        }else {
+          return null;
+        }
+    } else {
+      return null;
     }
   }
 }

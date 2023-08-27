@@ -89,11 +89,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public createNewFolderDialogueVisible: boolean = false;
   renameDialogueVisible: boolean = false;
   documentLockedPopup: boolean = false;
+  openLockedDocumentPopup: boolean = false;
   public entityName: string = '';
   entityRename: string = '';
   uploadedFiles: any[] = [];
   contextMenuItems: any[];
   public userDocumentPassword: string = '';
+  documentPromise: Promise<any> | null = null;
 
   currentFolders: any[] = []; //Holds an array of objects representing folders.
   currentFiles: any[] = []; //Holds an array of objects representing files.
@@ -161,7 +163,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
       {
         label: 'Lock Document',
         icon: 'pi pi-lock',
-        command: () => this.documentLockedPopup = true,
+        command: () => {
+          this.documentLockedPopup = true;
+
+          const file = this.getSelected();
+          if(file.length === 1){
+            this.documentPromise=this.fileService
+              .retrieveDocument(file[0].MarkdownID, file[0].Path);
+          }
+        },
       },
     ];
   }
@@ -597,6 +607,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
   onOpenFileSelect(MarkdownID: string | undefined | null): void {
     const file = this.nodeService.getFileDTOByID(MarkdownID);
     this.loading = true;
+    if (file.SafeLock) {
+      this.openLockedDocumentPopup = true;
+      this.documentPromise = this.fileService.retrieveDocument(file.MarkdownID, file.Path);
+      return;
+    }
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
@@ -613,9 +628,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         if(!file.SafeLock)
           this.navigateToPage('edit');
       });
-      if(file.SafeLock){
-        this.documentLockedPopup = true;
-      }
+
   }
 
 
@@ -1565,27 +1578,40 @@ export class HomeComponent implements OnInit, AfterViewInit {
     console.log(x);
   }
 
-lockDocument() {
-  const file = this.getSelected();
+  async lockDocument() {
 
-  this.fileService
-    .retrieveDocument(file.MarkdownID, file.Path)
-    .then((data) => {
-      this.editService.setAll(
-        data,
-        file.MarkdownID,
-        file.Name,
-        file.Path,
-        file.ParentFolderID,
-        file.SafeLock
-      );
+    const selected = this.getSelected();
+    if (selected.length === 1) {
+      selected[0].SafeLock = true;
+      this.fileService
+        .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, true, selected[0].Path)
+        .then((data) => console.log(data));
+        this.userDocumentPassword = '';
+    }
+  }
 
-
-      this.loading = false;
-      if (!file.SafeLock)
-        this.navigateToPage('edit');
-    });
-}
+  async openLockedDocument() {
+    const test=this.fileService.encryptSafeLockDocument("HELLO WORLD!", "password");
+    console.log(test);
+    const decrypt = this.fileService.decryptSafeLockDocument(test, "password");
+    console.log(decrypt);
+    const selected = this.getSelected();
+    if (selected.length === 1) {
+      console.log("Encrypted Document: " + await this.documentPromise);
+      const decryptedDocument= this.fileService.decryptSafeLockDocument(await this.documentPromise, this.userDocumentPassword);
+      if (decryptedDocument == null) {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Incorrect Password',
+            detail: '',
+          });
+        }
+        else {
+          this.editService.setAll(decryptedDocument, selected[0].MarkdownID, selected[0].Name, selected[0].Path, selected[0].ParentFolderID, true);
+          this.navigateToPage('edit');
+        }
+    }
+  }
 
   protected readonly focus = focus;
 }
