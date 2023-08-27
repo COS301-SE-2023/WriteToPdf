@@ -97,6 +97,7 @@ export class EditService {
     this.path = path;
     this.parentFolderID = parentFolderID;
     this.safeLock = safeLock;
+    this.documentPassword = documentPassword;
 
     if(this.content == undefined) {
       this.content = '';
