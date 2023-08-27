@@ -621,7 +621,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
           file.Name,
           file.Path,
           file.ParentFolderID,
-          file.SafeLock
+          file.SafeLock,
+          ''
         );
 
         this.loading = false;
@@ -1615,7 +1616,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           });
         }
         else {
-          this.editService.setAll(decryptedDocument, selected[0].MarkdownID, selected[0].Name, selected[0].Path, selected[0].ParentFolderID, true);
+          this.editService.setAll(decryptedDocument, selected[0].MarkdownID, selected[0].Name, selected[0].Path, selected[0].ParentFolderID, true, this.userDocumentPassword);
           this.navigateToPage('edit');
         }
     }

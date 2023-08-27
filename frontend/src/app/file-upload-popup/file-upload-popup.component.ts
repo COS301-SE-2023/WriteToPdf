@@ -52,7 +52,8 @@ export class FileUploadPopupComponent {
             response.Name,
             response.Path,
             response.ParentFolderID,
-            response.SafeLock
+            response.SafeLock,
+            ''
           );
 
           this.navigateToPage('edit');

@@ -124,9 +124,10 @@ export class EditComponent implements AfterViewInit, OnInit {
     const p = localStorage.getItem('path');
     const pf = localStorage.getItem('parentFolderID');
     const sl = localStorage.getItem('safeLock');
+    const dp = localStorage.getItem('documentPassword');
 
-    if (c != null && m != null && n != null && p != null && pf != null && sl != null)
-      this.editService.setAll(c, m, n, p, pf, sl === 'true');
+    if (c != null && m != null && n != null && p != null && pf != null && sl != null && dp != null)
+      this.editService.setAll(c, m, n, p, pf, sl === 'true', dp);
     this.fileName = this.editService.getName();
   }
 
@@ -236,12 +237,23 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
     let contents = this.editor.getData();
-    this.fileService.saveDocument(
-      contents,
-      this.editService.getMarkdownID(),
-      this.editService.getPath(),
-      this.editService.getSafeLock()
-    );
+    let pass = this.editService.getDocumentPassword();
+    if(pass != '' && pass != undefined) {
+      this.fileService.saveDocument(
+        this.fileService.encryptSafeLockDocument(contents, pass),
+        this.editService.getMarkdownID(),
+        this.editService.getPath(),
+        this.editService.getSafeLock()
+        );
+    }
+    else {
+      this.fileService.saveDocument(
+        contents,
+        this.editService.getMarkdownID(),
+        this.editService.getPath(),
+        this.editService.getSafeLock()
+        );
+    }
   }
 
   hideSideBar() {

@@ -137,7 +137,8 @@ export class FileService {
               response.body.Name,
               response.body.Path,
               response.body.ParentFolderID,
-              response.body.SafeLock
+              response.body.SafeLock,
+              ''
             );
 
             resolve(true);

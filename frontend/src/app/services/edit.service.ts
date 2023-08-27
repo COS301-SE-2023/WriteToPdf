@@ -10,6 +10,7 @@ export class EditService {
   private path: string | undefined = '';
   private parentFolderID: string | undefined = '';
   private safeLock: boolean | undefined = false;
+  private documentPassword: string | undefined = '';
 
   constructor() {}
 
@@ -77,13 +78,18 @@ export class EditService {
     return this.safeLock;
   }
 
+  getDocumentPassword(): string | undefined {
+    return this.documentPassword;
+  }
+
   setAll(
     content: string | undefined,
     markdownID: string | undefined,
     name: string | undefined,
     path: string | undefined,
     parentFolderID: string | undefined,
-    safeLock: boolean | undefined
+    safeLock: boolean | undefined,
+    documentPassword: string | undefined
   ) {
     this.content = content;
     this.markdownID = markdownID;
@@ -110,6 +116,9 @@ export class EditService {
     if(this.safeLock == undefined) {
       this.safeLock = false;
     }
+    if(documentPassword == undefined) {
+      documentPassword = '';
+    }
     
     localStorage.setItem('content', this.content);
     localStorage.setItem('markdownID', this.markdownID);
@@ -117,6 +126,7 @@ export class EditService {
     localStorage.setItem('path', this.path);
     localStorage.setItem('parentFolderID', this.parentFolderID);
     localStorage.setItem('safeLock', this.safeLock.toString());
+    localStorage.setItem('documentPassword', documentPassword);
   }
 
   reset() {
@@ -125,12 +135,16 @@ export class EditService {
     this.name = '';
     this.path = '';
     this.parentFolderID = '';
+    this.safeLock = false;
+    this.documentPassword = '';
 
     localStorage.setItem('content', this.content);
     localStorage.setItem('markdownID', this.markdownID);
     localStorage.setItem('name', this.name);
     localStorage.setItem('path', this.path);
     localStorage.setItem('parentFolderID', this.parentFolderID);
+    localStorage.setItem('safeLock', this.safeLock.toString());
+    localStorage.setItem('documentPassword', this.documentPassword);
     
   }
 }
