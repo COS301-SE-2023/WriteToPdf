@@ -14,6 +14,7 @@ import { ConversionService } from '../conversion/conversion.service';
 import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { ResetPasswordService } from '../reset_password/reset_password.service';
 import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
+import { MailService } from '../mail/mail.service';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ResetPasswordRequest } from '../reset_password/entities/reset_password_
     ConversionService,
     S3ServiceMock,
     ResetPasswordService,
+    MailService,
   ],
 })
 export class FileManagerModule {}

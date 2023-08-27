@@ -19,6 +19,8 @@ import { OAuth2Client } from 'google-auth-library';
 import { hashSync, genSaltSync } from 'bcryptjs';
 import { ResetPasswordService } from '../reset_password/reset_password.service';
 import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
+import { MailService } from '../mail/mail.service';
+import { ResetPasswordRequestDTO } from '../reset_password/dto/reset_password_request.dto';
 
 config();
 
@@ -50,6 +52,7 @@ jest.mock('bcryptjs', () => {
 describe('UsersService', () => {
   let service: UsersService;
   let authService: AuthService;
+  let resetPasswordService: ResetPasswordService;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -59,6 +62,7 @@ describe('UsersService', () => {
           AuthService,
           JwtService,
           ResetPasswordService,
+          MailService,
           {
             provide: getRepositoryToken(User),
             useClass: Repository,
@@ -82,6 +86,10 @@ describe('UsersService', () => {
       module.get<UsersService>(UsersService);
     authService =
       module.get<AuthService>(AuthService);
+    resetPasswordService =
+      module.get<ResetPasswordService>(
+        ResetPasswordService,
+      );
   });
 
   describe('create', () => {
@@ -909,34 +917,95 @@ describe('UsersService', () => {
     });
   });
 
-  // describe('update', () => {
-  //   it('should throw an exception if user is not found', async () => {
-  //     const user = new UserDTO();
-  //     user.UserID = 1;
-  //     user.FirstName = 'Test';
-  //     user.LastName = 'Test';
-  //     user.Email = 'test';
-  //     user.Password = 'test';
+  describe('resetPassword', () => {
+    it('should throw an error if the request is not found', async () => {
+      const resetPasswordDTO =
+        new ResetPasswordRequestDTO();
 
-  //     jest
-  //       .spyOn(service, 'findOne')
-  //       .mockResolvedValue(undefined);
+      const user = new User();
+      user.UserID = 1;
+      user.Email = 'test';
 
-  //     try {
-  //       await service.update(user);
-  //       expect(true).toBe(false);
-  //     } catch (error) {
-  //       expect(error).toBeInstanceOf(
-  //         HttpException,
-  //       );
-  //       expect(error.getStatus()).toEqual(
-  //         HttpStatus.NOT_FOUND,
-  //       );
-  //       expect(error.getResponse()).toEqual({
-  //         status: HttpStatus.NOT_FOUND,
-  //         error: 'User not found',
-  //       });
-  //     }
-  //   });
-  // });
+      jest
+        .spyOn(service, 'findOneByToken')
+        .mockResolvedValue(user);
+
+      jest
+        .spyOn(
+          resetPasswordService,
+          'findOneByTokenAndUserID',
+        )
+        .mockResolvedValue(undefined);
+
+      try {
+        await service.resetPassword(
+          resetPasswordDTO,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.status).toEqual(
+          HttpStatus.NOT_FOUND,
+        );
+        expect(error.getResponse()).toEqual({
+          status: HttpStatus.NOT_FOUND,
+          error:
+            'Reset password request not found',
+        });
+      }
+
+      expect(service.findOneByToken).toBeCalled();
+      expect(
+        resetPasswordService.findOneByTokenAndUserID,
+      ).toBeCalled();
+    });
+
+    it('should throw an error if the request is expired', async () => {
+      const resetPasswordDTO =
+        new ResetPasswordRequestDTO();
+
+      const user = new User();
+      user.UserID = 1;
+      user.Email = 'test';
+
+      const resetRequest =
+        new ResetPasswordRequest();
+      resetRequest.UserID = user.UserID;
+      resetRequest.DateExpires = new Date(
+        new Date().getTime() -
+          1000 * 60 * 60 * 24,
+      );
+
+      jest
+        .spyOn(service, 'findOneByToken')
+        .mockResolvedValue(user);
+
+      jest
+        .spyOn(
+          resetPasswordService,
+          'findOneByTokenAndUserID',
+        )
+        .mockResolvedValue(resetRequest);
+
+      try {
+        await service.resetPassword(
+          resetPasswordDTO,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.status).toEqual(
+          HttpStatus.BAD_REQUEST,
+        );
+        expect(error.getResponse()).toEqual({
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Reset password request expired',
+        });
+      }
+    });
+  });
 });

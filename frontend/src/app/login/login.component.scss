@@ -114,6 +114,13 @@
     display: flex;
 }
 
+.newPassword {
+    width: 80%;
+    margin: auto;
+    margin-left:0;
+    display: flex;
+}
+
 :host ::ng-deep .p-inputtext {
     padding-left: 20px;
     border: 2px solid #ffffff;
@@ -142,6 +149,15 @@
     margin-bottom: 10px !important;
     width: 80%;
     margin: auto;
+    font-size: 18px;
+    font-weight: regular;
+}
+
+.labelElement2 {
+    margin-bottom: 10px !important;
+    width: 80%;
+    margin: auto;
+    margin-left:0;
     font-size: 18px;
     font-weight: regular;
 }
@@ -216,4 +232,13 @@ hr {
     font-weight: regular;
     -webkit-user-select: none;
     user-select: none;
+}
+
+.forgotPasswordForm {
+    margin: auto;
+    width: 80%;
+}
+
+.forgotEmail {
+    width:100%;
 }
