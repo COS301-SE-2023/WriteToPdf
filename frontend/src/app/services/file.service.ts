@@ -25,7 +25,7 @@ export class FileService {
     private editService: EditService,
     private messageService: MessageService,
     private conversionService: ConversionService
-  ) {}
+  ) { }
 
   // User does not need to provide userDocumentPassword (SafeLock)
   saveDocument(
@@ -594,10 +594,18 @@ export class FileService {
       ).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'File locked successfully',
-            });
+            if (safeLock) {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'File locked successfully',
+              });
+            }
+            else {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'File unlocked successfully',
+              });
+            }
             resolve(true);
           } else {
             resolve(false);
@@ -627,7 +635,7 @@ export class FileService {
 
       new Promise<boolean>((resolve, reject) => {
         this.sendSaveData(body.Content, markdownID, path, safeLock).subscribe({
-          next: (response: HttpResponse<any>) => {},
+          next: (response: HttpResponse<any>) => { },
         });
       });
     } else {
@@ -640,7 +648,7 @@ export class FileService {
         return new Observable<HttpResponse<any>>();
       }
       body.Content = decrypted;
-      
+
       new Promise<boolean>((resolve, reject) => {
         this.sendSaveData(body.Content, markdownID, path, safeLock).subscribe({
           next: (response: HttpResponse<any>) => { },
