@@ -25,7 +25,7 @@ export class FileService {
     private editService: EditService,
     private messageService: MessageService,
     private conversionService: ConversionService
-  ) { }
+  ) {}
 
   // User does not need to provide userDocumentPassword (SafeLock)
   saveDocument(
@@ -577,9 +577,21 @@ export class FileService {
     // });
   }
 
-  updateLockDocument(markdownID: string, content: string, userDocumentPassword: string, safeLock: boolean, path: string): Promise<boolean> {
+  updateLockDocument(
+    markdownID: string,
+    content: string,
+    userDocumentPassword: string,
+    safeLock: boolean,
+    path: string
+  ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.sendUpdateLockData(markdownID, content, userDocumentPassword, safeLock, path).subscribe({
+      this.sendUpdateLockData(
+        markdownID,
+        content,
+        userDocumentPassword,
+        safeLock,
+        path
+      ).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
             this.messageService.add({
@@ -595,14 +607,23 @@ export class FileService {
     });
   }
 
-  sendUpdateLockData(markdownID: string, content: string, userDocumentPassword: string, safeLock: boolean, path: string): Observable<HttpResponse<any>> {
+  sendUpdateLockData(
+    markdownID: string,
+    content: string,
+    userDocumentPassword: string,
+    safeLock: boolean,
+    path: string
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/update_safelock_status`;
     const body = new MarkdownFileDTO();
     body.UserID = this.userService.getUserID();
     body.MarkdownID = markdownID;
     if (safeLock) {
-      body.Content = this.encryptSafeLockDocument(content, userDocumentPassword);
+      body.Content = this.encryptSafeLockDocument(
+        content,
+        userDocumentPassword
+      );
 
       new Promise<boolean>((resolve, reject) => {
         this.sendSaveData(body.Content, markdownID, path, safeLock).subscribe({
@@ -614,8 +635,10 @@ export class FileService {
     }
     body.SafeLock = safeLock;
 
-
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.userService.getAuthToken());
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
@@ -636,7 +659,7 @@ export class FileService {
   ) {
     const signature = 'WRITETOPDF-SAFELOCK-SIGNATURE';
     const key = userDocumentPassword;
-    if (key && content) {
+    if (key && (content || content == '')) {
       content = content + signature;
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
       return encryptedMessage;
@@ -662,17 +685,32 @@ export class FileService {
     content: string | undefined,
     userDocumentPassword: string
   ) {
+    console.log('decrypting safelock document');
     const signature = 'WRITETOPDF-SAFELOCK-SIGNATURE';
     const key = userDocumentPassword;
-    if (key && content) {
+    if (key && (content || content == '')) {
       const decryptedMessage = CryptoJS.AES.decrypt(content, key)
         .toString(CryptoJS.enc.Utf8)
         .replace(/^"(.*)"$/, '$1');
-        if(decryptedMessage.endsWith(signature)) {
-          return decryptedMessage.substring(0, decryptedMessage.length - signature.length);
-        }else {
-          return null;
-        }
+
+      console.log('Decrypted safelock document: ' + decryptedMessage);
+      if (decryptedMessage.endsWith(signature)) {
+        console.log('Decrypted safelock document end with signature');
+        const signRemoved = decryptedMessage.substring(
+          0,
+          decryptedMessage.length - signature.length
+        );
+
+        console.log('Decrypted safelock document: ' + signRemoved);
+        return signRemoved;
+        // return decryptedMessage.substring(
+        //   0,
+        //   decryptedMessage.length - signature.length
+        // );
+      } else {
+        console.log('Decrypted safelock document does not end with signature');
+        return null;
+      }
     } else {
       return null;
     }
