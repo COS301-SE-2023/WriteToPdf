@@ -1205,6 +1205,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           data.Name = movingNode.Name;
           data.Size = movingNode.Size;
           this.nodeService.addFile(data);
+          console.log("data returned, ", data);
           this.refreshTree();
           this.loading = false;
         });

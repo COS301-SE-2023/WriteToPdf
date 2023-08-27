@@ -275,7 +275,8 @@ export class FileService {
             markdownFile.Name = response.body.Name;
             markdownFile.Path = response.body.Path;
             markdownFile.ParentFolderID = response.body.ParentFolderID;
-
+            markdownFile.SafeLock = response.body.SafeLock;
+            markdownFile.DateCreated = response.body.DateCreated;
             resolve(markdownFile);
           } else {
             this.messageService.add({
