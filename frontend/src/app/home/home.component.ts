@@ -90,6 +90,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   renameDialogueVisible: boolean = false;
   documentLockedPopup: boolean = false;
   openLockedDocumentPopup: boolean = false;
+  removeDocumentLock: boolean = false;
   public entityName: string = '';
   entityRename: string = '';
   uploadedFiles: any[] = [];
@@ -167,8 +168,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
           this.documentLockedPopup = true;
 
           const file = this.getSelected();
-          if(file.length === 1){
-            this.documentPromise=this.fileService
+          if (file.length === 1) {
+            this.documentPromise = this.fileService
               .retrieveDocument(file[0].MarkdownID, file[0].Path);
           }
         },
@@ -289,12 +290,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const folder = this.nodeService.getFolderDTOByID(key);
       this.folderService
         .renameFolder(folder.FolderID, folder.Path, event)
-        .then((data) => {});
+        .then((data) => { });
     } else {
       const file = this.nodeService.getFileDTOByID(key);
       this.fileService
         .renameDocument(file.MarkdownID, event, file.Path)
-        .then((data) => {});
+        .then((data) => { });
     }
   }
 
@@ -626,7 +627,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         );
 
         this.loading = false;
-        if(!file.SafeLock)
+        if (!file.SafeLock)
           this.navigateToPage('edit');
       });
 
@@ -1067,7 +1068,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   //   }
   // }
 
-  openFileEnter(event: any): void {}
+  openFileEnter(event: any): void { }
 
   deleteSelectedEntities(): void {
     const selected = this.getSelected();
@@ -1102,7 +1103,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             summary: 'Items deleted successfully',
           });
       },
-      reject: () => {},
+      reject: () => { },
     });
   }
 
@@ -1382,9 +1383,54 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   handleRightClick(event: any, node: any) {
+
+    this.contextMenuItems[5] = {
+      label: 'Lock Document',
+      icon: 'pi pi-lock',
+      command: () => {
+        this.documentLockedPopup = true;
+
+        const file = this.getSelected();
+        if (file.length === 1) {
+          this.documentPromise = this.fileService
+            .retrieveDocument(file[0].MarkdownID, file[0].Path);
+        }
+      },
+    };
+    if (this.getSelected().length > 1) {
+      this.contextMenuItems[3].disabled = true;
+      this.contextMenuItems[5].disabled = true;
+    }
+    else {
+      this.contextMenuItems[3].disabled = false;
+      this.contextMenuItems[5].disabled = false;
+    }
+
     if (node.Selected) {
-      return;
     } else this.selectOnlyOne(node);
+
+    if (this.getSelected().length === 1) {
+      if (node.Type === 'folder') {
+        this.contextMenuItems[5].disabled = true;
+      } else {
+        this.contextMenuItems[5].disabled = false;
+        if (node.SafeLock) {
+          this.contextMenuItems[5] = {
+            label: 'Remove Lock',
+            icon: 'pi pi-fw pi-lock-open',
+            command: () => {
+              this.removeDocumentLock = true;
+
+              const file = this.getSelected();
+              if (file.length === 1) {
+                this.documentPromise = this.fileService
+                  .retrieveDocument(file[0].MarkdownID, file[0].Path);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   selectOnlyOne(node: any) {
@@ -1580,7 +1626,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const selected = this.getSelected();
     if (selected.length === 1) {
       selected[0].SafeLock = true;
-      if(this.userDocumentPassword == '') {
+      if (this.userDocumentPassword == '') {
         this.messageService.add({
           severity: 'warn',
           summary: 'Please Enter a Password',
@@ -1588,7 +1634,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         });
         return;
       }
-      if(this.userDocumentPassword.length < 8) {
+      if (this.userDocumentPassword.length < 8) {
         this.messageService.add({
           severity: 'warn',
           summary: 'Password must be at least 8 characters',
@@ -1598,27 +1644,38 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
       this.fileService
         .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, true, selected[0].Path);
-        this.userDocumentPassword = '';
+      this.userDocumentPassword = '';
+    }
+  }
+
+  async removeLock() {
+
+    const selected = this.getSelected();
+    if (selected.length === 1) {
+      selected[0].SafeLock = false;
+      this.fileService
+        .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, false, selected[0].Path);
+      this.userDocumentPassword = '';
     }
   }
 
   async openLockedDocument() {
-    const test=this.fileService.encryptSafeLockDocument("HELLO WORLD!", "password");
+    const test = this.fileService.encryptSafeLockDocument("HELLO WORLD!", "password");
     const decrypt = this.fileService.decryptSafeLockDocument(test, "password");
     const selected = this.getSelected();
     if (selected.length === 1) {
-      const decryptedDocument= this.fileService.decryptSafeLockDocument(await this.documentPromise, this.userDocumentPassword);
+      const decryptedDocument = this.fileService.decryptSafeLockDocument(await this.documentPromise, this.userDocumentPassword);
       if (decryptedDocument == null) {
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'Incorrect Password',
-            detail: '',
-          });
-        }
-        else {
-          this.editService.setAll(decryptedDocument, selected[0].MarkdownID, selected[0].Name, selected[0].Path, selected[0].ParentFolderID, true, this.userDocumentPassword);
-          this.navigateToPage('edit');
-        }
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Incorrect Password',
+          detail: '',
+        });
+      }
+      else {
+        this.editService.setAll(decryptedDocument, selected[0].MarkdownID, selected[0].Name, selected[0].Path, selected[0].ParentFolderID, true, this.userDocumentPassword);
+        this.navigateToPage('edit');
+      }
     }
   }
 

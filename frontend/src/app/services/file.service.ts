@@ -610,7 +610,21 @@ export class FileService {
         });
       });
     } else {
-      body.Content = content;
+      const decrypted = this.decryptSafeLockDocument(content, userDocumentPassword);
+      if (decrypted === null) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Incorrect password',
+        });
+        return new Observable<HttpResponse<any>>();
+      }
+      body.Content = decrypted;
+      
+      new Promise<boolean>((resolve, reject) => {
+        this.sendSaveData(body.Content, markdownID, path, safeLock).subscribe({
+          next: (response: HttpResponse<any>) => { },
+        });
+      });
     }
     body.SafeLock = safeLock;
 
