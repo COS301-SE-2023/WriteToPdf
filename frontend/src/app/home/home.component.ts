@@ -1579,6 +1579,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const selected = this.getSelected();
     if (selected.length === 1) {
       selected[0].SafeLock = true;
+      if(this.userDocumentPassword == '') {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Please Enter a Password',
+          detail: '',
+        });
+        return;
+      }
       this.fileService
         .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, true, selected[0].Path);
         this.userDocumentPassword = '';
