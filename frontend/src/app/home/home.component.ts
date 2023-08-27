@@ -1089,7 +1089,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
       icon: 'pi pi-exclamation-triangle',
       accept: async () => {
         for (const entity of selected) {
-          this.delete(entity);
+          if(entity.SafeLock) {
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'You can only delete an unlocked document',
+            });
+            return;
+          }else
+            this.delete(entity);
         }
 
         if (selected.length === 1)
