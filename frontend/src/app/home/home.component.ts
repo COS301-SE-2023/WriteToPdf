@@ -1660,8 +1660,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   async openLockedDocument() {
-    const test = this.fileService.encryptSafeLockDocument("HELLO WORLD!", "password");
-    const decrypt = this.fileService.decryptSafeLockDocument(test, "password");
     const selected = this.getSelected();
     if (selected.length === 1) {
       const decryptedDocument = this.fileService.decryptSafeLockDocument(await this.documentPromise, this.userDocumentPassword);
