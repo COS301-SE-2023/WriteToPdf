@@ -1587,6 +1587,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
         });
         return;
       }
+      if(this.userDocumentPassword.length < 8) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Password must be at least 8 characters',
+          detail: '',
+        });
+        return;
+      }
       this.fileService
         .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, true, selected[0].Path);
         this.userDocumentPassword = '';
