@@ -51,4 +51,3 @@ cypress/videos
 # Environment variables
 /src/environments/environment.development.ts
 /src/environments/environment.staging.ts
-/src/environments/environment.ts
