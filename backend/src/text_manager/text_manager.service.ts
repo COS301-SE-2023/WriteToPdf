@@ -60,6 +60,7 @@ export class TextManagerService {
       );
 
     // Send textract to classify s3 image
+    // TODO should this always be 'table'?
     const textractResponse =
       await this.textractService.extractDocument(
         'sync',
@@ -67,12 +68,120 @@ export class TextManagerService {
         'table',
       );
 
+    // TODO should the conversion happen here? What is the textract response? Is the JSON object stored in S3?
+    // TODO need way to test this. What is this textract connected to?
+
+    // 1D array of strings (lines)
+    // 2D array rows & cols for table
+
     this.s3Service.saveTextractResponse(
       savedAssetDTO,
       textractResponse,
     );
 
     return textractResponse;
+  }
+
+  formatTextractReponse(response: JSON) {
+    const rawLines = [];
+    let tableRoot = {};
+    for (const block in response['Blocks']) {
+      if (
+        response['Blocks'][block].BlockType ==
+        'LINE'
+      ) {
+        rawLines.push(response['Blocks'][block]);
+      }
+      if (
+        response['Blocks'][block].BlockType ==
+        'TABLE'
+      ) {
+        tableRoot = response['Blocks'][block];
+      }
+    }
+
+    const freeLines = [];
+    const tableLines = [];
+    for (const line of rawLines) {
+      if (
+        !this.isPartOfTable(
+          tableRoot,
+          line,
+          response['Blocks'],
+        )
+      ) {
+        freeLines.push(line);
+      } else {
+        tableLines.push(line);
+      }
+    }
+
+    // Group together lines that are close to each other vertically
+    const groupedLines = [];
+    for (const line of freeLines) {
+      if (groupedLines.length == 0) {
+        groupedLines.push([line]);
+      } else {
+        const lastGroup =
+          groupedLines[groupedLines.length - 1];
+        const lastLine =
+          lastGroup[lastGroup.length - 1];
+        if (
+          Math.abs(
+            lastLine.Geometry.BoundingBox.Top -
+              line.Geometry.BoundingBox.Top,
+          ) < 0.005
+        ) {
+          lastGroup.push(line);
+        } else {
+          groupedLines.push([line]);
+        }
+      }
+    }
+    const concatenatedTextLines = [];
+    for (const group of groupedLines) {
+      const concatenatedLine = group
+        .map((line) => line.Text)
+        .join('\t');
+      concatenatedTextLines.push(
+        concatenatedLine,
+      );
+    }
+  }
+
+  isPartOfTable(table, line, allBlocks) {
+    // Iterate through the relationships of the table (which are CELLs)
+    for (const cellID of table.Relationships[0]
+      .Ids) {
+      const cellBlock = this.findBlockByID(
+        cellID,
+        allBlocks,
+      );
+
+      // If the cell is empty skip it
+      if (!cellBlock.Relationships) continue;
+
+      // Iterate through the relationships of the CELL (which are WORDs)
+      for (const cellWordID of cellBlock
+        .Relationships[0].Ids) {
+        // Iterate through the relationships of the LINE (which are WORDs)
+        for (const lineWordID of line
+          .Relationships[0].Ids) {
+          if (cellWordID == lineWordID) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  findBlockByID(id, blocks) {
+    for (const block of blocks) {
+      if (block.Id === id) {
+        return block;
+      }
+    }
   }
 
   async retrieveOne(
