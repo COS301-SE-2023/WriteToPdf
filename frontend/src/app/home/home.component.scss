@@ -176,7 +176,7 @@ to co-operate.
 
 .mainWindowHome {
   margin-left: 250px;
-  margin-right: 150px;
+  margin-right: 10px;
   margin-top: 120px;
   display: inline-block;
   z-index: 0;
@@ -347,16 +347,17 @@ textarea {
 
 .directoryHeader {
   display: flex;
-  width: 70vw;
+  width: calc(95vw - 245px);
+  // min-width: 500px;
   height: $file-height;
   background-image: linear-gradient(to right, #f6f6f6, #f7f9fc, #f6f6f6);
   border-bottom: 1px #ccc solid;
-
+  
   -webkit-user-drag: none;
   -moz-user-drag: none;
   -ms-user-drag: none;
   user-drag: none;
-
+  
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -368,7 +369,8 @@ textarea {
 .moveFileItem {
   display: flex;
   box-sizing: content-box;
-  width: 70vw;
+  width: calc( 95vw - 245px);
+  // min-width: 500px;
   height: $file-height;
   background-color: lighten($light-grey, 10%);
   border: 1px solid #00000000;
@@ -535,3 +537,20 @@ $icon-size: 1.5rem;
   }
 }
 
+@media only screen and (max-width: 600px) {
+  .leftSideBarWrapper {
+    display: none;
+  }
+
+  .mainWindowHome {
+    margin-left: 2.5vw;
+    margin-right: 2.5vw;
+    width: 95vw;
+  }
+
+  .directoryHeader,
+  .fileItem,
+  .moveFileItem {
+    width: 100%;
+  }
+}
