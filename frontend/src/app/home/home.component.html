@@ -1,5 +1,5 @@
 <div class="container" data-testid="home-page" (click)="unselectAll()">
-  <p-toast></p-toast>
+    <p-toast [breakpoints]="{'600px': {width: '300px'}, '350px': {width: '90%'}}"></p-toast>
   <div class="header" >
     <div (click)="navigateToPage('home')" class="logoWrapper">
       <img alt="Home Page" class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" />
