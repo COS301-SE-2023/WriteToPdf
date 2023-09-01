@@ -109,7 +109,7 @@
     </div>
     <div class="directoryContents" (click)="$event.stopPropagation()">
 
-      <div class="directoryHeader">
+      <div class="directoryHeader" (click)=" this.contextMenu.hide(); unselectAll();">
         <div class="iconSpacing">
 
 
