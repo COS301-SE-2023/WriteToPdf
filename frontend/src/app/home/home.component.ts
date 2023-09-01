@@ -1326,7 +1326,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   handleClick(event: any, node: any) {
-
+    this.contextMenu.hide();
     if (event.ctrlKey) {
       this.addToSelection(node);
     } else if (event.shiftKey) {
@@ -1400,6 +1400,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
 
   getSelected() {
+    
     let selected: any = [];
     this.currentFolders.forEach((element: any) => {
       if (element.Selected) {
@@ -1540,7 +1541,13 @@ out(x:number){
   console.log(x);
 }
 
-enableContextMenu(event: MouseEvent){
+enableContextMenu(event: MouseEvent, obj: any){
+  event.stopPropagation();
+  if(!obj.Selected)
+  {
+    this.unselectAll();
+    obj.Selected = true;
+  }
   this.contextMenu.position(event);
   this.contextMenu.show(event);
 }
