@@ -401,7 +401,7 @@ export class FileManagerServiceMock {
       );
     }
 
-    console.log('convertedHtml: ', convertedHtml);
+    // console.log('convertedHtml: ', convertedHtml);
 
     const encryptedContent =
       await this.encryptContent(

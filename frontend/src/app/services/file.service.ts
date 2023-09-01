@@ -25,7 +25,7 @@ export class FileService {
     private editService: EditService,
     private messageService: MessageService,
     private conversionService: ConversionService
-  ) { }
+  ) {}
 
   // User does not need to provide userDocumentPassword (SafeLock)
   saveDocument(
@@ -600,8 +600,7 @@ export class FileService {
                 severity: 'success',
                 summary: 'File locked successfully',
               });
-            }
-            else {
+            } else {
               this.messageService.add({
                 severity: 'success',
                 summary: 'File unlocked successfully',
@@ -636,11 +635,14 @@ export class FileService {
 
       new Promise<boolean>((resolve, reject) => {
         this.sendSaveData(body.Content, markdownID, path, safeLock).subscribe({
-          next: (response: HttpResponse<any>) => { },
+          next: (response: HttpResponse<any>) => {},
         });
       });
     } else {
-      const decrypted = this.decryptSafeLockDocument(content, userDocumentPassword);
+      const decrypted = this.decryptSafeLockDocument(
+        content,
+        userDocumentPassword
+      );
       if (decrypted === null) {
         this.messageService.add({
           severity: 'error',
@@ -652,7 +654,7 @@ export class FileService {
 
       new Promise<boolean>((resolve, reject) => {
         this.sendSaveData(body.Content, markdownID, path, safeLock).subscribe({
-          next: (response: HttpResponse<any>) => { },
+          next: (response: HttpResponse<any>) => {},
         });
       });
     }
@@ -708,7 +710,7 @@ export class FileService {
     content: string | undefined,
     userDocumentPassword: string
   ) {
-    console.log('decrypting safelock document');
+    // console.log('decrypting safelock document');
     const signature = 'WRITETOPDF-SAFELOCK-SIGNATURE';
     const key = userDocumentPassword;
     if (key && (content || content == '')) {
@@ -716,22 +718,22 @@ export class FileService {
         .toString(CryptoJS.enc.Utf8)
         .replace(/^"(.*)"$/, '$1');
 
-      console.log('Decrypted safelock document: ' + decryptedMessage);
+      // console.log('Decrypted safelock document: ' + decryptedMessage);
       if (decryptedMessage.endsWith(signature)) {
-        console.log('Decrypted safelock document end with signature');
+        // console.log('Decrypted safelock document end with signature');
         const signRemoved = decryptedMessage.substring(
           0,
           decryptedMessage.length - signature.length
         );
 
-        console.log('Decrypted safelock document: ' + signRemoved);
+        // console.log('Decrypted safelock document: ' + signRemoved);
         return signRemoved;
         // return decryptedMessage.substring(
         //   0,
         //   decryptedMessage.length - signature.length
         // );
       } else {
-        console.log('Decrypted safelock document does not end with signature');
+        // console.log('Decrypted safelock document does not end with signature');
         return null;
       }
     } else {
