@@ -70,16 +70,19 @@ export class TextManagerService {
 
     // TODO should the conversion happen here? What is the textract response? Is the JSON object stored in S3?
     // TODO need way to test this. What is this textract connected to?
-
+    const formattedTextractResponse =
+      this.formatTextractReponse(
+        textractResponse,
+      );
     // 1D array of strings (lines)
     // 2D array rows & cols for table
 
     this.s3Service.saveTextractResponse(
       savedAssetDTO,
-      textractResponse,
+      formattedTextractResponse,
     );
 
-    return textractResponse;
+    return formattedTextractResponse;
   }
 
   formatTextractReponse(response: JSON) {
@@ -147,6 +150,125 @@ export class TextManagerService {
         concatenatedLine,
       );
     }
+
+    const tables = [];
+    //TODO add code here to handle multiple tables
+    const table = this.createTable(
+      tableRoot,
+      response['Blocks'],
+    );
+    tables.push(table);
+
+    // Create an array to hold elements (text and table)
+    const elements: {
+      'Text Element'?: { Lines: string[] };
+      'Table Element'?: {
+        'Num Rows': number;
+        'Num Cols': number;
+        Table: string[][];
+      };
+    }[] = [];
+
+    // Add text elements
+    if (concatenatedTextLines.length > 0) {
+      const textElement = {
+        'Text Element': {
+          Lines: concatenatedTextLines,
+        },
+      };
+      elements.push(textElement);
+    }
+
+    // Add table elements
+    for (const table of tables) {
+      const numRows = table.length;
+      const numCols = Math.max(
+        ...table.map((row) => row.length),
+      );
+
+      const tableElement = {
+        'Table Element': {
+          'Num Rows': numRows,
+          'Num Cols': numCols,
+          Table: table,
+        },
+      };
+      elements.push(tableElement);
+    }
+
+    // Create the JSON object
+    const jsonObject = {
+      'Num Elements': elements.length,
+      'Table Indices': 1,
+      elements: elements,
+    };
+
+    // Return the JSON object
+    return jsonObject;
+  }
+
+  createTable(
+    tableRoot: any,
+    allBlocks: any,
+  ): any {
+    const table: string[][] = [];
+    // Loop through the CHILD relationships of the table root element
+    for (const childId of tableRoot.Relationships.find(
+      (rel) => rel.Type === 'CHILD',
+    )?.Ids || []) {
+      // Find the CELL block with the childId
+      const cellBlock = this.findBlockByID(
+        childId,
+        allBlocks,
+      );
+
+      if (cellBlock) {
+        // If the CELL has CHILD relationships, find and concatenate the text blocks
+        if (
+          cellBlock.Relationships &&
+          cellBlock.Relationships.length > 0
+        ) {
+          const textBlocks: string[] = [];
+
+          for (const childId of cellBlock.Relationships.find(
+            (rel) => rel.Type === 'CHILD',
+          )?.Ids || []) {
+            const textBlock = this.findBlockByID(
+              childId,
+              allBlocks,
+            );
+            if (textBlock && textBlock.Text) {
+              textBlocks.push(textBlock.Text);
+            }
+          }
+
+          // Concatenate the text blocks with spaces and remove leading/trailing spaces
+          const concatenatedText = textBlocks
+            .join(' ')
+            .trim();
+
+          // Add the concatenated text to the table at the specified row and column
+          const rowIndex = cellBlock.RowIndex - 1; // Adjust for 0-based indexing
+          const colIndex =
+            cellBlock.ColumnIndex - 1; // Adjust for 0-based indexing
+
+          // Ensure the row exists in the table
+          table[rowIndex] = table[rowIndex] || [];
+
+          // Fill any missing columns with empty cells
+          while (
+            table[rowIndex].length <= colIndex
+          ) {
+            table[rowIndex].push(' ');
+          }
+
+          // Set the concatenated text in the specified cell
+          table[rowIndex][colIndex] =
+            concatenatedText;
+        }
+      }
+    }
+    return table;
   }
 
   isPartOfTable(table, line, allBlocks) {
