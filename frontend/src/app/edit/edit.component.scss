@@ -62,6 +62,16 @@ $page-height: 29.7cm;
     border-radius: 5px;
     transition: 0.3s;
     background-color: #00000000;
+    width: 35vw;
+    max-width: 300px;
+    min-width:200px;
+}
+
+@media only screen and (max-width: 360px) {
+    .documentTitle{
+        min-width:100px;
+
+    }
 }
 
 .documentTitle:hover {
@@ -202,7 +212,7 @@ $page-height: 29.7cm;
     border-right: 1px solid #c7c7c7;
     box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-    z-index: 1;
+    z-index: 20;
 }
 
 .pageName {
