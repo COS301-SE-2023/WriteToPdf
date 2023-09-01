@@ -1088,13 +1088,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: async () => {
+        let toastPoppedUp = false;
         for (const entity of selected) {
           if(entity.SafeLock) {
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'You can only delete an unlocked document',
-            });
-            return;
+            if(!toastPoppedUp)
+              this.messageService.add({
+                severity: 'warn',
+                summary: 'You can only delete an unlocked document',
+              });
+            toastPoppedUp = true;
+            continue;
           }else
             this.delete(entity);
         }
