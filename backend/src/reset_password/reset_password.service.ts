@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ResetPasswordRequest } from './entities/reset_password_request.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -38,6 +38,25 @@ export class ResetPasswordService {
     );
   }
 
+  async findOneByUserID(
+    userID: number,
+  ): Promise<ResetPasswordRequest> {
+    await this.resetPasswordRequestRepository.delete(
+      {
+        UserID: userID,
+        DateExpires: LessThan(new Date()),
+      },
+    );
+
+    return await this.resetPasswordRequestRepository.findOne(
+      {
+        where: {
+          UserID: userID,
+        },
+      },
+    );
+  }
+
   async remove(
     resetRequest: ResetPasswordRequest,
   ): Promise<void> {
@@ -48,12 +67,14 @@ export class ResetPasswordService {
 
   async create(
     userID: number,
+    email: string,
   ): Promise<ResetPasswordRequest> {
     const resetRequest =
       new ResetPasswordRequest();
     resetRequest.UserID = userID;
     resetRequest.Token = await this.generateToken(
       userID,
+      email,
       resetRequest.DateExpires,
     );
     return await this.resetPasswordRequestRepository.save(
@@ -63,11 +84,13 @@ export class ResetPasswordService {
 
   async generateToken(
     userID: number,
+    email: string,
     dateExpires: Date,
   ): Promise<string> {
     const token = await this.jwtService.signAsync(
       {
         UserID: userID,
+        Email: email,
         DateExpires: dateExpires,
       },
       {

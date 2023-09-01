@@ -32,6 +32,7 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { ResetPasswordService } from '../reset_password/reset_password.service';
 import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
+import { MailService } from '../mail/mail.service';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -52,6 +53,7 @@ describe('FileManagerController', () => {
           AuthService,
           JwtService,
           ResetPasswordService,
+          MailService,
           {
             provide: 'FileManagerService',
             useValue: {

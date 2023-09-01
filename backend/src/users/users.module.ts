@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { AuthService } from '../auth/auth.service';
 import { ResetPasswordService } from '../reset_password/reset_password.service';
 import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
+import { MailService } from '../mail/mail.service';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ResetPasswordRequest } from '../reset_password/entities/reset_password_
     UsersService,
     AuthService,
     ResetPasswordService,
+    MailService,
   ],
   exports: [UsersService],
 })

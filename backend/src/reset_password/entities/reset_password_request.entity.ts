@@ -19,9 +19,8 @@ export class ResetPasswordRequest {
   DateCreated: Date;
 
   @Column('timestamp', {
-    precision: 3,
     default: () =>
-      `DATE_ADD(CURRENT_TIMESTAMP(3), INTERVAL 24 HOUR)`,
+      `DATE_ADD(DateCreated, INTERVAL 24 HOUR)`,
   })
   DateExpires: Date;
 }

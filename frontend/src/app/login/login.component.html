@@ -52,26 +52,49 @@
     </form>
   </div>
 
-  <!--
-  <p-dialog [(visible)]="forgotPasswordPopup" [style]="{ width: '50vw' }" header="Reset Password" [focusOnShow]="true"
+  
+  <p-dialog [(visible)]="forgotPasswordPopup" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }" header="Reset Password" [focusOnShow]="true"
     (keydown.escape)="forgotPasswordPopup = false" [modal]="true">
     <div class="forgotPasswordForm">
 
-      <div class="labelElement">
+      <div class="labelElement2">
         <label for="emailForgot">Email</label>
       </div>
       <div class="formElement">
-        <input pInputText type="email" name="emailForgot" id="emailForgot" placeholder="" class="textBox" [(ngModel)]="emailForgot" />
+        <input pInputText type="email" name="emailForgot" id="emailForgot" placeholder="" class="forgotEmail" [(ngModel)]="emailForgot" />
       </div>
 
-      <div class="labelElement">
-        <label for="passwordForgot">Password</label>
+      <p-button class="fileOperations-entity" (click)="forgotPassword()" label="Send Recovery Email"></p-button>
+    </div>
+  </p-dialog>
+
+  <p-dialog [(visible)]="resetPasswordPopup" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)' }" header="Enter New Password" [focusOnShow]="true"
+    (keydown.escape)="resetPasswordPopup = false" [modal]="true">
+    <div class="forgotPasswordForm">
+
+      <div class="labelElement2">
+        <label for="newPass">Password</label>
+      </div>
+
+      <div class="formElement">
+        <p-password name="newPass" id="newPass" placeholder="" class="newPassword w-full" [(ngModel)]="newPass"
+          [toggleMask]="true" styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{ width: '100%' }"
+          [inputStyle]="{ width: '100%' }"></p-password>
+        
+      </div>
+
+      <div class="labelElement2">
+        <label for="confirmNewPass">Confirm New Password</label>
       </div>
       <div class="formElement">
-        <input pInputText type="password" name="passowrdForgot" id="passwordForgot" placeholder="" class="textBox" [(ngModel)]="passwordForgot" />
+        <p-password name="confirmNewPass" id="confirmNewPass" placeholder="" class="newPassword w-full"
+          [(ngModel)]="confirmNewPass" [(ngModel)]="confirmNewPass" [toggleMask]="true"
+          styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{ width: '100%' }"
+          [inputStyle]="{ width: '100%' }" [feedback]="false"></p-password>
       </div>
 
+      <p-button class="fileOperations-entity" (click)="resetPassword()" label="Reset Password"></p-button>
     </div>
-    <p-button class="fileOperations-entity" (click)="forgotPassword()" label="Reset Password"></p-button>
-  </p-dialog> -->
+  </p-dialog>
+
 </div>
