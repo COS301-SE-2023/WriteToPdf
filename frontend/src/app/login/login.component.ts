@@ -65,7 +65,7 @@ export class LoginComponent {
       google.accounts.id.renderButton(
         // @ts-ignore
         document.getElementById("buttonDiv"),
-        { theme: "outline", size: "large", width: "100%", shape: "pill" }
+        { theme: "outline", size: "large", width: "100%", height: "4svh", shape: "pill" }
       );
       // @ts-ignore
       google.accounts.id.prompt((notification: PromptMomentNotification) => { });
