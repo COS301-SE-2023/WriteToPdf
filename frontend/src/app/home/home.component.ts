@@ -1633,13 +1633,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     const selected = this.getSelected();
     if (selected.length === 1) {
-      selected[0].SafeLock = true;
       if (this.userDocumentPassword == '') {
         this.messageService.add({
           severity: 'warn',
           summary: 'Please Enter a Password',
           detail: '',
         });
+        this.userDocumentPassword = '';
+
         return;
       }
       if (this.userDocumentPassword.length < 8) {
@@ -1648,10 +1649,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
           summary: 'Password must be at least 8 characters',
           detail: '',
         });
+        this.userDocumentPassword = '';
+
         return;
       }
       this.fileService
         .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, true, selected[0].Path);
+      selected[0].SafeLock = true;
+
       this.userDocumentPassword = '';
     }
   }
