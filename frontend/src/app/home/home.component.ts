@@ -31,6 +31,7 @@ import { CoordinateService } from '../services/coordinate-service.service';
 import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
 import { NgxSpinnerService } from "ngx-spinner";
 import { start } from 'repl';
+import { ContextMenu } from 'primeng/contextmenu';
 
 interface Column {
   field: string;
@@ -102,6 +103,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   rootFolder: any = {};
   public loading: boolean = false;
   @ViewChild('myTreeTable') treeTable!: TreeTable;
+  @ViewChild(ContextMenu) contextMenu!: ContextMenu;
 
   constructor(
     @Inject(Router) private router: Router,
@@ -1324,6 +1326,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   handleClick(event: any, node: any) {
+
     if (event.ctrlKey) {
       this.addToSelection(node);
     } else if (event.shiftKey) {
@@ -1535,6 +1538,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
 out(x:number){
   console.log(x);
+}
+
+enableContextMenu(event: MouseEvent){
+  this.contextMenu.position(event);
+  this.contextMenu.show(event);
 }
 
   protected readonly focus = focus;

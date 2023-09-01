@@ -134,6 +134,8 @@
         </div>
         <div class="iconSpacing">
         </div>
+        <div class="iconSpacing">
+        </div>
       </div>
 
       
@@ -167,6 +169,9 @@
         </div>
         <div class="iconSpacing">
         </div>
+        <div class="iconSpacing">
+          <img class="fileItemIcon lockIcon" src="assets/Icons/editIcons/ellipse.svg" (click)="enableContextMenu($event)" alt="">
+        </div>
       </div>
       <!-- Folders End -->
       
@@ -193,6 +198,9 @@
         <div class="iconSpacing">
           <!-- <img class="fileItemIcon lockIcon" (click)="lockClick($event, obj)" (contextmenu)="lockRightClick($event, obj)" src="assets/Icons/homeIcons/mainWindow/lock.png" alt=""/> -->
         </div>
+        <div class="iconSpacing">
+          <img class="fileItemIcon lockIcon" src="assets/Icons/editIcons/ellipse.svg" (click)="enableContextMenu($event)" alt="">
+        </div>
       </div>
       <!-- Files End -->
 
@@ -200,6 +208,7 @@
     </div>
   </div>
   <p-contextMenu
+    id="cm"
     [target]="directory"
     [model]="contextMenuItems"
      (click)="$event.stopPropagation()"
@@ -209,7 +218,7 @@
 
       <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="moveDialogVisible" [modal]="true" [style]="{ width: '50vw' }"
+        <p-dialog [(visible)]="moveDialogVisible" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
           header="Select a Destination Folder" [focusOnShow]="true" (keydown.enter)="moveEntity()"
           (keydown.escape)="moveDialogVisible = false" (click)="$event.stopPropagation()">
       
@@ -250,7 +259,7 @@
       
       <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="createNewDocumentDialogueVisible" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
+        <p-dialog [(visible)]="createNewDocumentDialogueVisible" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
           header="Create Document" [focusOnShow]="true" (keydown.escape)="createNewDocumentDialogueVisible = false"
           (click)="$event.stopPropagation()">
           <div class="fileOperations" style="display:grid; width:80%;">
@@ -265,7 +274,7 @@
       </div>
       <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="createNewFolderDialogueVisible" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
+        <p-dialog [(visible)]="createNewFolderDialogueVisible" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
           header="Create Folder" [focusOnShow]="true" (keydown.escape)="createNewFolderDialogueVisible = false"
           (click)="$event.stopPropagation()">
           <div class="fileOperations" style="display:grid; width:80%;">
@@ -279,7 +288,7 @@
       </div>
       <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="renameDialogueVisible" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
+        <p-dialog [(visible)]="renameDialogueVisible" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
           header="Rename" [focusOnShow]="true" (keydown.escape)="renameDialogueVisible = false"
           (click)="$event.stopPropagation()">
           <div class="fileOperations" style="display: grid; width:80%;">
