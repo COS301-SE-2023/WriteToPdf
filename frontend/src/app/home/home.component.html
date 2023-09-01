@@ -297,7 +297,7 @@
       <div class="fileOperations-container">
         <p-dialog [(visible)]="documentLockedPopup" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
           header="Enter Document Password" [focusOnShow]="true" (keydown.escape)="documentLockedPopup = false; userDocumentPassword = '';"
-          (click)="$event.stopPropagation()">
+          (click)="$event.stopPropagation()"  (onHide)="userDocumentPassword = ''">
           <div class="fileOperations" style="display: grid; width:80%;">
             <p>The password must be 8 characters long.</p>
             <!-- <input placeholder="Enter Password" class="fileOperations-entity" [(ngModel)]="userDocumentPassword" label="Name: "
@@ -307,7 +307,7 @@
               styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{width: '100%'}"
               [feedback]="false" (keydown.enter)="lockDocument(); removeDocumentLock = false;"></p-password>
             <br />
-            <p-button (click)="lockDocument()" (click)="documentLockedPopup = false" label="Set Password"></p-button>
+            <p-button (click)="lockDocument()" label="Set Password"></p-button>
           </div>
         </p-dialog>
       </div>
@@ -317,7 +317,7 @@
       <div class="fileOperations-container">
         <p-dialog [(visible)]="openLockedDocumentPopup" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
           header="Enter Document Password" [focusOnShow]="true" (keydown.escape)="openLockedDocumentPopup = false; userDocumentPassword = '';"
-          (click)="$event.stopPropagation()">
+          (click)="$event.stopPropagation()" (onHide)="userDocumentPassword = ''">
           <div class="fileOperations" style="display: grid; width:80%;">
             <!-- <input placeholder="Enter Password" class="fileOperations-entity" [(ngModel)]="userDocumentPassword" label="Name: "
               pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" /> -->
@@ -326,7 +326,7 @@
               styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{width: '100%', marginTop: '20px'}"
               [feedback]="false" (keydown.enter)="openLockedDocument(); removeDocumentLock = false;"></p-password>
             <br />
-            <p-button (click)="openLockedDocument()" (click)="openLockedDocumentPopup = false" label="Enter Password"></p-button>
+            <p-button (click)="openLockedDocument()" label="Enter Password"></p-button>
           </div>
         </p-dialog>
       </div>
@@ -336,7 +336,7 @@
       <div class="fileOperations-container">
         <p-dialog [(visible)]="removeDocumentLock" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
           header="Enter Document Password" [focusOnShow]="true" (keydown.escape)="removeDocumentLock = false; userDocumentPassword = '';"
-          (click)="$event.stopPropagation()">
+          (click)="$event.stopPropagation()"  (onHide)="userDocumentPassword = ''">
           <div class="fileOperations" style="display: grid; width:80%;">
             <!-- <input placeholder="Enter Password" class="fileOperations-entity" [(ngModel)]="userDocumentPassword" label="Name: "
               pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" /> -->
@@ -345,7 +345,7 @@
               styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{width: '100%', marginTop: '20px'}"
               [feedback]="false" (keydown.enter)="removeLock(); removeDocumentLock = false;"></p-password>
             <br />
-            <p-button (click)="removeLock()" (click)="removeDocumentLock = false" label="Remove Document Lock"></p-button>
+            <p-button (click)="removeLock()" label="Remove Document Lock"></p-button>
           </div>
         </p-dialog>
       </div>

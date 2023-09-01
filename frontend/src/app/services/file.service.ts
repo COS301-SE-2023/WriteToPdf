@@ -649,7 +649,7 @@ export class FileService {
           summary: 'Incorrect password',
         });
         return new Observable<HttpResponse<any>>();
-      }
+              }
       body.Content = decrypted;
 
       new Promise<boolean>((resolve, reject) => {
@@ -714,28 +714,34 @@ export class FileService {
     const signature = 'WRITETOPDF-SAFELOCK-SIGNATURE';
     const key = userDocumentPassword;
     if (key && (content || content == '')) {
-      const decryptedMessage = CryptoJS.AES.decrypt(content, key)
-        .toString(CryptoJS.enc.Utf8)
-        .replace(/^"(.*)"$/, '$1');
+      try{
+        const decryptedMessage = CryptoJS.AES.decrypt(content, key)
+          .toString(CryptoJS.enc.Utf8)
+          .replace(/^"(.*)"$/, '$1');
 
-      // console.log('Decrypted safelock document: ' + decryptedMessage);
-      if (decryptedMessage.endsWith(signature)) {
-        // console.log('Decrypted safelock document end with signature');
-        const signRemoved = decryptedMessage.substring(
-          0,
-          decryptedMessage.length - signature.length
-        );
+        // console.log('Decrypted safelock document: ' + decryptedMessage);
+        if (decryptedMessage.endsWith(signature)) {
+          // console.log('Decrypted safelock document end with signature');
+          const signRemoved = decryptedMessage.substring(
+            0,
+            decryptedMessage.length - signature.length
+          );
 
-        // console.log('Decrypted safelock document: ' + signRemoved);
-        return signRemoved;
-        // return decryptedMessage.substring(
-        //   0,
-        //   decryptedMessage.length - signature.length
-        // );
-      } else {
-        // console.log('Decrypted safelock document does not end with signature');
+          // console.log('Decrypted safelock document: ' + signRemoved);
+          return signRemoved;
+          // return decryptedMessage.substring(
+          //   0,
+          //   decryptedMessage.length - signature.length
+          // );
+        } else {
+          // console.log('Decrypted safelock document does not end with signature');
+          return null;
+        }
+      } catch (error) {
         return null;
       }
+
+
     } else {
       return null;
     }

@@ -1639,7 +1639,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           summary: 'Please Enter a Password',
           detail: '',
         });
-        this.userDocumentPassword = '';
+        // this.userDocumentPassword = '';
 
         return;
       }
@@ -1649,7 +1649,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           summary: 'Password must be at least 8 characters',
           detail: '',
         });
-        this.userDocumentPassword = '';
+        // this.userDocumentPassword = '';
 
         return;
       }
@@ -1658,6 +1658,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       selected[0].SafeLock = true;
 
       this.userDocumentPassword = '';
+      this.documentLockedPopup = false;
     }
   }
 
@@ -1665,10 +1666,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     const selected = this.getSelected();
     if (selected.length === 1) {
-      selected[0].SafeLock = false;
-      this.fileService
-        .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, false, selected[0].Path);
-      this.userDocumentPassword = '';
+      if(await this.fileService
+        .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, false, selected[0].Path)){
+          selected[0].SafeLock = false;
+          this.userDocumentPassword = '';
+          this.removeDocumentLock = false;
+        }
     }
   }
 
