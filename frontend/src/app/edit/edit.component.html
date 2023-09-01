@@ -106,117 +106,117 @@
     </div> -->
   </div>
 
-  <div class="editor">
-    <p-button class="showAssetSidebar" icon="pi pi-arrow-right" (click)="hideSideBar()" title="Show Asset Bar"></p-button>
-    <div class="assetSidebar">
-      <div class="sidebarHeaderWrapper">
-        <div class="sidebarHeader">
-          <div class="sidebarHeaderIconWrapper backWrapper" (click)="hideSideBar()" title="Hide Asset Bar">
-            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="" />
+  <p-button class="showAssetSidebar" icon="pi pi-arrow-right" (click)="hideSideBar()" title="Show Asset Bar"></p-button>
+  <div class="assetSidebar">
+    <div class="sidebarHeaderWrapper">
+      <div class="sidebarHeader">
+        <div class="sidebarHeaderIconWrapper backWrapper" (click)="hideSideBar()" title="Hide Asset Bar">
+          <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="" />
+        </div>
+
+        <div class="sidebarHeaderTextWrapper">
+          <h4 class="sidebarHeaderText">Assets</h4>
+        </div>
+        <div class="uploadAssetIcon">
+          <div class="sidebarHeaderIconWrapper" title="Upload Image">
+            <img
+              class="sidebarHeaderIcon"
+              src="assets/Icons/editIcons/plus.png"
+              alt=""
+            />
           </div>
 
-          <div class="sidebarHeaderTextWrapper">
-            <h4 class="sidebarHeaderText">Assets</h4>
-          </div>
-          <div class="uploadAssetIcon">
-            <div class="sidebarHeaderIconWrapper" title="Upload Image">
-              <img
-                class="sidebarHeaderIcon"
-                src="assets/Icons/editIcons/plus.png"
-                alt=""
-              />
+          <div class="dropdownContent">
+            <div class="dropdownInput" (click)="navigateToPage('camera')">
+              <img class="dropdownIcon1" src="assets/Icons/editIcons/addAsset.png" alt="">
+              <p class="dropdownOptions" >
+                Camera
+              </p>
             </div>
-
-            <div class="dropdownContent">
-              <div class="dropdownInput" (click)="navigateToPage('camera')">
-                <img class="dropdownIcon1" src="assets/Icons/editIcons/addAsset.png" alt="">
-                <p class="dropdownOptions" >
-                  Camera
-                </p>
-              </div>
-              <div class="dropdownInput" (click)="showImageUploadPopup()">
-                <img class="dropdownIcon2" src="assets/Icons/editIcons/upload.png" alt="">
-                <p class="dropdownOptions" >
-                  Upload
-                </p>
-              </div>
+            <div class="dropdownInput" (click)="showImageUploadPopup()">
+              <img class="dropdownIcon2" src="assets/Icons/editIcons/upload.png" alt="">
+              <p class="dropdownOptions" >
+                Upload
+              </p>
             </div>
-          </div>
-
-          <div class="sidebarHeaderIconWrapper" (click)="refreshSidebar()" title="Refresh">
-            <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/refresh.svg" alt="" />
           </div>
         </div>
-        <hr />
+
+        <div class="sidebarHeaderIconWrapper" (click)="refreshSidebar()" title="Refresh">
+          <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/refresh.svg" alt="" />
+        </div>
       </div>
+      <hr />
+    </div>
 
-      <div class="alignDiv"></div>
-      <p *ngIf="noAssetsAvailable" style="text-align: center;">No Assets Available</p>
-      <div class="spinnerWrapper" *ngIf = "assets.length === 0 && !noAssetsAvailable" ><img class="spinner" src="assets/Spinner/loading2.gif" title="Loading..."></div>
-      
-      <div *ngFor="let obj of assets" class="assetWrapper" title="{{ 'File Name: '+obj.FileName }}">
-        <div *ngIf="obj.Deleted||obj.NotRetrieving" class="deleteSpinnerWrapper" ><img class="spinner" src="assets/Spinner/loading2.gif" title="Loading..."></div>
-        <div *ngIf="!obj.Deleted&&!obj.NotRetrieving" style="margin:0; padding:0;">
-          <div class="assetHeader">
-            <div class="assetName">
-              <!-- <h4 class="assetNameText"></h4> -->
-              <label for="editAsset" class="displayNone">b</label>
-              <input
-                type="text"
-                editable="true"
-                id="editAssetMock"
-                class="assetNameText"
-                value="{{ obj.FileName }}"
-                maxlength="50"
-                (blur)="renameAsset(obj.AssetID, $event)"
-                title="{{ obj.FileName }}"
-              />
-            </div>
-
-            <div class="deleteAsset" [ngClass]="{'deleteAssetHover': obj.Format === 'text'}" title="View Text" (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)">
-              <img
-                *ngIf="obj.Format === 'text'"
-                class="copyAssetIcon"
-                src="assets/Icons/editIcons/view.png"
-                alt=""
-              />
-            </div>
-
-            <div class="copyAsset" title="Delete Asset" (click)="deleteAsset(obj.AssetID)">
-              <img
-                class="deleteAssetIcon"
-                src="assets/Icons/editIcons/delete.png"
-                alt=""
-              />
-            </div>
-
-            <div class="copyTextAsset" title="Copy Image" *ngIf="obj.Format === 'image'" (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)">
-              <img
-                class="copyTextIcon"
-                src="assets/Icons/editIcons/copy.svg"
-                alt=""
-              />
-            </div>
-            
-            <div *ngIf="obj.Format==='text'" class="copyTextAsset" title="Copy All Text" (click)="copyAllText(obj.AssetID, obj.Format, obj.TextID)">
-              <img
-                class="copyTextIcon"
-                src="assets/Icons/editIcons/copy.svg"
-                alt=""
-              />
-            </div>
+    <div class="alignDiv"></div>
+    <p *ngIf="noAssetsAvailable" style="text-align: center;">No Assets Available</p>
+    <div class="spinnerWrapper" *ngIf = "assets.length === 0 && !noAssetsAvailable" ><img class="spinner" src="assets/Spinner/loading2.gif" title="Loading..."></div>
+    
+    <div *ngFor="let obj of assets" class="assetWrapper" title="{{ 'File Name: '+obj.FileName }}">
+      <div *ngIf="obj.Deleted||obj.NotRetrieving" class="deleteSpinnerWrapper" ><img class="spinner" src="assets/Spinner/loading2.gif" title="Loading..."></div>
+      <div *ngIf="!obj.Deleted&&!obj.NotRetrieving" style="margin:0; padding:0;">
+        <div class="assetHeader">
+          <div class="assetName">
+            <!-- <h4 class="assetNameText"></h4> -->
+            <label for="editAsset" class="displayNone">b</label>
+            <input
+              type="text"
+              editable="true"
+              id="editAssetMock"
+              class="assetNameText"
+              value="{{ obj.FileName }}"
+              maxlength="50"
+              (blur)="renameAsset(obj.AssetID, $event)"
+              title="{{ obj.FileName }}"
+            />
           </div>
-          <div class="assetContent">
-            <img class="assetImage" src="{{ obj.Image }}" alt="" />
-            <div class="assetDescription">
-              
-              <p class="assetDescription">{{ capitalizeFirstLetter(obj.Format) }}</p>
-              <p class="assetDescription">{{ formatDate(obj.DateCreated) }}</p>
-            </div>
+
+          <div class="deleteAsset" [ngClass]="{'deleteAssetHover': obj.Format === 'text'}" title="View Text" (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)">
+            <img
+              *ngIf="obj.Format === 'text'"
+              class="copyAssetIcon"
+              src="assets/Icons/editIcons/view.png"
+              alt=""
+            />
+          </div>
+
+          <div class="copyAsset" title="Delete Asset" (click)="deleteAsset(obj.AssetID)">
+            <img
+              class="deleteAssetIcon"
+              src="assets/Icons/editIcons/delete.png"
+              alt=""
+            />
+          </div>
+
+          <div class="copyTextAsset" title="Copy Image" *ngIf="obj.Format === 'image'" (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)">
+            <img
+              class="copyTextIcon"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
+          </div>
+          
+          <div *ngIf="obj.Format==='text'" class="copyTextAsset" title="Copy All Text" (click)="copyAllText(obj.AssetID, obj.Format, obj.TextID)">
+            <img
+              class="copyTextIcon"
+              src="assets/Icons/editIcons/copy.svg"
+              alt=""
+            />
+          </div>
+        </div>
+        <div class="assetContent">
+          <img class="assetImage" src="{{ obj.Image }}" alt="" />
+          <div class="assetDescription">
+            
+            <p class="assetDescription">{{ capitalizeFirstLetter(obj.Format) }}</p>
+            <p class="assetDescription">{{ formatDate(obj.DateCreated) }}</p>
           </div>
         </div>
       </div>
     </div>
+  </div>
+  <div class="editor">
 
 
     <!--    Below is the code that allows me to work with CKEditor    -->
