@@ -33,7 +33,10 @@ export class AssetManagerService {
     uploadAssetDTO: AssetDTO,
     isTest = false,
   ) {
-    if (uploadAssetDTO.Format === 'text') {
+    if (
+      uploadAssetDTO.Format === 'text' ||
+      uploadAssetDTO.Format === 'table'
+    ) {
       return this.textManagerService.upload(
         uploadAssetDTO,
         isTest,
@@ -109,7 +112,10 @@ export class AssetManagerService {
     retrieveAssetDTO: AssetDTO,
     isTest = false,
   ) {
-    if (retrieveAssetDTO.Format === 'text') {
+    if (
+      retrieveAssetDTO.Format === 'text' ||
+      retrieveAssetDTO.Format === 'table'
+    ) {
       return this.textManagerService.retrieveOne(
         retrieveAssetDTO,
         isTest,

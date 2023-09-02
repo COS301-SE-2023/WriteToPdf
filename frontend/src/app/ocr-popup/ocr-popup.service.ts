@@ -13,7 +13,7 @@ export class OCRDialogService {
     openDialog(): void {
       if(!this.CheckDialogOpen()) {
         this.dialog.open(OcrPopupComponent, {
-          height: '62vh',
+          height: '500px',
           width: '75%',
           position: {
             top: '12%',

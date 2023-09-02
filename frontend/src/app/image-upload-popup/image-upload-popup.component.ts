@@ -65,6 +65,9 @@ export class ImageUploadPopupComponent {
       if (this.extractText) {
         format = 'text';
       }
+      else if(this.extractTable){
+        format = 'table';
+      }
       this.assetService
         .uploadImage(
           fileContent,

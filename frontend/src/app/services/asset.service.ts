@@ -102,8 +102,8 @@ export class AssetService {
             }
           },
         });
-      else if (format === 'text')
-        this.sendRetrieveTextData(assetId, format, textId).subscribe({
+      else if (format === 'text' || format === 'table')
+        this.sendRetrieveTextOrTableData(assetId, format, textId).subscribe({
           next: (response: HttpResponse<any>) => {
             if (response.status === 200) {
               resolve(JSON.parse(response.body.Content));
@@ -134,21 +134,18 @@ export class AssetService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  sendRetrieveTextData(
+  sendRetrieveTextOrTableData(
     assetId: string,
     format: string,
     textID: string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}asset_manager/retrieve_one`;
-
     const body = new AssetDTO();
     body.UserID = this.userService.getUserID();
     body.AssetID = assetId;
     body.Format = format;
     body.TextID = textID;
-
-
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
