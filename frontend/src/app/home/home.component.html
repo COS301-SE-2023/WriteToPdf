@@ -304,7 +304,7 @@
 
       <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="documentLockedPopup" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
+        <p-dialog [(visible)]="documentLockedPopup" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)' }"
           header="Enter Document Password" [focusOnShow]="true" (keydown.escape)="documentLockedPopup = false; userDocumentPassword = '';"
           (click)="$event.stopPropagation()"  (onHide)="userDocumentPassword = ''">
           <p>Password must be 8 characters long.</p>
@@ -324,7 +324,7 @@
 
       <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="openLockedDocumentPopup" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
+        <p-dialog [(visible)]="openLockedDocumentPopup" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)' }"
           header="Enter Document Password" [focusOnShow]="true" (keydown.escape)="openLockedDocumentPopup = false; userDocumentPassword = '';"
           (click)="$event.stopPropagation()" (onHide)="userDocumentPassword = ''">
           <div class="fileOperations" style="display: grid; width:80%;">
@@ -343,7 +343,7 @@
 
       <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="removeDocumentLock" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
+        <p-dialog [(visible)]="removeDocumentLock" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)' }"
           header="Enter Document Password" [focusOnShow]="true" (keydown.escape)="removeDocumentLock = false; userDocumentPassword = '';"
           (click)="$event.stopPropagation()"  (onHide)="userDocumentPassword = ''">
           <div class="fileOperations" style="display: grid; width:80%;">
