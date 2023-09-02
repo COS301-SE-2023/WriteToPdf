@@ -60,14 +60,14 @@ export class EditComponent implements AfterViewInit, OnInit {
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
     this.editService.setContent(this.editor.getData());
-    
+
     this.fileService.saveDocument(
       this.editor.getData(),
       this.editService.getMarkdownID(),
       this.editService.getPath()
     );
   }
-  
+
   showImageUploadPopup(): void {
     const ref = this.dialogService.open(ImageUploadPopupComponent, {
       header: 'Upload Images',

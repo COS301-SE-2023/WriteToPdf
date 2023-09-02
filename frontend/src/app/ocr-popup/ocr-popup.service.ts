@@ -7,15 +7,23 @@ import {OcrPopupComponent} from "./ocr-popup.component";
 })
 export class OCRDialogService {
     constructor(private dialog: MatDialog) {}
+    CheckDialogOpen(): boolean {
+        return this.dialog.openDialogs.length > 0;
+    }
     openDialog(): void {
+      if(!this.CheckDialogOpen()) {
         this.dialog.open(OcrPopupComponent, {
-            height: '55vh',
-            width: '55%',
-            position: {
-                top: '12%',
-                left: '26%',
-            },
+          height: '62vh',
+          width: '75%',
+          position: {
+            top: '12%',
+            left: '17%',
+          },
         });
+      } else {
+        this.closeDialog();
+        this.openDialog();
+      }
     }
     closeDialog(): void {
         this.dialog.closeAll();

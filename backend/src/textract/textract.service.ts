@@ -173,7 +173,6 @@ export class TextractService {
     let textCommand: DetectDocumentTextCommand;
     let tableCommand: AnalyzeDocumentCommand;
     const filePath = `${assetDTO.UserID}/${assetDTO.AssetID}`;
-
     if (extractType === 'text') {
       textCommand = new DetectDocumentTextCommand(
         {

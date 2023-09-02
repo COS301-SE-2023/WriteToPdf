@@ -9,7 +9,6 @@ import { Clipboard } from "@angular/cdk/clipboard";
 })
 export class OcrPopupComponent {
   @ViewChild('myTable') tableRef!: ElementRef;
-  renderTableEditableBool: boolean = false;
   tableData: any[] = [
     {"name": "John Smith", "occupation": "Advisor", "age": 36},
     {"name": "Muhi Masri", "occupation": "Developer", "age": 28},
@@ -70,12 +69,6 @@ export class OcrPopupComponent {
   paragraphText: string = ''; // Use this property to bind to the textarea
 
   constructor(private dialog: MatDialog, private clipboard: Clipboard) {}
-
-  renderTableEditable(): void {
-    this.renderTableEditableBool = !this.renderTableEditableBool;
-    this.tableData.forEach((row) => (row.isEdit = this.renderTableEditableBool));
-
-  }
 
   copyFormData(): void {
     this.clipboard.copy(this.paragraphText);

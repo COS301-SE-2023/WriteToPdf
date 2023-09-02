@@ -19,6 +19,7 @@ export class ImageUploadPopupComponent {
   uploadedImage: File | null = null;
   fromHomepage: boolean = false;
   extractText: boolean = false; // Boolean variable to track text extraction option
+  extractTable: boolean = false; // Boolean variable to track table extraction option
 
   @Input() acceptedTypes = '.jpeg, .jpg';
 
@@ -32,12 +33,21 @@ export class ImageUploadPopupComponent {
     @Inject(Router) private router: Router
   ) { }
 
+  handleExtractTableChange() {
+    // If the Extract Table checkbox is checked, check both checkboxes and disable the Extract Text checkbox
+    if (this.extractTable) {
+      this.extractText = true;
+    } else {
+      // If the Extract Table checkbox is unchecked, re-enable the Extract Text checkbox
+      this.extractText = false;
+    }
+  }
+
   onUpload(event: any) {
     const file = event.files[0]; // Get the first selected file
     this.uploadedFiles = [file]; // Update the uploadedFiles array with the selected file
     const reader = new FileReader();
     this.uploadedFiles.push(file);
-
     reader.onload = (e: any) => {
       const fileContent = reader.result as string;
       const name = file.name.split('.')[0];
