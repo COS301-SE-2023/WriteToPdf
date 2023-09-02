@@ -106,6 +106,10 @@ export class FileManagerServiceMock {
         ParentFolderID: file.ParentFolderID,
         Content: '',
         SafeLock: false,
+        // Next three params do not apply to retrieveAllFiles
+        PreviousDiffs: [],
+        NewDiff: '',
+        NextDiffID: 0,
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
@@ -438,6 +442,9 @@ export class FileManagerServiceMock {
     const returnedDTO: MarkdownFileDTO = {
       ...savedFile,
       Content: encryptedContent,
+      PreviousDiffs: [],
+      NewDiff: '',
+      NextDiffID: 0,
     };
 
     return returnedDTO;
