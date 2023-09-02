@@ -838,6 +838,7 @@ describe('FileManagerService', () => {
         ParentFolderID: '1',
         Size: 100,
         SafeLock: false,
+        NextDiffID: 0,
       };
       const file2: MarkdownFile = {
         MarkdownID: '2',
@@ -849,6 +850,7 @@ describe('FileManagerService', () => {
         ParentFolderID: '1',
         Size: 100,
         SafeLock: false,
+        NextDiffID: 0,
       };
       const files = [file1, file2];
 
@@ -959,6 +961,7 @@ describe('FileManagerService', () => {
           ParentFolderID: '1',
           Size: 100,
           SafeLock: false,
+          NextDiffID: 0,
         },
         {
           MarkdownID: '2',
@@ -970,6 +973,7 @@ describe('FileManagerService', () => {
           ParentFolderID: '1',
           Size: 100,
           SafeLock: false,
+          NextDiffID: 0,
         },
       ];
 
