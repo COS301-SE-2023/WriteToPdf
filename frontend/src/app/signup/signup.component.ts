@@ -39,7 +39,9 @@ export class SignupComponent {
       Password: this.password,
     };
 
-    this.router.navigate([pageName], { state: data });
+    this.router.navigate([pageName], { state: data }).then(() => {
+      window.location.reload()
+    });
   }
 
   ngOnInit(): void {
