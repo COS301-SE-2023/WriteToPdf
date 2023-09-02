@@ -38,11 +38,7 @@ export class S3Service {
     markdownFileDTO: MarkdownFileDTO,
   ) {
     console.log('Delete File (s3)');
-    let filePath = '';
-    if (markdownFileDTO.Path === '')
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
-    else
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
+    let filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
 
     // try {
     //   await fs.access(`./storage/${filePath}`);
@@ -52,6 +48,8 @@ export class S3Service {
     // }
 
     try {
+      // delete 10 diff objects in the S3 bucket
+
       // await fs.unlink(`./storage/${filePath}`);
       /*const response = */ await this.s3Client.send(
         new DeleteObjectCommand({
@@ -67,9 +65,9 @@ export class S3Service {
     return markdownFileDTO;
   }
 
-  // Requires the following fields to be initialised in the DTO:
-  // Path: string; .. TO LOCATE THE FILE in S3
-  // UserID: string; .. TO IDENTIFY ROOT DIRECTORY
+  // This function will need to create the circular diff
+  // array in the S3 bucket. The 10 diff objects will use
+  // key: `${UserID}/${MarkdownID}/diff/{0...9}`.
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -79,10 +77,7 @@ export class S3Service {
     ).toString();
     markdownFileDTO.MarkdownID = markdownID;
 
-    let filePath = '';
-    if (markdownFileDTO.Path === '')
-      filePath = `${markdownFileDTO.UserID}`;
-    else filePath = `${markdownFileDTO.UserID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
+    let filePath = `${markdownFileDTO.UserID}`;
 
     // try {
     //   await fs.mkdir(`./storage/${filePath}`, {
@@ -96,6 +91,8 @@ export class S3Service {
     // }
 
     try {
+      // here, we create the 10 diff objects in the S3 bucket
+
       // await fs.writeFile(
       //   `./storage/${filePath}/${markdownFileDTO.MarkdownID}`,
       //   '',
@@ -145,6 +142,10 @@ export class S3Service {
     );
 
     try {
+
+      // Save the diff object in the S3 bucket
+      // at key: `${UserID}/${MarkdownID}/diff/{NextDiffID}`
+
       // await fs.writeFile(
       //   `./storage/${filePath}`,
       //   fileData,
