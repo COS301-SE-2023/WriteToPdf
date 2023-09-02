@@ -19,6 +19,7 @@
 <div class="extract-text-container">
   <input type="checkbox" [(ngModel)]="extractText" id="extractCheckbox" [disabled]="extractTable"/>
   <label for="extractCheckbox">Extract Text</label>
+  <div style="width: 15px; height: 0;"></div> <!-- spacer -->
   <input type="checkbox" [(ngModel)]="extractTable" id="extractTablebox" (change)="handleExtractTableChange()" />
   <label for="extractTablebox">Extract Table</label>
 </div>
