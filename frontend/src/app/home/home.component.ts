@@ -1089,6 +1089,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       icon: 'pi pi-exclamation-triangle',
       accept: async () => {
         let toastPoppedUp = false;
+        let itemDeleted = false;
         for (const entity of selected) {
           if(entity.SafeLock) {
             if(!toastPoppedUp)
@@ -1098,9 +1099,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
               });
             toastPoppedUp = true;
             continue;
-          }else
+          }else{
             this.delete(entity);
+            itemDeleted = true;
+          }
         }
+
+        if(!itemDeleted) return;
 
         if (selected.length === 1)
           this.messageService.add({
@@ -1215,7 +1220,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
           data.Name = movingNode.Name;
           data.Size = movingNode.Size;
           this.nodeService.addFile(data);
-          console.log("data returned, ", data);
           this.refreshTree();
           this.loading = false;
         });
