@@ -53,6 +53,7 @@ import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
 import { JwtModule } from "@auth0/angular-jwt";
 import { environment } from 'src/environments/environment';
+import { TableModule} from 'primeng/table';
 
 export function tokenGetter() {
   return localStorage.getItem('authToken');
@@ -70,6 +71,7 @@ export function tokenGetter() {
     OcrPopupComponent
   ],
   imports: [
+    TableModule,
     CKEditorModule,
     ToolbarModule,
     ToggleButtonModule,

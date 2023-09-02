@@ -36,7 +36,37 @@ export class OcrPopupComponent {
   displayedColumns: string[] = ['name', 'occupation', 'age'];
   dataSource: any = this.tableData;
   columnsSchema: any = this.COLUMNS_SCHEMA;
-
+  products: any[] = [
+    {
+      code: 'P1',
+      inventoryStatus: 'INSTOCK',
+      name: 'Product 1',
+      price: 100,
+    },
+    {
+      code: 'P2',
+      inventoryStatus: 'INSTOCK',
+      name: 'Product 2',
+      price: 100,
+    },
+    {
+      code: 'P3',
+      inventoryStatus: 'INSTOCK',
+      name: 'Product 3',
+      price: 100,
+    },
+    {
+      code: 'P1',
+      inventoryStatus: 'INSTOCK',
+      name: 'Product 4',
+      price: 100,
+    },
+    {
+      code: 'P1',
+      inventoryStatus: 'INSTOCK',
+      name: 'Product 5',
+      price: 100,
+    },];
   paragraphText: string = ''; // Use this property to bind to the textarea
 
   constructor(private dialog: MatDialog, private clipboard: Clipboard) {}
