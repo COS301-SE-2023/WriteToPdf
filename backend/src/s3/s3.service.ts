@@ -65,9 +65,6 @@ export class S3Service {
     return markdownFileDTO;
   }
 
-  // This function will need to create the circular diff
-  // array in the S3 bucket. The 10 diff objects will use
-  // key: `${UserID}/${MarkdownID}/diff/{0...9}`.
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -76,8 +73,6 @@ export class S3Service {
         new Date().getTime().toString(),
     ).toString();
     markdownFileDTO.MarkdownID = markdownID;
-
-    let filePath = `${markdownFileDTO.UserID}`;
 
     // try {
     //   await fs.mkdir(`./storage/${filePath}`, {
@@ -91,28 +86,45 @@ export class S3Service {
     // }
 
     try {
-      // here, we create the 10 diff objects in the S3 bucket
-
       // await fs.writeFile(
       //   `./storage/${filePath}/${markdownFileDTO.MarkdownID}`,
       //   '',
       //   'utf-8',
       // );
-      /*const response = */ await this.s3Client.send(
+      await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
-          Key: `${filePath}/${markdownFileDTO.MarkdownID}`,
+          Key: `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`,
           Body: new Uint8Array(Buffer.from('')),
         }),
       );
     } catch (err) {
-      console.log('Write File Error: ' + err);
+      console.log(
+        'S3 content file creation error: ' + err,
+      );
       return undefined;
     }
 
+    // Create circular diff array
+    for (let i = 0; i < 10; i++) {
+      try {
+        await this.s3Client.send(
+          new PutObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}/diff/${i}`,
+            Body: new Uint8Array(Buffer.from('')),
+          }),
+        );
+      } catch (err) {
+        console.log(
+          `S3 diff ${i} file creation error: ` +
+            err,
+        );
+        return undefined;
+      }
+    }
     markdownFileDTO.Content = '';
     markdownFileDTO.Size = 0;
-
     return markdownFileDTO;
   }
 
@@ -142,7 +154,6 @@ export class S3Service {
     );
 
     try {
-
       // Save the diff object in the S3 bucket
       // at key: `${UserID}/${MarkdownID}/diff/{NextDiffID}`
 
