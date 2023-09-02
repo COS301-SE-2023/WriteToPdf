@@ -74,6 +74,8 @@ export class S3Service {
     ).toString();
     markdownFileDTO.MarkdownID = markdownID;
 
+    let filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+
     // try {
     //   await fs.mkdir(`./storage/${filePath}`, {
     //     recursive: true,
@@ -94,7 +96,7 @@ export class S3Service {
       await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
-          Key: `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`,
+          Key: filePath,
           Body: new Uint8Array(Buffer.from('')),
         }),
       );
@@ -111,7 +113,7 @@ export class S3Service {
         await this.s3Client.send(
           new PutObjectCommand({
             Bucket: this.awsS3BucketName,
-            Key: `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}/diff/${i}`,
+            Key: `${filePath}/diff/${i}`,
             Body: new Uint8Array(Buffer.from('')),
           }),
         );
@@ -136,11 +138,7 @@ export class S3Service {
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    let filePath = '';
-    if (markdownFileDTO.Path === '')
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
-    else
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
+    let filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
 
     // try {
     //   await fs.access(`./storage/${filePath}`);
@@ -173,6 +171,22 @@ export class S3Service {
       console.log('Write File Error: ' + err);
       return undefined;
     }
+
+    // Save diff
+    try {
+      // await fs.writeFile(
+      //   `./storage/${filePath}/diff/${markdownFileDTO.NextDiffID}`,
+      //   fileData,
+      //   'utf-8',
+      // );
+      /*const response = */ await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/diff/${markdownFileDTO.NextDiffID}`,
+          Body: markdownFileDTO.NewDiff,
+        }),
+      );
+    } catch (err) {}
 
     return markdownFileDTO;
   }
