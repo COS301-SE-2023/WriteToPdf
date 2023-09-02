@@ -171,9 +171,13 @@ export class UsersService {
       );
     }
 
-    const emailExists = await this.findOneByEmail(
-      createUserDTO.Email,
-    );
+    let emailExists = false;
+    try {
+      await this.findOneByEmail(
+        createUserDTO.Email,
+      );
+      emailExists = true;
+    } catch (error) {}
 
     if (emailExists) {
       this.throwHttpException(
