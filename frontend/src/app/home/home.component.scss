@@ -473,7 +473,8 @@ textarea {
   cursor: pointer;
 }
 
-.lockIcon {
+.lockIcon,
+.menuIcon {
   transition: 0.5s;
   width: 40px;
   height: 40px;
@@ -482,8 +483,8 @@ textarea {
   cursor: pointer;
 }
 
-.lockIcon:hover {
-  // background-color: darken($light-grey, 10%);
+.menuIcon:hover {
+  background-color: darken($light-grey, 10%);
 }
 
 .folderNameWrapper {

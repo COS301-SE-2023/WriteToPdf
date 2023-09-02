@@ -5,6 +5,9 @@ import {
   OnInit,
   Renderer2,
   HostListener,
+  NgZone,
+  ViewChild,
+  Inject
 } from '@angular/core';
 // import {NgModule} from "@angular/core";
 import { Router } from '@angular/router';
@@ -23,14 +26,11 @@ import { FileService } from '../services/file.service';
 import { UserService } from '../services/user.service';
 import { FileManagerPopupComponent } from '../file-manager-popup/file-manager-popup.component';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
-import { ViewChild } from '@angular/core';
 import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
-import { Inject } from '@angular/core';
 import { CoordinateService } from '../services/coordinate-service.service';
 import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { start } from 'repl';
 import { ContextMenu } from 'primeng/contextmenu';
 
 interface Column {
@@ -123,9 +123,25 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private folderService: FolderService,
     private renderer: Renderer2,
     private coordinateService: CoordinateService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private zone: NgZone
   ) {
     this.contextMenuItems = [
+      {
+        label: 'Open',
+        icon: 'pi pi-fw pi-folder-open',
+        command: () => {
+          const selected = this.getSelected();
+
+          if (selected.length === 1) {
+            if (selected[0].Type == 'folder') {
+              this.openFolder(selected[0].FolderID);
+            } else if (selected[0].Type == 'file') {
+              this.onOpenFileSelect(selected[0].MarkdownID);
+            }
+          }
+        }
+      },
       {
         label: 'Create New Folder',
         icon: 'pi pi-folder',
@@ -1382,6 +1398,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   handleClick(event: any, node: any) {
     this.contextMenu.hide();
+
     if (event.ctrlKey) {
       this.addToSelection(node);
     } else if (event.shiftKey) {
@@ -1401,8 +1418,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   handleRightClick(event: any, node: any) {
-
-    this.contextMenuItems[5] = {
+    this.zone.run(() => {
+      // Your dynamic context menu updates here
+    this.contextMenuItems[6] = {
       label: 'Lock Document',
       icon: 'pi pi-lock',
       command: () => {
@@ -1415,13 +1433,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
         }
       },
     };
+    
     if (this.getSelected().length > 1) {
-      this.contextMenuItems[3].disabled = true;
-      this.contextMenuItems[5].disabled = true;
+      this.contextMenuItems[0].disabled = true;
+      this.contextMenuItems[4].disabled = true;
+      this.contextMenuItems[6].disabled = true;
     }
     else {
-      this.contextMenuItems[3].disabled = false;
-      this.contextMenuItems[5].disabled = false;
+      this.contextMenuItems[0].disabled = false;
+      this.contextMenuItems[4].disabled = false;
+      this.contextMenuItems[6].disabled = false;
     }
 
     if (node.Selected) {
@@ -1429,11 +1450,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     if (this.getSelected().length === 1) {
       if (node.Type === 'folder') {
-        this.contextMenuItems[5].disabled = true;
+        this.contextMenuItems[6].disabled = true;
       } else {
-        this.contextMenuItems[5].disabled = false;
+        this.contextMenuItems[6].disabled = false;
         if (node.SafeLock) {
-          this.contextMenuItems[5] = {
+          this.contextMenuItems[6] = {
             label: 'Remove Lock',
             icon: 'pi pi-fw pi-lock-open',
             command: () => {
@@ -1449,6 +1470,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
         }
       }
     }
+    this.contextMenu.cd.detectChanges();
+  });
+
   }
 
   selectOnlyOne(node: any) {
@@ -1730,6 +1754,7 @@ enableContextMenu(event: MouseEvent, obj: any){
   }
   this.contextMenu.position(event);
   this.contextMenu.show(event);
+  this.handleRightClick(event, obj);
 }
 
   protected readonly focus = focus;
