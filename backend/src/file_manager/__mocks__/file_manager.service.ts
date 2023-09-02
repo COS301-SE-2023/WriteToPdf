@@ -208,7 +208,7 @@ export class FileManagerServiceMock {
       markdownFileDTO,
     );
 
-    return this.markdownFilesService.updateLastModified(
+    return this.markdownFilesService.updateAfterModification(
       markdownFileDTO,
     );
   }
