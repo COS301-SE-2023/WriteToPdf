@@ -1384,16 +1384,31 @@ export class HomeComponent implements OnInit, AfterViewInit {
       return;
     }
     let startSelecting = false;
-
+    this.shiftClickStart.Selected = true;
+    node.Selected = true;
     const x = this.currentFolders.concat(this.currentFiles);
-    for (let i = 0; i < x.length; i++) {
-      const element = x[i];
-      if (element === this.shiftClickStart || element === node) {
-        startSelecting = !startSelecting;
-        element.Selected = true;
-      } else if (startSelecting) {
-        element.Selected = true;
+
+    let j = 0;
+    for (; j < x.length; j++) {
+      if (x[j] === this.shiftClickStart || x[j] === node) {
+        
+        break;
       }
+    }
+    let count = 0;
+    for (let i = j; i < x.length; i++) {
+      console.log(i);
+      setTimeout(() => { 
+        console.log(startSelecting);
+        const element = x[i];
+        if (element === this.shiftClickStart || element === node) {
+          startSelecting = !startSelecting;
+          element.Selected = true;
+        } else if (startSelecting) {
+          element.Selected = true;
+        }
+      }, 20*count++);
+
     }
 
   }

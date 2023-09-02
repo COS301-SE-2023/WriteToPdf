@@ -367,6 +367,7 @@ textarea {
 
 .fileItem,
 .moveFileItem {
+  transition: 0.2s;
   display: flex;
   box-sizing: content-box;
   width: calc( 95vw - 245px);
