@@ -144,11 +144,6 @@ export class FileManagerService {
     return directoryFilesDTO;
   }
 
-  // DB Requires the following fields to be initialised in the DTO:
-  // MarkdownID: string; .. TO IDENTIFY THE FILE
-  // Path: string; .. TO LOCATE THE FILE in S3
-  // Name: string; .. NEW NAME
-  // Size: number; .. NEW SIZE
   renameFile(markdownFileDTO: MarkdownFileDTO) {
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
@@ -173,7 +168,6 @@ export class FileManagerService {
     );
   }
 
-  // DB Requires the following fields to be initialised in the DTO:
   async moveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -208,12 +202,10 @@ export class FileManagerService {
     );
   }
 
-  // DB Requires the following fields to be initialised in the DTO:
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
     isTest = false,
   ) {
-    // console.log('saveFile: ', markdownFileDTO);
     markdownFileDTO.Size =
       markdownFileDTO.Content.length;
     if (markdownFileDTO.MarkdownID === undefined)
@@ -232,16 +224,11 @@ export class FileManagerService {
       );
     }
 
-    // markdownFileDTO.NextDiffID = (NextDiffID + 1) % 10;
-
     return await this.markdownFilesService.updateAfterModification(
       markdownFileDTO,
     );
   }
-  // DB Requires the following fields to be initialised in the DTO:
-  // MarkdownID: string; .. TO IDENTIFY THE FILE
-  // Path: string; .. TO LOCATE THE FILE IN S3
-  // Name: string; .. TO IDENTIFY THE FILE
+
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
     isTest = false,
