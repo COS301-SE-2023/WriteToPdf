@@ -54,7 +54,7 @@
     </div>
     <div class="directoryTree" (click)="$event.stopPropagation()">
       <p-tree class="leftTree" (onNodeSelect)="onNodeSelect($event)" [(selection)]="treeSelectedFile" [value]="iterateNodeIDRemoval(filesDirectoryTree)"
-        class="w-full md:w-30rem" selectionMode="single" [style]="{'border':'none','padding':'0', 'backgroundColor':'#00000000'}"></p-tree>
+        class="w-full md:w-30rem" selectionMode="single" [style]="{'border':'none','padding':'0', 'paddingBottom': '30px', 'backgroundColor':'#00000000'}"></p-tree>
     </div>
   </div>
   <div class="mainWindowHome" id="fadingDiv">

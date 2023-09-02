@@ -107,7 +107,7 @@ to co-operate.
   z-index: 3;
   position: fixed;
   width: 245px;
-  height: 110%;
+  height: calc(100svh - 112px);
   left: 0px;
   top: 112px;
   // Colour
