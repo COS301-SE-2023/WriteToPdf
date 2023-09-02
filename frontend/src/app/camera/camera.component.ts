@@ -90,7 +90,7 @@ export class CameraComponent {
         .getTracks()
         .forEach((track: { stop: () => any }) => track.stop());
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   }
 

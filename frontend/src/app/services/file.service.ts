@@ -27,13 +27,15 @@ export class FileService {
     private conversionService: ConversionService
   ) {}
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   saveDocument(
     content: string | undefined,
     markdownID: string | undefined,
-    path: string | undefined
+    path: string | undefined,
+    safeLock: boolean | undefined
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.sendSaveData(content, markdownID, path).subscribe({
+      this.sendSaveData(content, markdownID, path, safeLock).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
             this.messageService.add({
@@ -49,10 +51,12 @@ export class FileService {
     });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   sendSaveData(
     content: string | undefined,
     markdownID: string | undefined,
-    path: string | undefined
+    path: string | undefined,
+    safeLock: boolean | undefined
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/save_file`;
@@ -69,7 +73,8 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveDocument(
+  // User does not need to provide userDocumentPassword (SafeLock)
+  async retrieveDocument(
     markdownID: string | undefined,
     path: string | undefined
   ): Promise<any> {
@@ -90,6 +95,7 @@ export class FileService {
     });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   sendRetrieveData(
     markdownID: string | undefined,
     path: string | undefined
@@ -109,6 +115,8 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User must provide userDocumentPassword (SafeLock) IF
+  // they chose to lock the document
   createDocument(
     name: string,
     path: string | undefined,
@@ -128,9 +136,11 @@ export class FileService {
               response.body.MarkdownID,
               response.body.Name,
               response.body.Path,
-              response.body.ParentFolderID
+              response.body.ParentFolderID,
+              response.body.SafeLock,
+              ''
             );
-            
+
             resolve(true);
           } else {
             resolve(false);
@@ -140,6 +150,8 @@ export class FileService {
     });
   }
 
+  // User must provide userDocumentPassword (SafeLock) IF
+  // they chose to lock the document
   sendCreateData(
     name: string,
     path: string | undefined,
@@ -162,11 +174,12 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User must provide userDocumentPassword (SafeLock) IF
+  // the document is in SafeLock mode
   deleteDocument(markdownID: string | undefined): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
           if (response.status === 200) {
             resolve(true);
           } else {
@@ -177,6 +190,8 @@ export class FileService {
     });
   }
 
+  // User must provide userDocumentPassword (SafeLock) IF
+  // the document is in SafeLock mode
   sendDeleteData(
     markdownID: string | undefined
   ): Observable<HttpResponse<any>> {
@@ -195,6 +210,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   renameDocument(
     markdownFileID: string | undefined,
     fileName: string | undefined,
@@ -238,6 +254,8 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
+  // because moving does not modify or compromise the document content
   moveDocument(
     markdownID: string | undefined,
     path: string | undefined,
@@ -257,7 +275,8 @@ export class FileService {
             markdownFile.Name = response.body.Name;
             markdownFile.Path = response.body.Path;
             markdownFile.ParentFolderID = response.body.ParentFolderID;
-
+            markdownFile.SafeLock = response.body.SafeLock;
+            markdownFile.DateCreated = response.body.DateCreated;
             resolve(markdownFile);
           } else {
             this.messageService.add({
@@ -271,6 +290,8 @@ export class FileService {
     });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
+  // because moving does not modify or compromise the document content
   sendMoveData(
     markdownID: string | undefined,
     path: string | undefined,
@@ -292,6 +313,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   retrieveAllFiles(): Promise<MarkdownFileDTO[]> {
     return new Promise<MarkdownFileDTO[]>((resolve, reject) => {
       this.sendRetrieveAllFiles().subscribe({
@@ -309,6 +331,7 @@ export class FileService {
               fileDTO.ParentFolderID = body.Files[i].ParentFolderID;
               fileDTO.Path = body.Files[i].Path;
               fileDTO.Size = body.Files[i].Size;
+              fileDTO.SafeLock = body.Files[i].SafeLock;
 
               files.push(fileDTO);
             }
@@ -332,6 +355,7 @@ export class FileService {
     });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   sendRetrieveAllFiles(): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/retrieve_all_files`;
@@ -346,6 +370,8 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock) because
+  // a file on the local machine is not subject to SafeLock... for now
   importDocument(
     name: string,
     path: string,
@@ -379,6 +405,8 @@ export class FileService {
     });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock) because
+  // a file on the local machine is not subject to SafeLock... for now
   sendImportData(
     name: string,
     path: string,
@@ -397,7 +425,6 @@ export class FileService {
     body.Content = this.encryptDocument(content);
     body.Type = type;
 
-    console.log('body', body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -405,6 +432,7 @@ export class FileService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
+  // User does not need to provide userDocumentPassword (SafeLock)
   exportDocumentToNewFileType(
     markdownID: string | undefined,
     name: string,
@@ -413,12 +441,11 @@ export class FileService {
   ): void {
     //Applying CSS stylings to html page to allow for table conversion
     const txtContent = content;
-    const tableStyling = 'style="border-collapse: collapse; border:1px solid #bfbfbf;" ';
-    const tdThStyling ='style="border: 1px solid #bfbfbf; padding: 8px; text-align: left; width:32px;" ';
+    const tableStyling =
+      'style="border-collapse: collapse; border:1px solid #bfbfbf;" ';
+    const tdThStyling =
+      'style="border: 1px solid #bfbfbf; padding: 8px; text-align: left; width:32px;" ';
 
-    if(content.includes('<table')) {
-      console.log('contains table');
-    }
     //more work needs to be done to get conversion better
     //NB Try to use document selector to select by class and apply all relevant styling
     //See conversion to JPEG and PNG for details
@@ -426,7 +453,8 @@ export class FileService {
     content = content.replace(/<td/g, `<td ${tdThStyling}`);
     content = content.replace(/<th/g, `<th ${tdThStyling}`);
 
-    content = `<head><style>
+    content =
+      `<head><style>
     .text-huge {font-size: 1.8em;}
     .text-big {font-size: 1.4em;}
     .text-small {font-size: 0.85em;}
@@ -434,7 +462,6 @@ export class FileService {
     figure {display: block;margin-block-start: 1em;margin-block-end: 1em;margin-inline-start: 40px;margin-inline-end: 40px;}
     .table {display: table;margin: 0.9em auto;}
     </style></head>` + content;
-    console.log(content);
 
     let blob: Blob;
     let fileURL: string;
@@ -517,7 +544,6 @@ export class FileService {
       summary: 'Export failed',
     });
 
-
     // if (type === 'html') {
     //   this.downloadAsHtmlFile(content, name);
     //   return;
@@ -552,6 +578,95 @@ export class FileService {
     // });
   }
 
+  updateLockDocument(
+    markdownID: string,
+    content: string,
+    userDocumentPassword: string,
+    safeLock: boolean,
+    path: string
+  ): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendUpdateLockData(
+        markdownID,
+        content,
+        userDocumentPassword,
+        safeLock,
+        path
+      ).subscribe({
+        next: (response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            if (safeLock) {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'File locked successfully',
+              });
+            } else {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'File unlocked successfully',
+              });
+            }
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+      });
+    });
+  }
+
+  sendUpdateLockData(
+    markdownID: string,
+    content: string,
+    userDocumentPassword: string,
+    safeLock: boolean,
+    path: string
+  ): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/update_safelock_status`;
+    const body = new MarkdownFileDTO();
+    body.UserID = this.userService.getUserID();
+    body.MarkdownID = markdownID;
+    if (safeLock) {
+      body.Content = this.encryptSafeLockDocument(
+        content,
+        userDocumentPassword
+      );
+
+      new Promise<boolean>((resolve, reject) => {
+        this.sendSaveData(body.Content, markdownID, path, safeLock).subscribe({
+          next: (response: HttpResponse<any>) => {},
+        });
+      });
+    } else {
+      const decrypted = this.decryptSafeLockDocument(
+        content,
+        userDocumentPassword
+      );
+      if (decrypted === null) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Incorrect password',
+        });
+        return new Observable<HttpResponse<any>>();
+              }
+      body.Content = decrypted;
+
+      new Promise<boolean>((resolve, reject) => {
+        this.sendSaveData(body.Content, markdownID, path, safeLock).subscribe({
+          next: (response: HttpResponse<any>) => {},
+        });
+      });
+    }
+    body.SafeLock = safeLock;
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
   encryptDocument(content: string | undefined): string {
     if (content) return content;
     const key = this.userService.getEncryptionKey();
@@ -562,6 +677,22 @@ export class FileService {
       return '';
     }
   }
+
+  encryptSafeLockDocument(
+    content: string | undefined,
+    userDocumentPassword: string
+  ) {
+    const signature = 'WRITETOPDF-SAFELOCK-SIGNATURE';
+    const key = userDocumentPassword;
+    if (key && (content || content == '')) {
+      content = content + signature;
+      const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
+      return encryptedMessage;
+    } else {
+      return '';
+    }
+  }
+
   decryptDocument(content: string | undefined): string {
     if (content) return content;
     const key = this.userService.getEncryptionKey();
@@ -572,6 +703,47 @@ export class FileService {
       return decryptedMessage;
     } else {
       return '';
+    }
+  }
+
+  decryptSafeLockDocument(
+    content: string | undefined,
+    userDocumentPassword: string
+  ) {
+    // console.log('decrypting safelock document');
+    const signature = 'WRITETOPDF-SAFELOCK-SIGNATURE';
+    const key = userDocumentPassword;
+    if (key && (content || content == '')) {
+      try{
+        const decryptedMessage = CryptoJS.AES.decrypt(content, key)
+          .toString(CryptoJS.enc.Utf8)
+          .replace(/^"(.*)"$/, '$1');
+
+        // console.log('Decrypted safelock document: ' + decryptedMessage);
+        if (decryptedMessage.endsWith(signature)) {
+          // console.log('Decrypted safelock document end with signature');
+          const signRemoved = decryptedMessage.substring(
+            0,
+            decryptedMessage.length - signature.length
+          );
+
+          // console.log('Decrypted safelock document: ' + signRemoved);
+          return signRemoved;
+          // return decryptedMessage.substring(
+          //   0,
+          //   decryptedMessage.length - signature.length
+          // );
+        } else {
+          // console.log('Decrypted safelock document does not end with signature');
+          return null;
+        }
+      } catch (error) {
+        return null;
+      }
+
+
+    } else {
+      return null;
     }
   }
 }

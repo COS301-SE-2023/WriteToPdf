@@ -477,7 +477,7 @@ describe('UsersService', () => {
 
       jest
         .spyOn(service, 'findOneByEmail')
-        .mockResolvedValue(undefined);
+        .mockRejectedValueOnce(undefined);
 
       jest
         .spyOn(service, 'create')

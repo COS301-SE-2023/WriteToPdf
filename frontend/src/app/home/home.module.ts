@@ -18,6 +18,7 @@ import { TreeTableModule } from 'primeng/treetable';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { Menubar, MenubarModule } from 'primeng/menubar';
 import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
 
 @NgModule({
     declarations: [HomeComponent],
@@ -39,6 +40,7 @@ import { InputTextModule } from 'primeng/inputtext';
         DragDropModule,
         MenubarModule,
         InputTextModule,
+        PasswordModule,
     ],
     providers: [DialogService],
 })
