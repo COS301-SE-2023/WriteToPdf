@@ -817,13 +817,27 @@ export class HomeComponent implements OnInit, AfterViewInit {
       },
       {
         label: 'Import',
-        icon: 'pi pi-fw pi-pencil',
+        icon: 'pi pi-fw pi-upload',
         items: [
           {
             label: 'Upload File',
-            icon: 'pi pi-fw pi-upload',
+            icon: 'pi pi-fw pi-file',
             command: () => {
               this.showFileUploadPopup();
+            },
+          },
+          {
+            label: 'Upload Asset',
+            icon: 'pi pi-fw pi-image',
+            command: () => {
+              this.showImageUploadPopup();
+            },
+          },
+          {
+            label: 'Camera Upload',
+            icon: 'pi pi-fw pi-camera',
+            command: () => {
+              this.navigateToPage('camera');
             },
           },
         ],
@@ -1433,7 +1447,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         }
       },
     };
-    
+
     if (this.getSelected().length > 1) {
       this.contextMenuItems[0].disabled = true;
       this.contextMenuItems[4].disabled = true;
