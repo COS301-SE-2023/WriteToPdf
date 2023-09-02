@@ -298,8 +298,8 @@
         <p-dialog [(visible)]="documentLockedPopup" [modal]="true" [style]="{ width: '30vw', minWidth:'300px' }"
           header="Enter Document Password" [focusOnShow]="true" (keydown.escape)="documentLockedPopup = false; userDocumentPassword = '';"
           (click)="$event.stopPropagation()"  (onHide)="userDocumentPassword = ''">
+          <p>Password must be 8 characters long.</p>
           <div class="fileOperations" style="display: grid; width:80%;">
-            <p>The password must be 8 characters long.</p>
             <!-- <input placeholder="Enter Password" class="fileOperations-entity" [(ngModel)]="userDocumentPassword" label="Name: "
               pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" /> -->
             <p-password name="password" id="password" placeholder="" class="fileOperations-entity"

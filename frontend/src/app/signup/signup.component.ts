@@ -51,11 +51,11 @@ export class SignupComponent {
         cancel_on_tap_outside: true
       });
       // @ts-ignore
-      console.log(google.accounts.id.renderButton(
+      google.accounts.id.renderButton(
         // @ts-ignore
         document.getElementById("buttonDiv"),
         { theme: "outline", size: "large", width: "100%", shape: "pill" }
-      ));
+      );
       // @ts-ignore
       google.accounts.id.prompt((notification: PromptMomentNotification) => { });
     };

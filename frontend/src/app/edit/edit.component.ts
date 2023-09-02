@@ -238,10 +238,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
     let contents = this.editor.getData();
     let pass = this.editService.getDocumentPassword();
-    console.log('pass: ', pass);
     if(pass != '' && pass != undefined) {
-      console.log('contents: ', contents);
-      console.log('encrypting: ', this.fileService.encryptSafeLockDocument(contents, pass));
       this.fileService.saveDocument(
         this.fileService.encryptSafeLockDocument(contents, pass),
         this.editService.getMarkdownID(),
