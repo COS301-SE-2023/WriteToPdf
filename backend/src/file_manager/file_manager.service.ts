@@ -70,12 +70,13 @@ export class FileManagerService {
       );
     }
 
-    return this.markdownFilesService.create(
+    return await this.markdownFilesService.create(
       markdownFileDTO,
     ); // return the file to know ID;
   }
 
-  // DB Requires the following fields to be initialised in the DTO:
+  // This function will need to return the latest diffs for
+  // the specified file (at most, 10 diffs)
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
     isTest = false,
@@ -231,7 +232,9 @@ export class FileManagerService {
       );
     }
 
-    return this.markdownFilesService.updateLastModified(
+    // markdownFileDTO.NextDiffID = (NextDiffID + 1) % 10;
+
+    return await this.markdownFilesService.updateAfterModification(
       markdownFileDTO,
     );
   }
