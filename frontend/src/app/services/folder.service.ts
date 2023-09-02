@@ -206,11 +206,11 @@ export class FolderService {
     path: string | undefined,
     folderName: string
   ): Promise<boolean> {
-    console.log(folderID+" "+path+" "+folderName);
+    // console.log(folderID+" "+path+" "+folderName);
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameData(folderID, path, folderName).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
+          // console.log(response);
           if (response.status === 200) {
             this.messageService.add({
               severity: 'success',

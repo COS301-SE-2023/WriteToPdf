@@ -29,7 +29,7 @@ import { FolderService } from '../services/folder.service';
 import { Inject } from '@angular/core';
 import { CoordinateService } from '../services/coordinate-service.service';
 import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
-import { NgxSpinnerService } from "ngx-spinner";
+import { NgxSpinnerService } from 'ngx-spinner';
 import { start } from 'repl';
 
 interface Column {
@@ -88,10 +88,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public createNewDocumentDialogueVisible: boolean = false;
   public createNewFolderDialogueVisible: boolean = false;
   renameDialogueVisible: boolean = false;
+  documentLockedPopup: boolean = false;
+  openLockedDocumentPopup: boolean = false;
+  removeDocumentLock: boolean = false;
   public entityName: string = '';
   entityRename: string = '';
   uploadedFiles: any[] = [];
   contextMenuItems: any[];
+  public userDocumentPassword: string = '';
+  documentPromise: Promise<any> | null = null;
 
   currentFolders: any[] = []; //Holds an array of objects representing folders.
   currentFiles: any[] = []; //Holds an array of objects representing files.
@@ -122,17 +127,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
       {
         label: 'Create New Folder',
         icon: 'pi pi-folder',
-        command: () => this.createNewFolderDialogueVisible = true
+        command: () => (this.createNewFolderDialogueVisible = true),
       },
       {
         label: 'Create New File',
         icon: 'pi pi-file',
-        command: () => this.createNewDocumentDialogueVisible = true
+        command: () => (this.createNewDocumentDialogueVisible = true),
       },
       {
         label: 'Move',
         icon: 'pi pi-fw pi-arrow-right',
-        command: () => this.startMove()
+        command: () => this.startMove(),
       },
       // {
       //   label: 'Enclose in Folder',
@@ -143,20 +148,31 @@ export class HomeComponent implements OnInit, AfterViewInit {
         label: 'Rename',
         icon: 'pi pi-pencil',
         command: () => {
-
           const selected = this.getSelected();
           if (selected.length === 1) {
             if (!(this.entityRename = this.getSelected()[0].Name))
               this.entityRename = this.getSelected()[0].FolderName;
             this.renameDialogueVisible = true;
           }
-
-        }
+        },
       },
       {
         label: 'Delete',
         icon: 'pi pi-trash',
-        command: () => this.deleteSelectedEntities()
+        command: () => this.deleteSelectedEntities(),
+      },
+      {
+        label: 'Lock Document',
+        icon: 'pi pi-lock',
+        command: () => {
+          this.documentLockedPopup = true;
+
+          const file = this.getSelected();
+          if (file.length === 1) {
+            this.documentPromise = this.fileService
+              .retrieveDocument(file[0].MarkdownID, file[0].Path);
+          }
+        },
       },
     ];
   }
@@ -298,9 +314,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
-
     // Get a reference to the menubar element with the specific class
-    this.menubarElement = this.elementRef.nativeElement.querySelector('.p-menubar.custom-menubar');
+    this.menubarElement = this.elementRef.nativeElement.querySelector(
+      '.p-menubar.custom-menubar'
+    );
 
     // Call the function to set the component width initially
     this.updateMenubarWidth();
@@ -316,7 +333,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.loadByParentID(this.folderIDHistory[this.folderIDHistoryPosition]);
       } else {
         this.folderIDHistory.push('');
-        this.loadByParentID("");
+        this.loadByParentID('');
       }
 
       const data = this.nodeService.getTreeTableNodesData();
@@ -326,12 +343,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // Note, both filtered and non-filtered needs to be made and kept up to date,
       // as the non-filtered serves as the filter for the filters for the logic in the filter function
       // below
-      this.nodeService
-      .getTreeTableNodes()
-      .then((data) => {
-          this.filesDirectoryTreeTable = data;
-          this.filteredFilesDirectoryTreeTable = data;
-        });
+      this.nodeService.getTreeTableNodes().then((data) => {
+        this.filesDirectoryTreeTable = data;
+        this.filteredFilesDirectoryTreeTable = data;
+      });
       this.treeTableColumns = [
         { field: 'name', header: 'Name' },
         { field: 'size', header: 'Size' },
@@ -386,8 +401,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.rootFolder.Selected = false;
     this.rootFolder.MoveSelected = false;
     this.rootFolder.Type = 'folder';
-
-
   }
 
   iterateNodeIDRemoval(node: any[]) {
@@ -417,8 +430,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     else if (event.node.data.type === 'file') {
       if (!event.node.parent) {
         this.openFolder('');
-      } else
-        this.openFolder(event.node.parent.key);
+      } else this.openFolder(event.node.parent.key);
 
       this.unselectAll();
       for (let i = 0; i < this.currentFiles.length; i++) {
@@ -584,7 +596,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.subMenu = this.elementRef.nativeElement.querySelector('.p-menubarsub');
     if (this.subMenu) {
-      this.subMenu.style.zIndex = "10000 !important";
+      this.subMenu.style.zIndex = '10000 !important';
     }
     this.updateMenubarWidth();
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
@@ -596,22 +608,31 @@ export class HomeComponent implements OnInit, AfterViewInit {
   onOpenFileSelect(MarkdownID: string | undefined | null): void {
     const file = this.nodeService.getFileDTOByID(MarkdownID);
     this.loading = true;
+    if (file.SafeLock) {
+      this.openLockedDocumentPopup = true;
+      this.documentPromise = this.fileService.retrieveDocument(file.MarkdownID, file.Path);
+      return;
+    }
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
-
         this.editService.setAll(
           data,
           file.MarkdownID,
           file.Name,
           file.Path,
-          file.ParentFolderID
+          file.ParentFolderID,
+          file.SafeLock,
+          ''
         );
 
         this.loading = false;
-        this.navigateToPage('edit');
+        if (!file.SafeLock)
+          this.navigateToPage('edit');
       });
+
   }
+
 
   delete(event: any) {
     if (event.Type == 'folder') {
@@ -623,7 +644,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.fileService.deleteDocument(event.MarkdownID);
       this.deleteEntryByKey(this.filesDirectoryTree, event.MarkdownID);
       this.deleteEntryByKey(this.filesDirectoryTreeTable, event.MarkdownID);
-      this.deleteEntryByKey(this.filteredFilesDirectoryTreeTable, event.MarkdownID);
+      this.deleteEntryByKey(
+        this.filteredFilesDirectoryTreeTable,
+        event.MarkdownID
+      );
       this.nodeService.removeFile(event.MarkdownID);
       this.refreshTree();
       this.currentDirectory = null;
@@ -714,8 +738,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 } else if (selected[0].Type == 'file') {
                   this.onOpenFileSelect(selected[0].MarkdownID);
                 }
-              }
-              else if (selected.length === 0) {
+              } else if (selected.length === 0) {
                 this.messageService.add({
                   severity: 'warn',
                   summary: 'Please Select a Folder or File to Open',
@@ -732,8 +755,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 if (!(this.entityRename = this.getSelected()[0].Name))
                   this.entityRename = this.getSelected()[0].FolderName;
                 this.renameDialogueVisible = true;
-              }
-              else if (this.getSelected().length === 0) {
+              } else if (this.getSelected().length === 0) {
                 this.messageService.add({
                   severity: 'warn',
                   summary: 'Please Select a Folder or File to Rename',
@@ -751,7 +773,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
             label: 'Delete',
             icon: 'pi pi-fw pi-trash',
             command: () => {
-
               const selected = this.getSelected();
               if (selected.length > 0) {
                 this.deleteSelectedEntities();
@@ -837,24 +858,26 @@ export class HomeComponent implements OnInit, AfterViewInit {
       if (selected[0].Type === 'folder') {
         parentFolderID = selected[0].FolderID;
         path = selected[0].Path + '/' + selected[0].Name;
-      }
-      else {
+      } else {
         if (this.folderIDHistoryPosition == 0) {
           path = '';
           parentFolderID = '';
         } else {
-          const currentFolder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
+          const currentFolder = this.nodeService.getFolderDTOByID(
+            this.folderIDHistory[this.folderIDHistoryPosition]
+          );
           parentFolderID = this.folderIDHistory[this.folderIDHistoryPosition];
           path = currentFolder.Path + '/' + currentFolder.FolderName;
         }
       }
-    }
-    else {
+    } else {
       if (this.folderIDHistoryPosition == 0) {
         path = '';
         parentFolderID = '';
       } else {
-        const currentFolder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
+        const currentFolder = this.nodeService.getFolderDTOByID(
+          this.folderIDHistory[this.folderIDHistoryPosition]
+        );
         parentFolderID = this.folderIDHistory[this.folderIDHistoryPosition];
         path = currentFolder.Path + '/' + currentFolder.FolderName;
       }
@@ -892,18 +915,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   startMove() {
-    if (this.getSelected().length > 0){
+    if (this.getSelected().length > 0) {
       this.unselectAllMoveSelected();
       this.moveDialogVisible = true;
-    }
-    else {
+    } else {
       this.messageService.add({
         severity: 'warn',
         summary: 'Please Select a Folder or File to Move',
         detail: '',
       });
     }
-
   }
 
   async moveEntity() {
@@ -911,13 +932,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const movePromises = []; // Array to store all the move promises
 
     for (const entity of selected) {
-      const key = entity.Type === 'folder' ? entity.FolderID : entity.MarkdownID;
+      const key =
+        entity.Type === 'folder' ? entity.FolderID : entity.MarkdownID;
       const targetFolderID = this.getMoveSelectedFolder().FolderID;
 
       // Create a promise for each entity's move
-      const movePromise = entity.Type === 'folder'
-        ? this.moveByKey(key, targetFolderID)
-        : this.moveByKey(key, targetFolderID);
+      const movePromise =
+        entity.Type === 'folder'
+          ? this.moveByKey(key, targetFolderID)
+          : this.moveByKey(key, targetFolderID);
 
       movePromises.push(movePromise); // Store the promise in the array
     }
@@ -961,24 +984,26 @@ export class HomeComponent implements OnInit, AfterViewInit {
       if (selected[0].Type === 'folder') {
         parentFolderID = selected[0].FolderID;
         path = selected[0].Path + '/' + selected[0].Name;
-      }
-      else {
+      } else {
         if (this.folderIDHistoryPosition == 0) {
           path = '';
           parentFolderID = '';
         } else {
-          const currentFolder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
+          const currentFolder = this.nodeService.getFolderDTOByID(
+            this.folderIDHistory[this.folderIDHistoryPosition]
+          );
           parentFolderID = this.folderIDHistory[this.folderIDHistoryPosition];
           path = currentFolder.Path + '/' + currentFolder.FolderName;
         }
       }
-    }
-    else {
+    } else {
       if (this.folderIDHistoryPosition == 0) {
         path = '';
         parentFolderID = '';
       } else {
-        const currentFolder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
+        const currentFolder = this.nodeService.getFolderDTOByID(
+          this.folderIDHistory[this.folderIDHistoryPosition]
+        );
         parentFolderID = this.folderIDHistory[this.folderIDHistoryPosition];
         path = currentFolder.Path + '/' + currentFolder.FolderName;
       }
@@ -1043,19 +1068,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
   //   }
   // }
 
-  openFileEnter(event: any): void {
-
-  }
+  openFileEnter(event: any): void { }
 
   deleteSelectedEntities(): void {
-
     const selected = this.getSelected();
     let entities = '';
     for (const entity of selected) {
-      if (entity.Type == 'folder')
-        entities += '"' + entity.FolderName + '", ';
-      else
-        entities += '"' + entity.Name + '", ';
+      if (entity.Type == 'folder') entities += '"' + entity.FolderName + '", ';
+      else entities += '"' + entity.Name + '", ';
     }
     entities = entities.substring(0, entities.length - 2);
 
@@ -1068,9 +1088,24 @@ export class HomeComponent implements OnInit, AfterViewInit {
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: async () => {
+        let toastPoppedUp = false;
+        let itemDeleted = false;
         for (const entity of selected) {
-          this.delete(entity);
+          if(entity.SafeLock) {
+            if(!toastPoppedUp)
+              this.messageService.add({
+                severity: 'warn',
+                summary: 'You can only delete an unlocked document',
+              });
+            toastPoppedUp = true;
+            continue;
+          }else{
+            this.delete(entity);
+            itemDeleted = true;
+          }
         }
+
+        if(!itemDeleted) return;
 
         if (selected.length === 1)
           this.messageService.add({
@@ -1235,11 +1270,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
       return (size / 1000000000).toFixed(2) + ' GB';
     } else if (size > 1000000) {
       return (size / 1000000).toFixed(2) + ' MB';
-    }
-    else if (size > 1000) {
+    } else if (size > 1000) {
       return (size / 1000).toFixed(2) + ' KB';
-    }
-    else {
+    } else {
       return size + ' B';
     }
   }
@@ -1255,17 +1288,25 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   openFolder(parentID: string) {
-
     if (this.folderIDHistory[this.folderIDHistoryPosition] === parentID) return;
 
     if (this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
-      this.folderIDHistory.splice(this.folderIDHistoryPosition + 1, this.folderIDHistory.length - this.folderIDHistoryPosition - 1);
+      this.folderIDHistory.splice(
+        this.folderIDHistoryPosition + 1,
+        this.folderIDHistory.length - this.folderIDHistoryPosition - 1
+      );
     }
     this.folderIDHistory.push(parentID);
     this.folderIDHistoryPosition++;
 
-    localStorage.setItem('folderIDHistory', JSON.stringify(this.folderIDHistory));
-    localStorage.setItem('folderIDHistoryPosition', JSON.stringify(this.folderIDHistoryPosition));
+    localStorage.setItem(
+      'folderIDHistory',
+      JSON.stringify(this.folderIDHistory)
+    );
+    localStorage.setItem(
+      'folderIDHistoryPosition',
+      JSON.stringify(this.folderIDHistoryPosition)
+    );
     this.loadByParentID(parentID);
   }
 
@@ -1274,28 +1315,44 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.folderIDHistory = [];
     this.folderIDHistory.push('');
     this.folderIDHistoryPosition = 0;
-    localStorage.setItem('folderIDHistory', JSON.stringify(this.folderIDHistory));
-    localStorage.setItem('folderIDHistoryPosition', JSON.stringify(this.folderIDHistoryPosition));
+    localStorage.setItem(
+      'folderIDHistory',
+      JSON.stringify(this.folderIDHistory)
+    );
+    localStorage.setItem(
+      'folderIDHistoryPosition',
+      JSON.stringify(this.folderIDHistoryPosition)
+    );
     this.loadByParentID('');
   }
 
   undoFolder() {
-
     if (this.folderIDHistoryPosition > 0) {
       const parentID = this.folderIDHistory[--this.folderIDHistoryPosition];
       this.loadByParentID(parentID);
-      localStorage.setItem('folderIDHistory', JSON.stringify(this.folderIDHistory));
-      localStorage.setItem('folderIDHistoryPosition', JSON.stringify(this.folderIDHistoryPosition));
+      localStorage.setItem(
+        'folderIDHistory',
+        JSON.stringify(this.folderIDHistory)
+      );
+      localStorage.setItem(
+        'folderIDHistoryPosition',
+        JSON.stringify(this.folderIDHistoryPosition)
+      );
     }
   }
 
   redoFolder() {
-
     if (this.folderIDHistory.length > this.folderIDHistoryPosition + 1) {
       const parentID = this.folderIDHistory[++this.folderIDHistoryPosition];
       this.loadByParentID(parentID);
-      localStorage.setItem('folderIDHistory', JSON.stringify(this.folderIDHistory));
-      localStorage.setItem('folderIDHistoryPosition', JSON.stringify(this.folderIDHistoryPosition));
+      localStorage.setItem(
+        'folderIDHistory',
+        JSON.stringify(this.folderIDHistory)
+      );
+      localStorage.setItem(
+        'folderIDHistoryPosition',
+        JSON.stringify(this.folderIDHistoryPosition)
+      );
     }
   }
 
@@ -1303,13 +1360,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.folderIDHistoryPosition == 0) return;
     const parentID = this.folderIDHistory[this.folderIDHistoryPosition];
     const currDir = this.nodeService.getFolderDTOByID(parentID);
-    if(currDir.ParentFolderID == null) return;
+    if (currDir.ParentFolderID == null) return;
     this.openFolder(currDir.ParentFolderID);
   }
 
   renameFolder(folderID: string, path: string, newName: string) {
-    console.log(newName);
-    console.log(folderID);
     if (newName === '') return;
     this.folderService.renameFolder(folderID, path, newName).then((data) => {
       this.nodeService.renameFolder(folderID, newName);
@@ -1343,10 +1398,54 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   handleRightClick(event: any, node: any) {
+
+    this.contextMenuItems[5] = {
+      label: 'Lock Document',
+      icon: 'pi pi-lock',
+      command: () => {
+        this.documentLockedPopup = true;
+
+        const file = this.getSelected();
+        if (file.length === 1) {
+          this.documentPromise = this.fileService
+            .retrieveDocument(file[0].MarkdownID, file[0].Path);
+        }
+      },
+    };
+    if (this.getSelected().length > 1) {
+      this.contextMenuItems[3].disabled = true;
+      this.contextMenuItems[5].disabled = true;
+    }
+    else {
+      this.contextMenuItems[3].disabled = false;
+      this.contextMenuItems[5].disabled = false;
+    }
+
     if (node.Selected) {
-      return;
-    } else
-      this.selectOnlyOne(node);
+    } else this.selectOnlyOne(node);
+
+    if (this.getSelected().length === 1) {
+      if (node.Type === 'folder') {
+        this.contextMenuItems[5].disabled = true;
+      } else {
+        this.contextMenuItems[5].disabled = false;
+        if (node.SafeLock) {
+          this.contextMenuItems[5] = {
+            label: 'Remove Lock',
+            icon: 'pi pi-fw pi-lock-open',
+            command: () => {
+              this.removeDocumentLock = true;
+
+              const file = this.getSelected();
+              if (file.length === 1) {
+                this.documentPromise = this.fileService
+                  .retrieveDocument(file[0].MarkdownID, file[0].Path);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   selectOnlyOne(node: any) {
@@ -1392,9 +1491,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         element.Selected = true;
       }
     }
-
   }
-
 
   getSelected() {
     let selected: any = [];
@@ -1425,8 +1522,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   getSelectedName(): string {
     const selected = this.getSelected();
     if (selected.length === 1) {
-      if (selected[0].Type == 'folder')
-        return selected[0].FolderName;
+      if (selected[0].Type == 'folder') return selected[0].FolderName;
       return selected[0].Name;
     }
     return '';
@@ -1434,22 +1530,29 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   renameEntity() {
     const selected = this.getSelected();
-    console.log(selected);
     if (selected.length === 1) {
       if (selected[0].Type == 'folder')
-        this.renameFolder(selected[0].FolderID, selected[0].Path, this.entityRename);
+        this.renameFolder(
+          selected[0].FolderID,
+          selected[0].Path,
+          this.entityRename
+        );
       else
-        this.renameFile(selected[0].MarkdownID, selected[0].Path, this.entityRename);
+        this.renameFile(
+          selected[0].MarkdownID,
+          selected[0].Path,
+          this.entityRename
+        );
     }
   }
 
   lockClick($event: any, file: any) {
     $event.stopPropagation();
   }
+
   lockRightClick($event: any, file: any) {
     $event.stopPropagation();
   }
-
 
   onDragStart(event: DragEvent, obj: any) {
     // Prevent the default drag behavior
@@ -1459,9 +1562,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     event.dataTransfer?.setData('text/plain', data);
   }
 
-
   onDrop(event: DragEvent, obj: any): void {
-
     const data = event.dataTransfer?.getData('text/plain');
     if (data) {
       // Handle the dropped data and use the drop target as needed
@@ -1484,24 +1585,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
     event.stopPropagation();
 
     obj.DraggedOver = true;
-
   }
   onDragLeave(event: DragEvent, obj: any): void {
     event.preventDefault();
     event.stopPropagation();
 
     obj.DraggedOver = false;
-
   }
 
   getAllFolders(): any[] {
-
     let folders: any[] = [];
 
-    if (this.folderIDHistoryPosition != 0)
-      folders.push(this.rootFolder);
+    if (this.folderIDHistoryPosition != 0) folders.push(this.rootFolder);
     this.nodeService.getFolders().forEach((element: any) => {
-      if (!element.Selected && element.FolderID != this.folderIDHistory[this.folderIDHistoryPosition])
+      if (
+        !element.Selected &&
+        element.FolderID != this.folderIDHistory[this.folderIDHistoryPosition]
+      )
         folders.push(element);
     });
     return folders;
@@ -1516,26 +1616,89 @@ export class HomeComponent implements OnInit, AfterViewInit {
   getMoveSelectedFolder(): any {
     let folders = this.getAllFolders();
     for (let i = 0; i < folders.length; i++) {
-      if (folders[i].MoveSelected)
-        return folders[i];
+      if (folders[i].MoveSelected) return folders[i];
     }
   }
 
   getCurrentFolderName(): string {
-    if (this.folderIDHistory[this.folderIDHistoryPosition]==='')
+    if (this.folderIDHistory[this.folderIDHistoryPosition] === '')
       return 'Root';
     else {
-      const folder = this.nodeService.getFolderDTOByID(this.folderIDHistory[this.folderIDHistoryPosition]);
-      if (folder.FolderName)
-        return folder.FolderName;
-      else
-        return '';
+      const folder = this.nodeService.getFolderDTOByID(
+        this.folderIDHistory[this.folderIDHistoryPosition]
+      );
+      if (folder.FolderName) return folder.FolderName;
+      else return '';
     }
   }
 
-out(x:number){
-  console.log(x);
-}
+  out(x: number) {
+    console.log(x);
+  }
+
+  async lockDocument() {
+
+    const selected = this.getSelected();
+    if (selected.length === 1) {
+      if (this.userDocumentPassword == '') {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Please Enter a Password',
+          detail: '',
+        });
+        // this.userDocumentPassword = '';
+
+        return;
+      }
+      if (this.userDocumentPassword.length < 8) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Password must be at least 8 characters',
+          detail: '',
+        });
+        // this.userDocumentPassword = '';
+
+        return;
+      }
+      this.fileService
+        .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, true, selected[0].Path);
+      selected[0].SafeLock = true;
+
+      this.userDocumentPassword = '';
+      this.documentLockedPopup = false;
+    }
+  }
+
+  async removeLock() {
+
+    const selected = this.getSelected();
+    if (selected.length === 1) {
+      if(await this.fileService
+        .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, false, selected[0].Path)){
+          selected[0].SafeLock = false;
+          this.userDocumentPassword = '';
+          this.removeDocumentLock = false;
+        }
+    }
+  }
+
+  async openLockedDocument() {
+    const selected = this.getSelected();
+    if (selected.length === 1) {
+      const decryptedDocument = this.fileService.decryptSafeLockDocument(await this.documentPromise, this.userDocumentPassword);
+      if (decryptedDocument == null) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Incorrect Password',
+          detail: '',
+        });
+      }
+      else {
+        this.editService.setAll(decryptedDocument, selected[0].MarkdownID, selected[0].Name, selected[0].Path, selected[0].ParentFolderID, true, this.userDocumentPassword);
+        this.navigateToPage('edit');
+      }
+    }
+  }
 
   protected readonly focus = focus;
 }
