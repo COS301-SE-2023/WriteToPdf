@@ -90,7 +90,8 @@ export class MarkdownFilesService {
       );
     markdownToUpdate.LastModified = new Date();
     markdownToUpdate.Size = markdownDTO.Size;
-    // markdownToUpdate.NextDiffID = (markdownToUpdate.NextDiffID + 1) % 10;
+    markdownToUpdate.NextDiffID =
+      (markdownToUpdate.NextDiffID + 1) % 10;
     return this.markdownFileRepository.save(
       markdownToUpdate,
     );
