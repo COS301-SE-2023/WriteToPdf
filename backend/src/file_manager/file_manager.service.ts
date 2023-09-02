@@ -60,6 +60,9 @@ export class FileManagerService {
     if (markdownFileDTO.Size === undefined)
       markdownFileDTO.Size = 0;
 
+    if (markdownFileDTO.NextDiffID === undefined)
+      markdownFileDTO.NextDiffID = 0;
+
     if (isTest) {
       await this.s3ServiceMock.createFile(
         markdownFileDTO,
@@ -120,6 +123,9 @@ export class FileManagerService {
         ParentFolderID: file.ParentFolderID,
         Content: '',
         SafeLock: file.SafeLock,
+        PreviousDiffs: [],
+        NextDiffID: 0,
+        NewDiff: '',
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
@@ -223,6 +229,8 @@ export class FileManagerService {
         markdownFileDTO,
       );
     }
+
+    // Assuming frontend will send the NextDiffID
 
     return await this.markdownFilesService.updateAfterModification(
       markdownFileDTO,
@@ -461,9 +469,13 @@ export class FileManagerService {
       isTest,
     );
 
+    // Imported file is considered new, so it has no diffs
     const returnedDTO: MarkdownFileDTO = {
       ...savedFile,
       Content: encryptedContent,
+      NextDiffID: 0,
+      PreviousDiffs: [],
+      NewDiff: '',
     };
 
     return returnedDTO;
