@@ -4,11 +4,11 @@ import { UserService } from '../services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment';
+import { VersionControlService } from '../services/version.control.service';
 
 import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
 
 // import { HttpClient, HttpHeaders } from '@angular/common/http';
-
 
 @Component({
   selector: 'app-login',
@@ -31,14 +31,15 @@ export class LoginComponent {
     private userService: UserService,
     @Inject(ActivatedRoute) private route: ActivatedRoute,
     private messageService: MessageService,
-  ) { }
+    private versionControlService: VersionControlService
+  ) {}
   ngOnInit(): void {
     const data = history.state;
     if (data) {
       this.email = data['Email'];
       this.password = data['Password'];
     }
-    
+
     // @ts-ignore
     window.onGoogleLibraryLoad = () => {
       // @ts-ignore
@@ -46,21 +47,21 @@ export class LoginComponent {
         client_id: this.clientId,
         callback: this.handleCredentialResponse.bind(this),
         auto_select: false,
-        cancel_on_tap_outside: true
+        cancel_on_tap_outside: true,
       });
       // @ts-ignore
       google.accounts.id.renderButton(
         // @ts-ignore
-        document.getElementById("buttonDiv"),
-        { theme: "outline", size: "large", width: "100%", shape: "pill" }
+        document.getElementById('buttonDiv'),
+        { theme: 'outline', size: 'large', width: '100%', shape: 'pill' }
       );
       // @ts-ignore
-      google.accounts.id.prompt((notification: PromptMomentNotification) => { });
+      google.accounts.id.prompt((notification: PromptMomentNotification) => {});
     };
   }
 
   async handleCredentialResponse(response: CredentialResponse) {
-    if(await this.userService.loginWithGoogle(response.credential))
+    if (await this.userService.loginWithGoogle(response.credential))
       this.navigateToPage('home');
   }
 
@@ -94,21 +95,22 @@ export class LoginComponent {
   }
 
   async autoLogin(): Promise<void> {
-
     this.email = environment.DEV_USER_EMAIL;
     this.password = environment.DEV_USER_PASSWORD;
     this.login();
   }
 
   async forgotPassword(): Promise<void> {
-    await this.userService.forgotPassword(this.emailForgot, this.passwordForgot);
+    await this.userService.forgotPassword(
+      this.emailForgot,
+      this.passwordForgot
+    );
     this.forgotPasswordPopup = false;
   }
-  
+
   movemouse(event: MouseEvent) {
     // const windowWidth = window.innerWidth;
     // const windowHeight = window.innerHeight;
-
     // if (!windowWidth || !windowHeight) return;
     // const diffX = -1 * ((event.pageX - windowWidth / 2) / 1.5) / windowWidth;
     // const diffY = -1 * ((event.pageY - windowHeight / 2) / 1.5) / windowHeight;
@@ -116,14 +118,17 @@ export class LoginComponent {
     // const mouseYpercentage = Math.round((event.pageY / windowHeight + diffY) * 100);
     // // const mouseXpercentage = Math.round(event.pageX / windowWidth * 100);
     // // const mouseYpercentage = Math.round(event.pageY / windowHeight * 100);
-
     // // (document.getElementsByClassName('backgroundImage')[0] as HTMLElement).style.backgroundImage= 'radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, #3498db, #9b59b6)';
-    // (document.getElementsByClassName('backgroundImage')[0] as HTMLElement).style.backgroundImage = 
+    // (document.getElementsByClassName('backgroundImage')[0] as HTMLElement).style.backgroundImage =
     // 'radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, rgb(100 100 100 / 70%), rgb(100 100 100 / 70%)), url(/assets/MockData/BGIW.jpg)';
     // console.log('radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, rgb(100 100 100 / 70%), rgb(100 100 100 / 70%)), url(/assets/MockData/BGIW.jpg)');
   }
 
   navigateToSignup(): void {
     this.router.navigate(['/signup']).then(() => window.location.reload());
+  }
+
+  versionControl(): void {
+    this.versionControlService.test();
   }
 }
