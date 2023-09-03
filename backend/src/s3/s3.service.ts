@@ -30,10 +30,6 @@ export class S3Service {
     region: this.awsS3BucketRegion,
   });
 
-  // Requires the following fields to be initialised in the DTO:
-  // MarkdownID: string; .. TO IDENTIFY THE FILE
-  // Path: string; .. TO LOCATE THE FILE in S3
-  // UserID: string; .. TO IDENTIFY ROOT DIRECTORY
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -107,7 +103,6 @@ export class S3Service {
       return undefined;
     }
 
-    // Create circular diff array
     for (let i = 0; i < 10; i++) {
       try {
         await this.s3Client.send(
@@ -130,11 +125,6 @@ export class S3Service {
     return markdownFileDTO;
   }
 
-  // Requires the following fields to be initialised in the DTO:
-  // MarkdownID: string; .. TO IDENTIFY THE FILE
-  // Content: string; .. TO SAVE into FILE
-  // Path: string; .. TO LOCATE THE FILE in S3
-  // UserID: string; .. TO IDENTIFY ROOT DIRECTORY
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -172,7 +162,6 @@ export class S3Service {
       return undefined;
     }
 
-    // Save diff
     try {
       // await fs.writeFile(
       //   `./storage/${filePath}/diff/${markdownFileDTO.NextDiffID}`,
@@ -191,10 +180,6 @@ export class S3Service {
     return markdownFileDTO;
   }
 
-  // Requires the following fields to be initialised in the DTO:
-  // MarkdownID: string; .. TO IDENTIFY THE FILE
-  // Path: string; .. TO LOCATE THE FILE in S3
-  // UserID: string; .. TO IDENTIFY ROOT DIRECTORY
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
