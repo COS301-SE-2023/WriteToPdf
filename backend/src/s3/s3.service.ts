@@ -7,7 +7,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-import * as fs from 'fs/promises';
+import * as fs from 'fs/promises'; // for local storage
 import * as CryptoJS from 'crypto-js';
 import { AssetDTO } from '../assets/dto/asset.dto';
 
@@ -199,11 +199,7 @@ export class S3Service {
     markdownFileDTO: MarkdownFileDTO,
   ) {
     console.log('Retrieve File (s3)');
-    let filePath = '';
-    if (markdownFileDTO.Path === '')
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
-    else
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
+    let filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
 
     // try {
     //   await fs.access(`./storage/${filePath}`);
@@ -291,7 +287,7 @@ export class S3Service {
       textractResponse,
     );
 
-    filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.TextID}`;
+    filePath += `/${saveAssetDTO.TextID}`;
 
     try {
       // await fs.writeFile(
@@ -336,7 +332,7 @@ export class S3Service {
       Buffer.from(saveAssetDTO.Content),
     );
 
-    filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.AssetID}`;
+    filePath += `/${saveAssetDTO.AssetID}`;
 
     try {
       // await fs.writeFile(
@@ -384,7 +380,7 @@ export class S3Service {
       saveAssetDTO.ImageBuffer,
     );
 
-    filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.AssetID}`;
+    filePath += `/${saveAssetDTO.AssetID}`;
 
     try {
       // await fs.writeFile(
