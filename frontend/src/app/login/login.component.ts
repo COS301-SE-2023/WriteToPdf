@@ -128,7 +128,7 @@ export class LoginComponent {
     this.router.navigate(['/signup']).then(() => window.location.reload());
   }
 
-  versionControl(): void {
-    this.versionControlService.test();
+  async versionControl(): Promise<void> {
+    await this.versionControlService.test();
   }
 }
