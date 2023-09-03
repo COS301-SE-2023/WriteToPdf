@@ -13,37 +13,39 @@ import { FileDTO } from './dto/file.dto';
 export class VersionControlService {
   constructor(private http: HttpClient) {}
 
+  public snapshotArr: SnapshotDTO[] = [];
+  public diffArr: DiffDTO[] = [];
+
   async test(): Promise<void> {
-    try {
-      let text1: string = '';
-      let text2: string = '';
-      const filePath1 = '../assets/VersionControl/test1.txt';
-      this.http.get(filePath1, { responseType: 'text' }).subscribe((data) => {
-        text1 = data;
-        const filePath2 = '../assets/VersionControl/test2.txt';
-        this.http.get(filePath2, { responseType: 'text' }).subscribe((data) => {
-          text2 = data;
-          const dmp = new DiffMatchPatch();
-          const diff = dmp.diff_main(text1, text2);
-          const patches = dmp.patch_make(diff);
-          console.log(dmp.patch_toText(patches));
-          console.log(dmp.patch_apply(patches, text1));
-        });
+    let text1: string = '';
+    let text2: string = '';
+    const filePath1 = '../assets/VersionControl/test1.txt';
+    this.http.get(filePath1, { responseType: 'text' }).subscribe((data) => {
+      text1 = data;
+      const filePath2 = '../assets/VersionControl/test2.txt';
+      this.http.get(filePath2, { responseType: 'text' }).subscribe((data) => {
+        text2 = data;
+        const dmp = new DiffMatchPatch();
+        const diff = dmp.diff_main(text1, text2);
+        const patches = dmp.patch_make(diff);
+        console.log(dmp.patch_toText(patches));
+        console.log(dmp.patch_apply(patches, text1));
       });
-    } catch (err) {
-      console.error(err);
-    }
+    });
   }
 
   getDiff(fileDTO: FileDTO): DiffDTO {
     return new DiffDTO();
   }
+
   getAllDiffs(fileDTO: FileDTO): DiffDTO[] {
     return [new DiffDTO()];
   }
+
   getSnapshot(fileDTO: FileDTO): SnapshotDTO {
     return new SnapshotDTO();
   }
+
   getAllSnapshots(fileDTO: FileDTO): SnapshotDTO[] {
     return [new SnapshotDTO()];
   }
@@ -51,9 +53,11 @@ export class VersionControlService {
   patchDiff(fileDTO: FileDTO, diffDTO: DiffDTO): string {
     return '';
   }
+
   patchVersion(fileDTO: FileDTO, diffDTO: DiffDTO[]): string {
     return '';
   }
+
   patchSnapshot(fileDTO: FileDTO, snapshotDTO: SnapshotDTO): string {
     return '';
   }
