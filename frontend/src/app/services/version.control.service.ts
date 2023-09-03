@@ -3,6 +3,9 @@ import { UserService } from './user.service';
 // import DiffMatchPatch from 'diff-match-patch';
 import { diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
 import { HttpClient } from '@angular/common/http';
+import { DiffDTO } from './dto/diff.dto';
+import { SnapshotDTO } from './dto/snapshot.dto';
+import { FileDTO } from './dto/file.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -30,5 +33,42 @@ export class VersionControlService {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  getDiff(fileDTO: FileDTO): DiffDTO {
+    return new DiffDTO();
+  }
+  getAllDiffs(fileDTO: FileDTO): DiffDTO[] {
+    return [new DiffDTO()];
+  }
+  getSnapshot(fileDTO: FileDTO): SnapshotDTO {
+    return new SnapshotDTO();
+  }
+  getAllSnapshots(fileDTO: FileDTO): SnapshotDTO[] {
+    return [new SnapshotDTO()];
+  }
+
+  patchDiff(fileDTO: FileDTO, diffDTO: DiffDTO): string {
+    return '';
+  }
+  patchVersion(fileDTO: FileDTO, diffDTO: DiffDTO[]): string {
+    return '';
+  }
+  patchSnapshot(fileDTO: FileDTO, snapshotDTO: SnapshotDTO): string {
+    return '';
+  }
+
+  squashDiffs(diffDTO: DiffDTO[]): SnapshotDTO {
+    return new SnapshotDTO();
+  }
+
+  visualiseDiff(diffDTO: DiffDTO): void {
+    return;
+  }
+  visualiseVersion(diffDTO: DiffDTO[]): void {
+    return;
+  }
+  visualiseSnapshot(snapshotDTO: SnapshotDTO): void {
+    return;
   }
 }
