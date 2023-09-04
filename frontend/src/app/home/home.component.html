@@ -173,7 +173,10 @@
         <div class="iconSpacing">
         </div>
         <div class="iconSpacing">
-          <img class="fileItemIcon menuIcon" src="assets/Icons/editIcons/ellipse.svg" (click)="enableContextMenu($event, obj)" alt="">
+          <img class="fileItemIcon menuIcon" src="assets/Icons/editIcons/ellipse.svg" (click)="enableContextMenu($event, obj)" alt=""
+            (touchstart)="handleTouchStartCM($event, obj, 'folder')"
+            (touchmove)="handleTouchMoveCM($event, obj, 'folder')"
+            (touchend)="handleTouchEndCM($event, obj, 'folder')">
         </div>
       </div>
       <!-- Folders End -->
@@ -206,11 +209,15 @@
           <!-- <img *ngIf="obj.SafeLock" class="fileItemIcon lockIcon" (click)="lockClick($event, obj)" (contextmenu)="lockRightClick($event, obj)" src="assets/Icons/homeIcons/mainWindow/lock.png" alt=""/> -->
         </div>
         <div class="iconSpacing">
-          <img class="fileItemIcon menuIcon" src="assets/Icons/editIcons/ellipse.svg" (click)="enableContextMenu($event, obj)" alt="">
+          <img class="fileItemIcon menuIcon" src="assets/Icons/editIcons/ellipse.svg" (click)="enableContextMenu($event, obj)" alt=""
+            (touchstart)="handleTouchStartCM($event, obj, 'file')"
+            (touchmove)="handleTouchMoveCM($event, obj, 'file')"
+            (touchend)="handleTouchEndCM($event, obj, 'file')">
         </div>
       </div>
       <!-- Files End -->
 
+      <div class="filler" ></div>
       </div>
     </div>
   </div>

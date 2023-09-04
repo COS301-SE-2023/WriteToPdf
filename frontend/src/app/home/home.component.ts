@@ -109,6 +109,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public loading: boolean = false;
   @ViewChild('myTreeTable') treeTable!: TreeTable;
   @ViewChild(ContextMenu) contextMenu!: ContextMenu;
+  contextMenuVisible: boolean = false;
 
   constructor(
     @Inject(Router) private router: Router,
@@ -1544,6 +1545,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         }
       }
       this.contextMenu.cd.detectChanges();
+      this.contextMenuVisible = true;
     });
 
   }
@@ -1841,6 +1843,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   handleTouchEnd(event: any, obj: any, type: string) {
     if (this.touchObj == obj) {
+      if(this.contextMenuVisible) {
+        this.contextMenuVisible = false;
+        this.contextMenu.hide();
+        return;
+      }
       if (type == 'file') {
         this.onOpenFileSelect(obj.MarkdownID);
       }
@@ -1849,6 +1856,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     }
     this.touchObj = null;
+  }
+  handleTouchStartCM(event: any, obj: any, type: string) {
+    event.stopPropagation();
+  }
+  
+  handleTouchMoveCM(event: any, obj: any, type: string) {
+    event.stopPropagation();
+    
+  }
+  
+  handleTouchEndCM(event: any, obj: any, type: string) {
+    event.stopPropagation();
+
   }
 
   protected readonly focus = focus;
