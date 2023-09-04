@@ -118,6 +118,10 @@ export class EditComponent implements AfterViewInit, OnInit {
       },
     ];
 
+    //get window width
+    const width = window.innerWidth;
+    if (width < 800) 
+      this.hideSideBar();
     const c = localStorage.getItem('content');
     const m = localStorage.getItem('markdownID');
     const n = localStorage.getItem('name');
