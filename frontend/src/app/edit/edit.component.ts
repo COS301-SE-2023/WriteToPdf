@@ -41,6 +41,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   textFromAsset: any[] = [];
   textCopyDialog: boolean = false;
   noAssetsAvailable: boolean = false;
+  isTouchScreen: boolean = false;
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
@@ -119,6 +120,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     ];
 
     //get window width
+    this.isTouchScreen=window.matchMedia('(pointer: coarse)').matches;
     const width = window.innerWidth;
     if (width < 800) 
       this.hideSideBar();

@@ -760,13 +760,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 this.showImageUploadPopup();
               },
             },
-            {
-              label: 'Camera Upload',
-              icon: 'pi pi-fw pi-camera',
-              command: () => {
-                this.navigateToPage('camera');
-              },
-            },
           ],
         },
         {

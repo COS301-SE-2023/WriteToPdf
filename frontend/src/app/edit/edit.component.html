@@ -118,7 +118,7 @@
           <h4 class="sidebarHeaderText">Assets</h4>
         </div>
         <div class="uploadAssetIcon">
-          <div class="sidebarHeaderIconWrapper" title="Upload Image">
+          <div *ngIf="!isTouchScreen; else mobileUpload" class="sidebarHeaderIconWrapper" title="Upload Image">
             <img
               class="sidebarHeaderIcon"
               src="assets/Icons/editIcons/plus.png"
@@ -126,7 +126,7 @@
             />
           </div>
 
-          <div class="dropdownContent">
+          <div *ngIf="!isTouchScreen" class="dropdownContent">
             <div class="dropdownInput" (click)="navigateToPage('camera')">
               <img class="dropdownIcon1" src="assets/Icons/editIcons/addAsset.png" alt="">
               <p class="dropdownOptions" >
@@ -140,7 +140,20 @@
               </p>
             </div>
           </div>
+
+          <ng-template #mobileUpload>
+            <div class="sidebarHeaderIconWrapper" title="Upload Image">
+              <img
+                class="sidebarHeaderIcon"
+                src="assets/Icons/editIcons/upload.png"
+                alt=""
+                (click)="showImageUploadPopup()"
+              />
+            </div>
+          </ng-template>
         </div>
+
+
 
         <div class="sidebarHeaderIconWrapper" (click)="refreshSidebar()" title="Refresh">
           <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/refresh.svg" alt="" />
