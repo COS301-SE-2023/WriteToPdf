@@ -17,7 +17,7 @@
           <br>
           <textarea class ="editableForm" [(ngModel)]="paragraphText" cols="40" rows="6"></textarea>
           <p-button class ="copyFormData" icon="pi pi-copy" label="Copy" styleClass="p-button-rounded"
-                    (click)="copyFormData()"></p-button>
+                    (click)="copyFormDataAndRenderToHtml()"></p-button>
         </mat-tab>
         <mat-tab label="Tables">
           <br>
@@ -80,7 +80,7 @@
           </div>
           <br>
           <p-button class="copyButton" icon="pi pi-copy" label="Copy" styleClass="p-button-rounded"
-                    (click)="copyTableHtml()"></p-button>
+                    (click)="constructTableHtml()"></p-button>
         </mat-tab>
       </mat-tab-group>
     </div>

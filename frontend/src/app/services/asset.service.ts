@@ -105,11 +105,12 @@ export class AssetService {
       else if (format === 'text' || format === 'table')
         this.sendRetrieveTextOrTableData(assetId, format, textId).subscribe({
           next: (response: HttpResponse<any>) => {
-            if (response.status === 200) {
-              resolve(JSON.parse(response.body.Content));
-            } else {
-              resolve(null);
-            }
+            console.log(response);
+            // if (response.status === 200) {
+            //   resolve(JSON.parse(response.body.Content));
+            // } else {
+            //   resolve(null);
+            // }
           },
         });
     });

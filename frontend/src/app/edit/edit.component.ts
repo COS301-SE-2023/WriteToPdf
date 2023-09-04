@@ -17,7 +17,7 @@ import { EditService } from '../services/edit.service';
 import { AssetService } from '../services/asset.service';
 import { Inject } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import {OCRDialogService} from "../ocr-popup/ocr-popup.service";
+import {OCRDialogService} from "../services/ocr-popup.service";
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 import { parse } from 'path';
 
@@ -52,10 +52,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     private messageService: MessageService,
     private OCRDialog: OCRDialogService
   ) { }
-
-  showOCRPopup(): void {
-    this.OCRDialog.openDialog();
-  }
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
@@ -280,15 +276,15 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     this.assets[currAssetIndex].NotRetrieving = true;
     // const asset = true;
-    if (format === 'text') {
+    if (format === 'text' || format === 'table'){
       let asset = this.assets[currAssetIndex];
       if (!asset.Blocks) {
         asset = await this.assetService.retrieveAsset(assetId, format, textId);
         this.assets[currAssetIndex].Blocks = asset.Blocks;
       }
-      this.parseAssetText(asset);
       this.textCopyDialog = true;
       this.assets[currAssetIndex].NotRetrieving = false;
+      this.OCRDialog.openDialog(asset);
     }
     else if (format === 'image') {
 

@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Clipboard } from "@angular/cdk/clipboard";
+import { AssetService } from '../services/asset.service';
+import {OCRDialogService} from "../services/ocr-popup.service";
 
 @Component({
   selector: 'app-ocr-popup',
@@ -8,33 +10,7 @@ import { Clipboard } from "@angular/cdk/clipboard";
   styleUrls: ['./ocr-popup.component.scss'],
 })
 export class OcrPopupComponent {
-  @ViewChild('myTable') tableRef!: ElementRef;
-  tableData: any[] = [
-    {"name": "John Smith", "occupation": "Advisor", "age": 36},
-    {"name": "Muhi Masri", "occupation": "Developer", "age": 28},
-    {"name": "Peter Adams", "occupation": "HR", "age": 20},
-    {"name": "Lora Bay", "occupation": "Marketing", "age": 43}
-  ];
-  COLUMNS_SCHEMA = [
-    {
-      key: "name",
-      type: "text",
-      label: "Full Name"
-    },
-    {
-      key: "occupation",
-      type: "text",
-      label: "Occupation"
-    },
-    {
-      key: "age",
-      type: "number",
-      label: "Age"
-    },
-  ]
-  displayedColumns: string[] = ['name', 'occupation', 'age'];
-  dataSource: any = this.tableData;
-  columnsSchema: any = this.COLUMNS_SCHEMA;
+  JSONResponse: any = JSON;
   products: any[] = [
     {
       code: 'P1',
@@ -68,19 +44,26 @@ export class OcrPopupComponent {
     },];
   paragraphText: string = ''; // Use this property to bind to the textarea
 
-  constructor(private dialog: MatDialog, private clipboard: Clipboard) {}
+  constructor(private dialog: OCRDialogService, private clipboard: Clipboard) {}
 
-  copyFormData(): void {
+  copyFormDataAndRenderToHtml(): void {
+    let retrievedAsset = this.dialog.passedOverAsset;
     this.clipboard.copy(this.paragraphText);
+    console.log(retrievedAsset.JSONResponse);
   }
 
-  copyTableHtml(): void {
-    const tableHtml = this.tableRef.nativeElement.outerHTML;
+  constructTableHtml(): void {
+    let tableHtml = '<table>\n';
     this.clipboard.copy(tableHtml);
     console.log(tableHtml);
   }
 
   closeDialog(): void {
-    this.dialog.closeAll();
+    this.dialog.closeDialog()
   }
+
+
+
+
+
 }
