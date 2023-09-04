@@ -68,6 +68,12 @@ export class TextManagerService {
     console.log('savedAssetDTO', savedAssetDTO);
     console.log('7');
 
+    console.log(
+      'Sending textract request with params: ',
+      savedAssetDTO,
+      uploadTextDTO.Format,
+    );
+
     // Send textract to classify s3 image
     const textractResponse =
       await this.textractService.extractDocument(

@@ -78,6 +78,8 @@ export class AssetService {
     }
     body.Format = format;
 
+    console.log('Being uploaded here: ' + JSON.stringify(body));
+
     // const body = new MarkdownFileDTO();
     // body.UserID = this.userService.getUserID();
     // body.MarkdownID = 'IMG_3600.jpeg';
