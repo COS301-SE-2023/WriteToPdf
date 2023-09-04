@@ -557,3 +557,12 @@ $icon-size: 1.5rem;
     width: 100%;
   }
 }
+
+.directoryContents {
+  min-height: calc(100svh - 220px);
+  /* Set a maximum height for the container */
+  overflow-y: auto;
+  /* Add vertical scrollbar if necessary */
+  position: relative;
+  /* Required for the filler div positioning */
+}

@@ -107,7 +107,7 @@
       <h2 class="folderName">{{getCurrentFolderName()}}</h2>
               
     </div>
-    <div class="directoryContents" (click)="$event.stopPropagation()">
+    <div class="directoryContents" (click)="$event.stopPropagation();contextMenu.hide()" (contextmenu)="handleDirectoryRightClick($event)">
 
       <div class="directoryHeader" (click)=" this.contextMenu.hide(); unselectAll();">
         <div class="iconSpacing">
@@ -217,7 +217,6 @@
       </div>
       <!-- Files End -->
 
-      <div class="filler" ></div>
       </div>
     </div>
   </div>

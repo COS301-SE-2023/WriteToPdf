@@ -1508,6 +1508,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
         },
       };
 
+      this.contextMenuItems[0].disabled = false;
+      this.contextMenuItems[3].disabled = false;
+      this.contextMenuItems[4].disabled = false;
+      this.contextMenuItems[5].disabled = false;
+
       if (this.getSelected().length > 1) {
         this.contextMenuItems[0].disabled = true;
         this.contextMenuItems[4].disabled = true;
@@ -1871,5 +1876,31 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   }
 
+  handleDirectoryRightClick(event: any) {
+    if(this.getSelected().length > 0) return;
+    this.contextMenu.hide();
+    this.contextMenuItems[0].disabled = true;
+    this.contextMenuItems[3].disabled = true;
+    this.contextMenuItems[4].disabled = true;
+    this.contextMenuItems[5].disabled = true;
+    this.contextMenuItems[6] = {
+      label: 'Lock Document',
+      icon: 'pi pi-lock',
+      command: () => {
+        this.documentLockedPopup = true;
+
+        const file = this.getSelected();
+        if (file.length === 1) {
+          this.documentPromise = this.fileService
+            .retrieveDocument(file[0].MarkdownID, file[0].Path);
+        }
+      },
+    };
+    this.contextMenuItems[6].disabled = true;
+    this.contextMenu.cd.detectChanges();
+    this.contextMenuVisible = true;
+    this.contextMenu.position(event);
+    this.contextMenu.show(event);
+  }
   protected readonly focus = focus;
 }
