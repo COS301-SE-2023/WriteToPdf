@@ -176,6 +176,7 @@ export class TextManagerService {
 
     // Add table elements
     for (const table of tables) {
+      if (!table) continue;
       const numRows = table.length;
       const numCols = Math.max(
         ...table.map((row) => row.length),
@@ -194,8 +195,7 @@ export class TextManagerService {
     // Create the JSON object
     const jsonObject = {
       'Num Elements': elements.length,
-      'Table Indices':
-        tables.length > 0 ? [1] : [],
+      'Table Indices': tables[0] ? [1] : [],
       elements: elements,
     };
 
@@ -207,6 +207,7 @@ export class TextManagerService {
     tableRoot: any,
     allBlocks: any,
   ): any {
+    if (!tableRoot) return null;
     const table: string[][] = [];
     // Loop through the CHILD relationships of the table root element
     for (const childId of tableRoot.Relationships.find(
@@ -268,6 +269,7 @@ export class TextManagerService {
   }
 
   isPartOfTable(table, line, allBlocks) {
+    if (!table) return false;
     // Iterate through the relationships of the table (which are CELLs)
     for (const cellID of table.Relationships[0]
       .Ids) {
