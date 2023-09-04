@@ -1343,7 +1343,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   loadByParentID(parentID: string) {
     this.unselectAll();
-
+    this.contextMenu.hide();
+    this.contextMenuVisible = false;
     this.currentFolders = [];
     this.currentFiles = [];
     const folders = this.nodeService.getFoldersByParentID(parentID);
