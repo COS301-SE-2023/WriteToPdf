@@ -208,7 +208,7 @@ to co-operate.
   box-sizing: border-box;
   position: relative;
   padding: 10px;
-  width: 40vw;
+  width: 40svw;
   min-width: 300px;
   height: 40px;
   background: #F7F7F7;
@@ -347,7 +347,7 @@ textarea {
 
 .directoryHeader {
   display: flex;
-  width: calc(95vw - 245px);
+  width: calc(95svw - 245px);
   // min-width: 500px;
   height: $file-height;
   background-image: linear-gradient(to right, #f6f6f6, #f7f9fc, #f6f6f6);
@@ -370,7 +370,7 @@ textarea {
   transition: 0.2s;
   display: flex;
   box-sizing: content-box;
-  width: calc( 95vw - 245px);
+  width: calc( 95svw - 245px);
   // min-width: 500px;
   height: $file-height;
   background-color: lighten($light-grey, 10%);
@@ -546,19 +546,20 @@ $icon-size: 1.5rem;
   }
 
   .mainWindowHome {
-    margin-left: 2.5vw;
-    margin-right: 2.5vw;
-    width: 95vw;
+    margin-left: calc( 2.5svw - 5px);
+    margin-right: calc( 2.5svw - 5px);
+    width: 95svw;
   }
 
   .directoryHeader,
   .fileItem,
   .moveFileItem {
-    width: 100%;
+    width: 99%;
   }
 }
 
 .directoryContents {
+  width: 100%;
   min-height: calc(100svh - 220px);
   /* Set a maximum height for the container */
   overflow-y: auto;
