@@ -717,6 +717,65 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   getMenuItemsData() {
+    if (window.matchMedia('(pointer: coarse)').matches)
+      return [
+        {
+          label: 'New',
+          icon: 'pi pi-fw pi-plus',
+          items: [
+            {
+              label: 'Folder',
+              icon: 'pi pi-fw pi-folder',
+              command: () => {
+                // this.showFileManagerPopup('folder');
+                this.createNewFolderDialogueVisible = true;
+              },
+            },
+            {
+              label: 'Document',
+              icon: 'pi pi-fw pi-file',
+              command: () => {
+                // this.showFileManagerPopup('document');
+                this.createNewDocumentDialogueVisible = true;
+              },
+            },
+          ],
+        },
+        {
+          label: 'Import',
+          icon: 'pi pi-fw pi-upload',
+          items: [
+            {
+              label: 'Upload File',
+              icon: 'pi pi-fw pi-file',
+              command: () => {
+                this.showFileUploadPopup();
+              },
+            },
+            {
+              label: 'Upload Asset',
+              icon: 'pi pi-fw pi-image',
+              command: () => {
+                this.showImageUploadPopup();
+              },
+            },
+            {
+              label: 'Camera Upload',
+              icon: 'pi pi-fw pi-camera',
+              command: () => {
+                this.navigateToPage('camera');
+              },
+            },
+          ],
+        },
+        {
+          label: 'Logout',
+          icon: 'pi pi-fw pi-power-off',
+          command: () => {
+            this.userService.logout();
+          },
+        },
+      ]
     return [
       {
         label: 'File',
@@ -843,7 +902,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         ],
       },
       {
-        label: 'Quit',
+        label: 'Logout',
         icon: 'pi pi-fw pi-power-off',
         command: () => {
           this.userService.logout();
@@ -1123,21 +1182,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
         let toastPoppedUp = false;
         let itemDeleted = false;
         for (const entity of selected) {
-          if(entity.SafeLock) {
-            if(!toastPoppedUp)
+          if (entity.SafeLock) {
+            if (!toastPoppedUp)
               this.messageService.add({
                 severity: 'warn',
                 summary: 'You can only delete an unlocked document',
               });
             toastPoppedUp = true;
             continue;
-          }else{
+          } else {
             this.delete(entity);
             itemDeleted = true;
           }
         }
 
-        if(!itemDeleted) return;
+        if (!itemDeleted) return;
 
         if (selected.length === 1)
           this.messageService.add({
@@ -1434,58 +1493,58 @@ export class HomeComponent implements OnInit, AfterViewInit {
   handleRightClick(event: any, node: any) {
     this.zone.run(() => {
       // Your dynamic context menu updates here
-    this.contextMenuItems[6] = {
-      label: 'Lock Document',
-      icon: 'pi pi-lock',
-      command: () => {
-        this.documentLockedPopup = true;
+      this.contextMenuItems[6] = {
+        label: 'Lock Document',
+        icon: 'pi pi-lock',
+        command: () => {
+          this.documentLockedPopup = true;
 
-        const file = this.getSelected();
-        if (file.length === 1) {
-          this.documentPromise = this.fileService
-            .retrieveDocument(file[0].MarkdownID, file[0].Path);
-        }
-      },
-    };
+          const file = this.getSelected();
+          if (file.length === 1) {
+            this.documentPromise = this.fileService
+              .retrieveDocument(file[0].MarkdownID, file[0].Path);
+          }
+        },
+      };
 
-    if (this.getSelected().length > 1) {
-      this.contextMenuItems[0].disabled = true;
-      this.contextMenuItems[4].disabled = true;
-      this.contextMenuItems[6].disabled = true;
-    }
-    else {
-      this.contextMenuItems[0].disabled = false;
-      this.contextMenuItems[4].disabled = false;
-      this.contextMenuItems[6].disabled = false;
-    }
-
-    if (node.Selected) {
-    } else this.selectOnlyOne(node);
-
-    if (this.getSelected().length === 1) {
-      if (node.Type === 'folder') {
+      if (this.getSelected().length > 1) {
+        this.contextMenuItems[0].disabled = true;
+        this.contextMenuItems[4].disabled = true;
         this.contextMenuItems[6].disabled = true;
-      } else {
+      }
+      else {
+        this.contextMenuItems[0].disabled = false;
+        this.contextMenuItems[4].disabled = false;
         this.contextMenuItems[6].disabled = false;
-        if (node.SafeLock) {
-          this.contextMenuItems[6] = {
-            label: 'Remove Lock',
-            icon: 'pi pi-fw pi-lock-open',
-            command: () => {
-              this.removeDocumentLock = true;
+      }
 
-              const file = this.getSelected();
-              if (file.length === 1) {
-                this.documentPromise = this.fileService
-                  .retrieveDocument(file[0].MarkdownID, file[0].Path);
+      if (node.Selected) {
+      } else this.selectOnlyOne(node);
+
+      if (this.getSelected().length === 1) {
+        if (node.Type === 'folder') {
+          this.contextMenuItems[6].disabled = true;
+        } else {
+          this.contextMenuItems[6].disabled = false;
+          if (node.SafeLock) {
+            this.contextMenuItems[6] = {
+              label: 'Remove Lock',
+              icon: 'pi pi-fw pi-lock-open',
+              command: () => {
+                this.removeDocumentLock = true;
+
+                const file = this.getSelected();
+                if (file.length === 1) {
+                  this.documentPromise = this.fileService
+                    .retrieveDocument(file[0].MarkdownID, file[0].Path);
+                }
               }
             }
           }
         }
       }
-    }
-    this.contextMenu.cd.detectChanges();
-  });
+      this.contextMenu.cd.detectChanges();
+    });
 
   }
 
@@ -1528,14 +1587,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     let j = 0;
     for (; j < x.length; j++) {
       if (x[j] === this.shiftClickStart || x[j] === node) {
-        
+
         break;
       }
     }
     let count = 0;
     for (let i = j; i < x.length; i++) {
       console.log(i);
-      setTimeout(() => { 
+      setTimeout(() => {
         console.log(startSelecting);
         const element = x[i];
         if (element === this.shiftClickStart || element === node) {
@@ -1544,7 +1603,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         } else if (startSelecting) {
           element.Selected = true;
         }
-      }, 20*count++);
+      }, 20 * count++);
 
     }
 
@@ -1552,7 +1611,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   getSelected() {
-    
+
     let selected: any = [];
     this.currentFolders.forEach((element: any) => {
       if (element.Selected) {
@@ -1732,12 +1791,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     const selected = this.getSelected();
     if (selected.length === 1) {
-      if(await this.fileService
-        .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, false, selected[0].Path)){
-          selected[0].SafeLock = false;
-          this.userDocumentPassword = '';
-          this.removeDocumentLock = false;
-        }
+      if (await this.fileService
+        .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, false, selected[0].Path)) {
+        selected[0].SafeLock = false;
+        this.userDocumentPassword = '';
+        this.removeDocumentLock = false;
+      }
     }
   }
 
@@ -1759,39 +1818,38 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-enableContextMenu(event: MouseEvent, obj: any){
-  event.stopPropagation();
-  if(!obj.Selected)
-  {
-    this.unselectAll();
-    obj.Selected = true;
-  }
-  this.contextMenu.position(event);
-  this.contextMenu.show(event);
-  this.handleRightClick(event, obj);
-}
-
-touchObj: any;
-
-handleTouchStart(event: any, obj: any, type: string){
-  this.touchObj=obj;
-}
-
-handleTouchMove(event: any, obj: any, type: string){
-  this.touchObj=null;
-}
-
-handleTouchEnd(event: any, obj: any, type: string){
-  if(this.touchObj == obj){
-    if(type == 'file'){
-      this.onOpenFileSelect(obj.MarkdownID);
+  enableContextMenu(event: MouseEvent, obj: any) {
+    event.stopPropagation();
+    if (!obj.Selected) {
+      this.unselectAll();
+      obj.Selected = true;
     }
-    else if(type == 'folder'){
-      this.openFolder(obj.FolderID);
-    }
+    this.contextMenu.position(event);
+    this.contextMenu.show(event);
+    this.handleRightClick(event, obj);
   }
-  this.touchObj=null;
-}
+
+  touchObj: any;
+
+  handleTouchStart(event: any, obj: any, type: string) {
+    this.touchObj = obj;
+  }
+
+  handleTouchMove(event: any, obj: any, type: string) {
+    this.touchObj = null;
+  }
+
+  handleTouchEnd(event: any, obj: any, type: string) {
+    if (this.touchObj == obj) {
+      if (type == 'file') {
+        this.onOpenFileSelect(obj.MarkdownID);
+      }
+      else if (type == 'folder') {
+        this.openFolder(obj.FolderID);
+      }
+    }
+    this.touchObj = null;
+  }
 
   protected readonly focus = focus;
 }
