@@ -22,7 +22,6 @@ export class TextManagerService {
     uploadTextDTO: AssetDTO,
     isTest = false,
   ) {
-    // TODO Janco Check if asset already exists
     // Create S3 image data file
     const imageDataFile =
       await this.s3Service.createAsset(
@@ -61,38 +60,27 @@ export class TextManagerService {
       );
 
     // Send textract to classify s3 image
-    // TODO should this always be 'table'?
     const textractResponse =
       await this.textractService.extractDocument(
         'sync',
         savedAssetDTO,
-        savedAssetDTO.Format,
+        uploadTextDTO.Format,
       );
 
-    // TODO should the conversion happen here? What is the textract response? Is the JSON object stored in S3?
-    // TODO Janco - Yes, please store this JSON object in S3 - from Conrad.
-    // TODO Janco, give me another endpoint other than upload
-    // TODO so that I can just retrieve the JSON object from S3 if it has already been processed.
-    // TODO need way to test this. What is this textract connected to?
     const formattedTextractResponse =
-      this.formatTextractReponse(
+      this.formatTextractResponse(
         textractResponse,
       );
-    // 1D array of strings (lines)
-    // 2D array rows & cols for table
 
     this.s3Service.saveTextractResponse(
       savedAssetDTO,
       formattedTextractResponse,
     );
-    //TODO I'm just uploading an asset here
-    // I don't think this should be returning anything, maybe a boolean to show success?
-    // shouldn't the JSON object just delivered upon calling "retrieveOne"? in this file
-    // this is how it was done in the past for OCR assets. (if I'm not mistaken).
+
     return formattedTextractResponse;
   }
 
-  formatTextractReponse(response: JSON) {
+  formatTextractResponse(response: JSON) {
     const rawLines = [];
     let tableRoot = {};
     for (const block in response['Blocks']) {
@@ -188,6 +176,7 @@ export class TextManagerService {
 
     // Add table elements
     for (const table of tables) {
+      if (!table) continue;
       const numRows = table.length;
       const numCols = Math.max(
         ...table.map((row) => row.length),
@@ -206,8 +195,7 @@ export class TextManagerService {
     // Create the JSON object
     const jsonObject = {
       'Num Elements': elements.length,
-      'Table Indices': 1,
-      //todo Janco, please make the indices of the tables in the order as they appeared in the response from textract
+      'Table Indices': tables[0] ? [1] : [],
       elements: elements,
     };
 
@@ -219,6 +207,7 @@ export class TextManagerService {
     tableRoot: any,
     allBlocks: any,
   ): any {
+    if (!tableRoot) return null;
     const table: string[][] = [];
     // Loop through the CHILD relationships of the table root element
     for (const childId of tableRoot.Relationships.find(
@@ -280,6 +269,7 @@ export class TextManagerService {
   }
 
   isPartOfTable(table, line, allBlocks) {
+    if (!table) return false;
     // Iterate through the relationships of the table (which are CELLs)
     for (const cellID of table.Relationships[0]
       .Ids) {
@@ -316,7 +306,6 @@ export class TextManagerService {
 
   async retrieveOne(
     retrieveTextDTO: AssetDTO,
-    isTable: boolean, //TODO this indicates whether we need to retrieve a table or not
     isTest = false,
   ) {
     // Retrieve text asset reference from database
@@ -333,8 +322,7 @@ export class TextManagerService {
         HttpStatus.NOT_FOUND,
       );
     }
-    //TODO This code is not intuitve, what is happening here?
-    // is image the S3 service's image?
+
     // Get text image
     newAssetDTO.ImageBuffer =
       await this.s3Service.retrieveAssetByID(
