@@ -60,22 +60,17 @@ export class TextManagerService {
       );
 
     // Send textract to classify s3 image
-    // TODO should this always be 'table'?
     const textractResponse =
       await this.textractService.extractDocument(
         'sync',
         savedAssetDTO,
-        'table',
+        uploadTextDTO.Format,
       );
 
-    // TODO should the conversion happen here? What is the textract response? Is the JSON object stored in S3?
-    // TODO need way to test this. What is this textract connected to?
     const formattedTextractResponse =
-      this.formatTextractReponse(
+      this.formatTextractResponse(
         textractResponse,
       );
-    // 1D array of strings (lines)
-    // 2D array rows & cols for table
 
     this.s3Service.saveTextractResponse(
       savedAssetDTO,
@@ -85,7 +80,7 @@ export class TextManagerService {
     return formattedTextractResponse;
   }
 
-  formatTextractReponse(response: JSON) {
+  formatTextractResponse(response: JSON) {
     const rawLines = [];
     let tableRoot = {};
     for (const block in response['Blocks']) {
@@ -199,7 +194,8 @@ export class TextManagerService {
     // Create the JSON object
     const jsonObject = {
       'Num Elements': elements.length,
-      'Table Indices': 1,
+      'Table Indices':
+        tables.length > 0 ? [1] : [],
       elements: elements,
     };
 
