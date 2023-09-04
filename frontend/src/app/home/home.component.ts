@@ -5,6 +5,9 @@ import {
   OnInit,
   Renderer2,
   HostListener,
+  NgZone,
+  ViewChild,
+  Inject
 } from '@angular/core';
 // import {NgModule} from "@angular/core";
 import { Router } from '@angular/router';
@@ -23,14 +26,12 @@ import { FileService } from '../services/file.service';
 import { UserService } from '../services/user.service';
 import { FileManagerPopupComponent } from '../file-manager-popup/file-manager-popup.component';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
-import { ViewChild } from '@angular/core';
 import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
-import { Inject } from '@angular/core';
 import { CoordinateService } from '../services/coordinate-service.service';
 import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { start } from 'repl';
+import { ContextMenu } from 'primeng/contextmenu';
 
 interface Column {
   field: string;
@@ -85,9 +86,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public moveDialogVisible: boolean = false;
   public entityToMove: any;
   public destinationDirectory: any;
-  public createNewDocumentDialogueVisible: boolean = false;
-  public createNewFolderDialogueVisible: boolean = false;
-  renameDialogueVisible: boolean = false;
+  public createNewDocumentDialogVisible: boolean = false;
+  public createNewFolderDialogVisible: boolean = false;
+  renameDialogVisible: boolean = false;
   documentLockedPopup: boolean = false;
   openLockedDocumentPopup: boolean = false;
   removeDocumentLock: boolean = false;
@@ -107,6 +108,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   rootFolder: any = {};
   public loading: boolean = false;
   @ViewChild('myTreeTable') treeTable!: TreeTable;
+  @ViewChild(ContextMenu) contextMenu!: ContextMenu;
+  contextMenuVisible: boolean = false;
 
   constructor(
     @Inject(Router) private router: Router,
@@ -121,18 +124,34 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private folderService: FolderService,
     private renderer: Renderer2,
     private coordinateService: CoordinateService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private zone: NgZone
   ) {
     this.contextMenuItems = [
       {
+        label: 'Open',
+        icon: 'pi pi-fw pi-folder-open',
+        command: () => {
+          const selected = this.getSelected();
+
+          if (selected.length === 1) {
+            if (selected[0].Type == 'folder') {
+              this.openFolder(selected[0].FolderID);
+            } else if (selected[0].Type == 'file') {
+              this.onOpenFileSelect(selected[0].MarkdownID);
+            }
+          }
+        }
+      },
+      {
         label: 'Create New Folder',
         icon: 'pi pi-folder',
-        command: () => (this.createNewFolderDialogueVisible = true),
+        command: () => (this.createNewFolderDialogVisible = true),
       },
       {
         label: 'Create New File',
         icon: 'pi pi-file',
-        command: () => (this.createNewDocumentDialogueVisible = true),
+        command: () => (this.createNewDocumentDialogVisible = true),
       },
       {
         label: 'Move',
@@ -152,7 +171,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           if (selected.length === 1) {
             if (!(this.entityRename = this.getSelected()[0].Name))
               this.entityRename = this.getSelected()[0].FolderName;
-            this.renameDialogueVisible = true;
+            this.renameDialogVisible = true;
           }
         },
       },
@@ -367,7 +386,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       {
         icon: 'pi pi-pencil',
         command: async () => {
-          this.createNewDocumentDialogueVisible = true;
+          this.createNewDocumentDialogVisible = true;
         },
       },
       {
@@ -699,6 +718,58 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   getMenuItemsData() {
+    if (window.matchMedia('(pointer: coarse)').matches)
+      return [
+        {
+          label: 'New',
+          icon: 'pi pi-fw pi-plus',
+          items: [
+            {
+              label: 'Folder',
+              icon: 'pi pi-fw pi-folder',
+              command: () => {
+                // this.showFileManagerPopup('folder');
+                this.createNewFolderDialogVisible = true;
+              },
+            },
+            {
+              label: 'Document',
+              icon: 'pi pi-fw pi-file',
+              command: () => {
+                // this.showFileManagerPopup('document');
+                this.createNewDocumentDialogVisible = true;
+              },
+            },
+          ],
+        },
+        {
+          label: 'Import',
+          icon: 'pi pi-fw pi-upload',
+          items: [
+            {
+              label: 'Upload File',
+              icon: 'pi pi-fw pi-file',
+              command: () => {
+                this.showFileUploadPopup();
+              },
+            },
+            {
+              label: 'Upload Asset',
+              icon: 'pi pi-fw pi-image',
+              command: () => {
+                this.showImageUploadPopup();
+              },
+            },
+          ],
+        },
+        {
+          label: 'Logout',
+          icon: 'pi pi-fw pi-power-off',
+          command: () => {
+            this.userService.logout();
+          },
+        },
+      ]
     return [
       {
         label: 'File',
@@ -713,7 +784,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 icon: 'pi pi-fw pi-folder',
                 command: () => {
                   // this.showFileManagerPopup('folder');
-                  this.createNewFolderDialogueVisible = true;
+                  this.createNewFolderDialogVisible = true;
                 },
               },
               {
@@ -721,7 +792,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 icon: 'pi pi-fw pi-file',
                 command: () => {
                   // this.showFileManagerPopup('document');
-                  this.createNewDocumentDialogueVisible = true;
+                  this.createNewDocumentDialogVisible = true;
                 },
               },
             ],
@@ -754,7 +825,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
               if (this.getSelected().length === 1) {
                 if (!(this.entityRename = this.getSelected()[0].Name))
                   this.entityRename = this.getSelected()[0].FolderName;
-                this.renameDialogueVisible = true;
+                this.renameDialogVisible = true;
               } else if (this.getSelected().length === 0) {
                 this.messageService.add({
                   severity: 'warn',
@@ -799,19 +870,33 @@ export class HomeComponent implements OnInit, AfterViewInit {
       },
       {
         label: 'Import',
-        icon: 'pi pi-fw pi-pencil',
+        icon: 'pi pi-fw pi-upload',
         items: [
           {
             label: 'Upload File',
-            icon: 'pi pi-fw pi-upload',
+            icon: 'pi pi-fw pi-file',
             command: () => {
               this.showFileUploadPopup();
+            },
+          },
+          {
+            label: 'Upload Asset',
+            icon: 'pi pi-fw pi-image',
+            command: () => {
+              this.showImageUploadPopup();
+            },
+          },
+          {
+            label: 'Camera Upload',
+            icon: 'pi pi-fw pi-camera',
+            command: () => {
+              this.navigateToPage('camera');
             },
           },
         ],
       },
       {
-        label: 'Quit',
+        label: 'Logout',
         icon: 'pi pi-fw pi-power-off',
         command: () => {
           this.userService.logout();
@@ -825,7 +910,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   async createNewFolder() {
-    this.createNewFolderDialogueVisible = false;
+    this.createNewFolderDialogVisible = false;
 
     let path: string | undefined = '';
     let parentFolderID: string | undefined = '';
@@ -895,7 +980,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.nodeService.addFolder(data);
         this.refreshTree();
         this.loading = false;
-        this.createNewFolderDialogueVisible = false;
+        this.createNewFolderDialogVisible = false;
         this.entityName = '';
       });
   }
@@ -952,7 +1037,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   async createNewDocument() {
-    this.createNewDocumentDialogueVisible = false;
+    this.createNewDocumentDialogVisible = false;
     let path: string | undefined = '';
     let parentFolderID: string | undefined = '';
     if (this.entityName == '') {
@@ -1022,7 +1107,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     );
     if (check) {
       this.entityName = '';
-      this.createNewDocumentDialogueVisible = false;
+      this.createNewDocumentDialogVisible = false;
       this.navigateToPage('edit');
     }
     this.loading = false;
@@ -1091,21 +1176,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
         let toastPoppedUp = false;
         let itemDeleted = false;
         for (const entity of selected) {
-          if(entity.SafeLock) {
-            if(!toastPoppedUp)
+          if (entity.SafeLock) {
+            if (!toastPoppedUp)
               this.messageService.add({
                 severity: 'warn',
                 summary: 'You can only delete an unlocked document',
               });
             toastPoppedUp = true;
             continue;
-          }else{
+          } else {
             this.delete(entity);
             itemDeleted = true;
           }
         }
 
-        if(!itemDeleted) return;
+        if (!itemDeleted) return;
 
         if (selected.length === 1)
           this.messageService.add({
@@ -1251,7 +1336,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   loadByParentID(parentID: string) {
     this.unselectAll();
-
+    this.contextMenu.hide();
+    this.contextMenuVisible = false;
     this.currentFolders = [];
     this.currentFiles = [];
     const folders = this.nodeService.getFoldersByParentID(parentID);
@@ -1379,6 +1465,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   handleClick(event: any, node: any) {
+    this.contextMenu.hide();
+
     if (event.ctrlKey) {
       this.addToSelection(node);
     } else if (event.shiftKey) {
@@ -1398,54 +1486,67 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   handleRightClick(event: any, node: any) {
+    this.zone.run(() => {
+      // Your dynamic context menu updates here
+      this.contextMenuItems[6] = {
+        label: 'Lock Document',
+        icon: 'pi pi-lock',
+        command: () => {
+          this.documentLockedPopup = true;
 
-    this.contextMenuItems[5] = {
-      label: 'Lock Document',
-      icon: 'pi pi-lock',
-      command: () => {
-        this.documentLockedPopup = true;
+          const file = this.getSelected();
+          if (file.length === 1) {
+            this.documentPromise = this.fileService
+              .retrieveDocument(file[0].MarkdownID, file[0].Path);
+          }
+        },
+      };
 
-        const file = this.getSelected();
-        if (file.length === 1) {
-          this.documentPromise = this.fileService
-            .retrieveDocument(file[0].MarkdownID, file[0].Path);
-        }
-      },
-    };
-    if (this.getSelected().length > 1) {
-      this.contextMenuItems[3].disabled = true;
-      this.contextMenuItems[5].disabled = true;
-    }
-    else {
+      this.contextMenuItems[0].disabled = false;
       this.contextMenuItems[3].disabled = false;
+      this.contextMenuItems[4].disabled = false;
       this.contextMenuItems[5].disabled = false;
-    }
 
-    if (node.Selected) {
-    } else this.selectOnlyOne(node);
+      if (this.getSelected().length > 1) {
+        this.contextMenuItems[0].disabled = true;
+        this.contextMenuItems[4].disabled = true;
+        this.contextMenuItems[6].disabled = true;
+      }
+      else {
+        this.contextMenuItems[0].disabled = false;
+        this.contextMenuItems[4].disabled = false;
+        this.contextMenuItems[6].disabled = false;
+      }
 
-    if (this.getSelected().length === 1) {
-      if (node.Type === 'folder') {
-        this.contextMenuItems[5].disabled = true;
-      } else {
-        this.contextMenuItems[5].disabled = false;
-        if (node.SafeLock) {
-          this.contextMenuItems[5] = {
-            label: 'Remove Lock',
-            icon: 'pi pi-fw pi-lock-open',
-            command: () => {
-              this.removeDocumentLock = true;
+      if (node.Selected) {
+      } else this.selectOnlyOne(node);
 
-              const file = this.getSelected();
-              if (file.length === 1) {
-                this.documentPromise = this.fileService
-                  .retrieveDocument(file[0].MarkdownID, file[0].Path);
+      if (this.getSelected().length === 1) {
+        if (node.Type === 'folder') {
+          this.contextMenuItems[6].disabled = true;
+        } else {
+          this.contextMenuItems[6].disabled = false;
+          if (node.SafeLock) {
+            this.contextMenuItems[6] = {
+              label: 'Remove Lock',
+              icon: 'pi pi-fw pi-lock-open',
+              command: () => {
+                this.removeDocumentLock = true;
+
+                const file = this.getSelected();
+                if (file.length === 1) {
+                  this.documentPromise = this.fileService
+                    .retrieveDocument(file[0].MarkdownID, file[0].Path);
+                }
               }
             }
           }
         }
       }
-    }
+      this.contextMenu.cd.detectChanges();
+      this.contextMenuVisible = true;
+    });
+
   }
 
   selectOnlyOne(node: any) {
@@ -1480,20 +1581,38 @@ export class HomeComponent implements OnInit, AfterViewInit {
       return;
     }
     let startSelecting = false;
-
+    this.shiftClickStart.Selected = true;
+    node.Selected = true;
     const x = this.currentFolders.concat(this.currentFiles);
-    for (let i = 0; i < x.length; i++) {
-      const element = x[i];
-      if (element === this.shiftClickStart || element === node) {
-        startSelecting = !startSelecting;
-        element.Selected = true;
-      } else if (startSelecting) {
-        element.Selected = true;
+
+    let j = 0;
+    for (; j < x.length; j++) {
+      if (x[j] === this.shiftClickStart || x[j] === node) {
+
+        break;
       }
     }
+    let count = 0;
+    for (let i = j; i < x.length; i++) {
+      console.log(i);
+      setTimeout(() => {
+        console.log(startSelecting);
+        const element = x[i];
+        if (element === this.shiftClickStart || element === node) {
+          startSelecting = !startSelecting;
+          element.Selected = true;
+        } else if (startSelecting) {
+          element.Selected = true;
+        }
+      }, 20 * count++);
+
+    }
+
+
   }
 
   getSelected() {
+
     let selected: any = [];
     this.currentFolders.forEach((element: any) => {
       if (element.Selected) {
@@ -1673,12 +1792,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     const selected = this.getSelected();
     if (selected.length === 1) {
-      if(await this.fileService
-        .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, false, selected[0].Path)){
-          selected[0].SafeLock = false;
-          this.userDocumentPassword = '';
-          this.removeDocumentLock = false;
-        }
+      if (await this.fileService
+        .updateLockDocument(selected[0].MarkdownID, await this.documentPromise, this.userDocumentPassword, false, selected[0].Path)) {
+        selected[0].SafeLock = false;
+        this.userDocumentPassword = '';
+        this.removeDocumentLock = false;
+      }
     }
   }
 
@@ -1700,5 +1819,82 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
+  enableContextMenu(event: MouseEvent, obj: any) {
+    event.stopPropagation();
+    if (!obj.Selected) {
+      this.unselectAll();
+      obj.Selected = true;
+    }
+    this.contextMenu.position(event);
+    this.contextMenu.show(event);
+    this.handleRightClick(event, obj);
+  }
+
+  touchObj: any;
+
+  handleTouchStart(event: any, obj: any, type: string) {
+    this.touchObj = obj;
+  }
+
+  handleTouchMove(event: any, obj: any, type: string) {
+    this.touchObj = null;
+  }
+
+  handleTouchEnd(event: any, obj: any, type: string) {
+    if (this.touchObj == obj) {
+      if(this.contextMenuVisible) {
+        this.contextMenuVisible = false;
+        this.contextMenu.hide();
+        return;
+      }
+      if (type == 'file') {
+        this.onOpenFileSelect(obj.MarkdownID);
+      }
+      else if (type == 'folder') {
+        this.openFolder(obj.FolderID);
+      }
+    }
+    this.touchObj = null;
+  }
+  handleTouchStartCM(event: any, obj: any, type: string) {
+    event.stopPropagation();
+  }
+  
+  handleTouchMoveCM(event: any, obj: any, type: string) {
+    event.stopPropagation();
+    
+  }
+  
+  handleTouchEndCM(event: any, obj: any, type: string) {
+    event.stopPropagation();
+
+  }
+
+  handleDirectoryRightClick(event: any) {
+    if(this.getSelected().length > 0) return;
+    this.contextMenu.hide();
+    this.contextMenuItems[0].disabled = true;
+    this.contextMenuItems[3].disabled = true;
+    this.contextMenuItems[4].disabled = true;
+    this.contextMenuItems[5].disabled = true;
+    this.contextMenuItems[6] = {
+      label: 'Lock Document',
+      icon: 'pi pi-lock',
+      command: () => {
+        this.documentLockedPopup = true;
+
+        const file = this.getSelected();
+        if (file.length === 1) {
+          this.documentPromise = this.fileService
+            .retrieveDocument(file[0].MarkdownID, file[0].Path);
+        }
+      },
+    };
+    this.contextMenuItems[6].disabled = true;
+    this.contextMenu.cd.detectChanges();
+    this.contextMenuVisible = true;
+    this.contextMenu.position(event);
+    this.contextMenu.show(event);
+  }
   protected readonly focus = focus;
 }

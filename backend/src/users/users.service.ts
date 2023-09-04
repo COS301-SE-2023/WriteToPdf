@@ -120,7 +120,7 @@ export class UsersService {
       firstName.length > 0 &&
       firstName.length < 50 &&
       // firstName.match(/^[a-zA-Z]+$/)
-      /^[a-zA-Z]+$/.test(firstName)
+      /^[A-Za-zÀ-ÖØ-öø-ÿ '-]+$/.test(firstName)
     );
   }
 
@@ -129,7 +129,7 @@ export class UsersService {
       lastName.length > 0 &&
       lastName.length < 50 &&
       // lastName.match(/^[a-zA-Z]+$/)
-      /^[a-zA-Z]+$/.test(lastName)
+      /^[A-Za-zÀ-ÖØ-öø-ÿ '-]+$/.test(lastName)
     );
   }
 
