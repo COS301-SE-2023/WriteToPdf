@@ -102,6 +102,15 @@ describe('TextManagerService', () => {
           'mock textract response' as any,
         );
 
+      (
+        jest.spyOn(
+          service,
+          'formatTextractResponse',
+        ) as any
+      ).mockResolvedValue(
+        'mock formatted response',
+      );
+
       jest
         .spyOn(s3Service, 'saveTextractResponse')
         .mockResolvedValue(assetDTO);
@@ -115,7 +124,7 @@ describe('TextManagerService', () => {
       );
 
       expect(response).toBe(
-        'mock textract response',
+        'mock formatted response',
       );
     });
   });
