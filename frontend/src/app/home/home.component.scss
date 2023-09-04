@@ -241,7 +241,7 @@ textarea {
   border: 1.3px solid black;
 }
 
-.moveDialogueContainer {
+.moveDialogContainer {
   display: flex;
 }
 
@@ -565,4 +565,11 @@ $icon-size: 1.5rem;
   /* Add vertical scrollbar if necessary */
   position: relative;
   /* Required for the filler div positioning */
+}
+
+.noContent{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

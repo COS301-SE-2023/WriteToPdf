@@ -86,9 +86,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public moveDialogVisible: boolean = false;
   public entityToMove: any;
   public destinationDirectory: any;
-  public createNewDocumentDialogueVisible: boolean = false;
-  public createNewFolderDialogueVisible: boolean = false;
-  renameDialogueVisible: boolean = false;
+  public createNewDocumentDialogVisible: boolean = false;
+  public createNewFolderDialogVisible: boolean = false;
+  renameDialogVisible: boolean = false;
   documentLockedPopup: boolean = false;
   openLockedDocumentPopup: boolean = false;
   removeDocumentLock: boolean = false;
@@ -146,12 +146,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
       {
         label: 'Create New Folder',
         icon: 'pi pi-folder',
-        command: () => (this.createNewFolderDialogueVisible = true),
+        command: () => (this.createNewFolderDialogVisible = true),
       },
       {
         label: 'Create New File',
         icon: 'pi pi-file',
-        command: () => (this.createNewDocumentDialogueVisible = true),
+        command: () => (this.createNewDocumentDialogVisible = true),
       },
       {
         label: 'Move',
@@ -171,7 +171,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           if (selected.length === 1) {
             if (!(this.entityRename = this.getSelected()[0].Name))
               this.entityRename = this.getSelected()[0].FolderName;
-            this.renameDialogueVisible = true;
+            this.renameDialogVisible = true;
           }
         },
       },
@@ -386,7 +386,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       {
         icon: 'pi pi-pencil',
         command: async () => {
-          this.createNewDocumentDialogueVisible = true;
+          this.createNewDocumentDialogVisible = true;
         },
       },
       {
@@ -729,7 +729,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
               icon: 'pi pi-fw pi-folder',
               command: () => {
                 // this.showFileManagerPopup('folder');
-                this.createNewFolderDialogueVisible = true;
+                this.createNewFolderDialogVisible = true;
               },
             },
             {
@@ -737,7 +737,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
               icon: 'pi pi-fw pi-file',
               command: () => {
                 // this.showFileManagerPopup('document');
-                this.createNewDocumentDialogueVisible = true;
+                this.createNewDocumentDialogVisible = true;
               },
             },
           ],
@@ -791,7 +791,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 icon: 'pi pi-fw pi-folder',
                 command: () => {
                   // this.showFileManagerPopup('folder');
-                  this.createNewFolderDialogueVisible = true;
+                  this.createNewFolderDialogVisible = true;
                 },
               },
               {
@@ -799,7 +799,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 icon: 'pi pi-fw pi-file',
                 command: () => {
                   // this.showFileManagerPopup('document');
-                  this.createNewDocumentDialogueVisible = true;
+                  this.createNewDocumentDialogVisible = true;
                 },
               },
             ],
@@ -832,7 +832,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
               if (this.getSelected().length === 1) {
                 if (!(this.entityRename = this.getSelected()[0].Name))
                   this.entityRename = this.getSelected()[0].FolderName;
-                this.renameDialogueVisible = true;
+                this.renameDialogVisible = true;
               } else if (this.getSelected().length === 0) {
                 this.messageService.add({
                   severity: 'warn',
@@ -917,7 +917,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   async createNewFolder() {
-    this.createNewFolderDialogueVisible = false;
+    this.createNewFolderDialogVisible = false;
 
     let path: string | undefined = '';
     let parentFolderID: string | undefined = '';
@@ -987,7 +987,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.nodeService.addFolder(data);
         this.refreshTree();
         this.loading = false;
-        this.createNewFolderDialogueVisible = false;
+        this.createNewFolderDialogVisible = false;
         this.entityName = '';
       });
   }
@@ -1044,7 +1044,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   async createNewDocument() {
-    this.createNewDocumentDialogueVisible = false;
+    this.createNewDocumentDialogVisible = false;
     let path: string | undefined = '';
     let parentFolderID: string | undefined = '';
     if (this.entityName == '') {
@@ -1114,7 +1114,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     );
     if (check) {
       this.entityName = '';
-      this.createNewDocumentDialogueVisible = false;
+      this.createNewDocumentDialogVisible = false;
       this.navigateToPage('edit');
     }
     this.loading = false;
