@@ -1771,5 +1771,27 @@ enableContextMenu(event: MouseEvent, obj: any){
   this.handleRightClick(event, obj);
 }
 
+touchObj: any;
+
+handleTouchStart(event: any, obj: any, type: string){
+  this.touchObj=obj;
+}
+
+handleTouchMove(event: any, obj: any, type: string){
+  this.touchObj=null;
+}
+
+handleTouchEnd(event: any, obj: any, type: string){
+  if(this.touchObj == obj){
+    if(type == 'file'){
+      this.onOpenFileSelect(obj.MarkdownID);
+    }
+    else if(type == 'folder'){
+      this.openFolder(obj.FolderID);
+    }
+  }
+  this.touchObj=null;
+}
+
   protected readonly focus = focus;
 }

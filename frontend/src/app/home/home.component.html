@@ -154,7 +154,10 @@
       (dragstart)="onDragStart($event, obj)"
       (dragover)="onDragOver($event, obj)"
       (dragleave)="onDragLeave($event, obj)"
-      (drop)="onDrop($event, obj)">
+      (drop)="onDrop($event, obj)"
+      (touchstart)="handleTouchStart($event, obj, 'folder')"
+      (touchmove)="handleTouchMove($event, obj, 'folder')"
+      (touchend)="handleTouchEnd($event, obj, 'folder')">
         <div class="iconSpacing">
           <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/folder.png" alt=""/>
         </div>
@@ -182,7 +185,10 @@
       [ngClass]="obj.Selected ? 'selectedFile' : 'defaultFile'" 
       [draggable]="obj.Selected"
       (dragstart)="onDragStart($event, obj)"
-      (drop)="onDrop($event, obj)">
+      (drop)="onDrop($event, obj)"
+      (touchstart)="handleTouchStart($event, obj, 'file')"
+      (touchmove)="handleTouchMove($event, obj, 'file')"
+      (touchend)="handleTouchEnd($event, obj, 'file')">
         <div class="iconSpacing">
           <img class="fileItemIcon" src="assets/Icons/homeIcons/mainWindow/doc.png" alt=""/>
         </div>
