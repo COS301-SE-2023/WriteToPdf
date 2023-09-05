@@ -53,6 +53,7 @@ describe('UsersService', () => {
   let service: UsersService;
   let authService: AuthService;
   let resetPasswordService: ResetPasswordService;
+  let jwtService: JwtService;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -90,6 +91,8 @@ describe('UsersService', () => {
       module.get<ResetPasswordService>(
         ResetPasswordService,
       );
+    jwtService =
+      module.get<JwtService>(JwtService);
   });
 
   describe('create', () => {
@@ -1108,6 +1111,122 @@ describe('UsersService', () => {
           error: 'Reset password request expired',
         });
       }
+    });
+
+    it('should verify the userID and expiry date in the token', async () => {
+      const resetPasswordDTO =
+        new ResetPasswordRequestDTO();
+      resetPasswordDTO.Token = 'token';
+
+      const user = new User();
+      user.UserID = 1;
+
+      const resetRequest =
+        new ResetPasswordRequest();
+      resetRequest.UserID = user.UserID;
+      resetRequest.DateExpires = new Date(
+        new Date().getTime() +
+          1000 * 60 * 60 * 24,
+      );
+
+      jest
+        .spyOn(service, 'findOneByToken')
+        .mockResolvedValue(user);
+
+      jest
+        .spyOn(
+          resetPasswordService,
+          'findOneByTokenAndUserID',
+        )
+        .mockResolvedValue(resetRequest);
+
+      jest
+        .spyOn(jwtService, 'verifyAsync')
+        .mockResolvedValue({
+          UserID: 0,
+          DateExpires: resetRequest.DateExpires,
+        });
+
+      try {
+        await service.resetPassword(
+          resetPasswordDTO,
+        );
+        expect(true).toBe(true);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.getResponse()).toEqual({
+          status: HttpStatus.UNAUTHORIZED,
+          error: 'Invalid token',
+        });
+        expect(error.status).toEqual(
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+    });
+
+    it('should return a success message', async () => {
+      const resetPasswordDTO =
+        new ResetPasswordRequestDTO();
+      resetPasswordDTO.Token = 'token';
+
+      const user = new User();
+      user.UserID = 1;
+
+      const resetRequest =
+        new ResetPasswordRequest();
+      resetRequest.UserID = user.UserID;
+      resetRequest.DateExpires = new Date(
+        new Date().getTime() +
+          1000 * 60 * 60 * 24,
+      );
+
+      jest
+        .spyOn(service, 'findOneByToken')
+        .mockResolvedValue(user);
+
+      jest
+        .spyOn(
+          resetPasswordService,
+          'findOneByTokenAndUserID',
+        )
+        .mockResolvedValue(resetRequest);
+
+      jest
+        .spyOn(jwtService, 'verifyAsync')
+        .mockResolvedValue({
+          UserID: user.UserID,
+          DateExpires: resetRequest.DateExpires,
+        });
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockResolvedValue(undefined);
+
+      jest
+        .spyOn(resetPasswordService, 'remove')
+        .mockResolvedValue(undefined);
+
+      const result = await service.resetPassword(
+        resetPasswordDTO,
+      );
+
+      expect(result).toEqual({
+        message: 'Password reset successfully',
+      });
+
+      expect(service.findOneByToken).toBeCalled();
+      expect(
+        resetPasswordService.findOneByTokenAndUserID,
+      ).toBeCalled();
+      expect(jwtService.verifyAsync).toBeCalled();
+      expect(
+        Repository.prototype.save,
+      ).toBeCalled();
+      expect(
+        resetPasswordService.remove,
+      ).toBeCalled();
     });
   });
 });
