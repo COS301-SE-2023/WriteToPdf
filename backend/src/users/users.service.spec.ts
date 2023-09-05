@@ -219,6 +219,108 @@ describe('UsersService', () => {
       });
     });
   });
+
+  describe('findOneByToken', () => {
+    it('should throw an error if the request is not found', async () => {
+      const token = 'test';
+
+      jest
+        .spyOn(
+          resetPasswordService,
+          'findOneByToken',
+        )
+        .mockResolvedValue(undefined);
+
+      try {
+        await service.findOneByToken(token);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.status).toEqual(
+          HttpStatus.NOT_FOUND,
+        );
+        expect(error.getResponse()).toEqual({
+          status: HttpStatus.NOT_FOUND,
+          error:
+            'Reset password request not found',
+        });
+      }
+    });
+
+    it('should throw an error if the user does not exist', async () => {
+      const token = 'test';
+      const resetRequest =
+        new ResetPasswordRequest();
+      resetRequest.UserID = 1;
+
+      jest
+        .spyOn(
+          resetPasswordService,
+          'findOneByToken',
+        )
+        .mockResolvedValue(resetRequest);
+
+      jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValue(undefined);
+
+      try {
+        await service.findOneByToken(token);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.status).toEqual(
+          HttpStatus.NOT_FOUND,
+        );
+        expect(error.getResponse()).toEqual({
+          status: HttpStatus.NOT_FOUND,
+          error: 'User not found',
+        });
+      }
+    });
+
+    it('should return a user', async () => {
+      const token = 'test';
+      const resetRequest =
+        new ResetPasswordRequest();
+      resetRequest.UserID = 1;
+      const user = new UserDTO();
+      user.UserID = 1;
+
+      jest
+        .spyOn(
+          resetPasswordService,
+          'findOneByToken',
+        )
+        .mockResolvedValue(resetRequest);
+
+      jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValue(user);
+
+      const result = await service.findOneByToken(
+        token,
+      );
+
+      expect(result).toEqual(user);
+
+      expect(
+        resetPasswordService.findOneByToken,
+      ).toBeCalledWith(token);
+      expect(
+        Repository.prototype.findOne,
+      ).toBeCalledWith({
+        where: {
+          UserID: resetRequest.UserID,
+        },
+      });
+    });
+  });
+
   describe('signup', () => {
     it('should throw an exception if first name is invalid', async () => {
       const userFirstNameHasNumber =
