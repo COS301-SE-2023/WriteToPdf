@@ -133,7 +133,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     const dp = localStorage.getItem('documentPassword');
 
     if (c != null && m != null && n != null && p != null && pf != null && sl != null && dp != null)
-      this.editService.setAll(c, m, n, p, pf, sl === 'true', dp);
+      this.editService.setAll(c, m, n, p, pf, sl === 'true', this.editService.decryptPassword(dp));
     this.fileName = this.editService.getName();
   }
 
