@@ -74,7 +74,8 @@ export class LoginComponent {
 
   async handleCredentialResponse(response: CredentialResponse) {
     if(await this.userService.loginWithGoogle(response.credential))
-      this.navigateToPage('home');
+      this.router.navigate([`/home`]).then(() => window.location.reload());
+      // this.navigateToPage('home');
   }
 
   navigateToPage(pageName: string) {
