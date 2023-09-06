@@ -16,7 +16,6 @@ import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ExportDTO } from './dto/export.dto';
 import { ImportDTO } from './dto/import.dto';
-import { ConversionService } from '../conversion/conversion.service';
 
 @Controller('file_manager')
 export class FileManagerController {
@@ -227,6 +226,37 @@ export class FileManagerController {
 
     return this.fileManagerService.retrieveAllFiles(
       directoryFilesDTO,
+    );
+  }
+
+  @Post('update_safelock_status')
+  @HttpCode(HttpStatus.OK)
+  updateSafeLockStatus(
+    @Body()
+    markdownFileDTO: MarkdownFileDTO,
+    @Req() request: Request,
+    // @Headers('isTest') isTest: string, // For using mocked out services
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
+    if (
+      !markdownFileDTO.UserID ||
+      !markdownFileDTO.MarkdownID ||
+      markdownFileDTO.SafeLock === undefined
+    ) {
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return this.fileManagerService.updateSafeLockStatus(
+      markdownFileDTO,
     );
   }
 

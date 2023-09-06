@@ -33,7 +33,9 @@ import { User } from '../users/entities/user.entity';
 import { testDBOptions } from '../../db/data-source';
 import { UserDTO } from '../users/dto/user.dto';
 import * as CryptoJS from 'crypto-js';
-import { S3 } from '@aws-sdk/client-s3';
+import { ResetPasswordService } from '../reset_password/reset_password.service';
+import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
+import { MailService } from '../mail/mail.service';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -79,6 +81,8 @@ describe('FileManagerService', () => {
           UsersService,
           AuthService,
           JwtService,
+          ResetPasswordService,
+          MailService,
           {
             provide: 'FileManagerService',
             useValue: {
@@ -146,6 +150,12 @@ describe('FileManagerService', () => {
           },
           {
             provide: getRepositoryToken(User),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(
+              ResetPasswordRequest,
+            ),
             useClass: Repository,
           },
         ],
@@ -1655,6 +1665,33 @@ describe('FileManagerService', () => {
       expect(
         service.getEncryptionKey,
       ).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateSafeLockStatus', () => {
+    it('should call markdowFilesService updateSafeLockStatus method', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.SafeLock = true;
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'updateSafeLockStatus',
+        )
+        .mockResolvedValue(new MarkdownFile());
+
+      const response =
+        await service.updateSafeLockStatus(
+          markdownFileDTO,
+        );
+      expect(response).toBeInstanceOf(
+        MarkdownFile,
+      );
+      expect(
+        markdownFilesService.updateSafeLockStatus,
+      ).toHaveBeenCalledWith(markdownFileDTO);
     });
   });
 

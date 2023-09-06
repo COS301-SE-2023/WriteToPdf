@@ -265,7 +265,6 @@ export class ConversionService {
       windowWidth: 794,
       windowHeight: 1122,
     });
-    console.log('Canvas: ', canvas);
     const fileURL = canvas.toDataURL('image/' + type);
 
     document.body.removeChild(container);

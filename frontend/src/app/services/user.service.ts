@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 import { Inject } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { set } from 'cypress/types/lodash';
+import { ResetPasswordRequestDTO } from './dto/reset_password_request.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -33,8 +34,8 @@ export class UserService {
     private messageService: MessageService,
     @Inject(Router) private router: Router,
     private jwtHelper: JwtHelperService,
-    private _ngZone: NgZone,
-  ) { }
+    private _ngZone: NgZone
+  ) {}
 
   async login(email: string, password: string): Promise<boolean> {
     let salt: string;
@@ -50,19 +51,26 @@ export class UserService {
     return new Promise<boolean>(async (resolve, reject) => {
       this.sendLoginData(email, password, salt).subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 200) {
-
             //TODO this needs to change to read from token payload
             this.isAuthenticated = true;
             this.authToken = response.body.Token;
             this.userID = response.body.UserID;
-            this.expiresAt = this.jwtHelper.decodeToken(response.body.Token).ExpiresAt;
+            this.expiresAt = this.jwtHelper.decodeToken(
+              response.body.Token
+            ).ExpiresAt;
             this.email = email;
             this.firstName = response.body.FirstName;
             this.doExpirationCheck = true;
             this.encryptionKey = response.body.EncryptionKey;
-            if (this.authToken && this.userID && this.expiresAt && this.email && this.firstName && this.encryptionKey) {
+            if (
+              this.authToken &&
+              this.userID &&
+              this.expiresAt &&
+              this.email &&
+              this.firstName &&
+              this.encryptionKey
+            ) {
               localStorage.setItem('isAuthenticated', 'true');
               localStorage.setItem('authToken', this.authToken);
               localStorage.setItem('userID', this.userID.toString());
@@ -71,7 +79,6 @@ export class UserService {
               localStorage.setItem('firstName', this.firstName);
               localStorage.setItem('encryptionKey', this.encryptionKey);
             }
-
 
             this.startExpirationCheck();
             resolve(true);
@@ -124,7 +131,6 @@ export class UserService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSignupData(email, firstName, lastName, password).subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 200) {
             resolve(true);
           } else {
@@ -148,10 +154,8 @@ export class UserService {
     // Perform logout logic here (e.g., clear authentication token, reset flags)
     this._ngZone.run(() => {
       this.revokeToken().subscribe({
-        next: (x: any) => {
-          
-        }
-      })
+        next: (x: any) => {},
+      });
     });
 
     if (this.timer) {
@@ -170,28 +174,29 @@ export class UserService {
     this.router.navigate(['/login']).then(() => window.location.reload());
   }
 
-
   revokeToken(): Observable<any> {
     // return this.http.delete(this.path + "RevokeToken/" + this.username.value, { headers: header, withCredentials: true });
-    
+
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}users/revoke_token`;
     const body = new UserDTO();
     body.UserID = this.userID;
-        
+
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.getAuthToken()
     );
     return this.http.post(url, body, { headers, observe: 'response' });
-
   }
 
-  async forgotPassword(email : string, newPassword:string){
+  async forgotPassword(email: string, newPassword: string) {
     const salt = await this.retrieveSalt(email);
-    this.sendForgotPasswordData(email, this.hashPassword(newPassword, salt)).subscribe({
+    this.sendForgotPasswordData(
+      email,
+      this.hashPassword(newPassword, salt)
+    ).subscribe({
       next: (response: HttpResponse<any>) => {
-        console.log('forgotPass response: ', response);
+        // console.log('forgotPass response: ', response);
         if (response.status === 200) {
           this.messageService.add({
             severity: 'success',
@@ -218,7 +223,10 @@ export class UserService {
     });
   }
 
-  sendForgotPasswordData(email: string, password : string): Observable<HttpResponse<any>> {
+  sendForgotPasswordData(
+    email: string,
+    password: string
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}users/reset_password`;
     const body = new UserDTO();
@@ -226,7 +234,6 @@ export class UserService {
     body.Password = password;
     return this.http.post(url, body, { observe: 'response' });
   }
-
   isAuthenticatedUser(): boolean {
     // Return the authentication status
     return this.isAuthenticated;
@@ -323,6 +330,99 @@ export class UserService {
     return this.http.post(url, body, { observe: 'response' });
   }
 
+  passwordResetRequest(email: string): void {
+    this.sendPasswordResetRequest(email).subscribe({
+      next: (response: HttpResponse<any>) => {
+        if (response.status === 200) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: `Password reset request sent`,
+          });
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: `Password reset request failed`,
+          });
+        }
+      },
+      error: (error) => {
+        console.error(error); // Handle error if any
+      },
+    });
+  }
+
+  sendPasswordResetRequest(email: string): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}users/request_reset_password`;
+    const body = new UserDTO();
+    body.Email = email;
+
+    return this.http.post(url, body, { observe: 'response' });
+  }
+
+  async resetPassword(token: string, password: string): Promise<boolean> {
+    let salt: string;
+    
+    const email = this.jwtHelper.decodeToken(token).Email;
+    await this.retrieveSalt(email)
+      .then((result) => {
+        salt = result;
+        // Continue with the code that depends on the salt value
+      })
+      .catch((error) => {
+        console.error(error); // Handle error if any
+      });
+
+    return new Promise<boolean>(async (resolve, reject) => {
+      this.sendPasswordResetData(token, password, salt).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          if (response.status === 200) {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: `Password reset successful`,
+            });
+            resolve(true);
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: `Password reset failed`,
+            });
+            resolve(false);
+          }
+        },
+        error: (error) => {
+          console.error(error); // Handle error if any
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: `${error.error.error}`,
+          });
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  sendPasswordResetData(
+    token: string,
+    password: string,
+    salt: string
+  ): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}users/reset_password`;
+    const body = new ResetPasswordRequestDTO();
+    body.Token = token;
+    const hash = this.hashPassword(password, salt);
+    body.Password = hash;
+
+    return this.http.post(url, body, { observe: 'response' });
+  }
+
   async retrieveSalt(email: string): Promise<string> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}users/get_salt`;
@@ -374,15 +474,16 @@ export class UserService {
         this.sendRefreshTokenRequest().subscribe({
           next: (response: HttpResponse<any>) => {
             if (response.status === 200) {
-              console.log(response);
+              // console.log(response);
               this.authToken = response.body.Token;
-              this.expiresAt = this.jwtHelper.decodeToken(response.body.Token).ExpiresAt;
+              this.expiresAt = this.jwtHelper.decodeToken(
+                response.body.Token
+              ).ExpiresAt;
 
               if (this.authToken && this.expiresAt) {
                 localStorage.setItem('authToken', this.authToken);
                 localStorage.setItem('expiresAt', this.expiresAt.toString());
               }
-
             } else {
             }
           },
@@ -412,23 +513,29 @@ export class UserService {
   }
 
   loginWithGoogle(credential: any): Promise<boolean> {
-
     return new Promise<boolean>(async (resolve, reject) => {
       this.sendGoogleLoginData(credential).subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 200) {
-
             //TODO this needs to change to read from token payload
             this.isAuthenticated = true;
             this.authToken = response.body.Token;
             this.userID = response.body.UserID;
-            this.expiresAt = this.jwtHelper.decodeToken(response.body.Token).ExpiresAt;
+            this.expiresAt = this.jwtHelper.decodeToken(
+              response.body.Token
+            ).ExpiresAt;
             this.email = response.body.Email;
             this.firstName = response.body.FirstName;
             this.doExpirationCheck = true;
             this.encryptionKey = response.body.EncryptionKey;
-            if (this.authToken && this.userID && this.expiresAt && this.email && this.firstName && this.encryptionKey) {
+            if (
+              this.authToken &&
+              this.userID &&
+              this.expiresAt &&
+              this.email &&
+              this.firstName &&
+              this.encryptionKey
+            ) {
               localStorage.setItem('isAuthenticated', 'true');
               localStorage.setItem('authToken', this.authToken);
               localStorage.setItem('userID', this.userID.toString());
@@ -437,7 +544,6 @@ export class UserService {
               localStorage.setItem('firstName', this.firstName);
               localStorage.setItem('encryptionKey', this.encryptionKey);
             }
-
 
             this.startExpirationCheck();
             resolve(true);
@@ -461,7 +567,7 @@ export class UserService {
   sendGoogleLoginData(credentials: any): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}users/google_signin`;
-    const body : any = {};
+    const body: any = {};
     body.credential = credentials;
 
     return this.http.post(url, body, { observe: 'response' });

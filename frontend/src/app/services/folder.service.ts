@@ -40,6 +40,7 @@ export class FolderService {
             folder.ParentFolderID = response.body.ParentFolderID;
             folder.Path = response.body.Path;
             folder.ParentFolderID = response.body.ParentFolderID;
+            folder.FolderName = response.body.FolderName;
 
             resolve(folder);
           } else {
@@ -166,10 +167,13 @@ export class FolderService {
               summary: 'Folder created successfully',
             });
             const folder = new FolderDTO();
-            folder.FolderName = folderName;
-            folder.Path = path;
-            folder.ParentFolderID = parentFolderID;
             folder.FolderID = response.body.FolderID;
+            folder.DateCreated = response.body.DateCreated;
+            folder.LastModified = response.body.LastModified;
+            folder.ParentFolderID = response.body.ParentFolderID;
+            folder.Path = response.body.Path;
+            folder.ParentFolderID = response.body.ParentFolderID;
+            folder.FolderName = response.body.FolderName;
             resolve(folder);
           } else {
             reject();
@@ -206,11 +210,11 @@ export class FolderService {
     path: string | undefined,
     folderName: string
   ): Promise<boolean> {
-    console.log(folderID+" "+path+" "+folderName);
+    // console.log(folderID+" "+path+" "+folderName);
     return new Promise<boolean>((resolve, reject) => {
       this.sendRenameData(folderID, path, folderName).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
+          // console.log(response);
           if (response.status === 200) {
             this.messageService.add({
               severity: 'success',
