@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
+import * as CryptoJS from 'crypto-js';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -127,7 +129,7 @@ export class EditService {
     localStorage.setItem('path', this.path);
     localStorage.setItem('parentFolderID', this.parentFolderID);
     localStorage.setItem('safeLock', this.safeLock.toString());
-    localStorage.setItem('documentPassword', documentPassword);
+    localStorage.setItem('encryptedDocumentPassword', this.encryptPassword(documentPassword));
   }
 
   reset() {
@@ -145,12 +147,11 @@ export class EditService {
     localStorage.setItem('path', this.path);
     localStorage.setItem('parentFolderID', this.parentFolderID);
     localStorage.setItem('safeLock', this.safeLock.toString());
-    localStorage.setItem('documentPassword', this.encryptPassword(this.documentPassword));
+    localStorage.setItem('encryptedDocumentPassword', this.encryptPassword(this.documentPassword));
     
   }
 
   encryptPassword(content: string | undefined): string {
-    if (content) return content;
     const key = this.userService.getEncryptionKey();
     if (key && content) {
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
@@ -161,7 +162,6 @@ export class EditService {
   }
 
   decryptPassword(content: string | undefined): string {
-    if (content) return content;
     const key = this.userService.getEncryptionKey();
     if (key && content) {
       const decryptedMessage = CryptoJS.AES.decrypt(content, key)
