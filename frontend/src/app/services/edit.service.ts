@@ -129,7 +129,7 @@ export class EditService {
     localStorage.setItem('path', this.path);
     localStorage.setItem('parentFolderID', this.parentFolderID);
     localStorage.setItem('safeLock', this.safeLock.toString());
-    localStorage.setItem('documentPassword', this.encryptPassword(documentPassword));
+    localStorage.setItem('encryptedDocumentPassword', this.encryptPassword(documentPassword));
   }
 
   reset() {
@@ -147,7 +147,7 @@ export class EditService {
     localStorage.setItem('path', this.path);
     localStorage.setItem('parentFolderID', this.parentFolderID);
     localStorage.setItem('safeLock', this.safeLock.toString());
-    localStorage.setItem('documentPassword', this.encryptPassword(this.documentPassword));
+    localStorage.setItem('encryptedDocumentPassword', this.encryptPassword(this.documentPassword));
     
   }
 
