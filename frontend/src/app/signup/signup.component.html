@@ -1,3 +1,4 @@
+<p-toast [breakpoints]="{'600px': {width: '300px'}, '350px': {width: '90%'}}" [style]="{opacity: '1'}"></p-toast>
 
 <div class="backgroundImage">
   <div class="signupWrapper">
@@ -54,19 +55,19 @@
           [inputStyle]="{ width: '100%' }" [feedback]="false"></p-password>
       </div>
 
-      <div *ngIf="isFormValid(); else formInvalid" class="formElement">
+      <div class="formElement">
         <button (click)="signup()" type="button" class="signupButton">
           Signup
         </button>
       </div>
 
-      <ng-template #formInvalid>
+      <!-- <ng-template #formInvalid>
         <div class="formElement">
           <button type="button" class="signupButtonDisabled" disabled>
             Signup
           </button>
         </div>
-      </ng-template>
+      </ng-template> -->
 
       <div class="formElement">
         <div class="googleButton" id="buttonDiv"></div>

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
 import { MarkdownFile } from './entities/markdown_file.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -86,6 +90,30 @@ export class MarkdownFilesService {
       );
     markdownToUpdate.LastModified = new Date();
     markdownToUpdate.Size = markdownDTO.Size;
+    return this.markdownFileRepository.save(
+      markdownToUpdate,
+    );
+  }
+
+  async updateSafeLockStatus(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    const markdownToUpdate =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownFileDTO.MarkdownID,
+        },
+      );
+
+    if (!markdownToUpdate) {
+      throw new HttpException(
+        'Markdown file not found',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    markdownToUpdate.SafeLock =
+      markdownFileDTO.SafeLock;
     return this.markdownFileRepository.save(
       markdownToUpdate,
     );

@@ -40,13 +40,14 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 ### Architecture
 - [Architecture v1](https://docs.google.com/document/d/1skoEPk1VvtO8P9fyWIVFyUuf0ssU1aI8G-wrYYNbeyg/edit?usp=sharing)
 - [Architecture v2](https://docs.google.com/document/d/1FTGkhilcBonjeJdZc6e2ykf3x_l8cgZlwjZvC8O_KZ8/edit?usp=sharing)
+- [Architecture v3](https://docs.google.com/document/d/1vsMHJwqzcz90eAQDmRtiRptpSUpqpPzTstwP2HO-iX4/edit?usp=sharing)
 
 ### User Manual
 - [User manual v1](https://docs.google.com/document/d/1zUkgP6SMe9ti3cEWSjjO4yTOUCb1NZnV1_J4SeadA7A/edit?usp=sharing)
 - [User manual v2](https://docs.google.com/document/d/1zs5NqddSAby1zNL-tTCPOdJPDTYQJnAWIyChKixjNN4/edit?usp=sharing)
 
 ### Technical installation document
-- [Technical insallation v1](https://docs.google.com/document/d/1HG9QVSEh2NsHbrRTlXPBjiq3keQMapmmiDbTFK07tNU/edit?usp=sharing)
+- [Technical installation v1](https://docs.google.com/document/d/1HG9QVSEh2NsHbrRTlXPBjiq3keQMapmmiDbTFK07tNU/edit?usp=sharing)
 
 ### Coding standards
 
@@ -85,14 +86,14 @@ We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issu
 ## Branching strategy
 The main branch is the live/deployed branch.
 Test branch is used to run all tests. These two branches are the stable branches.
-The codecov branch is used to merge completed features into and is the branch where tests get fixed before being pushed to the Test.
+The codecov branch is used to merge completed features into and is the branch where tests get fixed before being pushed to the Test branch.
 Feature branches get created off of the Test branch and be called dev/feature_name. Once a feature is completed it gets merged into codecov.
 
 The flow of merging is: dev/feature -> codecov -> test -> main
 
 
 ## Repository Structure
-The repository follows a well-organized structure to meet our client's requirements and ensure efficient development and maintenance. It consists of the following folders:
+The repository follows a well-organised structure to meet our client's requirements and ensures efficient development and maintenance. It consists of the following folders:
 ```
 .
 |-- /frontend
@@ -132,9 +133,9 @@ Janco has experience working as a tutor for the module Data Structures and Algor
 <details>
 <summary>Jake Weatherhead - u04929552</summary>
 <br/>
-<p>Integration Engineer, Data Engineer</p>
+<p>API Engineer, Data Engineer</p>
 <p>
-Jake is a self-motivated and passionate individual who is highly enthusiastic about the practical applications of data science, machine learning and product design. He has experience as a tutor for the module Mathematical Modelling at the University of Pretoria where he tutors students in Pythonic data science. He has experience building, managing and integrating NoSQL databases, such as Google Cloud Firestore and MongoDB. He also has experience building APIs in PHP and Typescript through NestJS. Jake’s other relevant skills include Java, NodeJS, Angular, C++ and LaTeX.
+Jake is a self-motivated and passionate individual who is highly enthusiastic about the practical applications of data science, machine learning and product design. He has experience as a tutor for the module Mathematical Modelling at the University of Pretoria where he tutored students in Pythonic data science. He has experience building, managing and integrating NoSQL databases, such as Google Cloud Firestore and MongoDB. He also has experience building APIs in PHP and Typescript through NestJS. Jake’s other relevant skills include Java, NestJS, Angular, C++ and LaTeX.
 </p>
 <img src="https://user-images.githubusercontent.com/104741835/235907757-81df79c3-b9e8-49ae-a481-c21bbb385913.png" />
 <br/>
@@ -192,7 +193,7 @@ Conrad is an avid programmer, yogi and musician. He has experience in Python, R,
 <details >
 <summary>Julian Pienaar - u21599892</summary>
 <br/>
-<p>UI Engineer, Designer</p>
+<p>UI Engineer, Integration Engineer, Designer</p>
 
 <p>
 Julian has experience with design patterns and data structures giving him a good understanding of algorithms. He has worked on large Angular projects as a UI Engineer. He has a high capacity to learn and understand complex ideas and is able to adapt to the change. He is proficient in multiple languages and frameworks such as C++, Java, NodeJS, Php, Javascript, Ionic,  Angular and Typescript. 
@@ -201,7 +202,7 @@ Julian has experience with design patterns and data structures giving him a good
 <img src="https://user-images.githubusercontent.com/104741835/235907734-cc6ce2a7-ac9a-4d3c-9dfe-03eb772b4b98.png" /> 
 <br/>
 <a href="https://www.linkedin.com/in/julian-pienaar-370208271/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3B0NeumpYtT8e%2FsXo8GIBScQ%3D%3D">
-<img src="https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
+<img src="https://img.shields.io/badge/linkedin-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
 </a>
  
  <a href="https://github.com/JulianPienaar">
