@@ -143,7 +143,11 @@ export class UserService {
           }
         },
         error: (error) => {
-          console.error(error); // Handle error if any
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: `Signup failed`,
+          });
           resolve(false);
         },
       });
@@ -348,7 +352,11 @@ export class UserService {
         }
       },
       error: (error) => {
-        console.error(error); // Handle error if any
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Password reset request failed`,
+        });
       },
     });
   }
@@ -557,7 +565,11 @@ export class UserService {
           }
         },
         error: (error) => {
-          console.error(error); // Handle error if any
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: `Login failed`,
+          });
           resolve(false);
         },
       });
