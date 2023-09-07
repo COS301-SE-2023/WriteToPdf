@@ -105,77 +105,99 @@ export class TextManagerService {
     return formattedTextractResponse;
   }
 
-  formatTextractResponse(response: JSON) {
-    if (!response) return null;
-    const rawLines = [];
-    let tableRoot = {};
+  formatTextractResponse(response: any): any {
+    const rawLines: any[][] = [];
+    const tableRoot: any[] = [];
     for (const block in response['Blocks']) {
       if (
         response['Blocks'][block].BlockType ==
         'LINE'
       ) {
-        rawLines.push(response['Blocks'][block]);
+        if (rawLines.length == 0)
+          rawLines.push([]);
+        rawLines[rawLines.length - 1].push(
+          response['Blocks'][block],
+        );
       }
       if (
         response['Blocks'][block].BlockType ==
         'TABLE'
       ) {
-        tableRoot = response['Blocks'][block];
+        tableRoot.push(response['Blocks'][block]);
+        rawLines.push([]);
       }
     }
 
-    const freeLines = [];
-    const tableLines = [];
-    for (const line of rawLines) {
-      if (
-        !this.isPartOfTable(
-          tableRoot,
-          line,
-          response['Blocks'],
-        )
-      ) {
-        freeLines.push(line);
-      } else {
-        tableLines.push(line);
-      }
-    }
-
-    // Group together lines that are close to each other vertically
-    const groupedLines = [];
-    for (const line of freeLines) {
-      if (groupedLines.length == 0) {
-        groupedLines.push([line]);
-      } else {
-        const lastGroup =
-          groupedLines[groupedLines.length - 1];
-        const lastLine =
-          lastGroup[lastGroup.length - 1];
-        if (
-          Math.abs(
-            lastLine.Geometry.BoundingBox.Top -
-              line.Geometry.BoundingBox.Top,
-          ) < 0.005
-        ) {
-          lastGroup.push(line);
-        } else {
-          groupedLines.push([line]);
+    for (const group of rawLines) {
+      for (const line of group) {
+        for (const table of tableRoot) {
+          if (
+            this.isPartOfTable(
+              table,
+              line,
+              response['Blocks'],
+            )
+          ) {
+            group.splice(group.indexOf(line), 1);
+          }
         }
       }
     }
-    const concatenatedTextLines = [];
-    for (const group of groupedLines) {
-      const concatenatedLine = group
-        .map((line) => line.Text)
-        .join('\t');
-      concatenatedTextLines.push(
-        concatenatedLine,
+
+    for (const group of rawLines) {
+      if (group.length == 0) {
+        rawLines.splice(
+          rawLines.indexOf(group),
+          1,
+        );
+      }
+    }
+
+    const overallGroups = [];
+    for (const group of rawLines) {
+      const groupedLines: any[] = [];
+      for (const line of group) {
+        if (groupedLines.length == 0) {
+          groupedLines.push([line]);
+        } else {
+          const lastGroup: any[] =
+            groupedLines[groupedLines.length - 1];
+          const lastLine: any =
+            lastGroup[lastGroup.length - 1];
+          if (
+            Math.abs(
+              lastLine.Geometry.BoundingBox.Top -
+                line.Geometry.BoundingBox.Top,
+            ) < 0.005
+          ) {
+            lastGroup.push(line);
+          } else {
+            groupedLines.push([line]);
+          }
+        }
+      }
+      overallGroups.push(groupedLines);
+    }
+
+    const concatenatedLines: string[][] = [];
+    for (const bigGroup of overallGroups) {
+      const concatenatedTextLines: string[] = [];
+      for (const group of bigGroup) {
+        const concatenatedLine: string = group
+          .map((line: any) => line.Text)
+          .join('\t');
+        concatenatedTextLines.push(
+          concatenatedLine,
+        );
+      }
+      concatenatedLines.push(
+        concatenatedTextLines,
       );
     }
 
     const tables = [];
-    //TODO add code here to handle multiple tables
     const table = this.createTable(
-      tableRoot,
+      tableRoot[0],
       response['Blocks'],
     );
     tables.push(table);
@@ -190,38 +212,47 @@ export class TextManagerService {
       };
     }[] = [];
 
-    // Add text elements
-    if (concatenatedTextLines.length > 0) {
-      const textElement = {
-        'Text Element': {
-          Lines: concatenatedTextLines,
-        },
-      };
-      elements.push(textElement);
+    for (const groupIndex in concatenatedLines) {
+      // Add text elements
+      if (
+        concatenatedLines[groupIndex].length > 0
+      ) {
+        const textElement = {
+          'Text Element': {
+            Lines: concatenatedLines[groupIndex],
+          },
+        };
+        elements.push(textElement);
+      }
+
+      if (tables[groupIndex]) {
+        const tableElement = {
+          'Table Element': {
+            'Num Rows': tables[groupIndex].length,
+            'Num Cols': Math.max(
+              ...tables[groupIndex].map(
+                (row) => row.length,
+              ),
+            ),
+            Table: tables[groupIndex],
+          },
+        };
+        elements.push(tableElement);
+      }
     }
 
-    // Add table elements
-    for (const table of tables) {
-      if (!table) continue;
-      const numRows = table.length;
-      const numCols = Math.max(
-        ...table.map((row) => row.length),
-      );
-
-      const tableElement = {
-        'Table Element': {
-          'Num Rows': numRows,
-          'Num Cols': numCols,
-          Table: table,
-        },
-      };
-      elements.push(tableElement);
+    // Find the indices of the table elements
+    const tableIndices = [];
+    for (const el of elements) {
+      if (el['Table Element']) {
+        tableIndices.push(elements.indexOf(el));
+      }
     }
 
     // Create the JSON object
     const jsonObject = {
       'Num Elements': elements.length,
-      'Table Indices': tables[0] ? [1] : [],
+      'Table Indices': tableIndices,
       elements: elements,
     };
 
