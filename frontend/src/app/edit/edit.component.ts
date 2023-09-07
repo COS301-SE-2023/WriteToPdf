@@ -41,6 +41,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   textFromAsset: any[] = [];
   textCopyDialog: boolean = false;
   noAssetsAvailable: boolean = false;
+  isTouchScreen: boolean = false;
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
@@ -57,14 +58,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
-    this.editService.setContent(this.editor.getData());
-
-    this.fileService.saveDocument(
-      this.editor.getData(),
-      this.editService.getMarkdownID(),
-      this.editService.getPath(),
-      this.editService.getSafeLock()
-    );
+    this.saveDocumentContents();
   }
 
   showImageUploadPopup(): void {
@@ -118,16 +112,21 @@ export class EditComponent implements AfterViewInit, OnInit {
       },
     ];
 
+    //get window width
+    this.isTouchScreen=window.matchMedia('(pointer: coarse)').matches;
+    const width = window.innerWidth;
+    if (width < 800) 
+      this.hideSideBar();
     const c = localStorage.getItem('content');
     const m = localStorage.getItem('markdownID');
     const n = localStorage.getItem('name');
     const p = localStorage.getItem('path');
     const pf = localStorage.getItem('parentFolderID');
     const sl = localStorage.getItem('safeLock');
-    const dp = localStorage.getItem('documentPassword');
+    const dp = localStorage.getItem('encryptedDocumentPassword');
 
     if (c != null && m != null && n != null && p != null && pf != null && sl != null && dp != null)
-      this.editService.setAll(c, m, n, p, pf, sl === 'true', dp);
+      this.editService.setAll(c, m, n, p, pf, sl === 'true', this.editService.decryptPassword(dp));
     this.fileName = this.editService.getName();
   }
 

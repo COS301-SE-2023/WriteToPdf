@@ -193,7 +193,7 @@ Conrad is an avid programmer, yogi and musician. He has experience in Python, R,
 <details >
 <summary>Julian Pienaar - u21599892</summary>
 <br/>
-<p>UI Engineer, Designer</p>
+<p>UI Engineer, Integration Engineer, Designer</p>
 
 <p>
 Julian has experience with design patterns and data structures giving him a good understanding of algorithms. He has worked on large Angular projects as a UI Engineer. He has a high capacity to learn and understand complex ideas and is able to adapt to the change. He is proficient in multiple languages and frameworks such as C++, Java, NodeJS, Php, Javascript, Ionic,  Angular and Typescript. 
@@ -202,7 +202,7 @@ Julian has experience with design patterns and data structures giving him a good
 <img src="https://user-images.githubusercontent.com/104741835/235907734-cc6ce2a7-ac9a-4d3c-9dfe-03eb772b4b98.png" /> 
 <br/>
 <a href="https://www.linkedin.com/in/julian-pienaar-370208271/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3B0NeumpYtT8e%2FsXo8GIBScQ%3D%3D">
-<img src="https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
+<img src="https://img.shields.io/badge/linkedin-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
 </a>
  
  <a href="https://github.com/JulianPienaar">

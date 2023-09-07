@@ -3,6 +3,7 @@ import { AssetService } from '../services/asset.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { MessageService } from 'primeng/api';
+import { set } from 'cypress/types/lodash';
 
 @Component({
   selector: 'app-camera',
@@ -22,6 +23,7 @@ export class CameraComponent {
   captured: boolean = false;
   flipCamera: boolean = false;
   cameraAvailable: boolean = false;
+  settingCamera: boolean = false;
 
   constructor(
     private elementRef: ElementRef,
@@ -57,6 +59,7 @@ export class CameraComponent {
   }
 
   setupCamera() {
+    this.settingCamera=true;
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       console.error("getUserMedia is not supported in this browser.");
       this.cameraAvailable = false;
@@ -73,6 +76,7 @@ export class CameraComponent {
         // Access granted, display the camera stream
         this.cameraAvailable = true;
         this.videoRef.srcObject = stream;
+        this.settingCamera=false;
       })
       .catch((error) => {
         // Handle errors and permission denial
@@ -85,6 +89,18 @@ export class CameraComponent {
 
 
   disableCamera() {
+    if(this.settingCamera){
+      let interval=setInterval(() => {
+        try {
+          this.videoRef.srcObject
+            .getTracks()
+            .forEach((track: { stop: () => any }) => track.stop());
+          clearInterval(interval);
+        } catch (e) {
+          // console.log(e);
+        }
+      }, 1000);
+    }
     try {
       this.videoRef.srcObject
         .getTracks()

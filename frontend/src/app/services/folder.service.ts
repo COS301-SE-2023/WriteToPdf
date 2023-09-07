@@ -40,6 +40,7 @@ export class FolderService {
             folder.ParentFolderID = response.body.ParentFolderID;
             folder.Path = response.body.Path;
             folder.ParentFolderID = response.body.ParentFolderID;
+            folder.FolderName = response.body.FolderName;
 
             resolve(folder);
           } else {
@@ -166,10 +167,13 @@ export class FolderService {
               summary: 'Folder created successfully',
             });
             const folder = new FolderDTO();
-            folder.FolderName = folderName;
-            folder.Path = path;
-            folder.ParentFolderID = parentFolderID;
             folder.FolderID = response.body.FolderID;
+            folder.DateCreated = response.body.DateCreated;
+            folder.LastModified = response.body.LastModified;
+            folder.ParentFolderID = response.body.ParentFolderID;
+            folder.Path = response.body.Path;
+            folder.ParentFolderID = response.body.ParentFolderID;
+            folder.FolderName = response.body.FolderName;
             resolve(folder);
           } else {
             reject();

@@ -65,7 +65,7 @@ export class LoginComponent {
       google.accounts.id.renderButton(
         // @ts-ignore
         document.getElementById("buttonDiv"),
-        { theme: "outline", size: "large", width: "100%", shape: "pill" }
+        { theme: "outline", size: "large", width: "100%", height: "4svh", shape: "pill" }
       );
       // @ts-ignore
       google.accounts.id.prompt((notification: PromptMomentNotification) => { });
@@ -74,7 +74,8 @@ export class LoginComponent {
 
   async handleCredentialResponse(response: CredentialResponse) {
     if(await this.userService.loginWithGoogle(response.credential))
-      this.navigateToPage('home');
+      this.router.navigate([`/home`]).then(() => window.location.reload());
+      // this.navigateToPage('home');
   }
 
   navigateToPage(pageName: string) {

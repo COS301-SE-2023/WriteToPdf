@@ -120,7 +120,7 @@ export class UsersService {
       firstName.length > 0 &&
       firstName.length < 50 &&
       // firstName.match(/^[a-zA-Z]+$/)
-      /^[a-zA-Z]+$/.test(firstName)
+      /^[A-Za-zÀ-ÖØ-öø-ÿ '-]+$/.test(firstName)
     );
   }
 
@@ -129,7 +129,7 @@ export class UsersService {
       lastName.length > 0 &&
       lastName.length < 50 &&
       // lastName.match(/^[a-zA-Z]+$/)
-      /^[a-zA-Z]+$/.test(lastName)
+      /^[A-Za-zÀ-ÖØ-öø-ÿ '-]+$/.test(lastName)
     );
   }
 
@@ -253,10 +253,11 @@ export class UsersService {
         decodedToken;
 
       // Check if the user already exists in the database
-      let user = await this.findOneByEmail(email);
-
-      // If the user does not exist, create a new user
-      if (!user) {
+      let user;
+      try {
+        user = await this.findOneByEmail(email);
+      } catch (error) {
+        // If the user does not exist, create a new user
         const newUser = new UserDTO();
         newUser.Email = email;
         newUser.FirstName = given_name;

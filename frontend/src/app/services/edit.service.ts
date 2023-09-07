@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { UserService } from './user.service';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +14,7 @@ export class EditService {
   private safeLock: boolean | undefined = false;
   private documentPassword: string | undefined = '';
 
-  constructor() {}
+  constructor(private userService: UserService) {}
 
   setContent(content: string | undefined) {
     this.content = content;
@@ -127,7 +129,7 @@ export class EditService {
     localStorage.setItem('path', this.path);
     localStorage.setItem('parentFolderID', this.parentFolderID);
     localStorage.setItem('safeLock', this.safeLock.toString());
-    localStorage.setItem('documentPassword', documentPassword);
+    localStorage.setItem('encryptedDocumentPassword', this.encryptPassword(documentPassword));
   }
 
   reset() {
@@ -145,7 +147,30 @@ export class EditService {
     localStorage.setItem('path', this.path);
     localStorage.setItem('parentFolderID', this.parentFolderID);
     localStorage.setItem('safeLock', this.safeLock.toString());
-    localStorage.setItem('documentPassword', this.documentPassword);
+    localStorage.setItem('encryptedDocumentPassword', this.encryptPassword(this.documentPassword));
     
   }
+
+  encryptPassword(content: string | undefined): string {
+    const key = this.userService.getEncryptionKey();
+    if (key && content) {
+      const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
+      return encryptedMessage;
+    } else {
+      return '';
+    }
+  }
+
+  decryptPassword(content: string | undefined): string {
+    const key = this.userService.getEncryptionKey();
+    if (key && content) {
+      const decryptedMessage = CryptoJS.AES.decrypt(content, key)
+        .toString(CryptoJS.enc.Utf8)
+        .replace(/^"(.*)"$/, '$1');
+      return decryptedMessage;
+    } else {
+      return '';
+    }
+  }
+
 }

@@ -53,6 +53,7 @@ describe('UsersService', () => {
   let service: UsersService;
   let authService: AuthService;
   let resetPasswordService: ResetPasswordService;
+  let jwtService: JwtService;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -90,6 +91,8 @@ describe('UsersService', () => {
       module.get<ResetPasswordService>(
         ResetPasswordService,
       );
+    jwtService =
+      module.get<JwtService>(JwtService);
   });
 
   describe('create', () => {
@@ -219,6 +222,108 @@ describe('UsersService', () => {
       });
     });
   });
+
+  describe('findOneByToken', () => {
+    it('should throw an error if the request is not found', async () => {
+      const token = 'test';
+
+      jest
+        .spyOn(
+          resetPasswordService,
+          'findOneByToken',
+        )
+        .mockResolvedValue(undefined);
+
+      try {
+        await service.findOneByToken(token);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.status).toEqual(
+          HttpStatus.NOT_FOUND,
+        );
+        expect(error.getResponse()).toEqual({
+          status: HttpStatus.NOT_FOUND,
+          error:
+            'Reset password request not found',
+        });
+      }
+    });
+
+    it('should throw an error if the user does not exist', async () => {
+      const token = 'test';
+      const resetRequest =
+        new ResetPasswordRequest();
+      resetRequest.UserID = 1;
+
+      jest
+        .spyOn(
+          resetPasswordService,
+          'findOneByToken',
+        )
+        .mockResolvedValue(resetRequest);
+
+      jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValue(undefined);
+
+      try {
+        await service.findOneByToken(token);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.status).toEqual(
+          HttpStatus.NOT_FOUND,
+        );
+        expect(error.getResponse()).toEqual({
+          status: HttpStatus.NOT_FOUND,
+          error: 'User not found',
+        });
+      }
+    });
+
+    it('should return a user', async () => {
+      const token = 'test';
+      const resetRequest =
+        new ResetPasswordRequest();
+      resetRequest.UserID = 1;
+      const user = new UserDTO();
+      user.UserID = 1;
+
+      jest
+        .spyOn(
+          resetPasswordService,
+          'findOneByToken',
+        )
+        .mockResolvedValue(resetRequest);
+
+      jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValue(user);
+
+      const result = await service.findOneByToken(
+        token,
+      );
+
+      expect(result).toEqual(user);
+
+      expect(
+        resetPasswordService.findOneByToken,
+      ).toBeCalledWith(token);
+      expect(
+        Repository.prototype.findOne,
+      ).toBeCalledWith({
+        where: {
+          UserID: resetRequest.UserID,
+        },
+      });
+    });
+  });
+
   describe('signup', () => {
     it('should throw an exception if first name is invalid', async () => {
       const userFirstNameHasNumber =
@@ -763,7 +868,7 @@ describe('UsersService', () => {
 
       jest
         .spyOn(service, 'findOneByEmail')
-        .mockResolvedValue(undefined);
+        .mockRejectedValue(undefined);
 
       (
         jest.spyOn(service, 'generateSalt') as any
@@ -1006,6 +1111,122 @@ describe('UsersService', () => {
           error: 'Reset password request expired',
         });
       }
+    });
+
+    it('should verify the userID and expiry date in the token', async () => {
+      const resetPasswordDTO =
+        new ResetPasswordRequestDTO();
+      resetPasswordDTO.Token = 'token';
+
+      const user = new User();
+      user.UserID = 1;
+
+      const resetRequest =
+        new ResetPasswordRequest();
+      resetRequest.UserID = user.UserID;
+      resetRequest.DateExpires = new Date(
+        new Date().getTime() +
+          1000 * 60 * 60 * 24,
+      );
+
+      jest
+        .spyOn(service, 'findOneByToken')
+        .mockResolvedValue(user);
+
+      jest
+        .spyOn(
+          resetPasswordService,
+          'findOneByTokenAndUserID',
+        )
+        .mockResolvedValue(resetRequest);
+
+      jest
+        .spyOn(jwtService, 'verifyAsync')
+        .mockResolvedValue({
+          UserID: 0,
+          DateExpires: resetRequest.DateExpires,
+        });
+
+      try {
+        await service.resetPassword(
+          resetPasswordDTO,
+        );
+        expect(true).toBe(true);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.getResponse()).toEqual({
+          status: HttpStatus.UNAUTHORIZED,
+          error: 'Invalid token',
+        });
+        expect(error.status).toEqual(
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+    });
+
+    it('should return a success message', async () => {
+      const resetPasswordDTO =
+        new ResetPasswordRequestDTO();
+      resetPasswordDTO.Token = 'token';
+
+      const user = new User();
+      user.UserID = 1;
+
+      const resetRequest =
+        new ResetPasswordRequest();
+      resetRequest.UserID = user.UserID;
+      resetRequest.DateExpires = new Date(
+        new Date().getTime() +
+          1000 * 60 * 60 * 24,
+      );
+
+      jest
+        .spyOn(service, 'findOneByToken')
+        .mockResolvedValue(user);
+
+      jest
+        .spyOn(
+          resetPasswordService,
+          'findOneByTokenAndUserID',
+        )
+        .mockResolvedValue(resetRequest);
+
+      jest
+        .spyOn(jwtService, 'verifyAsync')
+        .mockResolvedValue({
+          UserID: user.UserID,
+          DateExpires: resetRequest.DateExpires,
+        });
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockResolvedValue(undefined);
+
+      jest
+        .spyOn(resetPasswordService, 'remove')
+        .mockResolvedValue(undefined);
+
+      const result = await service.resetPassword(
+        resetPasswordDTO,
+      );
+
+      expect(result).toEqual({
+        message: 'Password reset successfully',
+      });
+
+      expect(service.findOneByToken).toBeCalled();
+      expect(
+        resetPasswordService.findOneByTokenAndUserID,
+      ).toBeCalled();
+      expect(jwtService.verifyAsync).toBeCalled();
+      expect(
+        Repository.prototype.save,
+      ).toBeCalled();
+      expect(
+        resetPasswordService.remove,
+      ).toBeCalled();
     });
   });
 });
