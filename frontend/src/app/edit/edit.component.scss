@@ -672,3 +672,24 @@ Preserve the relative scale, though. */
     height:100%;
     margin: auto;
 }
+
+.sidebarTabs{
+    display:flex;
+    margin: auto;
+    justify-content: space-around;
+    margin-top: 5px;
+}
+
+.assetButton{
+    border-radius: 5px 5px 0 0;
+    background-color: #ffffff;
+    flex:1;
+    text-align: center;
+}
+
+.historyButton{
+    border-radius: 5px 5px 0 0;
+    background-color: #ccc;
+    flex:1;
+    text-align: center;
+}
