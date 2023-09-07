@@ -679,9 +679,9 @@ Preserve the relative scale, though. */
 .sidebarTabs {
     display: flex;
     margin: auto;
-    margin-left: 13.5px;
+    padding-top:6px;
     justify-content: space-around;
-    margin-top: 5px;
+    background: #eee;
 }
 
 .selectedButton,
