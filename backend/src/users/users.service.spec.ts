@@ -868,7 +868,7 @@ describe('UsersService', () => {
 
       jest
         .spyOn(service, 'findOneByEmail')
-        .mockResolvedValue(undefined);
+        .mockRejectedValue(undefined);
 
       (
         jest.spyOn(service, 'generateSalt') as any
