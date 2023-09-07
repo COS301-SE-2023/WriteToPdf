@@ -681,7 +681,7 @@ Preserve the relative scale, though. */
     margin: auto;
     padding-top:6px;
     justify-content: space-around;
-    background: #eee;
+    background: #ddd;
 }
 
 .selectedButton,
@@ -704,17 +704,17 @@ Preserve the relative scale, though. */
 }
 
 .selectedButton {
-    background-color: #ccd;
+    background-color: #fff;
 }
 .selectedButton:hover {
-    background-color: #bbc;
+    background-color: #eee;
 }
 .unselectedButton {
-    background-color: #eee;
+    background-color: #ddd;
     border-bottom: #999 1px solid;
     color: #999
 }
 .unselectedButton:hover{
-    background-color: #ddd;
+    background-color: #ccc;
     color:#000
 }
