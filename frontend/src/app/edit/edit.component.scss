@@ -237,6 +237,7 @@ div[contenteditable="true"]:focus {
 
 .sidebarHeader {
     display: flex;
+    justify-content: space-evenly;
     margin: auto;
     width: $sidebar-content-width;
 }
