@@ -196,12 +196,13 @@ export class TextManagerService {
     }
 
     const tables = [];
-    const table = this.createTable(
-      tableRoot[0],
-      response['Blocks'],
-    );
-    tables.push(table);
-
+    for (const root of tableRoot) {
+      const table = this.createTable(
+        root,
+        response['Blocks'],
+      );
+      tables.push(table);
+    }
     // Create an array to hold elements (text and table)
     const elements: {
       'Text Element'?: { Lines: string[] };
