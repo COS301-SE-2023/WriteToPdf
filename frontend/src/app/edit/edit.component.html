@@ -109,10 +109,10 @@
   <p-button class="showAssetSidebar" icon="pi pi-arrow-right" (click)="hideSideBar()" title="Show Asset Bar"></p-button>
   <div class="assetSidebar">
     <div class="sidebarTabs">
-      <div (click)="sideBarTab = false;" [ngClass]="{'unselectedButton': sideBarTab, 'selectedButton':!sideBarTab}">
+      <div (click)="sideBarTab = false;" [ngClass]="{'unselectedButton': sideBarTab, 'selectedButton':!sideBarTab}" title="Asset Sidebar">
         <p class="tabText">Assets</p>
       </div>
-      <div (click)="sideBarTab=true;" [ngClass]="{'unselectedButton': !sideBarTab, 'selectedButton':sideBarTab}">
+      <div (click)="sideBarTab=true;" [ngClass]="{'unselectedButton': !sideBarTab, 'selectedButton':sideBarTab}" title="History Sidebar">
         <p class="tabText">History</p>
       </div>
     </div>
