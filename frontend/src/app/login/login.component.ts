@@ -4,7 +4,6 @@ import { UserService } from '../services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment';
-import { VersionControlService } from '../services/version.control.service';
 
 import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
 
@@ -34,8 +33,7 @@ export class LoginComponent {
     private elementRef: ElementRef,
     private userService: UserService,
     @Inject(ActivatedRoute) private route: ActivatedRoute,
-    private messageService: MessageService,
-    private versionControlService: VersionControlService
+    private messageService: MessageService
   ) {}
   ngOnInit(): void {
     const data = history.state;
@@ -43,7 +41,7 @@ export class LoginComponent {
       this.email = data['Email'];
       this.password = data['Password'];
     }
-    
+
     const token = this.route.snapshot.queryParamMap.get('token');
 
     if (token) {
@@ -65,8 +63,14 @@ export class LoginComponent {
       // @ts-ignore
       google.accounts.id.renderButton(
         // @ts-ignore
-        document.getElementById("buttonDiv"),
-        { theme: "outline", size: "large", width: "100%", height: "4svh", shape: "pill" }
+        document.getElementById('buttonDiv'),
+        {
+          theme: 'outline',
+          size: 'large',
+          width: '100%',
+          height: '4svh',
+          shape: 'pill',
+        }
       );
       // @ts-ignore
       google.accounts.id.prompt((notification: PromptMomentNotification) => {});
@@ -74,9 +78,9 @@ export class LoginComponent {
   }
 
   async handleCredentialResponse(response: CredentialResponse) {
-    if(await this.userService.loginWithGoogle(response.credential))
+    if (await this.userService.loginWithGoogle(response.credential))
       this.router.navigate([`/home`]).then(() => window.location.reload());
-      // this.navigateToPage('home');
+    // this.navigateToPage('home');
   }
 
   navigateToPage(pageName: string) {
@@ -121,8 +125,12 @@ export class LoginComponent {
   }
 
   async resetPassword() {
-    if(!this.newPass || this.newPass === '' || !this.confirmNewPass || this.confirmNewPass === '')
-    {
+    if (
+      !this.newPass ||
+      this.newPass === '' ||
+      !this.confirmNewPass ||
+      this.confirmNewPass === ''
+    ) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
@@ -130,8 +138,7 @@ export class LoginComponent {
       });
       return;
     }
-    if(!this.isValidPassword(this.newPass))
-    {
+    if (!this.isValidPassword(this.newPass)) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
@@ -139,8 +146,7 @@ export class LoginComponent {
       });
       return;
     }
-    if(this.newPass !== this.confirmNewPass)
-    {
+    if (this.newPass !== this.confirmNewPass) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
@@ -148,13 +154,11 @@ export class LoginComponent {
       });
       return;
     }
-    if(await this.userService.resetPassword(this.token, this.newPass))
-    {
+    if (await this.userService.resetPassword(this.token, this.newPass)) {
       this.resetPasswordPopup = false;
-      
     }
   }
-  
+
   movemouse(event: MouseEvent) {
     // const windowWidth = window.innerWidth;
     // const windowHeight = window.innerHeight;
@@ -179,9 +183,5 @@ export class LoginComponent {
 
   navigateToSignup(): void {
     this.router.navigate(['/signup']).then(() => window.location.reload());
-  }
-
-  async versionControl(): Promise<void> {
-    await this.versionControlService.test();
   }
 }
