@@ -7,11 +7,13 @@ import { DiffDTO } from './dto/diff.dto';
 import { SnapshotDTO } from './dto/snapshot.dto';
 import { FileDTO } from './dto/file.dto';
 
+import { FileService } from './file.service';
+
 @Injectable({
   providedIn: 'root',
 })
 export class VersionControlService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private fileService: FileService) {}
 
   public snapshotArr: SnapshotDTO[] = [];
   public diffArr: DiffDTO[] = [];
@@ -35,8 +37,55 @@ export class VersionControlService {
     });
   }
 
-  getDiff(fileDTO: FileDTO): DiffDTO {
-    return new DiffDTO();
+  getNewDiff(fileDTO: FileDTO): DiffDTO {
+    // Get latest snapshot
+    this.snapshotArr.sort((a, b) =>
+      a.snapshotNumber > b.snapshotNumber
+        ? 1
+        : a.snapshotNumber < b.snapshotNumber
+        ? -1
+        : 0
+    );
+    const latestSnapshot = this.snapshotArr[0];
+    let snapshotContent = this.fileService.decryptDocument(
+      latestSnapshot.content
+    ); // TODO: Check that this is how decrypt works
+
+    // Get latest diff number
+    this.diffArr.sort((a, b) =>
+      a.diffNumber > b.diffNumber ? 1 : a.diffNumber < b.diffNumber ? -1 : 0
+    );
+    const latestDiff = this.diffArr[0];
+    const latestDiffNumber = latestDiff.diffNumber;
+
+    // Get all relevant diffs
+    const relevantDiffs = this.diffArr.filter(
+      (a) => a.snapshotNumber === latestSnapshot.snapshotNumber
+    );
+
+    // Patch all relevant diffs
+    for (let diff of relevantDiffs) {
+      this.patchDiff(snapshotContent, diff);
+    }
+
+    // Create newest diff and readable patch
+    const diff = this.DiffPatchService.diff_main(
+      snapshotContent,
+      fileDTO.content
+    );
+    const patches = this.DiffPatchService.patch_make(diff);
+
+    // Create and set new DTO
+    const readableDiff = new DiffDTO();
+    readableDiff.diffNumber = latestDiffNumber + 1;
+    readableDiff.fileID = fileDTO.fileID;
+    readableDiff.snapshotNumber = latestSnapshot.snapshotNumber; // TODO: Doesn't take into account squashing of diffs
+    readableDiff.content = this.DiffPatchService.patch_toText(patches); // TODO: Check when this should be encrypted
+    return readableDiff;
+  }
+
+  patchDiff(content: string, diffDTO: DiffDTO): string {
+    return '';
   }
 
   getAllDiffs(fileDTO: FileDTO): DiffDTO[] {
@@ -49,10 +98,6 @@ export class VersionControlService {
 
   getAllSnapshots(fileDTO: FileDTO): SnapshotDTO[] {
     return [new SnapshotDTO()];
-  }
-
-  patchDiff(fileDTO: FileDTO, diffDTO: DiffDTO): string {
-    return '';
   }
 
   patchVersion(fileDTO: FileDTO, diffDTO: DiffDTO[]): string {
