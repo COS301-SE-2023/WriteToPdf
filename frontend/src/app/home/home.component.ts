@@ -24,7 +24,6 @@ import { NodeService } from '../services/home.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { UserService } from '../services/user.service';
-import { FileManagerPopupComponent } from '../file-manager-popup/file-manager-popup.component';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
 import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
@@ -539,54 +538,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  /**
-   *
-   * @param options, must be "folder" || "move" || "document"
-   */
-  showFileManagerPopup(options: string): void {
-    if (options === 'folder') {
-      //TODO communicate intentions to file manager pop-up
-      const ref = this.dialogService.open(FileManagerPopupComponent, {
-        header: 'Folder Creation: Select location',
-        showHeader: true,
-        closable: true,
-        closeOnEscape: true,
-        dismissableMask: true,
-      });
-      ref.onClose.subscribe(() => {
-        //If the user creates a new folder we want it to be reflected in our home page,
-        //So we need to call ngOnInit once more to update the homepage after closing.
-        this.ngOnInit();
-        // Handle any actions after the dialog is closed
-      });
-    }
-    if (options === 'move') {
-      //TODO communicate intentions to file manager pop-up
-      const ref = this.dialogService.open(FileManagerPopupComponent, {
-        header: 'Select new location',
-        showHeader: true,
-        closable: true,
-        closeOnEscape: true,
-        dismissableMask: true,
-      });
-      ref.onClose.subscribe(() => {
-        // Handle any actions after the dialog is closed
-      });
-    }
-    if (options === 'document') {
-      //TODO communicate intentions to file manager pop-up
-      const ref = this.dialogService.open(FileManagerPopupComponent, {
-        header: 'Select document location',
-        showHeader: true,
-        closable: true,
-        closeOnEscape: true,
-        dismissableMask: true,
-      });
-      ref.onClose.subscribe(() => {
-        // Handle any actions after the dialog is closed
-      });
-    }
-  }
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
@@ -1859,12 +1810,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
   handleTouchStartCM(event: any, obj: any, type: string) {
     event.stopPropagation();
   }
-  
+
   handleTouchMoveCM(event: any, obj: any, type: string) {
     event.stopPropagation();
-    
+
   }
-  
+
   handleTouchEndCM(event: any, obj: any, type: string) {
     event.stopPropagation();
 
