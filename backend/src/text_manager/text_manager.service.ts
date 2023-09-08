@@ -80,94 +80,74 @@ export class TextManagerService {
     return formattedTextractResponse;
   }
 
-  formatTextractResponse(response: any): any {
-    const rawLines: any[][] = [];
-    const tableRoot: any[] = [];
+  formatTextractResponse(response: JSON) {
+    if (!response) return null;
+    const rawLines = [];
+    const tableRoot = [];
     for (const block in response['Blocks']) {
       if (
         response['Blocks'][block].BlockType ==
         'LINE'
       ) {
-        if (rawLines.length == 0)
-          rawLines.push([]);
-        rawLines[rawLines.length - 1].push(
-          response['Blocks'][block],
-        );
+        rawLines.push(response['Blocks'][block]);
       }
       if (
         response['Blocks'][block].BlockType ==
         'TABLE'
       ) {
         tableRoot.push(response['Blocks'][block]);
-        rawLines.push([]);
       }
     }
 
-    for (const group of rawLines) {
-      for (const line of group) {
-        for (const table of tableRoot) {
-          if (
-            this.isPartOfTable(
-              table,
-              line,
-              response['Blocks'],
-            )
-          ) {
-            group.splice(group.indexOf(line), 1);
-          }
+    const freeLines = rawLines.slice();
+    for (const line of rawLines) {
+      for (const root of tableRoot) {
+        if (
+          this.isPartOfTable(
+            root,
+            line,
+            response['Blocks'],
+          )
+        ) {
+          freeLines.splice(
+            freeLines.indexOf(line),
+            1,
+          );
         }
       }
     }
 
-    for (const group of rawLines) {
-      if (group.length == 0) {
-        rawLines.splice(
-          rawLines.indexOf(group),
-          1,
-        );
-      }
-    }
-
-    const overallGroups = [];
-    for (const group of rawLines) {
-      const groupedLines: any[] = [];
-      for (const line of group) {
-        if (groupedLines.length == 0) {
-          groupedLines.push([line]);
+    // Group together lines that are close to each other vertically
+    const groupedLines = [];
+    for (const line of freeLines) {
+      if (groupedLines.length == 0) {
+        groupedLines.push([line]);
+      } else {
+        const lastGroup =
+          groupedLines[groupedLines.length - 1];
+        const lastLine =
+          lastGroup[lastGroup.length - 1];
+        if (
+          Math.abs(
+            lastLine.Geometry.BoundingBox.Top -
+              line.Geometry.BoundingBox.Top,
+          ) < 0.005
+        ) {
+          lastGroup.push(line);
         } else {
-          const lastGroup: any[] =
-            groupedLines[groupedLines.length - 1];
-          const lastLine: any =
-            lastGroup[lastGroup.length - 1];
-          if (
-            Math.abs(
-              lastLine.Geometry.BoundingBox.Top -
-                line.Geometry.BoundingBox.Top,
-            ) < 0.005
-          ) {
-            lastGroup.push(line);
-          } else {
-            groupedLines.push([line]);
-          }
+          groupedLines.push([line]);
         }
       }
-      overallGroups.push(groupedLines);
     }
-
-    const concatenatedLines: string[][] = [];
-    for (const bigGroup of overallGroups) {
-      const concatenatedTextLines: string[] = [];
-      for (const group of bigGroup) {
-        const concatenatedLine: string = group
-          .map((line: any) => line.Text)
-          .join('\t');
-        concatenatedTextLines.push(
-          concatenatedLine,
-        );
-      }
-      concatenatedLines.push(
-        concatenatedTextLines,
-      );
+    const concatenatedTextLines = [];
+    for (const group of groupedLines) {
+      const concatenatedLine = group
+        .map((line) => line.Text)
+        .join('\t');
+      concatenatedTextLines.push({
+        Top: group[0].Geometry.BoundingBox.Top,
+        Lines: concatenatedLine,
+      });
     }
 
     const tables = [];
@@ -176,64 +156,137 @@ export class TextManagerService {
         root,
         response['Blocks'],
       );
-      tables.push(table);
+      tables.push({
+        Top: root.Geometry.BoundingBox.Top,
+        Table: table,
+      });
     }
+
     // Create an array to hold elements (text and table)
     const elements: {
-      'Text Element'?: { Lines: string[] };
+      'Text Element'?: {
+        Top: number;
+        Lines: string[];
+      };
       'Table Element'?: {
+        Top: number;
         'Num Rows': number;
         'Num Cols': number;
         Table: string[][];
       };
     }[] = [];
 
-    for (const groupIndex in concatenatedLines) {
-      // Add text elements
-      if (
-        concatenatedLines[groupIndex].length > 0
-      ) {
-        const textElement = {
-          'Text Element': {
-            Lines: concatenatedLines[groupIndex],
-          },
-        };
-        elements.push(textElement);
+    // Add text elements
+    for (const line of concatenatedTextLines) {
+      const textElement = {
+        'Text Element': {
+          Top: line.Top,
+          Lines: line.Lines,
+        },
+      };
+      elements.push(textElement);
+    }
+
+    // Add table elements
+    for (const table of tables) {
+      if (!table) continue;
+      const numRows = table.Table.length;
+      const numCols = Math.max(
+        ...table.Table.map((row) => row.length),
+      );
+
+      const tableElement = {
+        'Table Element': {
+          Top: table.Top,
+          'Num Rows': numRows,
+          'Num Cols': numCols,
+          Table: table,
+        },
+      };
+      elements.push(tableElement);
+    }
+
+    // Sort the elements based on their top position
+    elements.sort((a, b) => {
+      let topA, topB;
+
+      // Extract the "Top" property for Text Elements
+      if (a['Text Element']) {
+        topA = a['Text Element'].Top;
+      } else if (a['Table Element']) {
+        topA = a['Table Element'].Top;
       }
 
-      if (tables[groupIndex]) {
-        const tableElement = {
-          'Table Element': {
-            'Num Rows': tables[groupIndex].length,
-            'Num Cols': Math.max(
-              ...tables[groupIndex].map(
-                (row) => row.length,
-              ),
-            ),
-            Table: tables[groupIndex],
-          },
-        };
-        elements.push(tableElement);
+      // Extract the "Top" property for Table Elements
+      if (b['Text Element']) {
+        topB = b['Text Element'].Top;
+      } else if (b['Table Element']) {
+        topB = b['Table Element'].Top;
       }
-    }
+
+      // Compare and sort in ascending order
+      return topA - topB;
+    });
+
+    const mergedElements =
+      this.mergeTextElements(elements);
 
     // Find the indices of the table elements
     const tableIndices = [];
-    for (const el of elements) {
+    for (const el of mergedElements) {
       if (el['Table Element']) {
-        tableIndices.push(elements.indexOf(el));
+        tableIndices.push(
+          mergedElements.indexOf(el),
+        );
       }
     }
 
     // Create the JSON object
     const jsonObject = {
-      'Num Elements': elements.length,
+      'Num Elements': mergedElements.length,
       'Table Indices': tableIndices,
-      elements: elements,
+      elements: mergedElements,
     };
 
     // Return the JSON object
     return jsonObject;
+  }
+
+  mergeTextElements(elements) {
+    const mergedElements = [];
+    for (const element of elements) {
+      if (mergedElements.length == 0) {
+        mergedElements.push(element);
+      } else if (element['Text Element']) {
+        const lastElement =
+          mergedElements[
+            mergedElements.length - 1
+          ];
+        // If the last element is also a text element, merge the two
+        if (lastElement['Text Element']) {
+          const mergedTextElement = {
+            'Text Element': {
+              Top: lastElement['Text Element']
+                .Top,
+              Lines:
+                lastElement['Text Element']
+                  .Lines +
+                '\n' +
+                element['Text Element'].Lines,
+            },
+          };
+          mergedElements[
+            mergedElements.length - 1
+          ] = mergedTextElement;
+        } else {
+          // Otherwise if the last element is a table element, add the text element
+          mergedElements.push(element);
+        }
+      } else {
+        mergedElements.push(element);
+      }
+    }
+    return mergedElements;
   }
 
   createTable(
