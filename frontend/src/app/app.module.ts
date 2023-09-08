@@ -14,6 +14,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { NodeService } from './services/home.service';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { TreeTableModule } from 'primeng/treetable';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -91,6 +92,7 @@ export function tokenGetter() {
     EditorModule,
     DropdownModule,
     BreadcrumbModule,
+    TreeTableModule,
     SidebarModule,
     ButtonModule,
     BrowserAnimationsModule,
@@ -111,6 +113,13 @@ export function tokenGetter() {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: [environment.apiURL],
+        disallowedRoutes: ["http://example.com/examplebadroute/"],
+      },
+    }),
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,

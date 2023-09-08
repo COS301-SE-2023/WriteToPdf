@@ -27,6 +27,7 @@ import { ConversionService } from './conversion/conversion.service';
 import { TextractService } from './textract/textract.service';
 import { ResetPasswordModule } from './reset_password/reset_password.module';
 import { ResetPasswordRequest } from './reset_password/entities/reset_password_request.entity';
+import { MailService } from './mail/mail.service';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { ResetPasswordRequest } from './reset_password/entities/reset_password_r
     S3ServiceMock,
     ConversionService,
     TextractService,
+    MailService,
   ],
 })
 export class AppModule {}

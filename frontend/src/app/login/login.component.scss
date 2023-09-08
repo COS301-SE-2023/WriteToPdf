@@ -47,14 +47,14 @@
     height: -moz-fit-content;
     height: fit-content;
 
-    max-height: 99vh;
+    max-height: 95svh;
     overflow-y: auto;
     margin: auto;
     background-color: rgba($light-grey, 0.6);
 
     border-radius: 33px;
 
-    padding-top: min(10%, 50px);
+    padding-top: 5svh;
 
 }
 
@@ -73,29 +73,22 @@
 .logoWrapper {
     display: flex;
     width: 90%;
-
-
-
     margin: auto;
     margin-bottom: 50px;
 }
 
 .logo {
-    -webkit-user-drag: none;
-    -moz-user-drag: none;
-    -ms-user-drag: none;
-    user-drag: none;
-
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
-    width: 130px;
+    // width: 130px;
+    max-width: 130px;
+    height: 15svh;
     margin: auto;
 }
 
+@media screen and (max-height: 600px) {
+    .logoWrapper {
+        display: none;
+    }
+}
 // .textBox {
 //     border: 2px solid #ffffff;
 //     border-radius: 90px;
@@ -114,6 +107,13 @@
     display: flex;
 }
 
+.newPassword {
+    width: 80%;
+    margin: auto;
+    margin-left:0;
+    display: flex;
+}
+
 :host ::ng-deep .p-inputtext {
     padding-left: 20px;
     border: 2px solid #ffffff;
@@ -121,7 +121,7 @@
 
     background-color: $text-box-color ;
 
-    height: 4vh;
+    height: 4svh;
     max-height: 40px;
     min-height: 30px;
     width: 80%;
@@ -146,22 +146,32 @@
     font-weight: regular;
 }
 
+.labelElement2 {
+    margin-bottom: 10px !important;
+    width: 80%;
+    margin: auto;
+    margin-left:0;
+    font-size: 18px;
+    font-weight: regular;
+}
+
 .loginButton {
     font-family: Cabin;
     border: none;
     border-radius: 90px;
-
+    color:black;
     background-color: $text-box-color;
 
-    height: 4vh;
+    height: 4svh;
     max-height: 40px;
     min-height: 30px;
 
-    font-size: clamp(12px, 2vh, 16px);
+    font-size: clamp(12px, 2svh, 16px);
 
     width: 50%;
     margin: auto;
     transition: 0.3s;
+    cursor: pointer;
 }
 
 .loginButton:hover {
@@ -177,7 +187,7 @@
 .googleButton {
     height:38px;
     font-family: Cabin;
-    font-size: clamp(12px, 2vh, 16px);
+    font-size: clamp(12px, 2svh, 16px);
     border-radius: 90px;
     margin: auto;
     transition: 0.3s;
@@ -216,4 +226,13 @@ hr {
     font-weight: regular;
     -webkit-user-select: none;
     user-select: none;
+}
+
+.forgotPasswordForm {
+    margin: auto;
+    width: 80%;
+}
+
+.forgotEmail {
+    width:100%;
 }

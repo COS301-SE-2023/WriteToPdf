@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { Inject } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { MessageService } from 'primeng/api';
 
 import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
 @Component({
@@ -24,7 +25,8 @@ export class SignupComponent {
   constructor(
     @Inject(Router) private router: Router,
     private elementRef: ElementRef,
-    private userService: UserService
+    private userService: UserService,
+    private messageService: MessageService
   ) {}
 
   navigateToPage(pageName: string) {
@@ -37,7 +39,9 @@ export class SignupComponent {
       Password: this.password,
     };
 
-    this.router.navigate([pageName], { state: data });
+    this.router.navigate([pageName], { state: data }).then(() => {
+      window.location.reload()
+    });
   }
 
   ngOnInit(): void {
@@ -51,11 +55,11 @@ export class SignupComponent {
         cancel_on_tap_outside: true
       });
       // @ts-ignore
-      console.log(google.accounts.id.renderButton(
+      google.accounts.id.renderButton(
         // @ts-ignore
         document.getElementById("buttonDiv"),
-        { theme: "outline", size: "large", width: "100%", shape: "pill" }
-      ));
+        { theme: "outline", size: "large", width: "100%", height:"4svh", shape: "pill" }
+      );
       // @ts-ignore
       google.accounts.id.prompt((notification: PromptMomentNotification) => { });
     };
@@ -82,6 +86,27 @@ export class SignupComponent {
   }
 
   async signup() {
+    if(!this.isValidFirstName(this.firstName)){
+      this.messageService.add({ severity: 'error', summary: 'Invalid first name', detail: 'First name must be between 1 and 50 characters and contain only letters', life: 5000 });
+      return;
+    }
+    if(!this.isValidLastName(this.lastName)){
+      this.messageService.add({ severity: 'error', summary:'Invalid last name', detail:'Last name must be between 1 and 50 characters and contain only letters', life: 5000});
+      return;
+    }
+    if(!this.isValidEmail(this.email)){
+      this.messageService.add({ severity: 'error', summary: 'Invalid email', detail: 'Email must be a valid email address', life: 5000 });
+      return;
+    }
+    if(!this.isValidPassword(this.password)){
+      this.messageService.add({ severity: 'error', summary: 'Invalid password', detail: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number', life: 5000 });
+      return;
+    }
+    if(!this.isValidConfirmPassword(this.confirmPassword)){
+      this.messageService.add({ severity: 'error', summary: 'Invalid confirm password', detail: 'Confirm password must match password', life: 5000 });
+      return;
+    }
+
     if (
       await this.userService.signup(
         this.firstName,
@@ -111,7 +136,7 @@ export class SignupComponent {
     return (
       firstName.length > 0 &&
       firstName.length < 50 &&
-      !!firstName.match(/^[a-zA-Z]+$/)
+      !!firstName.match(/^[A-Za-zÀ-ÖØ-öø-ÿ '-]+$/)
     );
   }
 
@@ -119,7 +144,7 @@ export class SignupComponent {
     return (
       lastName.length > 0 &&
       lastName.length < 50 &&
-      !!lastName.match(/^[a-zA-Z]+$/)
+      !!lastName.match(/^[A-Za-zÀ-ÖØ-öø-ÿ '-]+$/)
     );
   }
 

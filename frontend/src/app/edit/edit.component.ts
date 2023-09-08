@@ -37,7 +37,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   textFromAsset: any[] = [];
   textCopyDialog: boolean = false;
   noAssetsAvailable: boolean = false;
-
+  isTouchScreen: boolean = false;
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
@@ -55,13 +55,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
-    this.editService.setContent(this.editor.getData());
-
-    this.fileService.saveDocument(
-      this.editor.getData(),
-      this.editService.getMarkdownID(),
-      this.editService.getPath()
-    );
+    this.saveDocumentContents();
   }
 
   showImageUploadPopup(): void {
@@ -115,14 +109,21 @@ export class EditComponent implements AfterViewInit, OnInit {
       },
     ];
 
+    //get window width
+    this.isTouchScreen=window.matchMedia('(pointer: coarse)').matches;
+    const width = window.innerWidth;
+    if (width < 800)
+      this.hideSideBar();
     const c = localStorage.getItem('content');
     const m = localStorage.getItem('markdownID');
     const n = localStorage.getItem('name');
     const p = localStorage.getItem('path');
     const pf = localStorage.getItem('parentFolderID');
+    const sl = localStorage.getItem('safeLock');
+    const dp = localStorage.getItem('encryptedDocumentPassword');
 
-    if(c!=null && m!=null && n!=null && p!=null && pf!=null)
-      this.editService.setAll(c, m, n, p, pf);
+    if (c != null && m != null && n != null && p != null && pf != null && sl != null && dp != null)
+      this.editService.setAll(c, m, n, p, pf, sl === 'true', this.editService.decryptPassword(dp));
     this.fileName = this.editService.getName();
   }
 
@@ -138,15 +139,34 @@ export class EditComponent implements AfterViewInit, OnInit {
       DecoupledEditor.create(editableArea, {
         toolbar: {
           items: [
-            'undo', 'redo',
-            '|', 'heading',
-            '|', 'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor',
-            '|', 'bold', 'italic', 'underline', 'strikethrough',
-            '|', 'link', 'insertTable', 'blockQuote',
-            '|', 'alignment',
-            '|', 'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent'
+            'undo',
+            'redo',
+            '|',
+            'heading',
+            '|',
+            'fontfamily',
+            'fontsize',
+            'fontColor',
+            'fontBackgroundColor',
+            '|',
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+            '|',
+            'link',
+            'insertTable',
+            'blockQuote',
+            '|',
+            'alignment',
+            '|',
+            'bulletedList',
+            'numberedList',
+            'todoList',
+            'outdent',
+            'indent',
           ],
-          shouldNotGroupWhenFull: false
+          shouldNotGroupWhenFull: false,
         },
         cloudServices: {
           //TODO Great for Collaboration features.
@@ -174,7 +194,6 @@ export class EditComponent implements AfterViewInit, OnInit {
             'hidden !important'
           );
           this.elementRef.nativeElement.ownerDocument.body.style.height = '0';
-
 
           document
             .getElementsByClassName('toolsWrapper')[0]
@@ -214,11 +233,23 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
     let contents = this.editor.getData();
-    this.fileService.saveDocument(
-      contents,
-      this.editService.getMarkdownID(),
-      this.editService.getPath()
-    );
+    let pass = this.editService.getDocumentPassword();
+    if(pass != '' && pass != undefined) {
+      this.fileService.saveDocument(
+        this.fileService.encryptSafeLockDocument(contents, pass),
+        this.editService.getMarkdownID(),
+        this.editService.getPath(),
+        this.editService.getSafeLock()
+        );
+    }
+    else {
+      this.fileService.saveDocument(
+        contents,
+        this.editService.getMarkdownID(),
+        this.editService.getPath(),
+        this.editService.getSafeLock()
+        );
+    }
   }
 
   hideSideBar() {
@@ -321,9 +352,12 @@ export class EditComponent implements AfterViewInit, OnInit {
         text += this.textFromAsset[i] + '\n';
       }
       this.copyTextToClipboard(text);
-
     } else {
-      const asset = await this.assetService.retrieveAsset(assetId, format, textId);
+      const asset = await this.assetService.retrieveAsset(
+        assetId,
+        format,
+        textId
+      );
 
       this.assets[currAssetIndex].Blocks = asset.Blocks;
       this.parseAssetText(asset);
@@ -348,40 +382,45 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   copyHtmlToClipboard(html: string) {
     // Use the Clipboard API to copy the data to the clipboard
-    navigator.clipboard.write([
-      new ClipboardItem({
-        'text/html': new Blob([html], { type: 'text/html' })
-      })
-    ]).then(
-      () => {
-      },
-      (error) => {
-        console.error('Could not copy HTML data (image) to clipboard: ', error);
-      }
-    );
+    navigator.clipboard
+      .write([
+        new ClipboardItem({
+          'text/html': new Blob([html], { type: 'text/html' }),
+        }),
+      ])
+      .then(
+        () => {},
+        (error) => {
+          console.error(
+            'Could not copy HTML data (image) to clipboard: ',
+            error
+          );
+        }
+      );
   }
 
   copyTextToClipboard(text: string) {
     // Use the Clipboard API to copy the data to the clipboard
-    navigator.clipboard.write([
-      new ClipboardItem({
-        'text/plain': new Blob([text], { type: 'text/plain' })
-      })
-    ]).then(
-      () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Text copied to clipboard',
-        });
-        this.textCopyDialog = false;
-      },
-      (error) => {
-        console.error('Could not copy text to clipboard: ', error);
-      }
-    );
+    navigator.clipboard
+      .write([
+        new ClipboardItem({
+          'text/plain': new Blob([text], { type: 'text/plain' }),
+        }),
+      ])
+      .then(
+        () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Text copied to clipboard',
+          });
+          this.textCopyDialog = false;
+        },
+        (error) => {
+          console.error('Could not copy text to clipboard: ', error);
+        }
+      );
   }
-
 
   async deleteAsset(assetId: string) {
     let currAssetIndex: number = 0;
@@ -392,7 +431,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       }
     }
 
-    this.assets[currAssetIndex].Deleted=true;
+    this.assets[currAssetIndex].Deleted = true;
 
     if (await this.assetService.deleteAsset(assetId)) {
       this.messageService.add({
@@ -401,10 +440,8 @@ export class EditComponent implements AfterViewInit, OnInit {
         detail: 'Asset deleted',
       });
       this.assets.splice(currAssetIndex, 1);
-    }
-    else{
-      this.assets[currAssetIndex].Deleted=false;
-
+    } else {
+      this.assets[currAssetIndex].Deleted = false;
     }
   }
 
@@ -424,7 +461,10 @@ export class EditComponent implements AfterViewInit, OnInit {
       this.editService.getParentFolderID()
     );
     this.noAssetsAvailable = this.assets.length === 0;
-    this.assets.sort((a, b) => new Date(b.DateCreated).getTime() - new Date(a.DateCreated).getTime());
+    this.assets.sort(
+      (a, b) =>
+        new Date(b.DateCreated).getTime() - new Date(a.DateCreated).getTime()
+    );
   }
 
   pageBreak() {
@@ -456,8 +496,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.reCenterPage();
   }
 
-  getZoom(){
-    return `${Math.floor(this.currentZoom*100)}%`;
+  getZoom() {
+    return `${Math.floor(this.currentZoom * 100)}%`;
   }
 
   reCenterPage() {
@@ -469,13 +509,13 @@ export class EditComponent implements AfterViewInit, OnInit {
       const leftPosition = this.getLeftPosition(element);
       if (leftPosition < 250) {
         element.style.marginLeft = '0';
-        element.style.marginLeft = `${(270 - this.getLeftPosition(element))}px`;
+        element.style.marginLeft = `${270 - this.getLeftPosition(element)}px`;
       }
     } else {
       const leftPosition = this.getLeftPosition(element);
       if (leftPosition < -10) {
         element.style.marginLeft = '0';
-        element.style.marginLeft = `${(20 - this.getLeftPosition(element))}px`;
+        element.style.marginLeft = `${20 - this.getLeftPosition(element)}px`;
       }
     }
   }
@@ -516,8 +556,8 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     const date = new Date(dateString);
     const year = date.getFullYear().toString();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
 
     return `${year}-${month}-${day}`;
   }

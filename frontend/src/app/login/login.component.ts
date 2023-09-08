@@ -18,14 +18,17 @@ import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
 export class LoginComponent {
   email: string = '';
   password: string = '';
-  // popupWindow: Window | null = null;
 
   emailForgot: string = '';
-  passwordForgot: string = '';
+
+  newPass: string = '';
+  confirmNewPass: string = '';
 
   private clientId = environment.clientId;
 
   forgotPasswordPopup: boolean = false;
+  resetPasswordPopup: boolean = false;
+  token: string = '';
   constructor(
     @Inject(Router) private router: Router,
     private elementRef: ElementRef,
@@ -40,6 +43,15 @@ export class LoginComponent {
       this.password = data['Password'];
     }
     
+    const token = this.route.snapshot.queryParamMap.get('token');
+
+    if (token) {
+      this.token = token;
+      this.resetPasswordPopup = true;
+    } else {
+      // The token attribute was not passed in the URL
+    }
+
     // @ts-ignore
     window.onGoogleLibraryLoad = () => {
       // @ts-ignore
@@ -53,7 +65,7 @@ export class LoginComponent {
       google.accounts.id.renderButton(
         // @ts-ignore
         document.getElementById("buttonDiv"),
-        { theme: "outline", size: "large", width: "100%", shape: "pill" }
+        { theme: "outline", size: "large", width: "100%", height: "4svh", shape: "pill" }
       );
       // @ts-ignore
       google.accounts.id.prompt((notification: PromptMomentNotification) => { });
@@ -62,7 +74,8 @@ export class LoginComponent {
 
   async handleCredentialResponse(response: CredentialResponse) {
     if(await this.userService.loginWithGoogle(response.credential))
-      this.navigateToPage('home');
+      this.router.navigate([`/home`]).then(() => window.location.reload());
+      // this.navigateToPage('home');
   }
 
   navigateToPage(pageName: string) {
@@ -102,11 +115,46 @@ export class LoginComponent {
   }
 
   async forgotPassword(): Promise<void> {
-    //todo implement
-    // console.log('TODO: forgotPassword');
-    await this.userService.forgotPassword(this.emailForgot, this.passwordForgot);
+    await this.userService.passwordResetRequest(this.emailForgot);
+
     this.forgotPasswordPopup = false;
   }
+
+  async resetPassword() {
+    if(!this.newPass || this.newPass === '' || !this.confirmNewPass || this.confirmNewPass === '')
+    {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `One or more fields empty`,
+      });
+      return;
+    }
+    if(!this.isValidPassword(this.newPass))
+    {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number`,
+      });
+      return;
+    }
+    if(this.newPass !== this.confirmNewPass)
+    {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `Passwords do not match`,
+      });
+      return;
+    }
+    if(await this.userService.resetPassword(this.token, this.newPass))
+    {
+      this.resetPasswordPopup = false;
+      
+    }
+  }
+  
   movemouse(event: MouseEvent) {
     // const windowWidth = window.innerWidth;
     // const windowHeight = window.innerHeight;
@@ -123,6 +171,12 @@ export class LoginComponent {
     // (document.getElementsByClassName('backgroundImage')[0] as HTMLElement).style.backgroundImage = 
     // 'radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, rgb(100 100 100 / 70%), rgb(100 100 100 / 70%)), url(/assets/MockData/BGIW.jpg)';
     // console.log('radial-gradient(at ' + mouseXpercentage + '% ' + mouseYpercentage + '%, rgb(100 100 100 / 70%), rgb(100 100 100 / 70%)), url(/assets/MockData/BGIW.jpg)');
+  }
+
+  isValidPassword(password: string): boolean {
+    if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/))
+      return false;
+    return true;
   }
 
   navigateToSignup(): void {

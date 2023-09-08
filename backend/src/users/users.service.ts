@@ -16,6 +16,7 @@ import 'dotenv/config';
 import { randomBytes } from 'crypto';
 import { ResetPasswordRequestDTO } from '../reset_password/dto/reset_password_request.dto';
 import { ResetPasswordService } from '../reset_password/reset_password.service';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UsersService {
@@ -24,7 +25,7 @@ export class UsersService {
     private usersRepository: Repository<User>,
     private authService: AuthService,
     private resetPasswordService: ResetPasswordService,
-    // private mailService: MailService,
+    private mailService: MailService,
     private jwtService: JwtService,
   ) {}
 
@@ -119,7 +120,7 @@ export class UsersService {
       firstName.length > 0 &&
       firstName.length < 50 &&
       // firstName.match(/^[a-zA-Z]+$/)
-      /^[a-zA-Z]+$/.test(firstName)
+      /^[A-Za-zÀ-ÖØ-öø-ÿ '-]+$/.test(firstName)
     );
   }
 
@@ -128,7 +129,7 @@ export class UsersService {
       lastName.length > 0 &&
       lastName.length < 50 &&
       // lastName.match(/^[a-zA-Z]+$/)
-      /^[a-zA-Z]+$/.test(lastName)
+      /^[A-Za-zÀ-ÖØ-öø-ÿ '-]+$/.test(lastName)
     );
   }
 
@@ -170,9 +171,13 @@ export class UsersService {
       );
     }
 
-    const emailExists = await this.findOneByEmail(
-      createUserDTO.Email,
-    );
+    let emailExists = false;
+    try {
+      await this.findOneByEmail(
+        createUserDTO.Email,
+      );
+      emailExists = true;
+    } catch (error) {}
 
     if (emailExists) {
       this.throwHttpException(
@@ -248,10 +253,11 @@ export class UsersService {
         decodedToken;
 
       // Check if the user already exists in the database
-      let user = await this.findOneByEmail(email);
-
-      // If the user does not exist, create a new user
-      if (!user) {
+      let user;
+      try {
+        user = await this.findOneByEmail(email);
+      } catch (error) {
+        // If the user does not exist, create a new user
         const newUser = new UserDTO();
         newUser.Email = email;
         newUser.FirstName = given_name;
@@ -404,7 +410,7 @@ export class UsersService {
 
     if (resetRequest.DateExpires < new Date()) {
       this.throwHttpException(
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.BAD_REQUEST,
         'Reset password request expired',
       );
     }
@@ -451,15 +457,28 @@ export class UsersService {
       );
     }
 
-    const resetPasswordRequest =
-      await this.resetPasswordService.create(
+    const previousRequest =
+      await this.resetPasswordService.findOneByUserID(
         user.UserID,
       );
 
+    if (previousRequest) {
+      this.throwHttpException(
+        HttpStatus.BAD_REQUEST,
+        'Reset password request already exists',
+      );
+    }
+
+    const resetPasswordRequest =
+      await this.resetPasswordService.create(
+        user.UserID,
+        user.Email,
+      );
+
     return await this.sendPasswordResetEmail(
-      userDTO.Email,
+      user.Email,
       resetPasswordRequest.Token,
-      userDTO.FirstName,
+      user.FirstName,
     );
   }
 
@@ -469,7 +488,7 @@ export class UsersService {
     name: string,
   ) {
     const subject = 'WriteToPdf Password Reset';
-    const url = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    const url = `${process.env.FRONTEND_URL}/?token=${token}`;
     const html = `
     <!DOCTYPE html>
     <html lang="en">
@@ -479,66 +498,67 @@ export class UsersService {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Password Reset Request</title>
       <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f5f5f5;
-          margin: 0;
-          padding: 0;
-        }
-        .container {
-          max-width: 600px;
-          margin: 0 auto;
-          padding: 20px;
-          background-color: #ffffff;
-          border-radius: 5px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-          color: #333333;
-          margin-bottom: 10px;
-        }
-        p {
-          font-size: 16px;
-          color: #666666;
-          line-height: 1.6;
-        }
-        a {
-          color: #007bff;
-          text-decoration: none;
-        }
-        a:hover {
-          text-decoration: underline;
-        }
-      </style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #eeeeee;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333333;
+        margin-bottom: 10px;
+      }
+      p {
+        font-size: 16px;
+        color: #666666;
+        line-height: 1.6;
+      }
+      a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
     </head>
     <body>
       <div class="container">
+      <img src="https://drive.google.com/uc?export=view&id=1fj8AZDQf8GCQHTrQ08ktpdztz2eJpQdA" alt="App logo" style="width: auto; height: 50px;">
         <h1>Password Reset Request</h1>
         <p>Hello ${name},</p>
         <p>We have received a request to reset your password. If this was not you, then please ignore this email.</p>
         <p>To reset your password, click <a href="${url}">here</a>.</p>
-        <p>If you did not initiate this request, please disregard this message.</p>
         <p>Thank you,</p>
         <p>WriteToPdf Support Team</p>
+        <img src="https://drive.google.com/uc?export=view&id=1fjlBU3wC8d-fQly0D_gxXkbphECBUZL6" alt="Team logo" style="width: auto; height: 30px;">
       </div>
     </body>
     </html>
     `;
-    // try {
-    //   await this.mailService.sendEmail(
-    //     email,
-    //     subject,
-    //     html,
-    //   );
-    return {
-      message: 'Password reset email sent',
-    };
-    // } catch (error) {
-    //   throw new HttpException(
-    //     'Password reset email failed: ' +
-    //       error.message,
-    //     HttpStatus.UNAUTHORIZED,
-    //   );
-    // }
+    try {
+      await this.mailService.sendEmail(
+        email,
+        subject,
+        html,
+      );
+      return {
+        message: 'Password reset email sent',
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Password reset email failed: ' +
+          error.message,
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
   }
 }
