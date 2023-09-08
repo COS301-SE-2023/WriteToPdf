@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import {OcrPopupComponent} from "../ocr-popup/ocr-popup.component";
-
+import { OcrPopupComponent } from '../ocr-popup/ocr-popup.component';
 @Injectable({
     providedIn: 'root',
 })
