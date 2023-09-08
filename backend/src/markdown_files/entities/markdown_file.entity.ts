@@ -39,4 +39,10 @@ export class MarkdownFile {
 
   @Column()
   ParentFolderID: string; // hash string
+
+  @Column()
+  NextDiffID: number;
+
+  @Column()
+  NextSnapshotID: number;
 }
