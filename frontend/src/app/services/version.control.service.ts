@@ -37,11 +37,16 @@ export class VersionControlService {
   //   });
   // }
 
+  init(): void {
+    this.snapshotArr[0] = new SnapshotDTO();
+    this.diffArr[0] = new DiffDTO();
+  }
+
   createDiff(fileDTO: FileDTO): DiffDTO {
     const latestSnapshot = this.getLatestSnapshot();
     let snapshotContent = latestSnapshot.content; // TODO: Check about decryption
 
-    const latestDiff = this.getLatestDiff();
+    const latestDiff = this.getLatestDiff(); // TODO: Check what we need when there are no diffs
     const latestDiffNumber = latestDiff.diffNumber;
 
     // Get all relevant diffs
