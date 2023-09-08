@@ -37,7 +37,7 @@ export class VersionControlService {
   //   });
   // }
 
-  getNewDiff(fileDTO: FileDTO): DiffDTO {
+  createDiff(fileDTO: FileDTO): DiffDTO {
     // Get latest snapshot
     this.snapshotArr.sort((a, b) =>
       a.snapshotNumber > b.snapshotNumber
@@ -47,9 +47,7 @@ export class VersionControlService {
         : 0
     );
     const latestSnapshot = this.snapshotArr[0];
-    let snapshotContent = this.fileService.decryptDocument(
-      latestSnapshot.content
-    ); // TODO: Check that this is how decrypt works
+    let snapshotContent = latestSnapshot.content; // TODO: Check abount decryption
 
     // Get latest diff number
     this.diffArr.sort((a, b) =>
@@ -65,7 +63,7 @@ export class VersionControlService {
 
     // Patch all relevant diffs
     for (let diff of relevantDiffs) {
-      this.patchDiff(snapshotContent, diff);
+      snapshotContent = this.patchDiff(snapshotContent, diff);
     }
 
     // Create newest diff and readable patch
@@ -85,11 +83,13 @@ export class VersionControlService {
   }
 
   patchDiff(content: string, diffDTO: DiffDTO): string {
-    return '';
+    const patches = this.DiffPatchService.patch_fromText(diffDTO.content); // TODO: Still don't know about encryption
+    const patchResult = this.DiffPatchService.patch_apply(patches, content);
+    return patchResult[0];
   }
 
   getAllDiffs(fileDTO: FileDTO): DiffDTO[] {
-    return [new DiffDTO()];
+    return this.diffArr;
   }
 
   getSnapshot(fileDTO: FileDTO): SnapshotDTO {
@@ -97,7 +97,7 @@ export class VersionControlService {
   }
 
   getAllSnapshots(fileDTO: FileDTO): SnapshotDTO[] {
-    return [new SnapshotDTO()];
+    return this.snapshotArr;
   }
 
   patchVersion(fileDTO: FileDTO, diffDTO: DiffDTO[]): string {
