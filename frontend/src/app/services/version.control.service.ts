@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
 // import DiffMatchPatch from 'diff-match-patch';
-import { diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
+import { Diff, diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
 import { HttpClient } from '@angular/common/http';
 import { DiffDTO } from './dto/diff.dto';
 import { SnapshotDTO } from './dto/snapshot.dto';
@@ -38,22 +38,10 @@ export class VersionControlService {
   // }
 
   createDiff(fileDTO: FileDTO): DiffDTO {
-    // Get latest snapshot
-    this.snapshotArr.sort((a, b) =>
-      a.snapshotNumber > b.snapshotNumber
-        ? 1
-        : a.snapshotNumber < b.snapshotNumber
-        ? -1
-        : 0
-    );
-    const latestSnapshot = this.snapshotArr[0];
-    let snapshotContent = latestSnapshot.content; // TODO: Check abount decryption
+    const latestSnapshot = this.getLatestSnapshot();
+    let snapshotContent = latestSnapshot.content; // TODO: Check about decryption
 
-    // Get latest diff number
-    this.diffArr.sort((a, b) =>
-      a.diffNumber > b.diffNumber ? 1 : a.diffNumber < b.diffNumber ? -1 : 0
-    );
-    const latestDiff = this.diffArr[0];
+    const latestDiff = this.getLatestDiff();
     const latestDiffNumber = latestDiff.diffNumber;
 
     // Get all relevant diffs
@@ -82,6 +70,28 @@ export class VersionControlService {
     return readableDiff;
   }
 
+  getLatestSnapshot(): SnapshotDTO {
+    // Get latest snapshot
+    this.snapshotArr.sort((a, b) =>
+      a.snapshotNumber > b.snapshotNumber
+        ? 1
+        : a.snapshotNumber < b.snapshotNumber
+        ? -1
+        : 0
+    );
+
+    return this.snapshotArr[0];
+  }
+
+  getLatestDiff(): DiffDTO {
+    // Get latest diff number
+    this.diffArr.sort((a, b) =>
+      a.diffNumber > b.diffNumber ? 1 : a.diffNumber < b.diffNumber ? -1 : 0
+    );
+
+    return this.diffArr[0];
+  }
+
   patchDiff(content: string, diffDTO: DiffDTO): string {
     const patches = this.DiffPatchService.patch_fromText(diffDTO.content); // TODO: Still don't know about encryption
     const patchResult = this.DiffPatchService.patch_apply(patches, content);
@@ -108,7 +118,20 @@ export class VersionControlService {
     return '';
   }
 
-  squashDiffs(diffDTO: DiffDTO[]): SnapshotDTO {
-    return new SnapshotDTO();
+  squashDiffs(diffDTOs: DiffDTO[]): SnapshotDTO {
+    const latestSnapshot = this.getLatestSnapshot();
+    let snapshotContent = latestSnapshot.content; // TODO: Check about decryption
+
+    // Patch all diffs
+    for (let diff of diffDTOs) {
+      snapshotContent = this.patchDiff(snapshotContent, diff);
+    }
+
+    const newSnapshot = new SnapshotDTO();
+    newSnapshot.content = snapshotContent;
+    newSnapshot.fileID = latestSnapshot.fileID;
+    newSnapshot.snapshotNumber = latestSnapshot.snapshotNumber + 1;
+
+    return newSnapshot;
   }
 }
