@@ -119,6 +119,8 @@ export class FileManagerService {
         ParentFolderID: file.ParentFolderID,
         Content: '',
         SafeLock: file.SafeLock,
+        NextDiffID: file.NextDiffID,
+        NextSnapshotID: file.NextSnapshotID,
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });

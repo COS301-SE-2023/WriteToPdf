@@ -106,6 +106,8 @@ export class FileManagerServiceMock {
         ParentFolderID: file.ParentFolderID,
         Content: '',
         SafeLock: false,
+        NextDiffID: file.NextDiffID,
+        NextSnapshotID: file.NextSnapshotID,
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
