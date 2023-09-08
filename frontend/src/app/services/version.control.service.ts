@@ -111,14 +111,4 @@ export class VersionControlService {
   squashDiffs(diffDTO: DiffDTO[]): SnapshotDTO {
     return new SnapshotDTO();
   }
-
-  visualiseDiff(diffDTO: DiffDTO): void {
-    return;
-  }
-  visualiseVersion(diffDTO: DiffDTO[]): void {
-    return;
-  }
-  visualiseSnapshot(snapshotDTO: SnapshotDTO): void {
-    return;
-  }
 }
