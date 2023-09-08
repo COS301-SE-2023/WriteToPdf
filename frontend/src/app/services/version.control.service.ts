@@ -15,21 +15,22 @@ export class VersionControlService {
 
   public snapshotArr: SnapshotDTO[] = [];
   public diffArr: DiffDTO[] = [];
+  private DiffPatchService = new DiffMatchPatch();
 
   async test(): Promise<void> {
     let text1: string = '';
     let text2: string = '';
     const filePath1 = '../assets/VersionControl/test1.txt';
+    const filePath2 = '../assets/VersionControl/test2.txt';
     this.http.get(filePath1, { responseType: 'text' }).subscribe((data) => {
       text1 = data;
-      const filePath2 = '../assets/VersionControl/test2.txt';
       this.http.get(filePath2, { responseType: 'text' }).subscribe((data) => {
         text2 = data;
-        const dmp = new DiffMatchPatch();
-        const diff = dmp.diff_main(text1, text2);
-        const patches = dmp.patch_make(diff);
-        console.log(dmp.patch_toText(patches));
-        console.log(dmp.patch_apply(patches, text1));
+
+        const diff = this.DiffPatchService.diff_main(text1, text2);
+        const patches = this.DiffPatchService.patch_make(diff);
+        console.log(this.DiffPatchService.patch_toText(patches));
+        console.log(this.DiffPatchService.patch_apply(patches, text1));
       });
     });
   }
