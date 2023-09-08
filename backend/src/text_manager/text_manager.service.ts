@@ -22,21 +22,18 @@ export class TextManagerService {
     uploadTextDTO: AssetDTO,
     isTest = false,
   ) {
-    console.log('1');
     // Create S3 image data file
     const imageDataFile =
       await this.s3Service.createAsset(
         uploadTextDTO,
       );
 
-    console.log('2');
     // Create S3 text data file
     const textDataFile =
       await this.s3Service.createAsset(
         uploadTextDTO,
       );
 
-    console.log('3');
     // Save text asset in database
     uploadTextDTO.AssetID = imageDataFile.AssetID;
     uploadTextDTO.TextID = textDataFile.AssetID;
@@ -44,35 +41,23 @@ export class TextManagerService {
     uploadTextDTO.Image = '';
     this.assetsService.saveAsset(uploadTextDTO);
 
-    console.log('4');
     // Strip base64 descriptor
     uploadTextDTO.Content =
       this.removeBase64Descriptor(
         uploadTextDTO.Content,
       );
 
-    console.log('5');
     // Create buffer from base64 image
     uploadTextDTO.ImageBuffer = Buffer.from(
       uploadTextDTO.Content,
       'base64',
     );
 
-    console.log('6');
     // Save image data in the S3
     const savedAssetDTO =
       await this.s3Service.saveTextAssetImage(
         uploadTextDTO,
       );
-
-    console.log('savedAssetDTO', savedAssetDTO);
-    console.log('7');
-
-    console.log(
-      'Sending textract request with params: ',
-      savedAssetDTO,
-      uploadTextDTO.Format,
-    );
 
     // Send textract to classify s3 image
     const textractResponse =
@@ -82,25 +67,15 @@ export class TextManagerService {
         uploadTextDTO.Format,
       );
 
-    console.log(
-      'textractResponse',
-      JSON.stringify(textractResponse),
-    );
-    console.log('8');
-
     const formattedTextractResponse =
       this.formatTextractResponse(
         textractResponse,
       );
 
-    console.log('9');
-
     this.s3Service.saveTextractResponse(
       savedAssetDTO,
       formattedTextractResponse,
     );
-
-    console.log('10');
 
     return formattedTextractResponse;
   }
