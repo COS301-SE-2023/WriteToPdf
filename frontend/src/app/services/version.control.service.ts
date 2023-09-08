@@ -44,7 +44,7 @@ export class VersionControlService {
 
   createDiff(fileDTO: FileDTO): DiffDTO {
     const latestSnapshot = this.getLatestSnapshot();
-    let snapshotContent = latestSnapshot.content; // TODO: Check about decryption
+    let snapshotContent = latestSnapshot.content;
 
     const latestDiff = this.getLatestDiff(); // TODO: Check what we need when there are no diffs
     const latestDiffNumber = latestDiff.diffNumber;
@@ -71,11 +71,12 @@ export class VersionControlService {
     readableDiff.diffNumber = latestDiffNumber + 1;
     readableDiff.fileID = fileDTO.fileID;
     readableDiff.snapshotNumber = latestSnapshot.snapshotNumber; // TODO: Doesn't take into account squashing of diffs
-    readableDiff.content = this.DiffPatchService.patch_toText(patches); // TODO: Check when this should be encrypted
+    readableDiff.content = this.DiffPatchService.patch_toText(patches);
     return readableDiff;
   }
 
   getLatestSnapshot(): SnapshotDTO {
+    // TODO: No need to sort
     // Get latest snapshot
     this.snapshotArr.sort((a, b) =>
       a.snapshotNumber > b.snapshotNumber
@@ -98,21 +99,9 @@ export class VersionControlService {
   }
 
   patchDiff(content: string, diffDTO: DiffDTO): string {
-    const patches = this.DiffPatchService.patch_fromText(diffDTO.content); // TODO: Still don't know about encryption
+    const patches = this.DiffPatchService.patch_fromText(diffDTO.content);
     const patchResult = this.DiffPatchService.patch_apply(patches, content);
     return patchResult[0];
-  }
-
-  getAllDiffs(fileDTO: FileDTO): DiffDTO[] {
-    return this.diffArr;
-  }
-
-  getSnapshot(fileDTO: FileDTO): SnapshotDTO {
-    return new SnapshotDTO();
-  }
-
-  getAllSnapshots(fileDTO: FileDTO): SnapshotDTO[] {
-    return this.snapshotArr;
   }
 
   patchVersion(fileDTO: FileDTO, diffDTO: DiffDTO[]): string {
@@ -125,7 +114,7 @@ export class VersionControlService {
 
   squashDiffs(diffDTOs: DiffDTO[]): SnapshotDTO {
     const latestSnapshot = this.getLatestSnapshot();
-    let snapshotContent = latestSnapshot.content; // TODO: Check about decryption
+    let snapshotContent = latestSnapshot.content;
 
     // Patch all diffs
     for (let diff of diffDTOs) {
