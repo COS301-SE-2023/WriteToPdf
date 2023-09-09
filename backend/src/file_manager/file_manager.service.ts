@@ -123,6 +123,8 @@ export class FileManagerService {
         ParentFolderID: file.ParentFolderID,
         Content: '',
         SafeLock: file.SafeLock,
+        NewDiff: '',
+        PreviousDiffs: [],
         NextDiffID: file.NextDiffID,
         NextSnapshotID: file.NextSnapshotID,
       };
