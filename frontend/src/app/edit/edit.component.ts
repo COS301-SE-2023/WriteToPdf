@@ -459,6 +459,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async refreshSidebar() {
+    
     this.assets = await this.assetService.retrieveAll(
       this.editService.getParentFolderID()
     );
@@ -467,6 +468,10 @@ export class EditComponent implements AfterViewInit, OnInit {
       (a, b) =>
         new Date(b.DateCreated).getTime() - new Date(a.DateCreated).getTime()
     );
+  }
+
+  async refreshSidebarHistory() {
+    console.log('refreshing history');
   }
 
   pageBreak() {
