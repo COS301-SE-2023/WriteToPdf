@@ -210,7 +210,7 @@ export class FileManagerServiceMock {
       markdownFileDTO,
     );
 
-    return this.markdownFilesService.updateLastModified(
+    return this.markdownFilesService.updateAfterModification(
       markdownFileDTO,
     );
   }
@@ -440,6 +440,9 @@ export class FileManagerServiceMock {
     const returnedDTO: MarkdownFileDTO = {
       ...savedFile,
       Content: encryptedContent,
+      PreviousDiffs: [],
+      NewDiff: '',
+      NextDiffID: 0,
     };
 
     return returnedDTO;
