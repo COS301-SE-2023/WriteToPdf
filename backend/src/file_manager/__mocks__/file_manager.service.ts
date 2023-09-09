@@ -106,10 +106,10 @@ export class FileManagerServiceMock {
         ParentFolderID: file.ParentFolderID,
         Content: '',
         SafeLock: false,
-        // Next three params do not apply to retrieveAllFiles
-        PreviousDiffs: [],
         NewDiff: '',
-        NextDiffID: 0,
+        NextDiffID: file.NextDiffID,
+        PreviousDiffs: [],
+        NextSnapshotID: file.NextSnapshotID,
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
