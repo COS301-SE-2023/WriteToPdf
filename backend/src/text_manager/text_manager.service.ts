@@ -432,6 +432,10 @@ export class TextManagerService {
     return newAssetDTO;
   }
 
+  update(assetDTO: AssetDTO) {
+    // Update the text or table content
+  }
+
   /// HELPER FUNCTIONS
 
   removeBase64Descriptor(base64String: string) {

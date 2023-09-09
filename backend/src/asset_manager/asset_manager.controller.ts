@@ -99,6 +99,17 @@ export class AssetManagerController {
     );
   }
 
+  @Post('update_asset')
+  @HttpCode(HttpStatus.OK)
+  update_asset(
+    @Body()
+    updateAssetDTO: AssetDTO,
+  ) {
+    return this.assetManagerService.update_asset(
+      updateAssetDTO,
+    );
+  }
+
   @Post('delete_asset')
   @HttpCode(HttpStatus.OK)
   delete_asset(
