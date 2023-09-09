@@ -866,6 +866,8 @@ describe('FileManagerController', () => {
       markdownFileDTO.MarkdownID = '123';
       markdownFileDTO.UserID = 123;
       markdownFileDTO.Content = ' ';
+      markdownFileDTO.NextDiffID = 0;
+      markdownFileDTO.NextSnapshotID = 0;
 
       jest
         .spyOn(fileManagerService, 'saveFile')

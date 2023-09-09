@@ -42,6 +42,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   textCopyDialog: boolean = false;
   noAssetsAvailable: boolean = false;
   isTouchScreen: boolean = false;
+  sideBarTab: boolean = false;
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;

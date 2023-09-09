@@ -35,8 +35,18 @@ export class MarkdownFile {
   Size: number;
 
   @Column()
-  SafeLock: boolean; // document locking
+  SafeLock: boolean;
+
+  // DO NOT UNCOMMENT UNTIL JAKE SAYS SO
+  // @Column()
+  // NextDiffID: number;
 
   @Column()
   ParentFolderID: string; // hash string
+
+  @Column()
+  NextDiffID: number;
+
+  @Column()
+  NextSnapshotID: number;
 }

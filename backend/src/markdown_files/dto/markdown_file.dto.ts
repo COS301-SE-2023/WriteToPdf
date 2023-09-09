@@ -9,6 +9,10 @@ export class MarkdownFileDTO {
   ParentFolderID: string;
   UserID: number;
   SafeLock: boolean;
+  NewDiff: string;
+  PreviousDiffs: string[];
+  NextDiffID: number;
+  NextSnapshotID: number;
 
   constructor() {
     this.MarkdownID = undefined;
@@ -21,5 +25,9 @@ export class MarkdownFileDTO {
     this.ParentFolderID = undefined;
     this.UserID = undefined;
     this.SafeLock = false;
+    this.NewDiff = undefined;
+    this.PreviousDiffs = undefined;
+    this.NextDiffID = undefined;
+    this.NextSnapshotID = undefined;
   }
 }
