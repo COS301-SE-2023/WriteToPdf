@@ -240,6 +240,12 @@ div[contenteditable="true"]:focus {
     justify-content: space-evenly;
     margin: auto;
     width: $sidebar-content-width;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .sidebarHeaderText {
@@ -679,7 +685,7 @@ Preserve the relative scale, though. */
 .sidebarTabs {
     display: flex;
     margin: auto;
-    padding-top:6px;
+    padding-top: 6px;
     justify-content: space-around;
     background: #ddd;
 }
@@ -693,12 +699,19 @@ Preserve the relative scale, though. */
     text-align: center;
     height: 30px;
     vertical-align: center;
-    align-items: center; /* Vertical centering */
+    align-items: center;
+    /* Vertical centering */
     cursor: pointer;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
-.tabText{
-    margin:auto;
+.tabText {
+    margin: auto;
     font-size: 20px;
     font-weight: bold;
 }
@@ -706,15 +719,18 @@ Preserve the relative scale, though. */
 .selectedButton {
     background-color: #fff;
 }
+
 .selectedButton:hover {
     background-color: #eee;
 }
+
 .unselectedButton {
     background-color: #d8d8d8;
     border-bottom: #999 1px solid;
     color: #999
 }
-.unselectedButton:hover{
+
+.unselectedButton:hover {
     background-color: #ccc;
-    color:#000
+    color: #000
 }
