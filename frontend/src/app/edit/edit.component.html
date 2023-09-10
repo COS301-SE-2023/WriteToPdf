@@ -247,10 +247,9 @@
     </div>
 
     <div *ngIf="sideBarTab" class="allHistory">
-      <div *ngFor="let obj of history" class="historyObject">
-        <p>
-          {{obj.name}}
-        </p>
+      <div *ngFor="let obj of history" class="historyObject" [ngClass]="{'selectedHistory':obj.isCurrent}" (click)="insertContent(obj)">
+        <p>{{obj.name}}</p>
+        <p>{{obj.date}}</p>
       </div>
     </div>
     

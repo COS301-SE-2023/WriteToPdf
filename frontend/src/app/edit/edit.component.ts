@@ -85,23 +85,6 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   async ngOnInit(): Promise<void> {
 
-    this.history.push({ name: 'Version 1', date: '01-01-1970', html: '<p>Version 1</p>' });
-    this.history.push({ name: 'Version 2', date: '01-01-1971', html: '<p>Version 2</p>' });
-    this.history.push({ name: 'Version 3', date: '01-01-1972', html: '<p>Version 3</p>' });
-    this.history.push({ name: 'Version 4', date: '01-01-1973', html: '<p>Version 4</p>' });
-    this.history.push({ name: 'Version 5', date: '01-01-1974', html: '<p>Version 5</p>' });
-    this.history.push({ name: 'Version 1', date: '01-01-1970', html: '<p>Version 1</p>' });
-    this.history.push({ name: 'Version 2', date: '01-01-1971', html: '<p>Version 2</p>' });
-    this.history.push({ name: 'Version 3', date: '01-01-1972', html: '<p>Version 3</p>' });
-    this.history.push({ name: 'Version 4', date: '01-01-1973', html: '<p>Version 4</p>' });
-    this.history.push({ name: 'Version 5', date: '01-01-1974', html: '<p>Version 5</p>' });
-    this.history.push({ name: 'Version 1', date: '01-01-1970', html: '<p>Version 1</p>' });
-    this.history.push({ name: 'Version 2', date: '01-01-1971', html: '<p>Version 2</p>' });
-    this.history.push({ name: 'Version 3', date: '01-01-1972', html: '<p>Version 3</p>' });
-    this.history.push({ name: 'Version 4', date: '01-01-1973', html: '<p>Version 4</p>' });
-    this.history.push({ name: 'Version 5', date: '01-01-1974', html: '<p>Version 5</p>' });
-
-    
     this.speedDialItems = [
       {
         icon: 'pi pi-pencil',
@@ -148,6 +131,24 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (c != null && m != null && n != null && p != null && pf != null && sl != null && dp != null)
       this.editService.setAll(c, m, n, p, pf, sl === 'true', this.editService.decryptPassword(dp));
     this.fileName = this.editService.getName();
+
+    this.history.push({ name: 'Latest', date: 'now', html: this.editService.getContent(), id: 'LATEST', isCurrent: true });
+    this.history.push({ name: 'Version 1', date: '01-01-1970', html: '<p>Version 1</p>',  id: '1'});
+    this.history.push({ name: 'Version 2', date: '01-01-1971', html: '<p>Version 2</p>',  id: '1'});
+    this.history.push({ name: 'Version 3', date: '01-01-1972', html: '<p>Version 3</p>',  id: '1'});
+    this.history.push({ name: 'Version 4', date: '01-01-1973', html: '<p>Version 4</p>',  id: '1'});
+    this.history.push({ name: 'Version 5', date: '01-01-1974', html: '<p>Version 5</p>',  id: '1'});
+    this.history.push({ name: 'Version 1', date: '01-01-1970', html: '<p>Version 1</p>',  id: '1'});
+    this.history.push({ name: 'Version 2', date: '01-01-1971', html: '<p>Version 2</p>',  id: '1'});
+    this.history.push({ name: 'Version 3', date: '01-01-1972', html: '<p>Version 3</p>',  id: '1'});
+    this.history.push({ name: 'Version 4', date: '01-01-1973', html: '<p>Version 4</p>',  id: '1'});
+    this.history.push({ name: 'Version 5', date: '01-01-1974', html: '<p>Version 5</p>',  id: '1'});
+    this.history.push({ name: 'Version 1', date: '01-01-1970', html: '<p>Version 1</p>', id: '1' });
+    this.history.push({ name: 'Version 2', date: '01-01-1971', html: '<p>Version 2</p>', id: '1' });
+    this.history.push({ name: 'Version 3', date: '01-01-1972', html: '<p>Version 3</p>', id: '1' });
+    this.history.push({ name: 'Version 4', date: '01-01-1973', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Version 4</span></p>', id: '1' });
+    this.history.push({ name: 'Version 5', date: '01-01-1974', html: '', id: '1' });
+
   }
 
   ngAfterViewInit() {
@@ -586,5 +587,31 @@ export class EditComponent implements AfterViewInit, OnInit {
     const day = date.getDate().toString().padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+  }
+
+  enableReadOnly() {
+    this.editor.enableReadOnlyMode('');
+  }
+
+  disableReadOnly() {
+    this.editor.disableReadOnlyMode('');
+  }
+
+  insertContent(obj: any) {
+    this.deselectAllHistory();
+    obj.isCurrent = true;
+    if(obj.id === 'LATEST') {
+      this.disableReadOnly();
+      this.editor.setData(obj.html);
+      return;
+    }
+    this.enableReadOnly();
+    this.editor.setData(obj.html);
+  }
+
+  deselectAllHistory() {
+    for(let i = 0; i < this.history.length; i++) {
+      this.history[i].isCurrent = false;
+    }
   }
 }
