@@ -738,13 +738,13 @@ Preserve the relative scale, though. */
 
 .historyObject {
     transition: 0.2s;
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
     justify-content: space-around;
     width: $sidebar-content-width;
     border-radius: 8px;
     background-color: #f0f0f0;
-    margin:auto;
+    margin: auto;
     margin-bottom: 10px;
     text-align: center;
 }
@@ -758,6 +758,23 @@ Preserve the relative scale, though. */
 .selectedHistory {
     background-color: #dfd;
 }
+
 .selectedHistory:hover {
     background-color: #dfd;
+}
+
+.historyIcon {
+    margin: 0;
+    margin:auto 0; 
+    width: 42px;
+    height: 42px;
+    padding: 4px;
+
+    border-radius: 5px;
+}
+
+.historyIcon:hover {
+    cursor: pointer;
+    background-color: #ddf;
+    transition: 0.5s;
 }

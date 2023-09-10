@@ -250,6 +250,8 @@
       <div *ngFor="let obj of history" class="historyObject" [ngClass]="{'selectedHistory':obj.isCurrent}" (click)="insertContent(obj)">
         <p>{{obj.name}}</p>
         <p>{{obj.date}}</p>
+        <img class="historyIcon" src="assets/Icons/homeIcons/headerRightToolbar/settings.png" alt="" />
+
       </div>
     </div>
     
