@@ -133,21 +133,14 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.fileName = this.editService.getName();
 
     this.history.push({ name: 'Latest', date: 'now', html: this.editService.getContent(), id: 'LATEST', isCurrent: true });
-    this.history.push({ name: 'Version 1', date: '01-01-1970', html: '<p>Version 1</p>',  id: '1'});
-    this.history.push({ name: 'Version 2', date: '01-01-1971', html: '<p>Version 2</p>',  id: '1'});
-    this.history.push({ name: 'Version 3', date: '01-01-1972', html: '<p>Version 3</p>',  id: '1'});
-    this.history.push({ name: 'Version 4', date: '01-01-1973', html: '<p>Version 4</p>',  id: '1'});
-    this.history.push({ name: 'Version 5', date: '01-01-1974', html: '<p>Version 5</p>',  id: '1'});
-    this.history.push({ name: 'Version 1', date: '01-01-1970', html: '<p>Version 1</p>',  id: '1'});
-    this.history.push({ name: 'Version 2', date: '01-01-1971', html: '<p>Version 2</p>',  id: '1'});
-    this.history.push({ name: 'Version 3', date: '01-01-1972', html: '<p>Version 3</p>',  id: '1'});
-    this.history.push({ name: 'Version 4', date: '01-01-1973', html: '<p>Version 4</p>',  id: '1'});
-    this.history.push({ name: 'Version 5', date: '01-01-1974', html: '<p>Version 5</p>',  id: '1'});
-    this.history.push({ name: 'Version 1', date: '01-01-1970', html: '<p>Version 1</p>', id: '1' });
-    this.history.push({ name: 'Version 2', date: '01-01-1971', html: '<p>Version 2</p>', id: '1' });
-    this.history.push({ name: 'Version 3', date: '01-01-1972', html: '<p>Version 3</p>', id: '1' });
-    this.history.push({ name: 'Version 4', date: '01-01-1973', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Version 4</span></p>', id: '1' });
-    this.history.push({ name: 'Version 5', date: '01-01-1974', html: '', id: '1' });
+    this.history.push({name: 'Version 7', date: '01-01-1970', html: '',  id: '8'});
+    this.history.push({name: 'Version 6', date: '01-01-1970', html: '<p><span style="background-color:hsl(0, 75%, 60%);">Text added from V0 to V1.</span style="background-color:hsl(0, 75%, 60%);"></p> <p><span style="background-color:hsl(0, 75%, 60%);">More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(0, 75%, 60%);">Addition from V3 to V4</span></p>',  id: '7'});
+    this.history.push({ name: 'Version 5', date: '01-01-1970', html: '<p><span style="background-color:hsl(0, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span >Addition from V3 to V4</span></p>', id: '6' });
+    this.history.push({ name: 'Version 4', date: '01-01-1971', html: '<p><span >Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(120, 75%, 60%);">Addition from V3 to V4</span></p>', id: '5' });
+    this.history.push({ name: 'Version 3', date: '01-01-1972', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p>', id: '4' });
+    this.history.push({ name: 'Version 2', date: '01-01-1973', html: '<p><span>Text added from V0 to V1.</span></p> <p><span style="background-color:hsl(120, 75%, 60%);">More Text added from V1 to V2.</span></p>', id: '3' });
+    this.history.push({ name: 'Version 1', date: '01-01-1974', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text added from V0 to V1.</span></p>', id: '2' });
+    this.history.push({ name: 'Version 0', date: '01-01-1974', html: '', id: '1' });
 
   }
 
