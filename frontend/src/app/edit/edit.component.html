@@ -108,15 +108,15 @@
 
   <p-button class="showAssetSidebar" icon="pi pi-arrow-right" (click)="hideSideBar()" title="Show Asset Bar"></p-button>
   <div class="assetSidebar">
-    <div class="sidebarTabs">
-      <div (click)="sideBarTab = false;" [ngClass]="{'unselectedButton': sideBarTab, 'selectedButton':!sideBarTab}" title="Asset Sidebar">
-        <p class="tabText">Assets</p>
-      </div>
-      <div (click)="sideBarTab=true;" [ngClass]="{'unselectedButton': !sideBarTab, 'selectedButton':sideBarTab}" title="History Sidebar">
-        <p class="tabText">History</p>
-      </div>
-    </div>
     <div class="sidebarHeaderWrapper">
+      <div class="sidebarTabs">
+        <div (click)="sideBarTab = false;" [ngClass]="{'unselectedButton': sideBarTab, 'selectedButton':!sideBarTab}" title="Asset Sidebar">
+          <p class="tabText">Assets</p>
+        </div>
+        <div (click)="sideBarTab=true;" [ngClass]="{'unselectedButton': !sideBarTab, 'selectedButton':sideBarTab}" title="History Sidebar">
+          <p class="tabText">History</p>
+        </div>
+      </div>
 
       <div class="sidebarHeader">
         <div class="sidebarHeaderIconWrapper backWrapper" (click)="hideSideBar()" title="Hide Asset Bar">
@@ -247,7 +247,11 @@
     </div>
 
     <div *ngIf="sideBarTab" class="allHistory">
-      <p>This is the history</p>
+      <div *ngFor="let obj of history" class="historyObject">
+        <p>
+          {{obj.name}}
+        </p>
+      </div>
     </div>
     
   </div>

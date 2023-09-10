@@ -290,7 +290,7 @@ div[contenteditable="true"]:focus {
 }
 
 .alignDiv {
-    height: 80px;
+    height: 122px;
 }
 
 .assetWrapper {
@@ -688,6 +688,7 @@ Preserve the relative scale, though. */
     padding-top: 6px;
     justify-content: space-around;
     background: #ddd;
+    width: 260px;
 }
 
 .selectedButton,
@@ -733,4 +734,16 @@ Preserve the relative scale, though. */
 .unselectedButton:hover {
     background-color: #ccc;
     color: #000
+}
+
+.historyObject {
+    display: flex;
+    flex-direction: row;
+    width: $sidebar-content-width;
+    height: 75px;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+    margin:auto;
+    margin-bottom: 30px;
+text-align: center;
 }
