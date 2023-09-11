@@ -14,7 +14,7 @@ export class OCRDialogService {
       this.passedOverAsset = passedOverAsset;
       if(!this.CheckDialogOpen()) {
         this.dialog.open(OcrPopupComponent, {
-          height: '500px',
+          height: '580px',
           width: '75%',
           position: {
             top: '12%',
