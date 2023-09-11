@@ -58,10 +58,10 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.saveDocumentContents();
   }
 
-  showOCRPopup(): void{
-    // TODO pass over relevant asset.
-    const dummyAsset = "dummy";
-    this.OCRDialog.openDialog(dummyAsset);
+  showOCRPopup(textractResponse: any): void{
+    // TODO find the relevant button on the asset that retrieves the textract response,
+    // and pass that response to the OCRDialogService.
+    this.OCRDialog.openDialog(textractResponse);
   }
 
   showImageUploadPopup(): void {

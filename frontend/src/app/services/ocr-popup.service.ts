@@ -10,21 +10,22 @@ export class OCRDialogService {
     CheckDialogOpen(): boolean {
         return this.dialog.openDialogs.length > 0;
     }
-    openDialog(passedOverAsset: any): void {
-      this.passedOverAsset = passedOverAsset;
-      if(!this.CheckDialogOpen()) {
-        this.dialog.open(OcrPopupComponent, {
-          height: '580px',
-          width: '75%',
-          position: {
-            top: '12%',
-            left: '17%',
-          },
-        });
-      } else {
-        this.closeDialog();
-      }
+    openDialog(data?: any): void {
+        if (!this.CheckDialogOpen()) {
+            this.dialog.open(OcrPopupComponent, {
+                height: '580px',
+                width: '75%',
+                position: {
+                    top: '12%',
+                    left: '17%',
+                },
+                data: data, // Pass the data to the dialog component
+            });
+        } else {
+            this.closeDialog();
+        }
     }
+
     retrievePassedOverAsset(): any {
       return this.passedOverAsset;
     }

@@ -34,15 +34,7 @@
             <br>
             <br>
             <div class="card">
-              <p-table [tableStyle]="{ 'min-width': '50rem' }" [value]="products" dataKey="id">
-                <ng-template pTemplate="header">
-                  <tr>
-                    <th style="width:25%">Code</th>
-                    <th style="width:25%">Name</th>
-                    <th style="width:25%">Inventory Status</th>
-                    <th style="width:25%">Price</th>
-                  </tr>
-                </ng-template>
+              <p-table class = "tableCreated" [tableStyle]="{ 'min-width': '35rem' }" [value]="products" dataKey="id">
                 <ng-template let-editing="editing" let-product pTemplate="body">
                   <tr>
                     <td [pEditableColumn]="product.code" pEditableColumnField="code">
