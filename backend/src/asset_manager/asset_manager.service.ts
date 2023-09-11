@@ -130,17 +130,6 @@ export class AssetManagerService {
     }
   }
 
-  update_asset(updateAssetDTO: AssetDTO) {
-    if (
-      updateAssetDTO.Format === 'text' ||
-      updateAssetDTO.Format === 'table'
-    ) {
-      return this.textManagerService.update(
-        updateAssetDTO,
-      );
-    }
-  }
-
   rename_asset(renameAssetDTO: AssetDTO) {
     return this.assetsService.renameAsset(
       renameAssetDTO,
