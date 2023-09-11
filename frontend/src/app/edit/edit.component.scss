@@ -747,6 +747,12 @@ Preserve the relative scale, though. */
     margin: auto;
     margin-bottom: 10px;
     text-align: center;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .historyObject:hover {
@@ -765,9 +771,9 @@ Preserve the relative scale, though. */
 
 .historyIcon {
     margin: 0;
-    margin:auto 0; 
-    width: 42px;
-    height: 42px;
+    margin: auto 0;
+    width: 30px;
+    height: 30px;
     padding: 4px;
 
     border-radius: 5px;
