@@ -8,6 +8,7 @@
   border-radius: 8px;
   box-shadow: 5px 5px 10px lightblue;
   height:100%;
+  padding-bottom:50px;
 }
 
 .popup-heading {
@@ -74,13 +75,6 @@
   align-items: center;
 }
 
-.styled-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #ccc;
-  padding:20px;
-  height:auto;
-}
 
 .editableForm{
   padding-top:14px;
@@ -89,44 +83,6 @@
   width:100%;
   height:auto;
 }
-// Below is the code for the angular material table
-/* Style for editable cells */
-td.mat-cell {
-  display: flex;
-  align-items: center;
-}
-
-/* Style for input fields in editable cells */
-.mat-form-field {
-  margin: 0;
-  flex: 1;
-  width:5%;
-}
-
-/* Style for buttons in editable cells */
-.btn-edit {
-  margin: 0;
-  display: flex;
-  align-items: center;
-}
-
-/* Style for non-editable cells */
-td.mat-cell > div[ngSwitchDefault] {
-  display: flex;
-  align-items: center;
-}
-//Above is the code for the angular material table.
-
-
-.styled-table thead tr {
-  background-color: #f0f0f0;
-  padding-top:7px;
-}
-
-.styled-table th, .styled-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
-}
 
 .mat-tab-header {
   padding-bottom:20px;
@@ -134,6 +90,9 @@ td.mat-cell > div[ngSwitchDefault] {
   top:10px;
 }
 
+.mat-tab-header :hover {
+  background-color: #b4e4ff !important;
+}
 .mat-tab-header .mat-tab-label {
   border-right: 1px solid #ccc;
   width:100%;
@@ -145,10 +104,12 @@ td.mat-cell > div[ngSwitchDefault] {
 }
 
 /* Active tab styles */
-.mat-tab-header .mat-tab-label.mat-tab-label-active {
-  background-color: #f0f0f0;
-  font-weight: bold;
+
+.activeTab {
+  font-weight: bold !important;
+  font-size: 1.1rem !important;
 }
+
 
 
 /* Adjust margin between tab content and labels */

@@ -10,6 +10,7 @@ import {OCRDialogService} from "../services/ocr-popup.service";
   styleUrls: ['./ocr-popup.component.scss'],
 })
 export class OcrPopupComponent {
+  activeTab: number = 0;
   JSONResponse: any = JSON;
   products: any[] = [
     {
