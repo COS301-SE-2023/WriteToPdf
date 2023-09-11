@@ -37,10 +37,6 @@ export class MarkdownFile {
   @Column()
   SafeLock: boolean;
 
-  // DO NOT UNCOMMENT UNTIL JAKE SAYS SO
-  // @Column()
-  // NextDiffID: number;
-
   @Column()
   ParentFolderID: string; // hash string
 

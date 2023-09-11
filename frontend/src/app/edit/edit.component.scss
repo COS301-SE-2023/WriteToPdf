@@ -240,6 +240,12 @@ div[contenteditable="true"]:focus {
     justify-content: space-evenly;
     margin: auto;
     width: $sidebar-content-width;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .sidebarHeaderText {
@@ -284,7 +290,7 @@ div[contenteditable="true"]:focus {
 }
 
 .alignDiv {
-    height: 80px;
+    height: 122px;
 }
 
 .assetWrapper {
@@ -679,9 +685,10 @@ Preserve the relative scale, though. */
 .sidebarTabs {
     display: flex;
     margin: auto;
-    padding-top:6px;
+    padding-top: 6px;
     justify-content: space-around;
     background: #ddd;
+    width: 260px;
 }
 
 .selectedButton,
@@ -693,12 +700,19 @@ Preserve the relative scale, though. */
     text-align: center;
     height: 30px;
     vertical-align: center;
-    align-items: center; /* Vertical centering */
+    align-items: center;
+    /* Vertical centering */
     cursor: pointer;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
-.tabText{
-    margin:auto;
+.tabText {
+    margin: auto;
     font-size: 20px;
     font-weight: bold;
 }
@@ -706,15 +720,67 @@ Preserve the relative scale, though. */
 .selectedButton {
     background-color: #fff;
 }
+
 .selectedButton:hover {
     background-color: #eee;
 }
+
 .unselectedButton {
-    background-color: #ddd;
+    background-color: #d8d8d8;
     border-bottom: #999 1px solid;
     color: #999
 }
-.unselectedButton:hover{
+
+.unselectedButton:hover {
     background-color: #ccc;
-    color:#000
+    color: #000
+}
+
+.historyObject {
+    transition: 0.2s;
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    justify-content: space-around;
+    width: $sidebar-content-width;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+    margin: auto;
+    margin-bottom: 10px;
+    text-align: center;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.historyObject:hover {
+    cursor: pointer;
+    // scale: 1.1;
+    background-color: darken($light-grey, 10%);
+}
+
+.selectedHistory {
+    background-color: #dfd;
+}
+
+.selectedHistory:hover {
+    background-color: #dfd;
+}
+
+.historyIcon {
+    margin: 0;
+    margin: auto 0;
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+
+    border-radius: 5px;
+}
+
+.historyIcon:hover {
+    cursor: pointer;
+    background-color: #ddf;
+    transition: 0.5s;
 }
