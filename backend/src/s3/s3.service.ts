@@ -34,7 +34,7 @@ export class S3Service {
     markdownFileDTO: MarkdownFileDTO,
   ) {
     console.log('Delete File (s3)');
-    let filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
 
     // try {
     //   await fs.access(`./storage/${filePath}`);
@@ -70,7 +70,7 @@ export class S3Service {
     ).toString();
     markdownFileDTO.MarkdownID = markdownID;
 
-    let filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
 
     // try {
     //   await fs.mkdir(`./storage/${filePath}`, {
@@ -128,7 +128,7 @@ export class S3Service {
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    let filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
 
     // try {
     //   await fs.access(`./storage/${filePath}`);
@@ -184,7 +184,7 @@ export class S3Service {
     markdownFileDTO: MarkdownFileDTO,
   ) {
     console.log('Retrieve File (s3)');
-    let filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
 
     // try {
     //   await fs.access(`./storage/${filePath}`);
