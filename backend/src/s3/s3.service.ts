@@ -249,15 +249,16 @@ export class S3Service {
     const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     for (let i = 0; i < this.MAX_DIFFS; i++) {
       try {
-        // await fs.unlink(`./storage/${filePath}`);
-        /*const response = */ await this.s3Client.send(
+        await this.s3Client.send(
           new DeleteObjectCommand({
             Bucket: this.awsS3BucketName,
             Key: `${filePath}/diff/${i}`,
           }),
         );
       } catch (err) {
-        console.log('Delete all diffs error: ' + err);
+        console.log(
+          'Delete all diffs error: ' + err,
+        );
         return undefined;
       }
     }
@@ -269,8 +270,7 @@ export class S3Service {
     const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     for (let i = 0; i < this.MAX_SNAPSHOTS; i++) {
       try {
-        // await fs.unlink(`./storage/${filePath}`);
-        /*const response = */ await this.s3Client.send(
+        await this.s3Client.send(
           new DeleteObjectCommand({
             Bucket: this.awsS3BucketName,
             Key: `${filePath}/snapshot/${i}`,
