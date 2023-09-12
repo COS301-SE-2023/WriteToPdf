@@ -278,7 +278,7 @@ export class S3Service {
         );
       } catch (err) {
         console.log(
-          'Delete all diffs error: ' + err,
+          'Delete all snapshots error: ' + err,
         );
         return undefined;
       }
