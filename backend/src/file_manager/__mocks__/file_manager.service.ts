@@ -233,6 +233,14 @@ export class FileManagerServiceMock {
       markdownFileDTO,
     );
 
+    await this.s3service.deleteAllDiffs(
+      markdownFileDTO,
+    );
+
+    await this.s3service.deleteAllSnapshots(
+      markdownFileDTO,
+    );
+
     return this.markdownFilesService.remove(
       markdownFileDTO,
     );
