@@ -257,8 +257,19 @@ export class FileManagerService {
       await this.s3ServiceMock.deleteFile(
         markdownFileDTO,
       );
+
+      // TODO: decide on a return value here, otherwise two calls to remove md file are made
+      // OR remove the mdservice.remove call from s3serviceMock.deleteFile
     } else {
       await this.s3service.deleteFile(
+        markdownFileDTO,
+      );
+
+      await this.s3service.deleteAllDiffs(
+        markdownFileDTO,
+      );
+
+      await this.s3service.deleteAllSnapshots(
         markdownFileDTO,
       );
     }
