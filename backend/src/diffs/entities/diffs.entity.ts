@@ -13,7 +13,7 @@
 //   MarkdownID: string;
 
 //   @Column()
-//   S3ArrayID: number;
+//   S3DiffID: number;
 
 //   @Column()
 //   Timestamp: Date;
