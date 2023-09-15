@@ -106,7 +106,9 @@ export class FileManagerServiceMock {
         ParentFolderID: file.ParentFolderID,
         Content: '',
         SafeLock: false,
+        NewDiff: '',
         NextDiffID: file.NextDiffID,
+        PreviousDiffs: [],
         NextSnapshotID: file.NextSnapshotID,
       };
       markdownFilesDTOArr.push(markdownFileDTO);
@@ -210,7 +212,7 @@ export class FileManagerServiceMock {
       markdownFileDTO,
     );
 
-    return this.markdownFilesService.updateLastModified(
+    return this.markdownFilesService.updateAfterModification(
       markdownFileDTO,
     );
   }
@@ -440,6 +442,9 @@ export class FileManagerServiceMock {
     const returnedDTO: MarkdownFileDTO = {
       ...savedFile,
       Content: encryptedContent,
+      PreviousDiffs: [],
+      NewDiff: '',
+      NextDiffID: 0,
     };
 
     return returnedDTO;

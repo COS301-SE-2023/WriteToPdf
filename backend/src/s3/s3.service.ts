@@ -7,7 +7,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-import * as fs from 'fs/promises';
+import * as fs from 'fs/promises'; // for local storage
 import * as CryptoJS from 'crypto-js';
 import { AssetDTO } from '../assets/dto/asset.dto';
 
@@ -30,19 +30,11 @@ export class S3Service {
     region: this.awsS3BucketRegion,
   });
 
-  // Requires the following fields to be initialised in the DTO:
-  // MarkdownID: string; .. TO IDENTIFY THE FILE
-  // Path: string; .. TO LOCATE THE FILE in S3
-  // UserID: string; .. TO IDENTIFY ROOT DIRECTORY
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
     console.log('Delete File (s3)');
-    let filePath = '';
-    if (markdownFileDTO.Path === '')
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
-    else
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
 
     // try {
     //   await fs.access(`./storage/${filePath}`);
@@ -52,6 +44,8 @@ export class S3Service {
     // }
 
     try {
+      // delete 10 diff objects in the S3 bucket
+
       // await fs.unlink(`./storage/${filePath}`);
       /*const response = */ await this.s3Client.send(
         new DeleteObjectCommand({
@@ -67,9 +61,6 @@ export class S3Service {
     return markdownFileDTO;
   }
 
-  // Requires the following fields to be initialised in the DTO:
-  // Path: string; .. TO LOCATE THE FILE in S3
-  // UserID: string; .. TO IDENTIFY ROOT DIRECTORY
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -79,10 +70,7 @@ export class S3Service {
     ).toString();
     markdownFileDTO.MarkdownID = markdownID;
 
-    let filePath = '';
-    if (markdownFileDTO.Path === '')
-      filePath = `${markdownFileDTO.UserID}`;
-    else filePath = `${markdownFileDTO.UserID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}`;
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
 
     // try {
     //   await fs.mkdir(`./storage/${filePath}`, {
@@ -101,37 +89,46 @@ export class S3Service {
       //   '',
       //   'utf-8',
       // );
-      /*const response = */ await this.s3Client.send(
+      await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
-          Key: `${filePath}/${markdownFileDTO.MarkdownID}`,
+          Key: filePath,
           Body: new Uint8Array(Buffer.from('')),
         }),
       );
     } catch (err) {
-      console.log('Write File Error: ' + err);
+      console.log(
+        'S3 content file creation error: ' + err,
+      );
       return undefined;
     }
 
+    for (let i = 0; i < 10; i++) {
+      try {
+        await this.s3Client.send(
+          new PutObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/diff/${i}`,
+            Body: new Uint8Array(Buffer.from('')),
+          }),
+        );
+      } catch (err) {
+        console.log(
+          `S3 diff ${i} file creation error: ` +
+            err,
+        );
+        return undefined;
+      }
+    }
     markdownFileDTO.Content = '';
     markdownFileDTO.Size = 0;
-
     return markdownFileDTO;
   }
 
-  // Requires the following fields to be initialised in the DTO:
-  // MarkdownID: string; .. TO IDENTIFY THE FILE
-  // Content: string; .. TO SAVE into FILE
-  // Path: string; .. TO LOCATE THE FILE in S3
-  // UserID: string; .. TO IDENTIFY ROOT DIRECTORY
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
-    let filePath = '';
-    if (markdownFileDTO.Path === '')
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
-    else
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
 
     // try {
     //   await fs.access(`./storage/${filePath}`);
@@ -145,6 +142,9 @@ export class S3Service {
     );
 
     try {
+      // Save the diff object in the S3 bucket
+      // at key: `${UserID}/${MarkdownID}/diff/{NextDiffID}`
+
       // await fs.writeFile(
       //   `./storage/${filePath}`,
       //   fileData,
@@ -162,22 +162,29 @@ export class S3Service {
       return undefined;
     }
 
+    try {
+      // await fs.writeFile(
+      //   `./storage/${filePath}/diff/${markdownFileDTO.NextDiffID}`,
+      //   fileData,
+      //   'utf-8',
+      // );
+      /*const response = */ await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/diff/${markdownFileDTO.NextDiffID}`,
+          Body: markdownFileDTO.NewDiff,
+        }),
+      );
+    } catch (err) {}
+
     return markdownFileDTO;
   }
 
-  // Requires the following fields to be initialised in the DTO:
-  // MarkdownID: string; .. TO IDENTIFY THE FILE
-  // Path: string; .. TO LOCATE THE FILE in S3
-  // UserID: string; .. TO IDENTIFY ROOT DIRECTORY
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
     console.log('Retrieve File (s3)');
-    let filePath = '';
-    if (markdownFileDTO.Path === '')
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
-    else
-      filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`; // Local Storage: filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.Path}/${markdownFileDTO.MarkdownID}`;
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
 
     // try {
     //   await fs.access(`./storage/${filePath}`);
@@ -265,7 +272,7 @@ export class S3Service {
       textractResponse,
     );
 
-    filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.TextID}`;
+    filePath += `/${saveAssetDTO.TextID}`;
 
     try {
       // await fs.writeFile(
@@ -310,7 +317,7 @@ export class S3Service {
       Buffer.from(saveAssetDTO.Content),
     );
 
-    filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.AssetID}`;
+    filePath += `/${saveAssetDTO.AssetID}`;
 
     try {
       // await fs.writeFile(
@@ -358,7 +365,7 @@ export class S3Service {
       saveAssetDTO.ImageBuffer,
     );
 
-    filePath = `${saveAssetDTO.UserID}/${saveAssetDTO.AssetID}`;
+    filePath += `/${saveAssetDTO.AssetID}`;
 
     try {
       // await fs.writeFile(

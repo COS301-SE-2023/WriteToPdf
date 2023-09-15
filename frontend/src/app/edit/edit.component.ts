@@ -34,10 +34,12 @@ export class EditComponent implements AfterViewInit, OnInit {
   exportDialogVisible: boolean = false;
   public speedDialItems!: MenuItem[];
   assets: any[] = [];
+  history: any[] = [];
   textFromAsset: any[] = [];
   textCopyDialog: boolean = false;
   noAssetsAvailable: boolean = false;
   isTouchScreen: boolean = false;
+  sideBarTab: boolean = false;
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
@@ -85,6 +87,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+
     this.speedDialItems = [
       {
         icon: 'pi pi-pencil',
@@ -131,6 +134,17 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (c != null && m != null && n != null && p != null && pf != null && sl != null && dp != null)
       this.editService.setAll(c, m, n, p, pf, sl === 'true', this.editService.decryptPassword(dp));
     this.fileName = this.editService.getName();
+
+    this.history.push({ name: 'Latest', date: 'now', html: this.editService.getContent(), id: 'LATEST', isCurrent: true });
+    this.history.push({name: 'Version 7', date: '01-01-1977', html: '',  id: '8'});
+    this.history.push({name: 'Version 6', date: '01-01-1976', html: '<s><p><span style="background-color:hsl(0, 75%, 60%);">Text added from V0 to V1.</span style="background-color:hsl(0, 75%, 60%);"></p> <p><span style="background-color:hsl(0, 75%, 60%);">More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(0, 75%, 60%);">Addition from V3 to V4</span></p></s>',  id: '7'});
+    this.history.push({ name: 'Version 5', date: '01-01-1975', html: '<p><span style="background-color:hsl(0, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span >Addition from V3 to V4</span></p>', id: '6' });
+    this.history.push({ name: 'Version 4', date: '01-01-1974', html: '<p><span >Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(120, 75%, 60%);">Addition from V3 to V4</span></p>', id: '5' });
+    this.history.push({ name: 'Version 3', date: '01-01-1973', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p>', id: '4' });
+    this.history.push({ name: 'Version 2', date: '01-01-1972', html: '<p><span>Text added from V0 to V1.</span></p> <p><span style="background-color:hsl(120, 75%, 60%);">More Text added from V1 to V2.</span></p>', id: '3' });
+    this.history.push({ name: 'Version 1', date: '01-01-1971', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text added from V0 to V1.</span></p>', id: '2' });
+    this.history.push({ name: 'Version 0', date: '01-01-1970', html: '', id: '1' });
+
   }
 
   ngAfterViewInit() {
@@ -463,6 +477,8 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async refreshSidebar() {
+    this.noAssetsAvailable = false;
+    this.assets = [];
     this.assets = await this.assetService.retrieveAll(
       this.editService.getParentFolderID()
     );
@@ -471,6 +487,10 @@ export class EditComponent implements AfterViewInit, OnInit {
       (a, b) =>
         new Date(b.DateCreated).getTime() - new Date(a.DateCreated).getTime()
     );
+  }
+
+  async refreshSidebarHistory() {
+    console.log('refreshing history');
   }
 
   pageBreak() {
@@ -566,5 +586,31 @@ export class EditComponent implements AfterViewInit, OnInit {
     const day = date.getDate().toString().padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+  }
+
+  enableReadOnly() {
+    this.editor.enableReadOnlyMode('');
+  }
+
+  disableReadOnly() {
+    this.editor.disableReadOnlyMode('');
+  }
+
+  insertContent(obj: any) {
+    this.deselectAllHistory();
+    obj.isCurrent = true;
+    if(obj.id === 'LATEST') {
+      this.disableReadOnly();
+      this.editor.setData(obj.html);
+      return;
+    }
+    this.enableReadOnly();
+    this.editor.setData(obj.html);
+  }
+
+  deselectAllHistory() {
+    for(let i = 0; i < this.history.length; i++) {
+      this.history[i].isCurrent = false;
+    }
   }
 }

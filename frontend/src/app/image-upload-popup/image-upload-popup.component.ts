@@ -21,7 +21,7 @@ export class ImageUploadPopupComponent {
   extractText: boolean = false; // Boolean variable to track text extraction option
   extractTable: boolean = false; // Boolean variable to track table extraction option
 
-  @Input() acceptedTypes = '.jpeg, .jpg';
+  @Input() acceptedTypes = '.jpeg, .jpg, .png';
 
   constructor(
     private dialogRef: DynamicDialogRef,

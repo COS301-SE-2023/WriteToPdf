@@ -127,7 +127,7 @@ describe('FileManagerService', () => {
               updateName: jest.fn(),
               updatePath: jest.fn(),
               remove: jest.fn(),
-              updateLastModified: jest.fn(),
+              updateAfterModification: jest.fn(),
             },
           },
           {
@@ -1271,7 +1271,7 @@ describe('FileManagerService', () => {
       jest
         .spyOn(
           markdownFilesService,
-          'updateLastModified',
+          'updateAfterModification',
         )
         .mockResolvedValue(new MarkdownFile());
 
@@ -1299,7 +1299,7 @@ describe('FileManagerService', () => {
       jest
         .spyOn(
           markdownFilesService,
-          'updateLastModified',
+          'updateAfterModification',
         )
         .mockResolvedValue(new MarkdownFile());
 
@@ -1313,7 +1313,7 @@ describe('FileManagerService', () => {
       ).toHaveBeenCalledWith(markdownFileDTO);
     });
 
-    it('should call updateLastModified method', async () => {
+    it('should call updateAfterModification method', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();
       markdownFileDTO.MarkdownID = '1';
@@ -1329,7 +1329,7 @@ describe('FileManagerService', () => {
       jest
         .spyOn(
           markdownFilesService,
-          'updateLastModified',
+          'updateAfterModification',
         )
         .mockResolvedValue(new MarkdownFile());
 
@@ -1340,7 +1340,7 @@ describe('FileManagerService', () => {
         MarkdownFile,
       );
       expect(
-        markdownFilesService.updateLastModified,
+        markdownFilesService.updateAfterModification,
       ).toHaveBeenCalledWith(markdownFileDTO);
     });
   });
