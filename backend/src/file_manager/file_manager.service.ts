@@ -265,11 +265,11 @@ export class FileManagerService {
         markdownFileDTO,
       );
 
-      await this.s3service.deleteAllDiffs(
+      await this.s3service.deleteAllDiffsForFile(
         markdownFileDTO,
       );
 
-      await this.s3service.deleteAllSnapshots(
+      await this.s3service.deleteAllSnapshotsForFile(
         markdownFileDTO,
       );
     }
