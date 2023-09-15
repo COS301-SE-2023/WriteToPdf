@@ -33,7 +33,7 @@ export class OcrPopupComponent {
     copyFormDataAndRenderToHtml(): void {
         let retrievedAsset = this.dialog.passedOverAsset;
         this.clipboard.copy(this.paragraphText);
-        console.log(retrievedAsset.ocrJSONResponse);
+        // console.log(retrievedAsset.ocrJSONResponse);
     }
 
     injectHtmlIntoTable(tableData: any) {

@@ -321,7 +321,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       }
       this.textCopyDialog = true;
       this.assets[currAssetIndex].NotRetrieving = false;
-      this.OCRDialog.openDialog(asset);
+      this.showOCRPopup(asset);
     }
     else if (format === 'image') {
 

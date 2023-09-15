@@ -60,6 +60,9 @@ export class FileManagerService {
     if (markdownFileDTO.Size === undefined)
       markdownFileDTO.Size = 0;
 
+    if (markdownFileDTO.NextDiffID === undefined)
+      markdownFileDTO.NextDiffID = 0;
+
     if (isTest) {
       await this.s3ServiceMock.createFile(
         markdownFileDTO,
@@ -70,12 +73,13 @@ export class FileManagerService {
       );
     }
 
-    return this.markdownFilesService.create(
+    return await this.markdownFilesService.create(
       markdownFileDTO,
     ); // return the file to know ID;
   }
 
-  // DB Requires the following fields to be initialised in the DTO:
+  // This function will need to return the latest diffs for
+  // the specified file (at most, 10 diffs)
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
     isTest = false,
@@ -119,8 +123,9 @@ export class FileManagerService {
         ParentFolderID: file.ParentFolderID,
         Content: '',
         SafeLock: file.SafeLock,
-        NextDiffID: file.NextDiffID,
-        NextSnapshotID: file.NextSnapshotID,
+        PreviousDiffs: [],
+        NextDiffID: 0,
+        NewDiff: '',
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
@@ -145,11 +150,6 @@ export class FileManagerService {
     return directoryFilesDTO;
   }
 
-  // DB Requires the following fields to be initialised in the DTO:
-  // MarkdownID: string; .. TO IDENTIFY THE FILE
-  // Path: string; .. TO LOCATE THE FILE in S3
-  // Name: string; .. NEW NAME
-  // Size: number; .. NEW SIZE
   renameFile(markdownFileDTO: MarkdownFileDTO) {
     if (markdownFileDTO.MarkdownID === undefined)
       throw new HttpException(
@@ -174,7 +174,6 @@ export class FileManagerService {
     );
   }
 
-  // DB Requires the following fields to be initialised in the DTO:
   async moveFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -209,12 +208,10 @@ export class FileManagerService {
     );
   }
 
-  // DB Requires the following fields to be initialised in the DTO:
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
     isTest = false,
   ) {
-    // console.log('saveFile: ', markdownFileDTO);
     markdownFileDTO.Size =
       markdownFileDTO.Content.length;
     if (markdownFileDTO.MarkdownID === undefined)
@@ -233,14 +230,13 @@ export class FileManagerService {
       );
     }
 
-    return this.markdownFilesService.updateLastModified(
+    // Assuming frontend will send the NextDiffID
+
+    return await this.markdownFilesService.updateAfterModification(
       markdownFileDTO,
     );
   }
-  // DB Requires the following fields to be initialised in the DTO:
-  // MarkdownID: string; .. TO IDENTIFY THE FILE
-  // Path: string; .. TO LOCATE THE FILE IN S3
-  // Name: string; .. TO IDENTIFY THE FILE
+
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
     isTest = false,
@@ -473,9 +469,13 @@ export class FileManagerService {
       isTest,
     );
 
+    // Imported file is considered new, so it has no diffs
     const returnedDTO: MarkdownFileDTO = {
       ...savedFile,
       Content: encryptedContent,
+      NextDiffID: 0,
+      PreviousDiffs: [],
+      NewDiff: '',
     };
 
     return returnedDTO;
