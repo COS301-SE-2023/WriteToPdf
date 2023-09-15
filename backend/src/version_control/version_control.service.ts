@@ -28,7 +28,7 @@ export class VersionControlService {
     return (idx - head + arr_len) % arr_len;
   }
 
-  reorderArray(
+  getLogicalOrder(
     arr: number[],
     head: number,
   ): number[] {
