@@ -108,11 +108,11 @@ export class AssetService {
         this.sendRetrieveTextOrTableData(assetId, format, textId).subscribe({
           next: (response: HttpResponse<any>) => {
             console.log(response);
-            // if (response.status === 200) {
-            //   resolve(JSON.parse(response.body.Content));
-            // } else {
-            //   resolve(null);
-            // }
+            if (response.status === 200) {
+              resolve(JSON.parse(response.body.Content));
+            } else {
+              resolve(null);
+            }
           },
         });
     });
