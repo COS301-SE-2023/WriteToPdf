@@ -22,7 +22,7 @@ export class S3Service {
   awsS3SecretAccessKey =
     process.env.AWS_S3_SECRET_ACCESS_KEY;
 
-  MAX_DIFFS = 10;
+  MAX_DIFFS = 50;
   MAX_SNAPSHOTS = 5;
 
   private readonly s3Client = new S3Client({
@@ -105,42 +105,9 @@ export class S3Service {
       return undefined;
     }
 
-    // Create diff objects
-    for (let i = 0; i < this.MAX_DIFFS; i++) {
-      try {
-        await this.s3Client.send(
-          new PutObjectCommand({
-            Bucket: this.awsS3BucketName,
-            Key: `${filePath}/diff/${i}`,
-            Body: new Uint8Array(Buffer.from('')),
-          }),
-        );
-      } catch (err) {
-        console.log(
-          `S3 diff ${i} object creation error: ` +
-            err,
-        );
-        return undefined;
-      }
-    }
+    this.createDiffsForFile(markdownFileDTO);
+    this.createSnapshotsForFile(markdownFileDTO);
 
-    // Create snapshot objects
-    for (let j = 0; j < this.MAX_SNAPSHOTS; j++) {
-      try {
-        await this.s3Client.send(
-          new PutObjectCommand({
-            Bucket: this.awsS3BucketName,
-            Key: `${filePath}/snapshot/${j}`,
-            Body: new Uint8Array(Buffer.from('')),
-          }),
-        );
-      } catch (err) {
-        console.log(
-          `S3 snapshot ${j} object creation error`,
-        );
-        return undefined;
-      }
-    }
     markdownFileDTO.Content = '';
     markdownFileDTO.Size = 0;
     return markdownFileDTO;
@@ -243,7 +210,30 @@ export class S3Service {
     return markdownFileDTO;
   }
 
-  async deleteAllDiffs(
+  async createDiffsForFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+    for (let i = 0; i < this.MAX_DIFFS; i++) {
+      try {
+        await this.s3Client.send(
+          new PutObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/diff/${i}`,
+            Body: new Uint8Array(Buffer.from('')),
+          }),
+        );
+      } catch (err) {
+        console.log(
+          `S3 diff ${i} object creation error: ` +
+            err,
+        );
+        return undefined;
+      }
+    }
+  }
+
+  async deleteAllDiffsForFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
     const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
@@ -264,7 +254,31 @@ export class S3Service {
     }
   }
 
-  async deleteAllSnapshots(
+  async createSnapshotsForFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+
+    // Create snapshot objects
+    for (let j = 0; j < this.MAX_SNAPSHOTS; j++) {
+      try {
+        await this.s3Client.send(
+          new PutObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/snapshot/${j}`,
+            Body: new Uint8Array(Buffer.from('')),
+          }),
+        );
+      } catch (err) {
+        console.log(
+          `S3 snapshot ${j} object creation error`,
+        );
+        return undefined;
+      }
+    }
+  }
+
+  async deleteAllSnapshotsForFile(
     markdownFileDTO: MarkdownFileDTO,
   ) {
     const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
