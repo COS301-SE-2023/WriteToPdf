@@ -42,6 +42,14 @@ export class VersionControlService {
     this.diffArr[0] = new DiffDTO();
   }
 
+  getDiffArr(): DiffDTO[] {
+    return this.diffArr;
+  }
+
+  getSnapshotArr(): SnapshotDTO[] {
+    return this.snapshotArr;
+  }
+
   createDiff(fileDTO: FileDTO): DiffDTO {
     const latestSnapshot = this.getLatestSnapshot();
     let snapshotContent = latestSnapshot.content;
