@@ -176,10 +176,7 @@ export class VersionControlService {
       return ele.diffNumber < diff.diffNumber;
     });
 
-    tempArr.sort(
-      (a, b) =>
-        a.diffNumber > b.diffNumber ? 1 : a.diffNumber < b.diffNumber ? -1 : 0 // Ascending sort on diffNumber
-    );
+    this.sortDiffArr(tempArr);
 
     for (let element of tempArr) {
       let patches = this.DiffPatchService.patch_fromText(element.content);
@@ -193,5 +190,23 @@ export class VersionControlService {
     const dpsDiff = this.DiffPatchService.diff_main(text1, text2);
     const patches = this.DiffPatchService.patch_make(dpsDiff);
     return this.DiffPatchService.patch_toText(patches);
+  }
+
+  sortSnapshotArr(inArr: SnapshotDTO[]): void {
+    // Ascending sort on snapshotNumber
+    inArr.sort((a, b) =>
+      a.snapshotNumber > b.snapshotNumber
+        ? 1
+        : a.snapshotNumber < b.snapshotNumber
+        ? -1
+        : 0
+    );
+  }
+
+  sortDiffArr(inArr: DiffDTO[]): void {
+    // Ascending sort on diffNumber
+    inArr.sort((a, b) =>
+      a.diffNumber > b.diffNumber ? 1 : a.diffNumber < b.diffNumber ? -1 : 0
+    );
   }
 }
