@@ -13,7 +13,7 @@ export class Diff {
   MarkdownID: string;
 
   @Column()
-  UserID: string;
+  UserID: number;
 
   @Column()
   DisplayID: string;
