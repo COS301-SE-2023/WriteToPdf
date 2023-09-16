@@ -86,11 +86,6 @@ export class VersionControlService {
     return this.diffArr;
   }
 
-  setDiffArr(inArr: DiffDTO[]): DiffDTO[] {
-    this.diffArr = inArr;
-    return this.diffArr;
-  }
-
   pushToDiffArr(element: DiffDTO): DiffDTO[] {
     this.diffArr.push(element);
     return this.diffArr;
@@ -100,14 +95,27 @@ export class VersionControlService {
     return this.snapshotArr;
   }
 
-  setSnapshotArr(inArr: SnapshotDTO[]): SnapshotDTO[] {
-    this.snapshotArr = inArr;
-    return this.snapshotArr;
-  }
-
   pushToSnapshotArr(element: SnapshotDTO): SnapshotDTO[] {
     this.snapshotArr.push(element);
     return this.snapshotArr;
+  }
+
+  sortSnapshotArr(inArr: SnapshotDTO[]): void {
+    // Ascending sort on snapshotNumber
+    inArr.sort((a, b) =>
+      a.snapshotNumber > b.snapshotNumber
+        ? 1
+        : a.snapshotNumber < b.snapshotNumber
+        ? -1
+        : 0
+    );
+  }
+
+  sortDiffArr(inArr: DiffDTO[]): void {
+    // Ascending sort on diffNumber
+    inArr.sort((a, b) =>
+      a.diffNumber > b.diffNumber ? 1 : a.diffNumber < b.diffNumber ? -1 : 0
+    );
   }
 
   visualise(): void {
@@ -192,21 +200,29 @@ export class VersionControlService {
     return this.DiffPatchService.patch_toText(patches);
   }
 
-  sortSnapshotArr(inArr: SnapshotDTO[]): void {
-    // Ascending sort on snapshotNumber
-    inArr.sort((a, b) =>
-      a.snapshotNumber > b.snapshotNumber
-        ? 1
-        : a.snapshotNumber < b.snapshotNumber
-        ? -1
-        : 0
-    );
+  snapshotRestore(snapshot: SnapshotDTO): void {
+    this.snapshotArr = this.snapshotArr.filter((ele) => {
+      return ele.snapshotNumber <= snapshot.snapshotNumber;
+    });
+
+    this.diffArr = this.diffArr.filter((ele) => {
+      return ele.snapshotNumber <= snapshot.snapshotNumber;
+    });
+
+    this.sortSnapshotArr(this.snapshotArr);
+    this.sortDiffArr(this.diffArr);
   }
 
-  sortDiffArr(inArr: DiffDTO[]): void {
-    // Ascending sort on diffNumber
-    inArr.sort((a, b) =>
-      a.diffNumber > b.diffNumber ? 1 : a.diffNumber < b.diffNumber ? -1 : 0
-    );
+  diffRestore(diff: DiffDTO): void {
+    this.snapshotArr = this.snapshotArr.filter((ele) => {
+      return ele.snapshotNumber <= diff.snapshotNumber;
+    });
+
+    this.diffArr = this.diffArr.filter((ele) => {
+      return ele.snapshotNumber <= diff.snapshotNumber;
+    });
+
+    this.sortSnapshotArr(this.snapshotArr);
+    this.sortDiffArr(this.diffArr);
   }
 }
