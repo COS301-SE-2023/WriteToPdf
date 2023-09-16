@@ -14,6 +14,7 @@ import { environment } from '../../environments/environment';
 import * as CryptoJS from 'crypto-js';
 
 import { ConversionService } from './conversion.service';
+import { env } from 'process';
 
 @Injectable({
   providedIn: 'root',
@@ -585,14 +586,14 @@ export class FileService {
     safeLock: boolean,
     path: string
   ): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      this.sendUpdateLockData(
+    return new Promise<boolean>(async (resolve, reject) => {
+      (await this.sendUpdateLockData(
         markdownID,
         content,
         userDocumentPassword,
         safeLock,
         path
-      ).subscribe({
+      )).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
             if (safeLock) {
@@ -615,13 +616,13 @@ export class FileService {
     });
   }
 
-  sendUpdateLockData(
+  async sendUpdateLockData(
     markdownID: string,
     content: string,
     userDocumentPassword: string,
     safeLock: boolean,
     path: string
-  ): Observable<HttpResponse<any>> {
+  ): Promise<Observable<HttpResponse<any>>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}file_manager/update_safelock_status`;
     const body = new MarkdownFileDTO();
@@ -639,7 +640,7 @@ export class FileService {
         });
       });
     } else {
-      const decrypted = this.decryptSafeLockDocument(
+      const decrypted = await this.decryptSafeLockDocument(
         content,
         userDocumentPassword
       );
@@ -678,13 +679,27 @@ export class FileService {
     }
   }
 
+  generateSignature(userDocumentPassword: string) {
+    const iterations = 100000;
+  
+    const key = CryptoJS.PBKDF2(
+      userDocumentPassword + environment.frontendSignature, 
+      '', 
+      { keySize: 256 / 32, iterations }
+    );
+      return CryptoJS.SHA256(key).toString();
+  }
+
   encryptSafeLockDocument(
     content: string | undefined,
     userDocumentPassword: string
   ) {
-    const signature = 'WRITETOPDF-SAFELOCK-SIGNATURE';
-    const key = userDocumentPassword;
-    if (key && (content || content == '')) {
+    const signature = this.generateSignature(userDocumentPassword);
+    if (userDocumentPassword && (content || content == '')) {
+      const key = CryptoJS.PBKDF2(userDocumentPassword, '', {
+        keySize: 256 / 32, // 256 bits for the key
+        iterations: 10000 // iterations for the key
+      }).toString();
       content = content + signature;
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
       return encryptedMessage;
@@ -709,39 +724,29 @@ export class FileService {
   decryptSafeLockDocument(
     content: string | undefined,
     userDocumentPassword: string
-  ) {
-    // console.log('decrypting safelock document');
-    const signature = 'WRITETOPDF-SAFELOCK-SIGNATURE';
-    const key = userDocumentPassword;
-    if (key && (content || content == '')) {
+  ): string | null {
+    if (userDocumentPassword && (content || content == '')) {
       try{
-        const decryptedMessage = CryptoJS.AES.decrypt(content, key)
-          .toString(CryptoJS.enc.Utf8)
-          .replace(/^"(.*)"$/, '$1');
-
-        // console.log('Decrypted safelock document: ' + decryptedMessage);
-        if (decryptedMessage.endsWith(signature)) {
-          // console.log('Decrypted safelock document end with signature');
+        const key = CryptoJS.PBKDF2(userDocumentPassword, '', {
+          keySize: 256 / 32, // 256 bits for the key
+          iterations: 10000 // iterations for the key
+        }).toString();
+        const decryptedMessageBeforeReplace = CryptoJS.AES.decrypt(content, key)
+          .toString(CryptoJS.enc.Utf8);
+          const decryptedMessage = decryptedMessageBeforeReplace.replace(/^"(.*)"$/, '$1');
+          const signature = this.generateSignature(userDocumentPassword);
+          if (decryptedMessage.endsWith(signature)) {
           const signRemoved = decryptedMessage.substring(
             0,
             decryptedMessage.length - signature.length
           );
-
-          // console.log('Decrypted safelock document: ' + signRemoved);
           return signRemoved;
-          // return decryptedMessage.substring(
-          //   0,
-          //   decryptedMessage.length - signature.length
-          // );
         } else {
-          // console.log('Decrypted safelock document does not end with signature');
           return null;
         }
       } catch (error) {
         return null;
       }
-
-
     } else {
       return null;
     }

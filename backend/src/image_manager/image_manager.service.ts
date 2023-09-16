@@ -45,15 +45,23 @@ export class ImageManagerService {
     uploadImageDTO.Image = '';
     this.assetsService.saveAsset(uploadImageDTO);
 
+    let s3Result;
     if (isTest) {
       // Save asset in the S3/local storage
       return this.s3ServiceMock.saveAsset(
         uploadImageDTO,
       );
     } else {
-      return this.s3Service.saveImageAsset(
+      s3Result = this.s3Service.saveImageAsset(
         uploadImageDTO,
       );
+      if (!s3Result) {
+        throw new HttpException(
+          'Failed to save image in S3',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      return s3Result;
     }
   }
 
@@ -102,15 +110,23 @@ export class ImageManagerService {
       removeImageDTO.AssetID,
     );
 
+    let s3Result;
     if (isTest) {
       // Delete asset in the S3/local storage
       return this.s3ServiceMock.deleteAsset(
         removeImageDTO,
       );
     } else {
-      return this.s3Service.deleteAsset(
+      s3Result = this.s3Service.deleteAsset(
         removeImageDTO,
       );
+      if (!s3Result) {
+        throw new HttpException(
+          'Failed to delete image in S3',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      return s3Result;
     }
   }
 
