@@ -1,20 +1,30 @@
-// import {
-//   Entity,
-//   Column,
-//   PrimaryColumn,
-// } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+} from 'typeorm';
 
-// @Entity('SNAPSHOTS')
-// export class SNAPSHOT {
-//   @PrimaryColumn()
-//   SnapshotID: string;
+@Entity('SNAPSHOTS')
+export class SNAPSHOT {
+  @PrimaryColumn()
+  SnapshotID: string;
 
-//   @Column()
-//   MarkdownID: string;
+  @Column()
+  MarkdownID: string;
 
-//   @Column()
-//   S3SnapshotID: number;
+  @Column()
+  UserID: string;
 
-//   @Column()
-//   Timestamp: Date;
-// }
+  @Column()
+  DisplayID: string;
+
+  @Column()
+  S3SnapshotID: number;
+
+  @Column('timestamp', {
+    precision: 3,
+    default: () => 'CURRENT_TIMESTAMP(3)',
+    onUpdate: 'CURRENT_TIMESTAMP(3)',
+  })
+  LastModified: Date;
+}
