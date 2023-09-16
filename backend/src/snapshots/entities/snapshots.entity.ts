@@ -5,7 +5,7 @@ import {
 } from 'typeorm';
 
 @Entity('SNAPSHOTS')
-export class SNAPSHOT {
+export class Snapshot {
   @PrimaryColumn()
   SnapshotID: string;
 
