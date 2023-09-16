@@ -120,4 +120,24 @@ export class MarkdownFilesService {
       markdownToUpdate,
     );
   }
+
+  async getNextDiffID(markdownID: string) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    return markdownFile.NextDiffID;
+  }
+
+  async getNextSnapshotID(markdownID: string) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    return markdownFile.NextSnapshotID;
+  }
 }
