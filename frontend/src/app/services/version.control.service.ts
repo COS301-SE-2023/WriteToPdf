@@ -8,6 +8,7 @@ import { SnapshotDTO } from './dto/snapshot.dto';
 import { FileDTO } from './dto/file.dto';
 
 import { FileService } from './file.service';
+import { VersionDTO } from './dto/version.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -106,6 +107,17 @@ export class VersionControlService {
   pushToSnapshotArr(element: SnapshotDTO): SnapshotDTO[] {
     this.snapshotArr.push(element);
     return this.snapshotArr;
+  }
+
+  buildSnapshotVersion(snapshot: SnapshotDTO): VersionDTO {
+    const tempDTO = new VersionDTO();
+
+    tempDTO.content = snapshot.content;
+    tempDTO.diff = false;
+    tempDTO.fileID = snapshot.fileID;
+    tempDTO.prevContent = '';
+
+    return tempDTO;
   }
 
   createDiff(fileDTO: FileDTO): DiffDTO {
