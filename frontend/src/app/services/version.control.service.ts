@@ -79,17 +79,7 @@ export class VersionControlService {
 
     await new Promise((f) => setTimeout(f, 10));
 
-    for (let element of this.snapshotArr) {
-      this.versionArr.push(this.buildSnapshotVersion(element));
-    }
-
-    for (let element of this.diffArr) {
-      this.versionArr.push(this.buildDiffVersion(element, this.snapshotArr[0]));
-    }
-
-    for (let element of this.versionArr) {
-      console.log(element);
-    }
+    this.visualise();
   }
 
   getDiffArr(): DiffDTO[] {
@@ -120,6 +110,37 @@ export class VersionControlService {
     return this.snapshotArr;
   }
 
+  visualise(): void {
+    // Build snapshot version
+    for (let element of this.snapshotArr) {
+      this.versionArr.push(this.buildSnapshotVersion(element));
+    }
+
+    // Build diff version
+    for (let element of this.diffArr) {
+      this.versionArr.push(this.buildDiffVersion(element, this.snapshotArr[0]));
+    }
+
+    // Visualise snapshot
+    const snapshotVersions = this.versionArr.filter((ele) => {
+      return !ele.isDiff;
+    });
+    console.log(snapshotVersions);
+
+    //Visualise diff
+    const diffVersions = this.versionArr.filter((ele) => {
+      return ele.isDiff;
+    });
+
+    for (let element of diffVersions) {
+      let dpsDiff = this.DiffPatchService.diff_main(
+        element.prevContent,
+        element.content
+      );
+      console.log(this.DiffPatchService.diff_prettyHtml(dpsDiff));
+    }
+  }
+
   buildSnapshotVersion(snapshot: SnapshotDTO): VersionDTO {
     const tempDTO = new VersionDTO();
 
@@ -134,10 +155,15 @@ export class VersionControlService {
   buildDiffVersion(diff: DiffDTO, snapshot: SnapshotDTO): VersionDTO {
     const tempDTO = new VersionDTO();
 
-    tempDTO.content = diff.content;
     tempDTO.isDiff = true;
     tempDTO.fileID = diff.fileID;
     tempDTO.prevContent = this.buildDiffContext(diff, snapshot);
+
+    const patches = this.DiffPatchService.patch_fromText(diff.content);
+    tempDTO.content = this.DiffPatchService.patch_apply(
+      patches,
+      tempDTO.prevContent
+    )[0];
 
     return tempDTO;
   }
