@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
 // import DiffMatchPatch from 'diff-match-patch';
-import { Diff, diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
+import { diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
 import { HttpClient } from '@angular/common/http';
 import { DiffDTO } from './dto/diff.dto';
 import { SnapshotDTO } from './dto/snapshot.dto';
-import { FileDTO } from './dto/file.dto';
+import { MarkdownFileDTO } from './dto/markdown_file.dto';
 
 import { FileService } from './file.service';
 import { VersionDTO } from './dto/version.dto';
@@ -187,5 +187,11 @@ export class VersionControlService {
     }
 
     return retString;
+  }
+
+  getReadablePatch(text1: string, text2: string): string {
+    const dpsDiff = this.DiffPatchService.diff_main(text1, text2);
+    const patches = this.DiffPatchService.patch_make(dpsDiff);
+    return this.DiffPatchService.patch_toText(patches);
   }
 }
