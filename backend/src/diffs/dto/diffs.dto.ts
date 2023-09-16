@@ -1,7 +1,7 @@
 export class DiffDTO {
   DiffID: string;
   MarkdownID: string;
-  UserID: string;
+  UserID: number;
   DisplayID: number;
   S3DiffID: number;
   LastModified: Date;
