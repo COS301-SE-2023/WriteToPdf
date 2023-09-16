@@ -1,19 +1,43 @@
 import { Injectable } from '@nestjs/common';
+import { DiffsService } from 'src/diffs/diffs.service';
 import { DiffDTO } from 'src/diffs/dto/diffs.dto';
+import { S3ServiceMock } from 'src/s3/__mocks__/s3.service';
+import { S3Service } from 'src/s3/s3.service';
 
 @Injectable()
 export class VersionControlService {
-  saveDiff(diffDTO: DiffDTO) {}
+  constructor(
+    private diffService: DiffsService,
+    private s3service: S3Service,
+    private s3ServiceMock: S3ServiceMock,
+  ) {}
+
+  ///===-----------------------------------------------------
+
+  saveDiff(diffDTO: DiffDTO) {
+    // get nextDiffID
+    // calls s3Service.saveDiff()
+    // check if snapshot needs to be created
+    // update diff metadata in table
+  }
+
+  ///===-----------------------------------------------------
 
   getDiff(diffDTO: DiffDTO) {}
 
+  ///===-----------------------------------------------------
+
   getAllDiffs() {}
 
-  //==-----------------------------------------------------
+  ///===-----------------------------------------------------
 
   saveSnapshot() {}
 
+  ///===-----------------------------------------------------
+
   getSnapshot() {}
+
+  ///===-----------------------------------------------------
 
   /**
    * @dev frontend calls retrieveOne for file opened by user
@@ -23,7 +47,6 @@ export class VersionControlService {
    * @returns all snapshots for this file, in logical order
    */
   getAllSnapshots() {
-
     // calls s3Service.getAllSnapshots()
     // reorders snapshots in logical order
     // return logically ordered snapshots
@@ -33,12 +56,26 @@ export class VersionControlService {
   // Helpers
 
   getLogicalIndex(
-    idx: number,
+    s3Index: number,
     head: number,
     arr_len: number,
   ): number {
-    return (idx - head + arr_len) % arr_len;
+    return (s3Index - head + arr_len) % arr_len;
   }
+
+  ///===-----------------------------------------------------
+
+  getIndexInS3(
+    logicalIndex: number,
+    arr_len: number,
+    head: number,
+  ) {
+    return (
+      (logicalIndex + head - arr_len) % arr_len
+    );
+  }
+
+  ///===-----------------------------------------------------
 
   getLogicalOrder(
     arr: number[],
