@@ -50,6 +50,16 @@ export class VersionControlService {
     return this.snapshotArr;
   }
 
+  setDiffArr(inArr: DiffDTO[]): DiffDTO[] {
+    this.diffArr = inArr;
+    return this.diffArr;
+  }
+
+  setSnapshotArr(inArr: SnapshotDTO[]): SnapshotDTO[] {
+    this.snapshotArr = inArr;
+    return this.snapshotArr;
+  }
+
   createDiff(fileDTO: FileDTO): DiffDTO {
     const latestSnapshot = this.getLatestSnapshot();
     let snapshotContent = latestSnapshot.content;
