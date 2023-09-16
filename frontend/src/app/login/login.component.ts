@@ -95,25 +95,25 @@ export class LoginComponent {
   }
 
   async login(): Promise<void> {
-    // if (!this.email || this.email === '') {
-    //   this.messageService.add({
-    //     severity: 'error',
-    //     summary: 'Error',
-    //     detail: `Email field empty`,
-    //   });
-    // } else if (!this.password || this.password === '') {
-    //   this.messageService.add({
-    //     severity: 'error',
-    //     summary: 'Error',
-    //     detail: `Password field empty`,
-    //   });
-    // } else {
-    //   if (await this.userService.login(this.email, this.password)) {
-    //     this.navigateToPage('home');
-    //   }
-    // }
+    if (!this.email || this.email === '') {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `Email field empty`,
+      });
+    } else if (!this.password || this.password === '') {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `Password field empty`,
+      });
+    } else {
+      if (await this.userService.login(this.email, this.password)) {
+        this.navigateToPage('home');
+      }
+    }
 
-    await this.versionControlService.init();
+    // await this.versionControlService.init();
   }
 
   async autoLogin(): Promise<void> {
