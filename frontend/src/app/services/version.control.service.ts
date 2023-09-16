@@ -38,6 +38,7 @@ export class VersionControlService {
   // }
 
   init(): void {
+    // TODO: Un-hijack login
     this.snapshotArr[0] = new SnapshotDTO();
     this.diffArr[0] = new DiffDTO();
   }

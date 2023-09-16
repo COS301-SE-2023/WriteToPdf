@@ -6,6 +6,7 @@ import { MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 
 import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
+import { VersionControlService } from '../services/version.control.service';
 
 // import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -33,7 +34,8 @@ export class LoginComponent {
     private elementRef: ElementRef,
     private userService: UserService,
     @Inject(ActivatedRoute) private route: ActivatedRoute,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private versionControlService: VersionControlService
   ) {}
   ngOnInit(): void {
     const data = history.state;
@@ -93,23 +95,25 @@ export class LoginComponent {
   }
 
   async login(): Promise<void> {
-    if (!this.email || this.email === '') {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: `Email field empty`,
-      });
-    } else if (!this.password || this.password === '') {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: `Password field empty`,
-      });
-    } else {
-      if (await this.userService.login(this.email, this.password)) {
-        this.navigateToPage('home');
-      }
-    }
+    // if (!this.email || this.email === '') {
+    //   this.messageService.add({
+    //     severity: 'error',
+    //     summary: 'Error',
+    //     detail: `Email field empty`,
+    //   });
+    // } else if (!this.password || this.password === '') {
+    //   this.messageService.add({
+    //     severity: 'error',
+    //     summary: 'Error',
+    //     detail: `Password field empty`,
+    //   });
+    // } else {
+    //   if (await this.userService.login(this.email, this.password)) {
+    //     this.navigateToPage('home');
+    //   }
+    // }
+
+    this.versionControlService.init();
   }
 
   async autoLogin(): Promise<void> {
