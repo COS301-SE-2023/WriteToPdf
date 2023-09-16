@@ -59,7 +59,7 @@ export class VersionControlService {
         tempDTO.fileID = 'abc123';
         tempDTO.snapshotNumber = +element.charAt(element.length - 1);
         tempDTO.content = data;
-        this.snapshotArr.push(tempDTO);
+        this.pushToSnapshotArr(tempDTO);
       });
     }
 
@@ -69,7 +69,7 @@ export class VersionControlService {
         tempDTO.fileID = 'abc123';
         tempDTO.snapshotNumber = +element.charAt(element.length - 1);
         tempDTO.content = data;
-        this.diffArr.push(tempDTO);
+        this.pushToDiffArr(tempDTO);
       });
     }
 
