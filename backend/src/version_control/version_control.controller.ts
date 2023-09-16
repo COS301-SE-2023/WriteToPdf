@@ -4,7 +4,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { VersionControlService } from './version_control.service';
-import { DiffDTO } from './dto/diff.dto';
+import { DiffDTO } from 'src/diffs/dto/diffs.dto';
 
 @Controller('version_control')
 export class VersionControlController {
