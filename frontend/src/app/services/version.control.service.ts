@@ -132,6 +132,7 @@ export class VersionControlService {
       return ele.isDiff;
     });
 
+    // Could optimise by saving pretty html somewhere on save
     for (let element of diffVersions) {
       let dpsDiff = this.DiffPatchService.diff_main(
         element.prevContent,
@@ -186,92 +187,5 @@ export class VersionControlService {
     }
 
     return retString;
-  }
-
-  createDiff(fileDTO: FileDTO): DiffDTO {
-    const latestSnapshot = this.getLatestSnapshot();
-    let snapshotContent = latestSnapshot.content;
-
-    const latestDiff = this.getLatestDiff(); // TODO: Check what we need when there are no diffs
-    const latestDiffNumber = latestDiff.diffNumber;
-
-    // Get all relevant diffs
-    const relevantDiffs = this.diffArr.filter((ele) => {
-      return ele.snapshotNumber === latestSnapshot.snapshotNumber;
-    });
-
-    // Patch all relevant diffs
-    for (let diff of relevantDiffs) {
-      snapshotContent = this.patchDiff(snapshotContent, diff);
-    }
-
-    // Create newest diff and readable patch
-    const diff = this.DiffPatchService.diff_main(
-      snapshotContent,
-      fileDTO.content
-    );
-    const patches = this.DiffPatchService.patch_make(diff);
-
-    // Create and set new DTO
-    const readableDiff = new DiffDTO();
-    readableDiff.diffNumber = latestDiffNumber + 1;
-    readableDiff.fileID = fileDTO.fileID;
-    readableDiff.snapshotNumber = latestSnapshot.snapshotNumber; // TODO: Doesn't take into account squashing of diffs
-    readableDiff.content = this.DiffPatchService.patch_toText(patches);
-    return readableDiff;
-  }
-
-  getLatestSnapshot(): SnapshotDTO {
-    // TODO: No need to sort
-    // Get latest snapshot
-    this.snapshotArr.sort((a, b) =>
-      a.snapshotNumber > b.snapshotNumber
-        ? 1
-        : a.snapshotNumber < b.snapshotNumber
-        ? -1
-        : 0
-    );
-
-    return this.snapshotArr[0];
-  }
-
-  getLatestDiff(): DiffDTO {
-    // Get latest diff number
-    this.diffArr.sort((a, b) =>
-      a.diffNumber > b.diffNumber ? 1 : a.diffNumber < b.diffNumber ? -1 : 0
-    );
-
-    return this.diffArr[0];
-  }
-
-  patchDiff(content: string, diffDTO: DiffDTO): string {
-    const patches = this.DiffPatchService.patch_fromText(diffDTO.content);
-    const patchResult = this.DiffPatchService.patch_apply(patches, content);
-    return patchResult[0];
-  }
-
-  patchVersion(fileDTO: FileDTO, diffDTO: DiffDTO[]): string {
-    return '';
-  }
-
-  patchSnapshot(fileDTO: FileDTO, snapshotDTO: SnapshotDTO): string {
-    return '';
-  }
-
-  squashDiffs(diffDTOs: DiffDTO[]): SnapshotDTO {
-    const latestSnapshot = this.getLatestSnapshot();
-    let snapshotContent = latestSnapshot.content;
-
-    // Patch all diffs
-    for (let diff of diffDTOs) {
-      snapshotContent = this.patchDiff(snapshotContent, diff);
-    }
-
-    const newSnapshot = new SnapshotDTO();
-    newSnapshot.content = snapshotContent;
-    newSnapshot.fileID = latestSnapshot.fileID;
-    newSnapshot.snapshotNumber = latestSnapshot.snapshotNumber + 1;
-
-    return newSnapshot;
   }
 }
