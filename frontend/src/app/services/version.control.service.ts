@@ -46,17 +46,27 @@ export class VersionControlService {
     return this.diffArr;
   }
 
-  getSnapshotArr(): SnapshotDTO[] {
-    return this.snapshotArr;
-  }
-
   setDiffArr(inArr: DiffDTO[]): DiffDTO[] {
     this.diffArr = inArr;
     return this.diffArr;
   }
 
+  pushToDiffArr(element: DiffDTO): DiffDTO[] {
+    this.diffArr.push(element);
+    return this.diffArr;
+  }
+
+  getSnapshotArr(): SnapshotDTO[] {
+    return this.snapshotArr;
+  }
+
   setSnapshotArr(inArr: SnapshotDTO[]): SnapshotDTO[] {
     this.snapshotArr = inArr;
+    return this.snapshotArr;
+  }
+
+  pushToSnapshotArr(element: SnapshotDTO): SnapshotDTO[] {
+    this.snapshotArr.push(element);
     return this.snapshotArr;
   }
 
