@@ -1,12 +1,12 @@
 export class VersionDTO {
   fileID: string;
-  diff: boolean;
+  isDiff: boolean;
   content: string;
   prevContent: string;
 
   constructor() {
     this.fileID = '';
-    this.diff = true;
+    this.isDiff = true;
     this.content = '';
     this.prevContent = '';
   }

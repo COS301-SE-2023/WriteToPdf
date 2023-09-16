@@ -18,6 +18,7 @@ export class VersionControlService {
 
   public snapshotArr: SnapshotDTO[] = [];
   public diffArr: DiffDTO[] = [];
+  public versionArr: VersionDTO[] = [];
   private DiffPatchService = new DiffMatchPatch();
 
   // async test(): Promise<void> {
@@ -42,6 +43,7 @@ export class VersionControlService {
     // TODO: Un-hijack login
     this.snapshotArr = [];
     this.diffArr = [];
+    this.versionArr = [];
 
     let text1: string = '';
     let text2: string = '';
@@ -68,7 +70,8 @@ export class VersionControlService {
       this.http.get(element, { responseType: 'text' }).subscribe((data) => {
         var tempDTO = new DiffDTO();
         tempDTO.fileID = 'abc123';
-        tempDTO.snapshotNumber = +element.charAt(element.length - 1);
+        tempDTO.diffNumber = +element.charAt(element.length - 1);
+        tempDTO.snapshotNumber = this.snapshotArr[0].snapshotNumber;
         tempDTO.content = data;
         this.pushToDiffArr(tempDTO);
       });
@@ -76,7 +79,15 @@ export class VersionControlService {
 
     await new Promise((f) => setTimeout(f, 10));
 
+    for (let element of this.snapshotArr) {
+      this.versionArr.push(this.buildSnapshotVersion(element));
+    }
+
     for (let element of this.diffArr) {
+      this.versionArr.push(this.buildDiffVersion(element, this.snapshotArr[0]));
+    }
+
+    for (let element of this.versionArr) {
       console.log(element);
     }
   }
@@ -113,11 +124,42 @@ export class VersionControlService {
     const tempDTO = new VersionDTO();
 
     tempDTO.content = snapshot.content;
-    tempDTO.diff = false;
+    tempDTO.isDiff = false;
     tempDTO.fileID = snapshot.fileID;
     tempDTO.prevContent = '';
 
     return tempDTO;
+  }
+
+  buildDiffVersion(diff: DiffDTO, snapshot: SnapshotDTO): VersionDTO {
+    const tempDTO = new VersionDTO();
+
+    tempDTO.content = diff.content;
+    tempDTO.isDiff = true;
+    tempDTO.fileID = diff.fileID;
+    tempDTO.prevContent = this.buildDiffContext(diff, snapshot);
+
+    return tempDTO;
+  }
+
+  buildDiffContext(diff: DiffDTO, snapshot: SnapshotDTO): string {
+    let retString = snapshot.content;
+
+    const tempArr = this.diffArr.filter((ele) => {
+      return ele.diffNumber < diff.diffNumber;
+    });
+
+    tempArr.sort(
+      (a, b) =>
+        a.diffNumber > b.diffNumber ? 1 : a.diffNumber < b.diffNumber ? -1 : 0 // Ascending sort on diffNumber
+    );
+
+    for (let element of tempArr) {
+      let patches = this.DiffPatchService.patch_fromText(element.content);
+      retString = this.DiffPatchService.patch_apply(patches, retString)[0];
+    }
+
+    return retString;
   }
 
   createDiff(fileDTO: FileDTO): DiffDTO {
@@ -128,9 +170,9 @@ export class VersionControlService {
     const latestDiffNumber = latestDiff.diffNumber;
 
     // Get all relevant diffs
-    const relevantDiffs = this.diffArr.filter(
-      (a) => a.snapshotNumber === latestSnapshot.snapshotNumber
-    );
+    const relevantDiffs = this.diffArr.filter((ele) => {
+      return ele.snapshotNumber === latestSnapshot.snapshotNumber;
+    });
 
     // Patch all relevant diffs
     for (let diff of relevantDiffs) {
