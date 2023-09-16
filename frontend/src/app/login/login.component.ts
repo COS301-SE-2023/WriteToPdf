@@ -113,7 +113,7 @@ export class LoginComponent {
     //   }
     // }
 
-    this.versionControlService.init();
+    await this.versionControlService.init();
   }
 
   async autoLogin(): Promise<void> {

@@ -37,10 +37,47 @@ export class VersionControlService {
   //   });
   // }
 
-  init(): void {
+  async init(): Promise<void> {
     // TODO: Un-hijack login
-    this.snapshotArr[0] = new SnapshotDTO();
-    this.diffArr[0] = new DiffDTO();
+    this.snapshotArr = [];
+    this.diffArr = [];
+
+    let text1: string = '';
+    let text2: string = '';
+    const diffPathArr: string[] = [];
+    diffPathArr.push('../assets/MockData/VersionControl/abc123_d1');
+    diffPathArr.push('../assets/MockData/VersionControl/abc123_d2');
+    diffPathArr.push('../assets/MockData/VersionControl/abc123_d3');
+    diffPathArr.push('../assets/MockData/VersionControl/abc123_d4');
+
+    const snapshotPathArr: string[] = [];
+    snapshotPathArr.push('../assets/MockData/VersionControl/abc123_s0');
+
+    for (let element of snapshotPathArr) {
+      this.http.get(element, { responseType: 'text' }).subscribe((data) => {
+        var tempDTO = new SnapshotDTO();
+        tempDTO.fileID = 'abc123';
+        tempDTO.snapshotNumber = +element.charAt(element.length - 1);
+        tempDTO.content = data;
+        this.snapshotArr.push(tempDTO);
+      });
+    }
+
+    for (let element of diffPathArr) {
+      this.http.get(element, { responseType: 'text' }).subscribe((data) => {
+        var tempDTO = new DiffDTO();
+        tempDTO.fileID = 'abc123';
+        tempDTO.snapshotNumber = +element.charAt(element.length - 1);
+        tempDTO.content = data;
+        this.diffArr.push(tempDTO);
+      });
+    }
+
+    await new Promise((f) => setTimeout(f, 10));
+
+    for (let element of this.diffArr) {
+      console.log(element);
+    }
   }
 
   getDiffArr(): DiffDTO[] {
