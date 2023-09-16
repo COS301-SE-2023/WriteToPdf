@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DiffDTO } from './dto/diff.dto';
+import { DiffDTO } from 'src/diffs/dto/diffs.dto';
 
 @Injectable()
 export class VersionControlService {
