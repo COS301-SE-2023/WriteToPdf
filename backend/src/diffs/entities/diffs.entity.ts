@@ -1,20 +1,30 @@
-// import {
-//   Entity,
-//   Column,
-//   PrimaryColumn,
-// } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+} from 'typeorm';
 
-// @Entity('DIFFS')
-// export class Diff {
-//   @PrimaryColumn()
-//   DiffID: string;
+@Entity('DIFFS')
+export class Diff {
+  @PrimaryColumn()
+  DiffID: string;
 
-//   @Column()
-//   MarkdownID: string;
+  @Column()
+  MarkdownID: string;
 
-//   @Column()
-//   S3DiffID: number;
+  @Column()
+  UserID: string;
 
-//   @Column()
-//   Timestamp: Date;
-// }
+  @Column()
+  DisplayID: string;
+
+  @Column()
+  S3DiffID: number;
+
+  @Column('timestamp', {
+    precision: 3,
+    default: () => 'CURRENT_TIMESTAMP(3)',
+    onUpdate: 'CURRENT_TIMESTAMP(3)',
+  })
+  LastModified: Date;
+}
