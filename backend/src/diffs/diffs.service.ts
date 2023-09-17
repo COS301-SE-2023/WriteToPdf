@@ -9,4 +9,13 @@ export class DiffsService {
     @InjectRepository(Diff)
     private diffRepository: Repository<Diff>,
   ) {}
+
+  async updateDiff(nextDiffID: number) {
+    const diff = await this.diffRepository.findOne({
+      where: { S3DiffID: nextDiffID },
+    });
+
+    diff.LastModified = new Date();
+    await this.diffRepository.save(diff);
+  }
 }
