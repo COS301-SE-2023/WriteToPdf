@@ -16,9 +16,6 @@ export class Diff {
   UserID: number;
 
   @Column()
-  DisplayID: string;
-
-  @Column()
   S3DiffID: number;
 
   @Column('timestamp', {
