@@ -1,24 +1,45 @@
 import { Injectable } from '@nestjs/common';
-import { DiffsService } from 'src/diffs/diffs.service';
-import { DiffDTO } from 'src/diffs/dto/diffs.dto';
-import { S3ServiceMock } from 'src/s3/__mocks__/s3.service';
-import { S3Service } from 'src/s3/s3.service';
+import { DiffsService } from '../diffs/diffs.service';
+import { DiffDTO } from '../diffs/dto/diffs.dto';
+import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
+import { S3ServiceMock } from '../s3/__mocks__/s3.service';
+import { S3Service } from '../s3/s3.service';
+import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 
 @Injectable()
 export class VersionControlService {
   constructor(
     private diffService: DiffsService,
-    private s3service: S3Service,
+    private markdownFileService: MarkdownFilesService,
+    private s3Service: S3Service,
     private s3ServiceMock: S3ServiceMock,
   ) {}
 
   ///===-----------------------------------------------------
 
-  saveDiff(diffDTO: DiffDTO) {
-    // get nextDiffID
-    // calls s3Service.saveDiff()
-    // check if snapshot needs to be created
-    // update diff metadata in table
+  async saveDiff(diffDTO: DiffDTO) {
+    const nextDiffID =
+      await this.markdownFileService.getNextDiffID(
+        diffDTO.MarkdownID,
+      );
+
+    this.s3Service.saveDiff(diffDTO, nextDiffID);
+
+    if (
+      nextDiffID %
+        parseInt(
+          process.env.DIFFS_PER_SNAPSHOT,
+        ) ===
+        0 &&
+      nextDiffID !== 0
+    ) {
+      // create snapshot
+    }
+
+    await this.diffService.updateDiff(nextDiffID);
+    await this.markdownFileService.incrementNextDiffID(
+      diffDTO.MarkdownID,
+    );
   }
 
   ///===-----------------------------------------------------
@@ -27,11 +48,30 @@ export class VersionControlService {
 
   ///===-----------------------------------------------------
 
-  getAllDiffs() {}
+  getAllDiffsForSnapshot(
+    snapshotDTO: SnapshotDTO,
+  ) {}
 
   ///===-----------------------------------------------------
 
-  saveSnapshot() {}
+  async saveSnapshot(snapshotDTO: SnapshotDTO) {
+    const nextSnapshotID =
+      await this.markdownFileService.getNextSnapshotID(
+        snapshotDTO.MarkdownID,
+      );
+
+    this.s3Service.saveSnapshot(
+      snapshotDTO,
+      nextSnapshotID,
+    );
+
+    await this.diffService.updateDiff(
+      nextSnapshotID,
+    );
+    await this.markdownFileService.incrementNextDiffID(
+      snapshotDTO.MarkdownID,
+    );
+  }
 
   ///===-----------------------------------------------------
 
