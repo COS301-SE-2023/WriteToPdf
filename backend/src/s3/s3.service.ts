@@ -10,7 +10,8 @@ import {
 import * as fs from 'fs/promises'; // for local storage
 import * as CryptoJS from 'crypto-js';
 import { AssetDTO } from '../assets/dto/asset.dto';
-import { DiffDTO } from 'src/diffs/dto/diffs.dto';
+import { DiffDTO } from '../diffs/dto/diffs.dto';
+import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 
 @Injectable()
 export class S3Service {
@@ -253,19 +254,17 @@ export class S3Service {
 
   ///===----------------------------------------------------
 
-  async saveDiff(diffDTO: DiffDTO) {
+  async saveDiff(
+    diffDTO: DiffDTO,
+    nextDiffID: number,
+  ) {
     const filePath = `${diffDTO.UserID}/${diffDTO.MarkdownID}`;
 
     try {
-      // await fs.writeFile(
-      //   `./storage/${filePath}/diff/${diffDTO.S3DiffID}`,
-      //   diffDTO.Content,
-      //   'utf-8',
-      // );
-      /*const response = */ await this.s3Client.send(
+      await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
-          Key: `${filePath}/diff/${diffDTO.S3DiffID}`,
+          Key: `${filePath}/diff/${nextDiffID}`,
           Body: diffDTO.Content,
         }),
       );
@@ -274,6 +273,54 @@ export class S3Service {
       return undefined;
     }
     return diffDTO;
+  }
+
+  ///===----------------------------------------------------
+
+  /**
+   * @notes every snapshot is associated with n previous diffs.
+   * The IDs of the associated diffs do not change unless
+   * a change is made to the relevant versioning env variables.
+   */
+
+  async getAllDiffsForSnapshot(
+    snapshotDTO: SnapshotDTO,
+  ) {
+    const filePath = `${snapshotDTO.UserID}/${snapshotDTO.MarkdownID}`;
+
+    let diffDTOs: DiffDTO[] = [];
+
+    const firstDiffID =
+      snapshotDTO.S3SnapshotID *
+      parseInt(process.env.DIFFS_PER_SNAPSHOT);
+
+    for (
+      let j = firstDiffID;
+      j <
+      firstDiffID +
+        parseInt(process.env.DIFFS_PER_SNAPSHOT);
+      j++
+    ) {
+      try {
+        const response = await this.s3Client.send(
+          new GetObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/diff/${j}`,
+          }),
+        );
+
+        const diffDTO = new DiffDTO();
+        diffDTO.Content =
+          await response.Body.transformToString();
+        diffDTOs.push(diffDTO);
+      } catch (err) {
+        console.log(
+          `S3 diff ${j} read error: ` + err,
+        );
+        return undefined;
+      }
+    }
+    return diffDTOs;
   }
 
   ///===----------------------------------------------------
@@ -358,6 +405,29 @@ export class S3Service {
         return undefined;
       }
     }
+  }
+
+  ///===----------------------------------------------------
+
+  async saveSnapshot(
+    snapshotDTO: SnapshotDTO,
+    nextSnapshotID: number,
+  ) {
+    const filePath = `${snapshotDTO.UserID}/${snapshotDTO.MarkdownID}`;
+
+    try {
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/snapshot/${nextSnapshotID}`,
+          Body: snapshotDTO.Content,
+        }),
+      );
+    } catch (err) {
+      console.log('Write File Error: ' + err);
+      return undefined;
+    }
+    return snapshotDTO;
   }
 
   ///===----------------------------------------------------
