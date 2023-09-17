@@ -4,7 +4,8 @@ import {
   Post,
 } from '@nestjs/common';
 import { VersionControlService } from './version_control.service';
-import { DiffDTO } from 'src/diffs/dto/diffs.dto';
+import { DiffDTO } from '../diffs/dto/diffs.dto';
+import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 
 @Controller('version_control')
 export class VersionControlController {
@@ -12,10 +13,14 @@ export class VersionControlController {
     private readonly versionControlService: VersionControlService,
   ) {}
 
+  ///===----------------------------------------------------
+
   @Post('save_diff')
   saveDiff(@Body() diffDTO: DiffDTO) {
     this.versionControlService.saveDiff(diffDTO);
   }
+
+  ///===----------------------------------------------------
 
   @Post('get_diff')
   getDiff(@Body() diffDTO: DiffDTO) {
@@ -24,13 +29,21 @@ export class VersionControlController {
     );
   }
 
+  ///===----------------------------------------------------
+
   @Post('get_all_diffs')
-  getAllDiffs() {
-    return this.versionControlService.getAllDiffs();
+  getAllDiffs(@Body() snapshotDTO: SnapshotDTO) {
+    return this.versionControlService.getAllDiffsForSnapshot(
+      snapshotDTO,
+    );
   }
 
+  ///===----------------------------------------------------
+
   @Post('save_snapshot')
-  saveSnapshot() {
-    this.versionControlService.saveSnapshot();
+  saveSnapshot(@Body() snapshotDTO: SnapshotDTO) {
+    this.versionControlService.saveSnapshot(
+      snapshotDTO,
+    );
   }
 }
