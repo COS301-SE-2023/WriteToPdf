@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
+import 'dotenv/config';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
 import { MarkdownFile } from './entities/markdown_file.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -121,6 +122,8 @@ export class MarkdownFilesService {
     );
   }
 
+  ///===----------------------------------------------------
+
   async getNextDiffID(markdownID: string) {
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
@@ -131,6 +134,8 @@ export class MarkdownFilesService {
     return markdownFile.NextDiffID;
   }
 
+  ///===----------------------------------------------------
+
   async getNextSnapshotID(markdownID: string) {
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
@@ -139,5 +144,41 @@ export class MarkdownFilesService {
         },
       );
     return markdownFile.NextSnapshotID;
+  }
+
+  ///===----------------------------------------------------
+
+  async incrementNextDiffID(markdownID: string) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    markdownFile.NextDiffID =
+      (markdownFile.NextDiffID + 1) %
+      parseInt(process.env.MAX_DIFFS);
+    return this.markdownFileRepository.save(
+      markdownFile,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async incrementNextSnapshotID(
+    markdownID: string,
+  ) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    markdownFile.NextSnapshotID =
+      (markdownFile.NextSnapshotID + 1) %
+      parseInt(process.env.MAX_SNAPSHOTS);
+    return this.markdownFileRepository.save(
+      markdownFile,
+    );
   }
 }
