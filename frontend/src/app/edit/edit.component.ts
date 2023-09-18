@@ -498,7 +498,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   async refreshSidebarHistory() {
     this.history = [];
     this.history=await this.versionControlService.retrieveAllSnapshots(this.editService.getMarkdownID() as string);
-    
+
   }
 
   pageBreak() {
@@ -606,13 +606,13 @@ export class EditComponent implements AfterViewInit, OnInit {
   insertContent(obj: any) {
     this.deselectAllHistory();
     obj.isCurrent = true;
-    if(obj.id === 'LATEST') {
+    if(obj.SnapshotID === 'LATEST') {
       this.disableReadOnly();
-      this.editor.setData(obj.html);
+      this.editor.setData(obj.Content);
       return;
     }
     this.enableReadOnly();
-    this.editor.setData(obj.html);
+    this.editor.setData(obj.Content);
   }
 
   deselectAllHistory() {

@@ -248,8 +248,8 @@
 
     <div *ngIf="sideBarTab" class="allHistory">
       <div *ngFor="let obj of history" class="historyObject" [ngClass]="{'selectedHistory':obj.isCurrent}" (click)="insertContent(obj)">
-        <p>{{obj.name}}</p>
-        <p>{{obj.date}}</p>
+        <p>{{obj.Name}}</p>
+        <p>{{obj.DateCreated}}</p>
         <img class="historyIcon" src="assets/Icons/editIcons/ellipse.svg" alt="" />
 
       </div>
