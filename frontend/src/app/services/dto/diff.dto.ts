@@ -1,12 +1,12 @@
 export class DiffDTO {
-  UserID: string;
+  UserID: number;
   FileID: string;
   DiffNumber: number;
   SnapshotNumber: number;
   Content: string;
 
   constructor() {
-    this.UserID = '';
+    this.UserID = 0;
     this.FileID = '';
     this.DiffNumber = 0;
     this.SnapshotNumber = 0;
