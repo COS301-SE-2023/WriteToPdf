@@ -13,10 +13,10 @@ export class DiffsService {
     private diffRepository: Repository<Diff>,
   ) {}
 
-  async updateDiff(nextDiffID: number) {
+  async updateDiff(diffID: string) {
     const diff =
       await this.diffRepository.findOne({
-        where: { S3DiffID: nextDiffID },
+        where: { DiffID: diffID },
       });
 
     diff.LastModified = new Date();
@@ -48,9 +48,21 @@ export class DiffsService {
     await this.diffRepository.insert(diffRecords);
   }
 
-  async deleteDiffs(markdownFileDTO: MarkdownFileDTO) {
+  async deleteDiffs(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
     await this.diffRepository.delete({
       MarkdownID: markdownFileDTO.MarkdownID,
+    });
+  }
+
+  async getAllDiffs(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    return await this.diffRepository.find({
+      where: {
+        MarkdownID: markdownFileDTO.MarkdownID,
+      },
     });
   }
 }
