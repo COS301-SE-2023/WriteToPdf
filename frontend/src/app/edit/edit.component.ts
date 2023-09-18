@@ -230,6 +230,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#E3E3E3';
     this.elementRef.nativeElement.ownerDocument.body.style.overflow = 'hidden';
+    this.refreshSidebarHistory();
     this.refreshSidebar();
   }
 
@@ -495,7 +496,9 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async refreshSidebarHistory() {
-    console.log('refreshing history');
+    this.history = [];
+    this.history=await this.versionControlService.retrieveAllSnapshots(this.editService.getMarkdownID() as string);
+    
   }
 
   pageBreak() {

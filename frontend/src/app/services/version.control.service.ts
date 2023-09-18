@@ -257,4 +257,32 @@ export class VersionControlService {
     );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
+
+  retrieveAllSnapshots(fileID: string): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.sendRetrieveAllSnapshots(fileID).subscribe({
+        next: (response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            resolve(response.body);
+          } else {
+            resolve(null);
+          }
+        },
+      });
+    });
+  }
+
+  sendRetrieveAllSnapshots(fileID: string): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}version_control/get_all_snapshots`;
+    console.log(url);
+    const body = new SnapshotDTO();
+
+    body.fileID = fileID;
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
 }
