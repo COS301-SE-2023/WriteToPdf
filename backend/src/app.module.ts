@@ -28,6 +28,10 @@ import { TextractService } from './textract/textract.service';
 import { ResetPasswordModule } from './reset_password/reset_password.module';
 import { ResetPasswordRequest } from './reset_password/entities/reset_password_request.entity';
 import { MailService } from './mail/mail.service';
+import { DiffsService } from './diffs/diffs.service';
+import { SnapshotService } from './snapshots/snapshots.service';
+import { Diff } from './diffs/entities/diffs.entity';
+import { Snapshot } from './snapshots/entities/snapshots.entity';
 
 @Module({
   imports: [
@@ -41,6 +45,8 @@ import { MailService } from './mail/mail.service';
     TypeOrmModule.forFeature([
       ResetPasswordRequest,
     ]),
+    TypeOrmModule.forFeature([Diff]),
+    TypeOrmModule.forFeature([Snapshot]),
     MarkdownFilesModule,
     FoldersModule,
     S3Module,
@@ -62,6 +68,8 @@ import { MailService } from './mail/mail.service';
     ConversionService,
     TextractService,
     MailService,
+    DiffsService,
+    SnapshotService,
   ],
 })
 export class AppModule {}
