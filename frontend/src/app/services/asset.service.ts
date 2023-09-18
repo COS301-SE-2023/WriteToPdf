@@ -98,7 +98,6 @@ export class AssetService {
         this.sendRetrieveTextOrTableData(assetId, format, textId).subscribe({
           next: (response: HttpResponse<any>) => {
             if (response.status === 200) {
-              console.log("Asset service: ", response);
               resolve(response.body);
             } else {
               resolve(null);

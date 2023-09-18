@@ -84,23 +84,23 @@ export class OcrPopupComponent implements OnInit {
     }
 
     ngOnInit() {
-      console.log("Textract Response:", this.assetObject.Content);
       this.assetObjectJSON = JSON.parse(this.assetObject.Content);
       console.log("Parsed JSON:", this.assetObjectJSON);
-      this.assetImage = this.assetObject.Image;
-      console.log("Image of asset:", this.assetImage);
-      // const imageUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/png;base64,${base64String}`);
-        // this.tableIndices = this.dummyJSON["Table Indices"];
-        for (let i = 0; i < this.dummyJSON.elements.length; i++) {
-            if (this.dummyJSON.elements[i].hasOwnProperty("Text Element")) {
-                this.textElements.push(this.dummyJSON.elements[i]["Text Element"]);
-            } else if (this.dummyJSON["Table Indices"].length!=0 && this.dummyJSON.elements[i].hasOwnProperty("Table Element")) {
-                this.tableElements.push(this.dummyJSON.elements[i]["Table Element"]);
+      this.assetImage = "data:image/png;base64," + this.assetObject.Image;
+        for (let i = 0; i < this.assetObjectJSON.elements.length; i++) {
+            if (this.assetObjectJSON.elements[i].hasOwnProperty("Text Element")) {
+                this.textElements.push(this.assetObjectJSON.elements[i]["Text Element"]);
+            }
+        }
+        if(this.assetObjectJSON["Table Indices"].length !=0) {
+            let eachIndex;
+            for (eachIndex of this.assetObjectJSON["Table Indices"]) {
+                this.tableElements.push(this.assetObjectJSON.elements["elements"][eachIndex]["Table Element"]);
             }
         }
         this.paragraphText = '';
         for (let i = 0; i < this.textElements.length; i++) {
-            this.paragraphText += this.textElements[i]["Lines"].join("\n");
+            this.paragraphText += this.textElements[i]["Lines"];
         }
         for (let i = 0 ; this.tableElements.length; i++){
           this.convertedRenderableTables.push(this.convertToTableStructForPrimeNG(this.tableElements[i]));
@@ -121,7 +121,6 @@ export class OcrPopupComponent implements OnInit {
         const colKey = `col${j + 1}`;
         let cellVal = tableElement["Table"][i][j];
         row.push({[colKey]:cellVal});
-        // Access the data from the table and add it to the row
       }
       returnStruct.push(row);
     }
