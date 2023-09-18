@@ -287,4 +287,33 @@ export class VersionControlService {
     );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
+
+  retrieveAllHistory(markdownID: string): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.sendRetrieveAllHistory(markdownID).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          if (response.status === 200) {
+            resolve(response.body);
+          } else {
+            resolve(null);
+          }
+        },
+      });
+    });
+  }
+
+  sendRetrieveAllHistory(markdownID: string): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}version_control/load_history`;
+    console.log(url);
+    const body = new MarkdownFileDTO();
+
+    body.MarkdownID = markdownID;
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
 }
