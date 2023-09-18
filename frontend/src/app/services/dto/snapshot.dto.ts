@@ -1,12 +1,12 @@
 export class SnapshotDTO {
   UserID: number;
-  FileID: string;
+  MarkdownID: string;
   SnapshotNumber: number;
   Content: string;
 
   constructor() {
     this.UserID = 0;
-    this.FileID = '';
+    this.MarkdownID = '';
     this.SnapshotNumber = 0;
     this.Content = '';
   }

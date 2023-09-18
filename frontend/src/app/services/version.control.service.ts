@@ -61,7 +61,7 @@ export class VersionControlService {
     for (let element of snapshotPathArr) {
       this.http.get(element, { responseType: 'text' }).subscribe((data) => {
         var tempDTO = new SnapshotDTO();
-        tempDTO.FileID = 'abc123';
+        tempDTO.MarkdownID = 'abc123';
         tempDTO.SnapshotNumber = +element.charAt(element.length - 1);
         tempDTO.Content = data;
         this.pushToSnapshotArr(tempDTO);
@@ -71,7 +71,7 @@ export class VersionControlService {
     for (let element of diffPathArr) {
       this.http.get(element, { responseType: 'text' }).subscribe((data) => {
         var tempDTO = new DiffDTO();
-        tempDTO.FileID = 'abc123';
+        tempDTO.MarkdownID = 'abc123';
         tempDTO.DiffNumber = +element.charAt(element.length - 1);
         tempDTO.SnapshotNumber = this.snapshotArr[0].SnapshotNumber;
         tempDTO.Content = data;
@@ -157,7 +157,7 @@ export class VersionControlService {
 
     tempDTO.content = snapshot.Content;
     tempDTO.isDiff = false;
-    tempDTO.fileID = snapshot.FileID;
+    tempDTO.fileID = snapshot.MarkdownID;
     tempDTO.prevContent = '';
 
     return tempDTO;
@@ -167,7 +167,7 @@ export class VersionControlService {
     const tempDTO = new VersionDTO();
 
     tempDTO.isDiff = true;
-    tempDTO.fileID = diff.FileID;
+    tempDTO.fileID = diff.MarkdownID;
     tempDTO.prevContent = this.buildDiffContext(diff, snapshot);
 
     const patches = this.DiffPatchService.patch_fromText(diff.Content);
@@ -242,7 +242,7 @@ export class VersionControlService {
     });
   }
 
-  sendSaveDiff(fileId: string, content: string): Observable<HttpResponse<any>> {
+  sendSaveDiff(markdownID: string, content: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}version_control/save_diff`;
     console.log(url);
@@ -250,7 +250,7 @@ export class VersionControlService {
 
     body.UserID = this.userService.getUserID() as number;
     body.Content = content;
-    body.FileID = fileId;
+    body.MarkdownID = markdownID;
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -258,9 +258,9 @@ export class VersionControlService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveAllSnapshots(fileID: string): Promise<any> {
+  retrieveAllSnapshots(markdownID: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      this.sendRetrieveAllSnapshots(fileID).subscribe({
+      this.sendRetrieveAllSnapshots(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
             resolve(response.body);
@@ -272,14 +272,14 @@ export class VersionControlService {
     });
   }
 
-  sendRetrieveAllSnapshots(fileID: string): Observable<HttpResponse<any>> {
+  sendRetrieveAllSnapshots(markdownID: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}version_control/get_all_snapshots`;
     console.log(url);
     const body = new SnapshotDTO();
 
     body.UserID = this.userService.getUserID() as number;
-    body.FileID = fileID;
+    body.MarkdownID = markdownID;
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
