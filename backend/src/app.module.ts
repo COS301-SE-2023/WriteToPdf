@@ -32,6 +32,9 @@ import { DiffsService } from './diffs/diffs.service';
 import { SnapshotService } from './snapshots/snapshots.service';
 import { Diff } from './diffs/entities/diffs.entity';
 import { Snapshot } from './snapshots/entities/snapshots.entity';
+import { VersionControlModule } from './version_control/version_control.module';
+import { VersionControlService } from './version_control/version_control.service';
+import { VersionControlController } from './version_control/version_control.controller';
 
 @Module({
   imports: [
@@ -52,12 +55,14 @@ import { Snapshot } from './snapshots/entities/snapshots.entity';
     S3Module,
     FileManagerModule,
     AssetManagerModule,
+    VersionControlModule,
     ResetPasswordModule,
   ],
   controllers: [
     AuthController,
     S3Controller,
     FileManagerController,
+    VersionControlController
   ],
   providers: [
     FileManagerService,
@@ -70,6 +75,7 @@ import { Snapshot } from './snapshots/entities/snapshots.entity';
     MailService,
     DiffsService,
     SnapshotService,
+    VersionControlService,
   ],
 })
 export class AppModule {}
