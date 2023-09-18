@@ -25,6 +25,10 @@ export class VersionControlService {
 
     this.s3Service.saveDiff(diffDTO, nextDiffID);
 
+    console.log(
+      '[versionControlService.saveDiff] Saved diff in s3',
+    );
+
     if (
       nextDiffID %
         parseInt(
@@ -37,8 +41,17 @@ export class VersionControlService {
     }
 
     await this.diffService.updateDiff(nextDiffID);
+
+    console.log(
+      '[versionControlService.saveDiff] Updated diff in db',
+    );
+
     await this.markdownFileService.incrementNextDiffID(
       diffDTO.MarkdownID,
+    );
+
+    console.log(
+      '[versionControlService.saveDiff] Incremented nextDiffID in db',
     );
   }
 
