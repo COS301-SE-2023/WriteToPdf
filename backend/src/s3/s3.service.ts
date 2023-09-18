@@ -108,14 +108,7 @@ export class S3Service {
         'S3 content file creation error: ' + err,
       );
       return undefined;
-    }
-
-    this.createDiffObjectsForFile(
-      markdownFileDTO,
-    );
-    this.createSnapshotObjectsForFile(
-      markdownFileDTO,
-    );
+    };
 
     markdownFileDTO.Content = '';
     markdownFileDTO.Size = 0;
