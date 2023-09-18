@@ -108,7 +108,7 @@ export class S3Service {
         'S3 content file creation error: ' + err,
       );
       return undefined;
-    };
+    }
 
     markdownFileDTO.Content = '';
     markdownFileDTO.Size = 0;
@@ -421,6 +421,47 @@ export class S3Service {
       return undefined;
     }
     return snapshotDTO;
+  }
+
+  ///===----------------------------------------------------
+
+  async retrieveAllSnapshots(
+    logicalOrder: number[],
+    snapshotDTO: SnapshotDTO,
+  ) {
+    const filePath = `${snapshotDTO.UserID}/${snapshotDTO.MarkdownID}`;
+
+    let snapshotDTOs: SnapshotDTO[] = [];
+
+    for (
+      let i = 0;
+      i < logicalOrder.length;
+      i++
+    ) {
+      console.log(
+        'Trying to retrieve snapshot on path ',
+        `${filePath}/snapshot/${logicalOrder[i]}`,
+      );
+      try {
+        const response = await this.s3Client.send(
+          new GetObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/snapshot/${logicalOrder[i]}`,
+          }),
+        );
+
+        const snapshotDTO = new SnapshotDTO();
+        snapshotDTO.Content =
+          await response.Body.transformToString();
+        snapshotDTOs.push(snapshotDTO);
+      } catch (err) {
+        console.log(
+          `S3 snapshot ${i} read error: ` + err,
+        );
+        return undefined;
+      }
+    }
+    return snapshotDTOs;
   }
 
   ///===----------------------------------------------------
