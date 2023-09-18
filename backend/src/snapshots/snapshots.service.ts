@@ -12,6 +12,8 @@ export class SnapshotService {
     private snapshotRepository: Repository<Snapshot>,
   ) {}
 
+  ///===-----------------------------------------------------
+
   async createSnapshots(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -38,6 +40,28 @@ export class SnapshotService {
       snapshotRecords,
     );
   }
+
+  ///===-----------------------------------------------------
+
+  async updateSnapshot(
+    snapshotID: string,
+  ) {
+    
+  }
+
+  ///===-----------------------------------------------------
+
+  async getAllSnapshots(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    return await this.snapshotRepository.find({
+      where: {
+        MarkdownID: markdownFileDTO.MarkdownID,
+      },
+    });
+  }
+
+  ///===-----------------------------------------------------
 
   async deleteSnapshots(
     markdownFileDTO: MarkdownFileDTO,
