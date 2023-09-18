@@ -1,13 +1,15 @@
 export class DiffDTO {
-  fileID: string;
-  diffNumber: number;
-  snapshotNumber: number;
-  content: string;
+  UserID: string;
+  FileID: string;
+  DiffNumber: number;
+  SnapshotNumber: number;
+  Content: string;
 
   constructor() {
-    this.fileID = '';
-    this.diffNumber = 0;
-    this.snapshotNumber = 0;
-    this.content = '';
+    this.UserID = '';
+    this.FileID = '';
+    this.DiffNumber = 0;
+    this.SnapshotNumber = 0;
+    this.Content = '';
   }
 }

@@ -2,19 +2,22 @@ import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
 // import DiffMatchPatch from 'diff-match-patch';
 import { diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { DiffDTO } from './dto/diff.dto';
 import { SnapshotDTO } from './dto/snapshot.dto';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
 
 import { FileService } from './file.service';
 import { VersionDTO } from './dto/version.dto';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VersionControlService {
-  constructor(private http: HttpClient, private fileService: FileService) {}
+  userService: any;
+  constructor(private http: HttpClient, private fileService: FileService) { }
 
   public snapshotArr: SnapshotDTO[] = [];
   public diffArr: DiffDTO[] = [];
@@ -69,10 +72,10 @@ export class VersionControlService {
     for (let element of diffPathArr) {
       this.http.get(element, { responseType: 'text' }).subscribe((data) => {
         var tempDTO = new DiffDTO();
-        tempDTO.fileID = 'abc123';
-        tempDTO.diffNumber = +element.charAt(element.length - 1);
-        tempDTO.snapshotNumber = this.snapshotArr[0].snapshotNumber;
-        tempDTO.content = data;
+        tempDTO.FileID = 'abc123';
+        tempDTO.DiffNumber = +element.charAt(element.length - 1);
+        tempDTO.SnapshotNumber = this.snapshotArr[0].snapshotNumber;
+        tempDTO.Content = data;
         this.pushToDiffArr(tempDTO);
       });
     }
@@ -106,15 +109,15 @@ export class VersionControlService {
       a.snapshotNumber > b.snapshotNumber
         ? 1
         : a.snapshotNumber < b.snapshotNumber
-        ? -1
-        : 0
+          ? -1
+          : 0
     );
   }
 
   sortDiffArr(inArr: DiffDTO[]): void {
     // Ascending sort on diffNumber
     inArr.sort((a, b) =>
-      a.diffNumber > b.diffNumber ? 1 : a.diffNumber < b.diffNumber ? -1 : 0
+      a.DiffNumber > b.DiffNumber ? 1 : a.DiffNumber < b.DiffNumber ? -1 : 0
     );
   }
 
@@ -165,10 +168,10 @@ export class VersionControlService {
     const tempDTO = new VersionDTO();
 
     tempDTO.isDiff = true;
-    tempDTO.fileID = diff.fileID;
+    tempDTO.fileID = diff.FileID;
     tempDTO.prevContent = this.buildDiffContext(diff, snapshot);
 
-    const patches = this.DiffPatchService.patch_fromText(diff.content);
+    const patches = this.DiffPatchService.patch_fromText(diff.Content);
     tempDTO.content = this.DiffPatchService.patch_apply(
       patches,
       tempDTO.prevContent
@@ -181,13 +184,13 @@ export class VersionControlService {
     let retString = snapshot.content;
 
     const tempArr = this.diffArr.filter((ele) => {
-      return ele.diffNumber < diff.diffNumber;
+      return ele.DiffNumber < diff.DiffNumber;
     });
 
     this.sortDiffArr(tempArr);
 
     for (let element of tempArr) {
-      let patches = this.DiffPatchService.patch_fromText(element.content);
+      let patches = this.DiffPatchService.patch_fromText(element.Content);
       retString = this.DiffPatchService.patch_apply(patches, retString)[0];
     }
 
@@ -206,7 +209,7 @@ export class VersionControlService {
     });
 
     this.diffArr = this.diffArr.filter((ele) => {
-      return ele.snapshotNumber <= snapshot.snapshotNumber;
+      return ele.SnapshotNumber <= snapshot.snapshotNumber;
     });
 
     this.sortSnapshotArr(this.snapshotArr);
@@ -215,14 +218,43 @@ export class VersionControlService {
 
   diffRestore(diff: DiffDTO): void {
     this.snapshotArr = this.snapshotArr.filter((ele) => {
-      return ele.snapshotNumber <= diff.snapshotNumber;
+      return ele.snapshotNumber <= diff.SnapshotNumber;
     });
 
     this.diffArr = this.diffArr.filter((ele) => {
-      return ele.snapshotNumber <= diff.snapshotNumber;
+      return ele.SnapshotNumber <= diff.SnapshotNumber;
     });
 
     this.sortSnapshotArr(this.snapshotArr);
     this.sortDiffArr(this.diffArr);
+  }
+
+  saveDiff(fileID: string, content: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendSaveDiff(fileID, content).subscribe({
+        next: (response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+      });
+    });
+  }
+
+  sendSaveDiff(fileId: string, content: string): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}version_control/save_diff`;
+    const body = new DiffDTO();
+
+    body.UserID = this.userService.getUserID();
+    body.Content = content;
+    body.FileID = fileId;
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
   }
 }
