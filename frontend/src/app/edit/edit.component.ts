@@ -497,8 +497,9 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   async refreshSidebarHistory() {
     this.history = [];
-    this.history=await this.versionControlService.retrieveAllHistory(this.editService.getMarkdownID() as string);
-
+    const data=await this.versionControlService.retrieveAllHistory(this.editService.getMarkdownID() as string);
+    this.history=data.SnapshotHistory.concat(data.DiffHistory);
+    
   }
 
   pageBreak() {
