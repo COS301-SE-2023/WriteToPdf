@@ -16,9 +16,6 @@ export class Snapshot {
   UserID: number;
 
   @Column()
-  DisplayID: string;
-
-  @Column()
   S3SnapshotID: number;
 
   @Column('timestamp', {
