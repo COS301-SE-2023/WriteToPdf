@@ -249,8 +249,6 @@ export class FileManagerService {
       );
     }
 
-    // Assuming frontend will send the NextDiffID
-
     return await this.markdownFilesService.updateAfterModification(
       markdownFileDTO,
     );
