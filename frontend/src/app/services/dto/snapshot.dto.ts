@@ -1,11 +1,13 @@
 export class SnapshotDTO {
-  fileID: string;
-  snapshotNumber: number;
-  content: string;
+  UserID: number;
+  FileID: string;
+  SnapshotNumber: number;
+  Content: string;
 
   constructor() {
-    this.fileID = '';
-    this.snapshotNumber = 0;
-    this.content = '';
+    this.UserID = 0;
+    this.FileID = '';
+    this.SnapshotNumber = 0;
+    this.Content = '';
   }
 }

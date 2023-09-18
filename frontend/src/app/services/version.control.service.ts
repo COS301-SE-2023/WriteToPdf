@@ -61,9 +61,9 @@ export class VersionControlService {
     for (let element of snapshotPathArr) {
       this.http.get(element, { responseType: 'text' }).subscribe((data) => {
         var tempDTO = new SnapshotDTO();
-        tempDTO.fileID = 'abc123';
-        tempDTO.snapshotNumber = +element.charAt(element.length - 1);
-        tempDTO.content = data;
+        tempDTO.FileID = 'abc123';
+        tempDTO.SnapshotNumber = +element.charAt(element.length - 1);
+        tempDTO.Content = data;
         this.pushToSnapshotArr(tempDTO);
       });
     }
@@ -73,7 +73,7 @@ export class VersionControlService {
         var tempDTO = new DiffDTO();
         tempDTO.FileID = 'abc123';
         tempDTO.DiffNumber = +element.charAt(element.length - 1);
-        tempDTO.SnapshotNumber = this.snapshotArr[0].snapshotNumber;
+        tempDTO.SnapshotNumber = this.snapshotArr[0].SnapshotNumber;
         tempDTO.Content = data;
         this.pushToDiffArr(tempDTO);
       });
@@ -105,9 +105,9 @@ export class VersionControlService {
   sortSnapshotArr(inArr: SnapshotDTO[]): void {
     // Ascending sort on snapshotNumber
     inArr.sort((a, b) =>
-      a.snapshotNumber > b.snapshotNumber
+      a.SnapshotNumber > b.SnapshotNumber
         ? 1
-        : a.snapshotNumber < b.snapshotNumber
+        : a.SnapshotNumber < b.SnapshotNumber
           ? -1
           : 0
     );
@@ -155,9 +155,9 @@ export class VersionControlService {
   buildSnapshotVersion(snapshot: SnapshotDTO): VersionDTO {
     const tempDTO = new VersionDTO();
 
-    tempDTO.content = snapshot.content;
+    tempDTO.content = snapshot.Content;
     tempDTO.isDiff = false;
-    tempDTO.fileID = snapshot.fileID;
+    tempDTO.fileID = snapshot.FileID;
     tempDTO.prevContent = '';
 
     return tempDTO;
@@ -180,7 +180,7 @@ export class VersionControlService {
   }
 
   buildDiffContext(diff: DiffDTO, snapshot: SnapshotDTO): string {
-    let retString = snapshot.content;
+    let retString = snapshot.Content;
 
     const tempArr = this.diffArr.filter((ele) => {
       return ele.DiffNumber < diff.DiffNumber;
@@ -204,11 +204,11 @@ export class VersionControlService {
 
   snapshotRestore(snapshot: SnapshotDTO): void {
     this.snapshotArr = this.snapshotArr.filter((ele) => {
-      return ele.snapshotNumber <= snapshot.snapshotNumber;
+      return ele.SnapshotNumber <= snapshot.SnapshotNumber;
     });
 
     this.diffArr = this.diffArr.filter((ele) => {
-      return ele.SnapshotNumber <= snapshot.snapshotNumber;
+      return ele.SnapshotNumber <= snapshot.SnapshotNumber;
     });
 
     this.sortSnapshotArr(this.snapshotArr);
@@ -217,7 +217,7 @@ export class VersionControlService {
 
   diffRestore(diff: DiffDTO): void {
     this.snapshotArr = this.snapshotArr.filter((ele) => {
-      return ele.snapshotNumber <= diff.SnapshotNumber;
+      return ele.SnapshotNumber <= diff.SnapshotNumber;
     });
 
     this.diffArr = this.diffArr.filter((ele) => {
@@ -278,7 +278,8 @@ export class VersionControlService {
     console.log(url);
     const body = new SnapshotDTO();
 
-    body.fileID = fileID;
+    body.UserID = this.userService.getUserID() as number;
+    body.FileID = fileID;
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
