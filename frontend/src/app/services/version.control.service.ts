@@ -16,8 +16,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class VersionControlService {
-  userService: any;
-  constructor(private http: HttpClient, private fileService: FileService) { }
+  constructor(private http: HttpClient, private fileService: FileService, private userService: UserService) { }
 
   public snapshotArr: SnapshotDTO[] = [];
   public diffArr: DiffDTO[] = [];
@@ -246,9 +245,10 @@ export class VersionControlService {
   sendSaveDiff(fileId: string, content: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}version_control/save_diff`;
+    console.log(url);
     const body = new DiffDTO();
 
-    body.UserID = this.userService.getUserID();
+    body.UserID = this.userService.getUserID() as number;
     body.Content = content;
     body.FileID = fileId;
     const headers = new HttpHeaders().set(
