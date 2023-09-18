@@ -5,11 +5,15 @@ import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
 import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { S3Service } from '../s3/s3.service';
 import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
+import { SnapshotService } from '../snapshots/snapshots.service';
+import { Snapshot } from '../snapshots/entities/snapshots.entity';
+import { Diff } from '../diffs/entities/diffs.entity';
 
 @Injectable()
 export class VersionControlService {
   constructor(
     private diffService: DiffsService,
+    private snapshotService: SnapshotService,
     private markdownFileService: MarkdownFilesService,
     private s3Service: S3Service,
     private s3ServiceMock: S3ServiceMock,
@@ -25,10 +29,6 @@ export class VersionControlService {
 
     this.s3Service.saveDiff(diffDTO, nextDiffID);
 
-    console.log(
-      '[versionControlService.saveDiff] Saved diff in s3',
-    );
-
     if (
       nextDiffID %
         parseInt(
@@ -37,21 +37,15 @@ export class VersionControlService {
         0 &&
       nextDiffID !== 0
     ) {
-      // create snapshot
+      // TODO @Dylan create snapshot
     }
 
-    await this.diffService.updateDiff(nextDiffID);
-
-    console.log(
-      '[versionControlService.saveDiff] Updated diff in db',
+    await this.diffService.updateDiff(
+      diffDTO.DiffID,
     );
 
     await this.markdownFileService.incrementNextDiffID(
       diffDTO.MarkdownID,
-    );
-
-    console.log(
-      '[versionControlService.saveDiff] Incremented nextDiffID in db',
     );
   }
 
@@ -78,9 +72,10 @@ export class VersionControlService {
       nextSnapshotID,
     );
 
-    await this.diffService.updateDiff(
-      nextSnapshotID,
+    await this.snapshotService.updateSnapshot(
+      snapshotDTO.SnapshotID,
     );
+
     await this.markdownFileService.incrementNextDiffID(
       snapshotDTO.MarkdownID,
     );
@@ -99,10 +94,38 @@ export class VersionControlService {
    *
    * @returns all snapshots for this file, in logical order
    */
-  getAllSnapshots() {
-    // calls s3Service.getAllSnapshots()
-    // reorders snapshots in logical order
-    // return logically ordered snapshots
+  async getAllSnapshots(
+    snapshotDTO: SnapshotDTO,
+  ) {
+    const snapshotRange = Array.from(
+      {
+        length: parseInt(
+          process.env.MAX_SNAPSHOTS,
+        ),
+      },
+      (_, index) => index,
+    );
+
+    const nextSnapshotID =
+      await this.markdownFileService.getNextSnapshotID(
+        snapshotDTO.MarkdownID,
+      );
+
+    const logicalOrder = this.getLogicalOrder(
+      snapshotRange,
+      nextSnapshotID,
+    );
+
+    let snapshots =
+      await this.s3Service.retrieveAllSnapshots(
+        logicalOrder,
+        snapshotDTO,
+      );
+
+    snapshots =
+      this.pruneEmptySnapshots(snapshots);
+
+    return snapshots;
   }
 
   ///===----------------------------------------------------
@@ -146,5 +169,51 @@ export class VersionControlService {
       logicalOrder[logicalIndex] = arr[idx];
     }
     return logicalOrder;
+  }
+
+  ///===-----------------------------------------------------
+
+  pruneEmptySnapshots(snapshots: SnapshotDTO[]) {
+    return snapshots.filter((snapshot) => {
+      return (
+        snapshot.Content !== undefined &&
+        snapshot.Content !== null &&
+        snapshot.Content !== ''
+      );
+    });
+  }
+
+  ///===----------------------------------------------------
+
+  async convertSnapshotsToSnapshotDTOs(snapshots: Snapshot[]) {
+    const snapshotDTOs = [];
+    for (let i = 0; i < snapshots.length; i++) {
+      const snapshot = snapshots[i];
+      const snapshotDTO = new SnapshotDTO();
+      snapshotDTO.SnapshotID = snapshot.SnapshotID;
+      snapshotDTO.MarkdownID = snapshot.MarkdownID;
+      snapshotDTO.UserID = snapshot.UserID;
+      snapshotDTO.S3SnapshotID = snapshot.S3SnapshotID;
+      snapshotDTO.LastModified = snapshot.LastModified;
+      snapshotDTOs.push(snapshotDTO);
+    }
+    return snapshotDTOs;
+  }
+
+  ///===----------------------------------------------------
+
+  async convertDiffsToDiffDTOs(diffs: Diff[]) {
+    const diffDTOs = [];
+    for (let i = 0; i < diffs.length; i++) {
+      const diff = diffs[i];
+      const diffDTO = new DiffDTO();
+      diffDTO.DiffID = diff.DiffID;
+      diffDTO.MarkdownID = diff.MarkdownID;
+      diffDTO.UserID = diff.UserID;
+      diffDTO.S3DiffID = diff.S3DiffID;
+      diffDTO.LastModified = diff.LastModified;
+      diffDTOs.push(diffDTO);
+    }
+    return diffDTOs;
   }
 }
