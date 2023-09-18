@@ -15,6 +15,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
 import { AssetService } from '../services/asset.service';
+import { VersionControlService } from '../services/version.control.service';
 import { Inject } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { set } from 'cypress/types/lodash';
@@ -44,6 +45,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   noAssetsAvailable: boolean = false;
   isTouchScreen: boolean = false;
   sideBarTab: boolean = false;
+  prevVersion: string = '';
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
@@ -55,7 +57,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     private editService: EditService,
     private assetService: AssetService,
     private clipboard: Clipboard,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private versionControlService: VersionControlService
   ) {}
 
   @HostListener('window:beforeunload', ['$event'])
@@ -84,7 +87,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-
+    this.prevVersion = this.editService.getContent() as string;
     this.speedDialItems = [
       {
         icon: 'pi pi-pencil',
@@ -249,6 +252,13 @@ export class EditComponent implements AfterViewInit, OnInit {
   saveDocumentContents() {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+
+    console.log(this.prevVersion)
+    console.log(this.editor.getData());
+    const diff = this.versionControlService.getReadablePatch(this.prevVersion as string, this.editor.getData());
+    console.log(diff);
+    this.versionControlService.saveDiff(this.editService.getMarkdownID() as string,diff);
+    this.prevVersion = this.editor.getData();
     let contents = this.editor.getData();
     let pass = this.editService.getDocumentPassword();
     if(pass != '' && pass != undefined) {
