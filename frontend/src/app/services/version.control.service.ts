@@ -309,6 +309,7 @@ export class VersionControlService {
     console.log(url);
     const body = new MarkdownFileDTO();
 
+    body.UserID = this.userService.getUserID() as number;
     body.MarkdownID = markdownID;
     const headers = new HttpHeaders().set(
       'Authorization',
