@@ -1,13 +1,13 @@
 export class VersionDTO {
-  fileID: string;
-  isDiff: boolean;
-  content: string;
-  prevContent: string;
+  MarkdownID: string;
+  IsDiff: boolean;
+  Content: string;
+  PrevContent: string;
 
   constructor() {
-    this.fileID = '';
-    this.isDiff = true;
-    this.content = '';
-    this.prevContent = '';
+    this.MarkdownID = '';
+    this.IsDiff = true;
+    this.Content = '';
+    this.PrevContent = '';
   }
 }

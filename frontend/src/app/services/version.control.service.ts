@@ -133,20 +133,20 @@ export class VersionControlService {
 
     // Visualise snapshot
     const snapshotVersions = this.versionArr.filter((ele) => {
-      return !ele.isDiff;
+      return !ele.IsDiff;
     });
     console.log(snapshotVersions);
 
     //Visualise diff
     const diffVersions = this.versionArr.filter((ele) => {
-      return ele.isDiff;
+      return ele.IsDiff;
     });
 
     // Could optimise by saving pretty html somewhere on save
     for (let element of diffVersions) {
       let dpsDiff = this.DiffPatchService.diff_main(
-        element.prevContent,
-        element.content
+        element.PrevContent,
+        element.Content
       );
       console.log(this.DiffPatchService.diff_prettyHtml(dpsDiff));
     }
@@ -155,10 +155,10 @@ export class VersionControlService {
   buildSnapshotVersion(snapshot: SnapshotDTO): VersionDTO {
     const tempDTO = new VersionDTO();
 
-    tempDTO.content = snapshot.Content;
-    tempDTO.isDiff = false;
-    tempDTO.fileID = snapshot.MarkdownID;
-    tempDTO.prevContent = '';
+    tempDTO.Content = snapshot.Content;
+    tempDTO.IsDiff = false;
+    tempDTO.MarkdownID = snapshot.MarkdownID;
+    tempDTO.PrevContent = '';
 
     return tempDTO;
   }
@@ -166,14 +166,14 @@ export class VersionControlService {
   buildDiffVersion(diff: DiffDTO, snapshot: SnapshotDTO): VersionDTO {
     const tempDTO = new VersionDTO();
 
-    tempDTO.isDiff = true;
-    tempDTO.fileID = diff.MarkdownID;
-    tempDTO.prevContent = this.buildDiffContext(diff, snapshot);
+    tempDTO.IsDiff = true;
+    tempDTO.MarkdownID = diff.MarkdownID;
+    tempDTO.PrevContent = this.buildDiffContext(diff, snapshot);
 
     const patches = this.DiffPatchService.patch_fromText(diff.Content);
-    tempDTO.content = this.DiffPatchService.patch_apply(
+    tempDTO.Content = this.DiffPatchService.patch_apply(
       patches,
-      tempDTO.prevContent
+      tempDTO.PrevContent
     )[0];
 
     return tempDTO;
