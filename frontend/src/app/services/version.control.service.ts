@@ -262,6 +262,7 @@ export class VersionControlService {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveAllSnapshots(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
+          console.log(response);
           if (response.status === 200) {
             resolve(response.body);
           } else {
