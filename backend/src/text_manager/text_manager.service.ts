@@ -170,8 +170,8 @@ export class TextManagerService {
       };
       'Table Element'?: {
         Top: number;
-        'Num Rows': number;
-        'Num Cols': number;
+        rows: number;
+        cols: number;
         Table: string[][];
       };
     }[] = [];
@@ -198,8 +198,8 @@ export class TextManagerService {
       const tableElement = {
         'Table Element': {
           Top: table.Top,
-          'Num Rows': numRows,
-          'Num Cols': numCols,
+          rows: numRows,
+          cols: numCols,
           Table: table,
         },
       };

@@ -152,9 +152,6 @@
             </div>
           </ng-template>
         </div>
-
-
-
         <div class="sidebarHeaderIconWrapper" (click)="refreshSidebar()" title="Refresh">
           <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/refresh.svg" alt="" />
         </div>
@@ -244,24 +241,24 @@
     </div>
   </div>
 
-<p-dialog class="extractedTextDialog" header="Extracted Text:"
-  [(visible)]="textCopyDialog" [modal]="true"
-  [style]="{ width: '30vw', minWidth: '300px' }"
-  [focusOnShow]="true">
+<!--<p-dialog class="extractedTextDialog" header="Extracted Text:"-->
+<!--  [(visible)]="textCopyDialog" [modal]="true"-->
+<!--  [style]="{ width: '30vw', minWidth: '300px' }"-->
+<!--  [focusOnShow]="true">-->
 
-  <div *ngFor="let text of textFromAsset" class="copyTextWrapper">
-    <p class="copyText">{{ text }}</p>
-    <div class="copyTextIconWrapper">
-      <img
-        class="copyTextIcon"
-        (click)="copyTextToClipboard(text)"
-        src="assets/Icons/editIcons/copy.svg"
-        alt=""
-      />
-    </div>
-  </div>
-  <p *ngIf="textFromAsset.length===0">No text detected :(</p>
-</p-dialog>
+<!--  <div *ngFor="let text of textFromAsset" class="copyTextWrapper">-->
+<!--    <p class="copyText">{{ text }}</p>-->
+<!--    <div class="copyTextIconWrapper">-->
+<!--      <img-->
+<!--        class="copyTextIcon"-->
+<!--        (click)="copyTextToClipboard(text)"-->
+<!--        src="assets/Icons/editIcons/copy.svg"-->
+<!--        alt=""-->
+<!--      />-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  <p *ngIf="textFromAsset.length===0">No text detected :(</p>-->
+<!--</p-dialog>-->
 </div>
 
 

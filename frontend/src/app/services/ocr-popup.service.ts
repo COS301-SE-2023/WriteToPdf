@@ -19,7 +19,7 @@ export class OCRDialogService {
                     top: '12%',
                     left: '17%',
                 },
-                data: data, // Pass the data to the dialog component
+                data: data
             });
         } else {
             this.closeDialog();

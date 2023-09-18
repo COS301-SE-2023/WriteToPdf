@@ -94,22 +94,12 @@ export class AssetService {
 
   retrieveAsset(assetId: string, format: string, textId:string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      if (format === 'image')
-        this.sendRetrieveAssetData(assetId, format).subscribe({
-          next: (response: HttpResponse<any>) => {
-            if (response.status === 200) {
-              resolve(response.body);
-            } else {
-              resolve(null);
-            }
-          },
-        });
-      else if (format === 'text' || format === 'table')
+        if (format === 'text' || format === 'table')
         this.sendRetrieveTextOrTableData(assetId, format, textId).subscribe({
           next: (response: HttpResponse<any>) => {
-            console.log(response);
             if (response.status === 200) {
-              resolve(JSON.parse(response.body.Content));
+              console.log("Asset service: ", response);
+              resolve(response.body);
             } else {
               resolve(null);
             }
@@ -117,6 +107,8 @@ export class AssetService {
         });
     });
   }
+
+
 
   sendRetrieveAssetData(
     assetId: string,

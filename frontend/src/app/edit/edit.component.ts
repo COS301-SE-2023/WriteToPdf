@@ -330,12 +330,12 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (format === 'text' || format === 'table'){
       let asset = this.assets[currAssetIndex];
       if (!asset.Blocks) {
-        asset = await this.assetService.retrieveAsset(assetId, format, textId);
+        var assetResponse = await this.assetService.retrieveAsset(assetId, format, textId);
+        console.log("Response from Service: ", assetResponse);
         this.assets[currAssetIndex].Blocks = asset.Blocks;
       }
-      this.textCopyDialog = true;
       this.assets[currAssetIndex].NotRetrieving = false;
-      this.showOCRPopup(asset);
+      this.showOCRPopup(assetResponse);
     }
     else if (format === 'image') {
 
