@@ -14,6 +14,7 @@ export class CameraComponent {
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef;
 
   sysImage = '';
+  originalImage = '';
   public sidebarVisible = false;
   assetName: string = '';
   videoRef: any;
@@ -126,6 +127,7 @@ export class CameraComponent {
     const dataUrl = canvas.toDataURL('image/jpeg', 1); // Adjust the quality (0.0 to 1.0)
 
     this.sysImage = dataUrl;
+    this.originalImage = dataUrl;
     this.captured = true;
   }
 
@@ -171,7 +173,7 @@ export class CameraComponent {
       const ctx = canvas.getContext('2d');
       if (ctx) { // Check if ctx is not null
         const img = new Image();
-        img.src = this.sysImage;
+        img.src = this.originalImage;
         img.onload = () => {
           canvas.width = img.width;
           canvas.height = img.height;
