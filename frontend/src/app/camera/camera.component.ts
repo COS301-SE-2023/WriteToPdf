@@ -24,7 +24,7 @@ export class CameraComponent {
   flipCamera: boolean = false;
   cameraAvailable: boolean = false;
   settingCamera: boolean = false;
-
+  contrastValue: number = 0;
   constructor(
     private elementRef: ElementRef,
     private assetService: AssetService,
@@ -59,7 +59,7 @@ export class CameraComponent {
   }
 
   setupCamera() {
-    this.settingCamera=true;
+    this.settingCamera = true;
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       console.error("getUserMedia is not supported in this browser.");
       this.cameraAvailable = false;
@@ -76,7 +76,7 @@ export class CameraComponent {
         // Access granted, display the camera stream
         this.cameraAvailable = true;
         this.videoRef.srcObject = stream;
-        this.settingCamera=false;
+        this.settingCamera = false;
       })
       .catch((error) => {
         // Handle errors and permission denial
@@ -89,8 +89,8 @@ export class CameraComponent {
 
 
   disableCamera() {
-    if(this.settingCamera){
-      let interval=setInterval(() => {
+    if (this.settingCamera) {
+      let interval = setInterval(() => {
         try {
           this.videoRef.srcObject
             .getTracks()
@@ -163,5 +163,40 @@ export class CameraComponent {
       this.sidebarVisible = true;
     }
   }
+
+  adjustContrast() {
+    const imageElement = document.getElementById('image') as HTMLImageElement;
+    if (imageElement) {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (ctx) { // Check if ctx is not null
+        const img = new Image();
+        img.src = this.sysImage;
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+
+          // Adjust contrast
+          const factor = (259 * (this.contrastValue + 255)) / (255 * (259 - this.contrastValue));
+          for (let i = 0; i < data.length; i += 4) {
+            data[i] = this.clamp(factor * (data[i] - 128) + 128);
+            data[i + 1] = this.clamp(factor * (data[i + 1] - 128) + 128);
+            data[i + 2] = this.clamp(factor * (data[i + 2] - 128) + 128);
+          }
+
+          ctx.putImageData(imageData, 0, 0);
+          this.sysImage = canvas.toDataURL();
+        };
+      }
+    }
+  }
+
+  clamp(value: number, min = 0, max = 255): number {
+    return Math.min(max, Math.max(min, value));
+  }
+
 
 }

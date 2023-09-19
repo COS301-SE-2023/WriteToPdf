@@ -31,8 +31,10 @@
   </div>
 
   <div class="imageWrapper" [ngClass]="{ 'notVisible': !captured }">
-    <img class="previewImg" [src]="sysImage" alt="" />
+    <img class="previewImg" [src]="sysImage" alt="" id="image"/>
   </div>
+
+  <input type="range" min="0" max="200" [(ngModel)]="contrastValue" (input)="adjustContrast()" [ngClass]="{ 'notVisible': !captured }" placeholder="0" title="Adjust Contrast"/>
 
   <div class="footer" [ngClass]="{ 'notVisible': !captured }">
     <p-checkbox class="checkbox" [(ngModel)]="isAsset" [binary]="true" label="Extract Text"
