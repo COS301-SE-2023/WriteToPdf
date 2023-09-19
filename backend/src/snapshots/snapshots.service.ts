@@ -34,6 +34,7 @@ export class SnapshotService {
         MarkdownID: markdownFileDTO.MarkdownID,
         UserID: markdownFileDTO.UserID,
         S3SnapshotID: i,
+        HasBeenUsed: false,
       });
     }
     await this.snapshotRepository.insert(

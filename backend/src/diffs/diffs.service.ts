@@ -43,6 +43,7 @@ export class DiffsService {
         MarkdownID: markdownFileDTO.MarkdownID,
         UserID: markdownFileDTO.UserID,
         S3DiffID: i,
+        HasBeenUsed: false,
       });
     }
     await this.diffRepository.insert(diffRecords);
