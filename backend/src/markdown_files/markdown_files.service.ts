@@ -158,7 +158,7 @@ export class MarkdownFilesService {
     markdownFile.NextDiffID =
       (markdownFile.NextDiffID + 1) %
       parseInt(process.env.MAX_DIFFS);
-    return this.markdownFileRepository.save(
+    return await this.markdownFileRepository.save(
       markdownFile,
     );
   }
