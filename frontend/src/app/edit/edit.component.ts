@@ -645,4 +645,18 @@ export class EditComponent implements AfterViewInit, OnInit {
       this.history[i].isCurrent = false;
     }
   }
+
+  expandSnapshot(snapshot: any, event: any) {
+    if (snapshot.expanded) {
+      snapshot.expanded = false;
+    } else {
+      snapshot.expanded = true;
+    }
+
+    const arrowElement = event.target;
+
+    arrowElement.classList.toggle('expanded');
+
+    event.stopPropagation();
+  }
 }

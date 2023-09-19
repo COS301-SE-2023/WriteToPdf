@@ -739,7 +739,7 @@ Preserve the relative scale, though. */
 .historyObject {
     transition: 0.2s;
     display: grid;
-    grid-template-columns: 2fr 2fr 1fr;
+    grid-template-columns: 0.5fr 2fr 2fr 0.5fr;
     justify-content: space-around;
     width: $sidebar-content-width;
     border-radius: 8px;
@@ -783,4 +783,25 @@ Preserve the relative scale, though. */
     cursor: pointer;
     background-color: #ddf;
     transition: 0.5s;
+}
+
+.dropdownArrow {
+    transition: transform 0.3s ease;
+    margin: 0;
+    margin: auto 0;
+    width: 20px;
+    height: 20px;
+    padding: 4px;
+
+    border-radius: 5px;
+}
+
+.dropdownArrow:hover {
+    cursor: pointer;
+    background-color: #ddf;
+}
+
+.dropdownArrow.expanded {
+    transform: rotate(90deg);
+    /* Rotate 180 degrees when expanded */
 }
