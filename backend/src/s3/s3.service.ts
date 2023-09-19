@@ -381,7 +381,7 @@ export class S3Service {
     const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
     for (
       let i = 0;
-      i < parseInt(process.env.SNAPSHOTS);
+      i < parseInt(process.env.MAX_SNAPSHOTS);
       i++
     ) {
       try {
