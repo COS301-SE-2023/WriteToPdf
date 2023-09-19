@@ -49,12 +49,12 @@ export class VersionControlController {
 
   ///===----------------------------------------------------
 
-  @Post('get_diff_set')
-  getDiffSet(@Body() snapshotDTO: SnapshotDTO) {
-    return this.versionControlService.getDiffSetForSnapshot(
-      snapshotDTO,
-    );
-  }
+  // @Post('get_diff_set')
+  // getDiffSet(@Body() snapshotDTO: SnapshotDTO) {
+  //   return this.versionControlService.getDiffSetForSnapshot(
+  //     snapshotDTO,
+  //   );
+  // }
 
   ///===----------------------------------------------------
 
@@ -111,7 +111,6 @@ export class VersionControlController {
       );
 
     versionHistoryDTO.DiffHistory = diffDTOs;
-    console.log(versionHistoryDTO);
     return versionHistoryDTO;
   }
 }
