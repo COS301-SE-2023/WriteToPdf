@@ -498,7 +498,21 @@ export class EditComponent implements AfterViewInit, OnInit {
   async refreshSidebarHistory() {
     this.history = [];
     const data=await this.versionControlService.retrieveAllHistory(this.editService.getMarkdownID() as string);
-    this.history=data.SnapshotHistory.concat(data.DiffHistory);
+    const snapshot=data.SnapshotHistory;
+    const diff=data.DiffHistory;
+
+    for(let i = 0; i < snapshot.length; i++) {
+      snapshot[i].LastModified = this.formatDate(snapshot[i].LastModified);
+      snapshot[i].Name = "Snapshot " + i;
+      for(let j = 0; j < diff.length; j++) {
+        if(snapshot[i].SnapshotID === diff[j].SnapshotID) {
+          snapshot[i].ChildDiff = diff[j];
+          diff[j].LastModified = this.formatDate(diff[j].LastModified);
+          diff[j].Name = "Diff " + j;
+        }
+      }
+    }
+    this.history=snapshot;
     
   }
 
