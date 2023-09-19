@@ -258,7 +258,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     console.log(this.editor.getData());
     const diff = this.versionControlService.getReadablePatch(this.prevVersion as string, this.editor.getData());
     console.log(diff);
-    this.versionControlService.saveDiff(this.editService.getMarkdownID() as string,diff);
+    this.versionControlService.saveDiff(this.editService.getMarkdownID() as string,diff, this.editor.getData());
     this.prevVersion = this.editor.getData();
     let contents = this.editor.getData();
     let pass = this.editService.getDocumentPassword();

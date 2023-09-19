@@ -228,9 +228,9 @@ export class VersionControlService {
     this.sortDiffArr(this.diffArr);
   }
 
-  saveDiff(fileID: string, content: string): Promise<boolean> {
+  saveDiff(fileID: string, content: string, snapshotPayload:string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.sendSaveDiff(fileID, content).subscribe({
+      this.sendSaveDiff(fileID, content, snapshotPayload).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
             resolve(true);
@@ -242,7 +242,7 @@ export class VersionControlService {
     });
   }
 
-  sendSaveDiff(markdownID: string, content: string): Observable<HttpResponse<any>> {
+  sendSaveDiff(markdownID: string, content: string, snapshotPayload:string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}version_control/save_diff`;
     console.log(url);
@@ -251,6 +251,7 @@ export class VersionControlService {
     body.UserID = this.userService.getUserID() as number;
     body.Content = content;
     body.MarkdownID = markdownID;
+    body.SnapshotPayload = snapshotPayload;
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
