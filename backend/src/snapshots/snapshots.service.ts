@@ -44,10 +44,15 @@ export class SnapshotService {
 
   ///===-----------------------------------------------------
 
-  async updateSnapshot(
-    snapshotID: string,
-  ) {
-    
+  async updateSnapshot(snapshotID: string) {
+    const snapshot =
+      await this.snapshotRepository.findOne({
+        where: { SnapshotID: snapshotID },
+      });
+
+    snapshot.LastModified = new Date();
+    snapshot.HasBeenUsed = true;
+    await this.snapshotRepository.save(snapshot);
   }
 
   ///===-----------------------------------------------------
@@ -58,6 +63,7 @@ export class SnapshotService {
     return await this.snapshotRepository.find({
       where: {
         MarkdownID: markdownFileDTO.MarkdownID,
+        HasBeenUsed: true,
       },
     });
   }
