@@ -510,7 +510,7 @@ export class EditComponent implements AfterViewInit, OnInit {
           if (snapshot[i].SnapshotID === diff[j].SnapshotID) {
             snapshot[i].ChildDiffs.push(diff[j]);
             diff[j].LastModified = this.formatDate(diff[j].LastModified);
-            diff[j].Name = "Diff " + j;
+            diff[j].Name = "Version " + j;
             diff[j].hasSnapshot = true;
           }
         }

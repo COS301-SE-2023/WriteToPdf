@@ -764,7 +764,8 @@ Preserve the relative scale, though. */
 }
 
 .diffObject{
-    grid-template-columns: 2fr 2fr 1fr;
+    margin-left: 20px;
+    grid-template-columns: 2fr 2fr 0.5fr;
 }
 
 .selectedHistory {
