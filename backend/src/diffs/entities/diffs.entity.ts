@@ -27,4 +27,7 @@ export class Diff {
 
   @Column()
   HasBeenUsed: boolean;
+
+  @Column()
+  SnapshotID: string;
 }

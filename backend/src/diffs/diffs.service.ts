@@ -33,8 +33,10 @@ export class DiffsService {
 
   async createDiffs(
     markdownFileDTO: MarkdownFileDTO,
+    snapshotIDs: string[],
   ) {
     const diffRecords = [];
+    let snapshotIndex = 0;
     for (
       let i = 0;
       i < parseInt(process.env.MAX_DIFFS);
@@ -46,12 +48,24 @@ export class DiffsService {
           i.toString(),
       ).toString();
 
+      if (
+        i %
+          parseInt(
+            process.env.DIFFS_PER_SNAPSHOT,
+          ) ===
+          0 &&
+        i !== 0
+      ) {
+        snapshotIndex++;
+      }
+
       diffRecords.push({
         DiffID: diffID,
         MarkdownID: markdownFileDTO.MarkdownID,
         UserID: markdownFileDTO.UserID,
         S3DiffID: i,
         HasBeenUsed: false,
+        SnapshotID: snapshotIDs[snapshotIndex],
       });
     }
     await this.diffRepository.insert(diffRecords);

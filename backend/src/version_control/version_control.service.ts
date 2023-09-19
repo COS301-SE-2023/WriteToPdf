@@ -235,6 +235,7 @@ export class VersionControlService {
       diffDTO.UserID = diff.UserID;
       diffDTO.S3DiffID = diff.S3DiffID;
       diffDTO.LastModified = diff.LastModified;
+      diffDTO.SnapshotID = diff.SnapshotID;
       diffDTOs.push(diffDTO);
     }
     return diffDTOs;

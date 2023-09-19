@@ -17,6 +17,7 @@ export class SnapshotService {
   async createSnapshots(
     markdownFileDTO: MarkdownFileDTO,
   ) {
+    const snapshotIDs = [];
     const snapshotRecords = [];
     for (
       let i = 0;
@@ -36,10 +37,14 @@ export class SnapshotService {
         S3SnapshotID: i,
         HasBeenUsed: false,
       });
+
+      snapshotIDs.push(snapshotID);
     }
     await this.snapshotRepository.insert(
       snapshotRecords,
     );
+
+    return snapshotIDs;
   }
 
   ///===-----------------------------------------------------
