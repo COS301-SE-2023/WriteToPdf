@@ -4,6 +4,7 @@ export class DiffDTO {
   DiffNumber: number;
   SnapshotNumber: number;
   Content: string;
+  SnapshotPayload: string;
 
   constructor() {
     this.UserID = 0;
@@ -11,5 +12,6 @@ export class DiffDTO {
     this.DiffNumber = 0;
     this.SnapshotNumber = 0;
     this.Content = '';
+    this.SnapshotPayload = '';
   }
 }
