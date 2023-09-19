@@ -111,6 +111,7 @@ export class VersionControlController {
       );
 
     versionHistoryDTO.DiffHistory = diffDTOs;
+    console.log(versionHistoryDTO);
     return versionHistoryDTO;
   }
 }

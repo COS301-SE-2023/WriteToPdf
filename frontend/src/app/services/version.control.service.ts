@@ -294,7 +294,7 @@ export class VersionControlService {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveAllHistory(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
+          console.log("Backend data response: ",response);
           if (response.status === 200) {
             resolve(response.body);
           } else {

@@ -59,7 +59,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private clipboard: Clipboard,
     private messageService: MessageService,
     private versionControlService: VersionControlService
-  ) {}
+  ) { }
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
@@ -119,9 +119,9 @@ export class EditComponent implements AfterViewInit, OnInit {
     ];
 
     //get window width
-    this.isTouchScreen=window.matchMedia('(pointer: coarse)').matches;
+    this.isTouchScreen = window.matchMedia('(pointer: coarse)').matches;
     const width = window.innerWidth;
-    if (width < 800) 
+    if (width < 800)
       this.hideSideBar();
     const c = localStorage.getItem('content');
     const m = localStorage.getItem('markdownID');
@@ -136,8 +136,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.fileName = this.editService.getName();
 
     this.history.push({ name: 'Latest', date: 'now', html: this.editService.getContent(), id: 'LATEST', isCurrent: true });
-    this.history.push({name: 'Version 7', date: '01-01-1977', html: '',  id: '8'});
-    this.history.push({name: 'Version 6', date: '01-01-1976', html: '<s><p><span style="background-color:hsl(0, 75%, 60%);">Text added from V0 to V1.</span style="background-color:hsl(0, 75%, 60%);"></p> <p><span style="background-color:hsl(0, 75%, 60%);">More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(0, 75%, 60%);">Addition from V3 to V4</span></p></s>',  id: '7'});
+    this.history.push({ name: 'Version 7', date: '01-01-1977', html: '', id: '8' });
+    this.history.push({ name: 'Version 6', date: '01-01-1976', html: '<s><p><span style="background-color:hsl(0, 75%, 60%);">Text added from V0 to V1.</span style="background-color:hsl(0, 75%, 60%);"></p> <p><span style="background-color:hsl(0, 75%, 60%);">More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(0, 75%, 60%);">Addition from V3 to V4</span></p></s>', id: '7' });
     this.history.push({ name: 'Version 5', date: '01-01-1975', html: '<p><span style="background-color:hsl(0, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span >Addition from V3 to V4</span></p>', id: '6' });
     this.history.push({ name: 'Version 4', date: '01-01-1974', html: '<p><span >Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(120, 75%, 60%);">Addition from V3 to V4</span></p>', id: '5' });
     this.history.push({ name: 'Version 3', date: '01-01-1973', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p>', id: '4' });
@@ -258,17 +258,17 @@ export class EditComponent implements AfterViewInit, OnInit {
     console.log(this.editor.getData());
     const diff = this.versionControlService.getReadablePatch(this.prevVersion as string, this.editor.getData());
     console.log(diff);
-    this.versionControlService.saveDiff(this.editService.getMarkdownID() as string,diff, this.editor.getData());
+    this.versionControlService.saveDiff(this.editService.getMarkdownID() as string, diff, this.editor.getData());
     this.prevVersion = this.editor.getData();
     let contents = this.editor.getData();
     let pass = this.editService.getDocumentPassword();
-    if(pass != '' && pass != undefined) {
+    if (pass != '' && pass != undefined) {
       this.fileService.saveDocument(
         this.fileService.encryptSafeLockDocument(contents, pass),
         this.editService.getMarkdownID(),
         this.editService.getPath(),
         this.editService.getSafeLock()
-        );
+      );
     }
     else {
       this.fileService.saveDocument(
@@ -276,7 +276,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editService.getMarkdownID(),
         this.editService.getPath(),
         this.editService.getSafeLock()
-        );
+      );
     }
   }
 
@@ -415,7 +415,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         }),
       ])
       .then(
-        () => {},
+        () => { },
         (error) => {
           console.error(
             'Could not copy HTML data (image) to clipboard: ',
@@ -497,30 +497,33 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   async refreshSidebarHistory() {
     this.history = [];
-    const data=await this.versionControlService.retrieveAllHistory(this.editService.getMarkdownID() as string);
-    const snapshot=data.SnapshotHistory;
-    const diff=data.DiffHistory;
+    this.versionControlService.retrieveAllHistory(this.editService.getMarkdownID() as string).then((data) => {
+      console.log("Response body: ", data);
+      const snapshot = JSON.parse(JSON.stringify(data.SnapshotHistory));
+      const diff = JSON.parse(JSON.stringify(data.DiffHistory));
 
-    for(let i = 0; i < snapshot.length; i++) {
-      snapshot[i].LastModified = this.formatDate(snapshot[i].LastModified);
-      snapshot[i].Name = "Snapshot " + i;
-      for(let j = 0; j < diff.length; j++) {
-        if(snapshot[i].SnapshotID === diff[j].SnapshotID) {
-          snapshot[i].ChildDiff = diff[j];
-          diff[j].LastModified = this.formatDate(diff[j].LastModified);
-          diff[j].Name = "Diff " + j;
-          diff[j].hasSnapshot = true;
+      for (let i = 0; i < snapshot.length; i++) {
+        snapshot[i].LastModified = this.formatDate(snapshot[i].LastModified);
+        snapshot[i].Name = "Snapshot " + i;
+        for (let j = 0; j < diff.length; j++) {
+          if (snapshot[i].SnapshotID === diff[j].SnapshotID) {
+            snapshot[i].ChildDiff = diff[j];
+            diff[j].LastModified = this.formatDate(diff[j].LastModified);
+            diff[j].Name = "Diff " + j;
+            diff[j].hasSnapshot = true;
+          }
         }
       }
-    }
-    this.history=snapshot;
-    for(let i=0;i<diff.length;i++){
-      if(!diff[i].hasSnapshot){
-        diff[i].LastModified = this.formatDate(diff[i].LastModified);
-        diff[i].Name = "Diff " + i;
-        this.history.push(diff[i]);
+      this.history = snapshot;
+      for (let i = 0; i < diff.length; i++) {
+        if (!diff[i].hasSnapshot) {
+          diff[i].LastModified = this.formatDate(diff[i].LastModified);
+          diff[i].Name = "Diff " + i;
+          this.history.push(diff[i]);
+        }
       }
-    }
+    });
+
   }
 
   pageBreak() {
@@ -628,7 +631,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   insertContent(obj: any) {
     this.deselectAllHistory();
     obj.isCurrent = true;
-    if(obj.SnapshotID === 'LATEST') {
+    if (obj.SnapshotID === 'LATEST') {
       this.disableReadOnly();
       this.editor.setData(obj.Content);
       return;
@@ -638,7 +641,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   deselectAllHistory() {
-    for(let i = 0; i < this.history.length; i++) {
+    for (let i = 0; i < this.history.length; i++) {
       this.history[i].isCurrent = false;
     }
   }
