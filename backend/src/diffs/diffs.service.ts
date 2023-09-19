@@ -14,7 +14,7 @@ export class DiffsService {
     private diffRepository: Repository<Diff>,
   ) {}
 
-  async updateDiff(
+  async getDiff(
     diffDTO: DiffDTO,
     nextDiffID: number,
   ) {
@@ -25,6 +25,26 @@ export class DiffsService {
           S3DiffID: nextDiffID,
         },
       });
+
+    return diff;
+  }
+
+  async updateDiff(
+    diffDTO: DiffDTO,
+    nextDiffID: number,
+  ) {
+    // const diff =
+    //   await this.diffRepository.findOne({
+    //     where: {
+    //       MarkdownID: diffDTO.MarkdownID,
+    //       S3DiffID: nextDiffID,
+    //     },
+    //   });
+
+    const diff = await this.getDiff(
+      diffDTO,
+      nextDiffID,
+    );
 
     diff.LastModified = new Date();
     diff.HasBeenUsed = true;
