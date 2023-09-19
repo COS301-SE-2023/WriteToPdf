@@ -1,9 +1,10 @@
 <div class="container">
     <p-toast [breakpoints]="{'600px': {width: '300px'}, '350px': {width: '90%'}}"></p-toast>
+    <p-confirmDialog [style]="{width: '50vw', minWidth:'300px'}"></p-confirmDialog>
   <div class="header">
     <div class="toolbarWrapper">
       <div class="titleWrapper">
-        <div class="logoWrapper" (click)="navigateToPage('home')" title="Return Home">
+        <div class="logoWrapper" (click)="exitToHome()" title="Return Home">
           <img
             class="logo"
             src="assets/Logos/WriteToPdf_Logo_white.png"
@@ -26,7 +27,7 @@
         </div>
         <div class="exitEditPage">
               <p-button class="backButton" icon="pi pi-times" label="Exit" styleClass="p-button-rounded"
-                (click)="navigateToPage('home')"></p-button>
+                (click)="exitToHome()"></p-button>
         </div>
       </div>
       <div class="toolsWrapper">

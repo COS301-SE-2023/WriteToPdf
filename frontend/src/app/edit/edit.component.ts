@@ -17,7 +17,7 @@ import { EditService } from '../services/edit.service';
 import { AssetService } from '../services/asset.service';
 import { VersionControlService } from '../services/version.control.service';
 import { Inject } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { set } from 'cypress/types/lodash';
 import { PageBreak } from '@ckeditor/ckeditor5-page-break';
 
@@ -58,7 +58,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     private assetService: AssetService,
     private clipboard: Clipboard,
     private messageService: MessageService,
-    private versionControlService: VersionControlService
+    private versionControlService: VersionControlService,
+    private confirmationService: ConfirmationService,
   ) { }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -248,6 +249,27 @@ export class EditComponent implements AfterViewInit, OnInit {
       Path: this.editService.getPath(),
     };
     this.router.navigate(['/camera'], { state: data });
+  }
+
+  exitToHome(){
+    console.log("Exit To Home.");
+    this.confirmationService.confirm({
+      message: 'Do you want to save before you leave?',
+      header: 'Save Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Exit and Save',
+      rejectLabel: 'Exit without Saving',
+      accept: () => {
+        this.editService.setContent(this.editor.getData());
+        this.saveDocumentContents();
+        this.router.navigate(['/home']);
+      },
+      reject: (type: any) => {
+        if(type === 1) 
+          this.router.navigate(['/home']);
+      }
+
+    });
   }
 
   saveDocumentContents() {
