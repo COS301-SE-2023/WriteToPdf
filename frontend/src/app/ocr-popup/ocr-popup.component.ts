@@ -1,10 +1,7 @@
 import {Component, ElementRef, Inject, Renderer2, OnInit} from '@angular/core';
-import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Clipboard} from "@angular/cdk/clipboard";
 import {OCRDialogService} from "../services/ocr-popup.service";
-import {legacyMixinTabIndex} from "@angular/material/legacy-core";
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import {HttpResponse} from "@angular/common/http";
 
 
 @Component({
@@ -21,7 +18,38 @@ export class OcrPopupComponent implements OnInit {
     convertedRenderableTables: any = [];
     assetImage: string ='';
     textElements: any = [];
-    paragraphText: string = ''; // Use this property to bind to the textarea
+    paragraphText: string = '';
+    products: any[] = [
+    {
+      code: 'P1',
+      inventoryStatus: 'INSTOCK',
+      name: 'Product 1',
+      price: 100,
+    },
+    {
+      code: 'P2',
+      inventoryStatus: 'INSTOCK',
+      name: 'Product 2',
+      price: 100,
+    },
+    {
+      code: 'P3',
+      inventoryStatus: 'INSTOCK',
+      name: 'Product 3',
+      price: 100,
+    },
+    {
+      code: 'P1',
+      inventoryStatus: 'INSTOCK',
+      name: 'Product 4',
+      price: 100,
+    },
+    {
+      code: 'P1',
+      inventoryStatus: 'INSTOCK',
+      name: 'Product 5',
+      price: 100,
+    },];// Use this property to bind to the textarea
     dummyJSON: any = {
         "Num Elements": 2,
         "Table Indices": 1,
