@@ -509,11 +509,18 @@ export class EditComponent implements AfterViewInit, OnInit {
           snapshot[i].ChildDiff = diff[j];
           diff[j].LastModified = this.formatDate(diff[j].LastModified);
           diff[j].Name = "Diff " + j;
+          diff[j].hasSnapshot = true;
         }
       }
     }
     this.history=snapshot;
-    
+    for(let i=0;i<diff.length;i++){
+      if(!diff[i].hasSnapshot){
+        diff[i].LastModified = this.formatDate(diff[i].LastModified);
+        diff[i].Name = "Diff " + i;
+        this.history.push(diff[i]);
+      }
+    }
   }
 
   pageBreak() {
