@@ -20,6 +20,7 @@ export class DiffsService {
       });
 
     diff.LastModified = new Date();
+    diff.HasBeenUsed = true;
     await this.diffRepository.save(diff);
   }
 
