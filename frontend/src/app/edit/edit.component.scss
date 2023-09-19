@@ -736,6 +736,7 @@ Preserve the relative scale, though. */
     color: #000
 }
 
+.diffObject,
 .historyObject {
     transition: 0.2s;
     display: grid;
@@ -755,10 +756,15 @@ Preserve the relative scale, though. */
     user-select: none;
 }
 
+.diffObject:hover,
 .historyObject:hover {
     cursor: pointer;
     // scale: 1.1;
     background-color: darken($light-grey, 10%);
+}
+
+.diffObject{
+    grid-template-columns: 2fr 2fr 1fr;
 }
 
 .selectedHistory {

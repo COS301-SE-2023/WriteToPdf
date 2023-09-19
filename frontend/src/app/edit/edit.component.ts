@@ -505,9 +505,10 @@ export class EditComponent implements AfterViewInit, OnInit {
       for (let i = 0; i < snapshot.length; i++) {
         snapshot[i].LastModified = this.formatDate(snapshot[i].LastModified);
         snapshot[i].Name = "Snapshot " + i;
+        snapshot[i].ChildDiffs = [];
         for (let j = 0; j < diff.length; j++) {
           if (snapshot[i].SnapshotID === diff[j].SnapshotID) {
-            snapshot[i].ChildDiff = diff[j];
+            snapshot[i].ChildDiffs.push(diff[j]);
             diff[j].LastModified = this.formatDate(diff[j].LastModified);
             diff[j].Name = "Diff " + j;
             diff[j].hasSnapshot = true;
@@ -522,7 +523,9 @@ export class EditComponent implements AfterViewInit, OnInit {
           this.history.push(diff[i]);
         }
       }
+      console.log(this.history);
     });
+
 
   }
 
