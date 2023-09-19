@@ -26,6 +26,7 @@ export class CameraComponent {
   cameraAvailable: boolean = false;
   settingCamera: boolean = false;
   contrastValue: number = 0;
+  brightnessValue: number = 100;
   constructor(
     private elementRef: ElementRef,
     private assetService: AssetService,
@@ -166,14 +167,13 @@ export class CameraComponent {
     }
   }
 
-  adjustContrast() {
-    const imageElement = document.getElementById('image') as HTMLImageElement;
-    if (imageElement) {
+  async adjustContrast(dataImage: string): Promise<string> {
+    return new Promise<string>((resolve) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      if (ctx) { // Check if ctx is not null
+      if (ctx) {
         const img = new Image();
-        img.src = this.originalImage;
+        img.src = dataImage;
         img.onload = () => {
           canvas.width = img.width;
           canvas.height = img.height;
@@ -190,15 +190,61 @@ export class CameraComponent {
           }
 
           ctx.putImageData(imageData, 0, 0);
-          this.sysImage = canvas.toDataURL();
+          resolve(canvas.toDataURL());
         };
+      } else {
+        resolve(dataImage); // Return the original dataURL if the canvas context cannot be obtained
       }
-    }
+    });
+  }
+
+
+  async adjustBrightness(dataImage: string): Promise<string> {
+    return new Promise<string>((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const img = new Image();
+        img.src = dataImage;
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+
+          // Adjust brightness
+          const factor = (this.brightnessValue - 100) / 100; // Calculate the brightness factor
+          for (let i = 0; i < data.length; i += 4) {
+            data[i] = this.clamp(data[i] + 255 * factor);
+            data[i + 1] = this.clamp(data[i + 1] + 255 * factor);
+            data[i + 2] = this.clamp(data[i + 2] + 255 * factor);
+          }
+
+          ctx.putImageData(imageData, 0, 0);
+          resolve(canvas.toDataURL());
+        };
+      } else {
+        resolve(dataImage); // Return the original dataURL if the canvas context cannot be obtained
+      }
+    });
+  }
+
+
+  async applyFilters() {
+    const contrastImage = await this.adjustBrightness(this.originalImage);
+    const brightnessImage = await this.adjustContrast(contrastImage);
+    this.sysImage = brightnessImage;
   }
 
   clamp(value: number, min = 0, max = 255): number {
     return Math.min(max, Math.max(min, value));
   }
 
+  resetFilters() {
+    this.contrastValue = 0;
+    this.brightnessValue = 100;
+    this.sysImage = this.originalImage;
+  }
 
 }
