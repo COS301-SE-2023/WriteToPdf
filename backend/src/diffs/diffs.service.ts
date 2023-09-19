@@ -62,6 +62,7 @@ export class DiffsService {
     return await this.diffRepository.find({
       where: {
         MarkdownID: markdownFileDTO.MarkdownID,
+        HasBeenUsed: true,
       },
     });
   }
