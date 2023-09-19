@@ -27,17 +27,26 @@ export class VersionControlService {
         diffDTO.MarkdownID,
       );
 
+    const nextDiff =
+      await this.diffService.getDiff(
+        diffDTO,
+        nextDiffID,
+      );
+
     this.s3Service.saveDiff(diffDTO, nextDiffID);
 
     if (
-      nextDiffID %
-        parseInt(
-          process.env.DIFFS_PER_SNAPSHOT,
-        ) ===
-        0 &&
-      nextDiffID !== 0
+      !(nextDiffID === 0 && !nextDiff.HasBeenUsed)
     ) {
-      this.saveSnapshot(diffDTO);
+      if (
+        nextDiffID %
+          parseInt(
+            process.env.DIFFS_PER_SNAPSHOT,
+          ) ===
+        0
+      ) {
+        this.saveSnapshot(diffDTO);
+      }
     }
 
     await this.diffService.updateDiff(
@@ -52,13 +61,13 @@ export class VersionControlService {
 
   ///===-----------------------------------------------------
 
-  getDiff(diffDTO: DiffDTO) {}
+  // getDiff(diffDTO: DiffDTO) {}
 
   ///===-----------------------------------------------------
 
-  getAllDiffsForSnapshot(
-    snapshotDTO: SnapshotDTO,
-  ) {}
+  // getAllDiffsForSnapshot(
+  //   snapshotDTO: SnapshotDTO,
+  // ) {}
 
   ///===-----------------------------------------------------
 
@@ -68,7 +77,7 @@ export class VersionControlService {
         diffDTO.MarkdownID,
       );
 
-    this.s3Service.saveSnapshot(
+    await this.s3Service.saveSnapshot(
       diffDTO,
       nextSnapshotID,
     );
@@ -85,7 +94,7 @@ export class VersionControlService {
 
   ///===-----------------------------------------------------
 
-  getDiffSetForSnapshot(snapshot: SnapshotDTO) {}
+  // getDiffSetForSnapshot(snapshot: SnapshotDTO) {}
 
   ///===-----------------------------------------------------
 
