@@ -68,6 +68,7 @@ export class SnapshotService {
   ) {
     await this.snapshotRepository.delete({
       MarkdownID: markdownFileDTO.MarkdownID,
+      HasBeenUsed: true,
     });
   }
 }
