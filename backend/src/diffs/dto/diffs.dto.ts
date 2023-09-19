@@ -6,6 +6,8 @@ export class DiffDTO {
   S3DiffID: number;
   LastModified: Date;
   Content: string;
+  SnapshotPayload: string;
+  SnapshotID: string;
 
   constructor() {
     this.DiffID = undefined;
@@ -15,5 +17,7 @@ export class DiffDTO {
     this.S3DiffID = undefined;
     this.LastModified = undefined;
     this.Content = undefined;
+    this.SnapshotPayload = undefined;
+    this.SnapshotID = undefined;
   }
 }
