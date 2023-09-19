@@ -44,10 +44,16 @@ export class SnapshotService {
 
   ///===-----------------------------------------------------
 
-  async updateSnapshot(snapshotID: string) {
+  async updateSnapshot(
+    markdownID: string,
+    nextSnapshotID: number,
+  ) {
     const snapshot =
       await this.snapshotRepository.findOne({
-        where: { SnapshotID: snapshotID },
+        where: {
+          MarkdownID: markdownID,
+          S3SnapshotID: nextSnapshotID,
+        },
       });
 
     snapshot.LastModified = new Date();

@@ -31,30 +31,39 @@ export class VersionControlController {
 
   ///===----------------------------------------------------
 
-  @Post('get_diff')
-  getDiff(@Body() diffDTO: DiffDTO) {
-    return this.versionControlService.getDiff(
-      diffDTO,
-    );
-  }
+  // @Post('get_diff')
+  // getDiff(@Body() diffDTO: DiffDTO) {
+  //   return this.versionControlService.getDiff(
+  //     diffDTO,
+  //   );
+  // }
+
+  // ///===----------------------------------------------------
+
+  // @Post('get_all_diffs')
+  // getAllDiffs(@Body() snapshotDTO: SnapshotDTO) {
+  //   return this.versionControlService.getAllDiffsForSnapshot(
+  //     snapshotDTO,
+  //   );
+  // }
 
   ///===----------------------------------------------------
 
-  @Post('get_all_diffs')
-  getAllDiffs(@Body() snapshotDTO: SnapshotDTO) {
-    return this.versionControlService.getAllDiffsForSnapshot(
+  @Post('get_diff_set')
+  getDiffSet(@Body() snapshotDTO: SnapshotDTO) {
+    return this.versionControlService.getDiffSetForSnapshot(
       snapshotDTO,
     );
   }
 
   ///===----------------------------------------------------
 
-  @Post('save_snapshot')
-  saveSnapshot(@Body() snapshotDTO: SnapshotDTO) {
-    this.versionControlService.saveSnapshot(
-      snapshotDTO,
-    );
-  }
+  // @Post('save_snapshot')
+  // saveSnapshot(@Body() snapshotDTO: SnapshotDTO) {
+  //   this.versionControlService.saveSnapshot(
+  //     snapshotDTO,
+  //   );
+  // }
 
   ///===----------------------------------------------------
 

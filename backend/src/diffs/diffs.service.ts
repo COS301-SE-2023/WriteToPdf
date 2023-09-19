@@ -5,6 +5,7 @@ import { Diff } from './entities/diffs.entity';
 import 'dotenv/config';
 import * as CryptoJS from 'crypto-js';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
+import { DiffDTO } from './dto/diffs.dto';
 
 @Injectable()
 export class DiffsService {
@@ -13,10 +14,16 @@ export class DiffsService {
     private diffRepository: Repository<Diff>,
   ) {}
 
-  async updateDiff(diffID: string) {
+  async updateDiff(
+    diffDTO: DiffDTO,
+    nextDiffID: number,
+  ) {
     const diff =
       await this.diffRepository.findOne({
-        where: { DiffID: diffID },
+        where: {
+          MarkdownID: diffDTO.MarkdownID,
+          S3DiffID: nextDiffID,
+        },
       });
 
     diff.LastModified = new Date();

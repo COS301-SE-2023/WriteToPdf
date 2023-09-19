@@ -37,11 +37,12 @@ export class VersionControlService {
         0 &&
       nextDiffID !== 0
     ) {
-      // TODO @Dylan create snapshot
+      this.saveSnapshot(diffDTO);
     }
 
     await this.diffService.updateDiff(
-      diffDTO.DiffID,
+      diffDTO,
+      nextDiffID,
     );
 
     await this.markdownFileService.incrementNextDiffID(
@@ -61,29 +62,30 @@ export class VersionControlService {
 
   ///===-----------------------------------------------------
 
-  async saveSnapshot(snapshotDTO: SnapshotDTO) {
+  async saveSnapshot(diffDTO: DiffDTO) {
     const nextSnapshotID =
       await this.markdownFileService.getNextSnapshotID(
-        snapshotDTO.MarkdownID,
+        diffDTO.MarkdownID,
       );
 
     this.s3Service.saveSnapshot(
-      snapshotDTO,
+      diffDTO,
       nextSnapshotID,
     );
 
     await this.snapshotService.updateSnapshot(
-      snapshotDTO.SnapshotID,
+      diffDTO.MarkdownID,
+      nextSnapshotID,
     );
 
-    await this.markdownFileService.incrementNextDiffID(
-      snapshotDTO.MarkdownID,
+    await this.markdownFileService.incrementNextSnapshotID(
+      diffDTO.MarkdownID,
     );
   }
 
   ///===-----------------------------------------------------
 
-  getSnapshot() {}
+  getDiffSetForSnapshot(snapshot: SnapshotDTO) {}
 
   ///===-----------------------------------------------------
 
@@ -130,6 +132,21 @@ export class VersionControlService {
 
   ///===----------------------------------------------------
   // Helpers
+
+  getDiffSetIndices(snapshotID: number) {
+    const diffsPerSnap = parseInt(
+      process.env.DIFFS_PER_SNAPSHOT,
+    );
+    const first = snapshotID * diffsPerSnap;
+    const last = first + diffsPerSnap;
+    const indices = Array.from(
+      { length: last - first },
+      (_, index) => index + first,
+    );
+    return indices;
+  }
+
+  ///===----------------------------------------------------
 
   getLogicalIndex(
     s3Index: number,
@@ -185,16 +202,22 @@ export class VersionControlService {
 
   ///===----------------------------------------------------
 
-  async convertSnapshotsToSnapshotDTOs(snapshots: Snapshot[]) {
+  async convertSnapshotsToSnapshotDTOs(
+    snapshots: Snapshot[],
+  ) {
     const snapshotDTOs = [];
     for (let i = 0; i < snapshots.length; i++) {
       const snapshot = snapshots[i];
       const snapshotDTO = new SnapshotDTO();
-      snapshotDTO.SnapshotID = snapshot.SnapshotID;
-      snapshotDTO.MarkdownID = snapshot.MarkdownID;
+      snapshotDTO.SnapshotID =
+        snapshot.SnapshotID;
+      snapshotDTO.MarkdownID =
+        snapshot.MarkdownID;
       snapshotDTO.UserID = snapshot.UserID;
-      snapshotDTO.S3SnapshotID = snapshot.S3SnapshotID;
-      snapshotDTO.LastModified = snapshot.LastModified;
+      snapshotDTO.S3SnapshotID =
+        snapshot.S3SnapshotID;
+      snapshotDTO.LastModified =
+        snapshot.LastModified;
       snapshotDTOs.push(snapshotDTO);
     }
     return snapshotDTOs;

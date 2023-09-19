@@ -403,24 +403,24 @@ export class S3Service {
   ///===----------------------------------------------------
 
   async saveSnapshot(
-    snapshotDTO: SnapshotDTO,
+    diffDTO: DiffDTO,
     nextSnapshotID: number,
   ) {
-    const filePath = `${snapshotDTO.UserID}/${snapshotDTO.MarkdownID}`;
+    const filePath = `${diffDTO.UserID}/${diffDTO.MarkdownID}`;
 
     try {
       await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
           Key: `${filePath}/snapshot/${nextSnapshotID}`,
-          Body: snapshotDTO.Content,
+          Body: diffDTO.SnapshotPayload,
         }),
       );
     } catch (err) {
       console.log('Write File Error: ' + err);
       return undefined;
     }
-    return snapshotDTO;
+    return diffDTO;
   }
 
   ///===----------------------------------------------------
