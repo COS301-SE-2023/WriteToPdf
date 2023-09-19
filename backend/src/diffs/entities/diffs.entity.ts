@@ -23,5 +23,8 @@ export class Diff {
     default: () => 'CURRENT_TIMESTAMP(3)',
     onUpdate: 'CURRENT_TIMESTAMP(3)',
   })
-  LastModified: Date;
+  LastModified: Date; 
+
+  @Column()
+  HasBeenUsed: boolean;
 }

@@ -24,4 +24,7 @@ export class Snapshot {
     onUpdate: 'CURRENT_TIMESTAMP(3)',
   })
   LastModified: Date;
+
+  @Column()
+  HasBeenUsed: boolean;
 }
