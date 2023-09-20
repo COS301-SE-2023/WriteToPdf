@@ -1,0 +1,16 @@
+import { DiffDTO } from '../../diffs/dto/diffs.dto';
+import { SnapshotDTO } from '../../snapshots/dto/snapshot.dto';
+
+export class VersionSetDTO {
+  UserID: number;
+  MarkdownID: string;
+  DiffHistory: string[];
+  SnapshotID: string;
+
+  constructor() {
+    this.UserID = undefined;
+    this.MarkdownID = undefined;
+    this.DiffHistory = undefined;
+    this.SnapshotID = undefined;
+  }
+}
