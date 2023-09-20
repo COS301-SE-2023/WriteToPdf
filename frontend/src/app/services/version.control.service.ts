@@ -1,49 +1,40 @@
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
-// import DiffMatchPatch from 'diff-match-patch';
 import { diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { HttpResponse } from '@angular/common/http';
+import { MessageService } from 'primeng/api';
+import { environment } from '../../environments/environment';
+
 import { DiffDTO } from './dto/diff.dto';
 import { SnapshotDTO } from './dto/snapshot.dto';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
 
 import { FileService } from './file.service';
 import { VersionDTO } from './dto/version.dto';
-import { environment } from 'src/environments/environment';
 import { VersionSetDTO } from './dto/version_set.dto';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VersionControlService {
-  constructor(private http: HttpClient, private fileService: FileService, private userService: UserService) { }
+  constructor(
+    private http: HttpClient,
+    private fileService: FileService,
+    private messageService: MessageService,
+    private userService: UserService
+  ) {}
 
   public snapshotArr: SnapshotDTO[] = [];
   public diffArr: DiffDTO[] = [];
   public versionArr: VersionDTO[] = [];
+
+  private latestVersion: VersionDTO = new VersionDTO();
   private DiffPatchService = new DiffMatchPatch();
 
-  // async test(): Promise<void> {
-  //   let text1: string = '';
-  //   let text2: string = '';
-  //   const filePath1 = '../assets/VersionControl/test1.txt';
-  //   const filePath2 = '../assets/VersionControl/test2.txt';
-  //   this.http.get(filePath1, { responseType: 'text' }).subscribe((data) => {
-  //     text1 = data;
-  //     this.http.get(filePath2, { responseType: 'text' }).subscribe((data) => {
-  //       text2 = data;
-
-  //       const diff = this.DiffPatchService.diff_main(text1, text2);
-  //       const patches = this.DiffPatchService.patch_make(diff);
-  //       console.log(this.DiffPatchService.patch_toText(patches));
-  //       console.log(this.DiffPatchService.patch_apply(patches, text1));
-  //     });
-  //   });
-  // }
-
   async init(): Promise<void> {
-    // TODO: Un-hijack login
     this.snapshotArr = [];
     this.diffArr = [];
     this.versionArr = [];
@@ -73,8 +64,7 @@ export class VersionControlService {
       this.http.get(element, { responseType: 'text' }).subscribe((data) => {
         var tempDTO = new DiffDTO();
         tempDTO.MarkdownID = 'abc123';
-        tempDTO.DiffNumber = +element.charAt(element.length - 1);
-        tempDTO.SnapshotNumber = this.snapshotArr[0].SnapshotNumber;
+        // tempDTO.snapshotNumber = this.snapshotArr[0].snapshotNumber;
         tempDTO.Content = data;
         this.pushToDiffArr(tempDTO);
       });
@@ -98,6 +88,14 @@ export class VersionControlService {
     return this.snapshotArr;
   }
 
+  getLatestVersionContent(): string {
+    return this.latestVersion.Content;
+  }
+
+  setLatestVersionContent(content: string) {
+    this.latestVersion.Content = content;
+  }
+
   pushToSnapshotArr(element: SnapshotDTO): SnapshotDTO[] {
     this.snapshotArr.push(element);
     return this.snapshotArr;
@@ -109,15 +107,16 @@ export class VersionControlService {
       a.SnapshotNumber > b.SnapshotNumber
         ? 1
         : a.SnapshotNumber < b.SnapshotNumber
-          ? -1
-          : 0
+        ? -1
+        : 0
     );
   }
 
   sortDiffArr(inArr: DiffDTO[]): void {
     // Ascending sort on diffNumber
-    inArr.sort((a, b) =>
-      a.DiffNumber > b.DiffNumber ? 1 : a.DiffNumber < b.DiffNumber ? -1 : 0
+    inArr.sort(
+      (a, b) =>
+        a.DiffNumber > b.DiffNumber ? 1 : a.DiffNumber < b.DiffNumber ? -1 : 0 // TODO: Rework
     );
   }
 
@@ -184,7 +183,7 @@ export class VersionControlService {
     let retString = snapshot.Content;
 
     const tempArr = this.diffArr.filter((ele) => {
-      return ele.DiffNumber < diff.DiffNumber;
+      return ele.DiffNumber < diff.DiffNumber; // TODO: Rework
     });
 
     this.sortDiffArr(tempArr);
@@ -204,6 +203,7 @@ export class VersionControlService {
   }
 
   snapshotRestore(snapshot: SnapshotDTO): void {
+    //TODO: Rework
     this.snapshotArr = this.snapshotArr.filter((ele) => {
       return ele.SnapshotNumber <= snapshot.SnapshotNumber;
     });
@@ -217,6 +217,7 @@ export class VersionControlService {
   }
 
   diffRestore(diff: DiffDTO): void {
+    //TODO: Rework
     this.snapshotArr = this.snapshotArr.filter((ele) => {
       return ele.SnapshotNumber <= diff.SnapshotNumber;
     });
@@ -229,7 +230,11 @@ export class VersionControlService {
     this.sortDiffArr(this.diffArr);
   }
 
-  saveDiff(fileID: string, content: string, snapshotPayload:string): Promise<boolean> {
+  saveDiff(
+    fileID: string,
+    content: string,
+    snapshotPayload: string
+  ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSaveDiff(fileID, content, snapshotPayload).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -243,7 +248,11 @@ export class VersionControlService {
     });
   }
 
-  sendSaveDiff(markdownID: string, content: string, snapshotPayload:string): Observable<HttpResponse<any>> {
+  sendSaveDiff(
+    markdownID: string,
+    content: string,
+    snapshotPayload: string
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}version_control/save_diff`;
     console.log(url);
@@ -295,7 +304,7 @@ export class VersionControlService {
     return new Promise<any>((resolve, reject) => {
       this.sendRetrieveAllHistory(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log("Backend data response: ",response);
+          console.log('Backend data response: ', response);
           if (response.status === 200) {
             resolve(response.body);
           } else {
@@ -320,7 +329,11 @@ export class VersionControlService {
     );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
-  loadHistorySet(markdownID:string, diffHistory: string[], snapshotID: string) {
+  loadHistorySet(
+    markdownID: string,
+    diffHistory: string[],
+    snapshotID: string
+  ) {
     return new Promise<any>((resolve, reject) => {
       this.sendLoadHistorySet(markdownID, diffHistory, snapshotID).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -335,7 +348,11 @@ export class VersionControlService {
     });
   }
 
-  sendLoadHistorySet(markdownID:string, diffHistory: string[], snapshotID: string): Observable<HttpResponse<any>> {
+  sendLoadHistorySet(
+    markdownID: string,
+    diffHistory: string[],
+    snapshotID: string
+  ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}version_control/get_history_set`;
     const body = new VersionSetDTO();

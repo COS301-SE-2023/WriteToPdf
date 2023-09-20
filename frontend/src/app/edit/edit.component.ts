@@ -59,8 +59,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     private clipboard: Clipboard,
     private messageService: MessageService,
     private versionControlService: VersionControlService,
-    private confirmationService: ConfirmationService,
-  ) { }
+    private confirmationService: ConfirmationService
+  ) {}
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
@@ -122,8 +122,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     //get window width
     this.isTouchScreen = window.matchMedia('(pointer: coarse)').matches;
     const width = window.innerWidth;
-    if (width < 800)
-      this.hideSideBar();
+    if (width < 800) this.hideSideBar();
     const c = localStorage.getItem('content');
     const m = localStorage.getItem('markdownID');
     const n = localStorage.getItem('name');
@@ -132,20 +131,81 @@ export class EditComponent implements AfterViewInit, OnInit {
     const sl = localStorage.getItem('safeLock');
     const dp = localStorage.getItem('encryptedDocumentPassword');
 
-    if (c != null && m != null && n != null && p != null && pf != null && sl != null && dp != null)
-      this.editService.setAll(c, m, n, p, pf, sl === 'true', this.editService.decryptPassword(dp));
+    if (
+      c != null &&
+      m != null &&
+      n != null &&
+      p != null &&
+      pf != null &&
+      sl != null &&
+      dp != null
+    )
+      this.editService.setAll(
+        c,
+        m,
+        n,
+        p,
+        pf,
+        sl === 'true',
+        this.editService.decryptPassword(dp)
+      );
     this.fileName = this.editService.getName();
 
-    this.history.push({ name: 'Latest', date: 'now', html: this.editService.getContent(), id: 'LATEST', isCurrent: true });
-    this.history.push({ name: 'Version 7', date: '01-01-1977', html: '', id: '8' });
-    this.history.push({ name: 'Version 6', date: '01-01-1976', html: '<s><p><span style="background-color:hsl(0, 75%, 60%);">Text added from V0 to V1.</span style="background-color:hsl(0, 75%, 60%);"></p> <p><span style="background-color:hsl(0, 75%, 60%);">More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(0, 75%, 60%);">Addition from V3 to V4</span></p></s>', id: '7' });
-    this.history.push({ name: 'Version 5', date: '01-01-1975', html: '<p><span style="background-color:hsl(0, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span >Addition from V3 to V4</span></p>', id: '6' });
-    this.history.push({ name: 'Version 4', date: '01-01-1974', html: '<p><span >Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(120, 75%, 60%);">Addition from V3 to V4</span></p>', id: '5' });
-    this.history.push({ name: 'Version 3', date: '01-01-1973', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p>', id: '4' });
-    this.history.push({ name: 'Version 2', date: '01-01-1972', html: '<p><span>Text added from V0 to V1.</span></p> <p><span style="background-color:hsl(120, 75%, 60%);">More Text added from V1 to V2.</span></p>', id: '3' });
-    this.history.push({ name: 'Version 1', date: '01-01-1971', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text added from V0 to V1.</span></p>', id: '2' });
-    this.history.push({ name: 'Version 0', date: '01-01-1970', html: '', id: '1' });
-
+    this.history.push({
+      name: 'Latest',
+      date: 'now',
+      html: this.editService.getContent(),
+      id: 'LATEST',
+      isCurrent: true,
+    });
+    this.history.push({
+      name: 'Version 7',
+      date: '01-01-1977',
+      html: '',
+      id: '8',
+    });
+    this.history.push({
+      name: 'Version 6',
+      date: '01-01-1976',
+      html: '<s><p><span style="background-color:hsl(0, 75%, 60%);">Text added from V0 to V1.</span style="background-color:hsl(0, 75%, 60%);"></p> <p><span style="background-color:hsl(0, 75%, 60%);">More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(0, 75%, 60%);">Addition from V3 to V4</span></p></s>',
+      id: '7',
+    });
+    this.history.push({
+      name: 'Version 5',
+      date: '01-01-1975',
+      html: '<p><span style="background-color:hsl(0, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span >Addition from V3 to V4</span></p>',
+      id: '6',
+    });
+    this.history.push({
+      name: 'Version 4',
+      date: '01-01-1974',
+      html: '<p><span >Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(120, 75%, 60%);">Addition from V3 to V4</span></p>',
+      id: '5',
+    });
+    this.history.push({
+      name: 'Version 3',
+      date: '01-01-1973',
+      html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p>',
+      id: '4',
+    });
+    this.history.push({
+      name: 'Version 2',
+      date: '01-01-1972',
+      html: '<p><span>Text added from V0 to V1.</span></p> <p><span style="background-color:hsl(120, 75%, 60%);">More Text added from V1 to V2.</span></p>',
+      id: '3',
+    });
+    this.history.push({
+      name: 'Version 1',
+      date: '01-01-1971',
+      html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text added from V0 to V1.</span></p>',
+      id: '2',
+    });
+    this.history.push({
+      name: 'Version 0',
+      date: '01-01-1970',
+      html: '',
+      id: '1',
+    });
   }
 
   ngAfterViewInit() {
@@ -251,8 +311,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.router.navigate(['/camera'], { state: data });
   }
 
-  exitToHome(){
-    console.log("Exit To Home.");
+  exitToHome() {
+    console.log('Exit To Home.');
     this.confirmationService.confirm({
       message: 'Do you want to save before you leave?',
       header: 'Save Confirmation',
@@ -265,10 +325,8 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.router.navigate(['/home']);
       },
       reject: (type: any) => {
-        if(type === 1) 
-          this.router.navigate(['/home']);
-      }
-
+        if (type === 1) this.router.navigate(['/home']);
+      },
     });
   }
 
@@ -276,11 +334,18 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
 
-    console.log(this.prevVersion)
+    console.log(this.prevVersion);
     console.log(this.editor.getData());
-    const diff = this.versionControlService.getReadablePatch(this.prevVersion as string, this.editor.getData());
+    const diff = this.versionControlService.getReadablePatch(
+      this.prevVersion as string,
+      this.editor.getData()
+    );
     console.log(diff);
-    this.versionControlService.saveDiff(this.editService.getMarkdownID() as string, diff, this.editor.getData());
+    this.versionControlService.saveDiff(
+      this.editService.getMarkdownID() as string,
+      diff,
+      this.editor.getData()
+    );
     this.prevVersion = this.editor.getData();
     let contents = this.editor.getData();
     let pass = this.editService.getDocumentPassword();
@@ -291,14 +356,28 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editService.getPath(),
         this.editService.getSafeLock()
       );
-    }
-    else {
+    } else {
       this.fileService.saveDocument(
         contents,
         this.editService.getMarkdownID(),
         this.editService.getPath(),
         this.editService.getSafeLock()
       );
+      // const latestVersionContent =
+      //   this.versionControlService.getLatestVersionContent();
+
+      // const readablePatch = this.versionControlService.getReadablePatch(
+      //   latestVersionContent,
+      //   contents
+      // );
+      // const markdownID = this.editService.getMarkdownID();
+
+      // this.versionControlService.saveDiff(
+      //   readablePatch,
+      //   markdownID ? (markdownID as string) : ''
+      // );
+
+      // this.versionControlService.setLatestVersionContent(contents);
     }
   }
 
@@ -437,7 +516,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         }),
       ])
       .then(
-        () => { },
+        () => {},
         (error) => {
           console.error(
             'Could not copy HTML data (image) to clipboard: ',
@@ -519,36 +598,36 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   async refreshSidebarHistory() {
     this.history = [];
-    this.versionControlService.retrieveAllHistory(this.editService.getMarkdownID() as string).then((data) => {
-      console.log("Response body: ", data);
-      const snapshot = JSON.parse(JSON.stringify(data.SnapshotHistory));
-      const diff = JSON.parse(JSON.stringify(data.DiffHistory));
+    this.versionControlService
+      .retrieveAllHistory(this.editService.getMarkdownID() as string)
+      .then((data) => {
+        console.log('Response body: ', data);
+        const snapshot = JSON.parse(JSON.stringify(data.SnapshotHistory));
+        const diff = JSON.parse(JSON.stringify(data.DiffHistory));
 
-      for (let i = 0; i < snapshot.length; i++) {
-        snapshot[i].LastModified = this.formatDate(snapshot[i].LastModified);
-        snapshot[i].Name = "Snapshot " + (i+1);
-        snapshot[i].ChildDiffs = [];
-        for (let j = 0; j < diff.length; j++) {
-          if (snapshot[i].SnapshotID === diff[j].SnapshotID) {
-            snapshot[i].ChildDiffs.push(diff[j]);
-            diff[j].LastModified = this.formatDate(diff[j].LastModified);
-            diff[j].Name = "Version " + (j+1);
-            diff[j].hasSnapshot = true;
+        for (let i = 0; i < snapshot.length; i++) {
+          snapshot[i].LastModified = this.formatDate(snapshot[i].LastModified);
+          snapshot[i].Name = 'Snapshot ' + (i + 1);
+          snapshot[i].ChildDiffs = [];
+          for (let j = 0; j < diff.length; j++) {
+            if (snapshot[i].SnapshotID === diff[j].SnapshotID) {
+              snapshot[i].ChildDiffs.push(diff[j]);
+              diff[j].LastModified = this.formatDate(diff[j].LastModified);
+              diff[j].Name = 'Version ' + (j + 1);
+              diff[j].hasSnapshot = true;
+            }
           }
         }
-      }
-      this.history = snapshot;
-      for (let i = 0; i < diff.length; i++) {
-        if (!diff[i].hasSnapshot) {
-          diff[i].LastModified = this.formatDate(diff[i].LastModified);
-          diff[i].Name = "Diff " + (i+1);
-          this.history.push(diff[i]);
+        this.history = snapshot;
+        for (let i = 0; i < diff.length; i++) {
+          if (!diff[i].hasSnapshot) {
+            diff[i].LastModified = this.formatDate(diff[i].LastModified);
+            diff[i].Name = 'Diff ' + (i + 1);
+            this.history.push(diff[i]);
+          }
         }
-      }
-      console.log(this.history);
-    });
-
-
+        console.log(this.history);
+      });
   }
 
   pageBreak() {
