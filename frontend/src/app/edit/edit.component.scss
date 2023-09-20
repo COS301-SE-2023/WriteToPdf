@@ -170,6 +170,8 @@ $page-height: 29.7cm;
     cursor: pointer;
 }
 
+
+
 .logo {
     width: 50px;
 }
@@ -214,6 +216,10 @@ $page-height: 29.7cm;
     box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
     z-index: 2;
+}
+
+.alignDiv {
+  margin-bottom:-35px;
 }
 
 .pageName {
@@ -300,7 +306,7 @@ div[contenteditable="true"]:focus {
     border-radius: 8px;
 
     background-color: #f0f0f0;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .assetHeader {
