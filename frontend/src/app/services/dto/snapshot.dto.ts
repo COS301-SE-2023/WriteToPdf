@@ -3,11 +3,13 @@ export class SnapshotDTO {
   MarkdownID: string;
   SnapshotNumber: number;
   Content: string;
+  OldestSnapshot: boolean;
 
   constructor() {
     this.UserID = 0;
     this.MarkdownID = '';
     this.SnapshotNumber = 0;
     this.Content = '';
+    this.OldestSnapshot = false;
   }
 }
