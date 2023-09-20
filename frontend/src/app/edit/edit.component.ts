@@ -349,7 +349,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     });
   }
 
-  saveDocumentContents() {
+  async saveDocumentContents() {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
 
@@ -357,27 +357,31 @@ export class EditComponent implements AfterViewInit, OnInit {
       this.prevVersion as string,
       this.editor.getData()
     );
-    this.versionControlService.saveDiff(
-      this.editService.getMarkdownID() as string,
-      diff,
-      this.editor.getData()
-    );
+
     this.prevVersion = this.editor.getData();
     let contents = this.editor.getData();
     let pass = this.editService.getDocumentPassword();
     if (pass != '' && pass != undefined) {
-      this.fileService.saveDocument(
+      await this.fileService.saveDocument(
         this.fileService.encryptSafeLockDocument(contents, pass),
         this.editService.getMarkdownID(),
         this.editService.getPath(),
         this.editService.getSafeLock()
       );
+      await this.versionControlService.saveDiff(
+        this.editService.getMarkdownID() as string,
+        diff
+      );
     } else {
-      this.fileService.saveDocument(
+      await this.fileService.saveDocument(
         contents,
         this.editService.getMarkdownID(),
         this.editService.getPath(),
         this.editService.getSafeLock()
+      );
+      await this.versionControlService.saveDiff(
+        this.editService.getMarkdownID() as string,
+        diff
       );
       // const latestVersionContent =
       //   this.versionControlService.getLatestVersionContent();

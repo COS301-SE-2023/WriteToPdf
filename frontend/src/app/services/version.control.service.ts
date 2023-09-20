@@ -248,11 +248,10 @@ export class VersionControlService {
 
   saveDiff(
     fileID: string,
-    content: string,
-    snapshotPayload: string
+    content: string
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.sendSaveDiff(fileID, content, snapshotPayload).subscribe({
+      this.sendSaveDiff(fileID, content).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
             resolve(true);
@@ -266,8 +265,7 @@ export class VersionControlService {
 
   sendSaveDiff(
     markdownID: string,
-    content: string,
-    snapshotPayload: string
+    content: string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}version_control/save_diff`;
@@ -277,7 +275,6 @@ export class VersionControlService {
     body.UserID = this.userService.getUserID() as number;
     body.Content = content;
     body.MarkdownID = markdownID;
-    body.SnapshotPayload = snapshotPayload;
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
