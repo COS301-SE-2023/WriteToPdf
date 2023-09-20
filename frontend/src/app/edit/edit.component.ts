@@ -69,7 +69,6 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   @HostListener('window:mousewheel', ['$event'])
   onMouseWheel(event: WheelEvent) {
-    console.log(event)
     if(event.shiftKey)
     {
       if(event.deltaY > 0)
@@ -279,7 +278,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   exitToHome(){
-    console.log("Exit To Home.");
     this.confirmationService.confirm({
       message: 'Do you want to save before you leave?',
       header: 'Save Confirmation',
@@ -303,10 +301,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
 
-    console.log(this.prevVersion)
-    console.log(this.editor.getData());
     const diff = this.versionControlService.getReadablePatch(this.prevVersion as string, this.editor.getData());
-    console.log(diff);
     this.versionControlService.saveDiff(this.editService.getMarkdownID() as string, diff, this.editor.getData());
     this.prevVersion = this.editor.getData();
     let contents = this.editor.getData();
@@ -547,7 +542,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   async refreshSidebarHistory() {
     this.history = [];
     this.versionControlService.retrieveAllHistory(this.editService.getMarkdownID() as string).then((data) => {
-      console.log("Response body: ", data);
       const snapshot = JSON.parse(JSON.stringify(data.SnapshotHistory));
       const diff = JSON.parse(JSON.stringify(data.DiffHistory));
 
@@ -572,7 +566,6 @@ export class EditComponent implements AfterViewInit, OnInit {
           this.history.push(diff[i]);
         }
       }
-      console.log(this.history);
     });
 
 

@@ -36,8 +36,6 @@ export class VersionControlService {
 
   //       const diff = this.DiffPatchService.diff_main(text1, text2);
   //       const patches = this.DiffPatchService.patch_make(diff);
-  //       console.log(this.DiffPatchService.patch_toText(patches));
-  //       console.log(this.DiffPatchService.patch_apply(patches, text1));
   //     });
   //   });
   // }

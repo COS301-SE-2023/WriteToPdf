@@ -99,7 +99,6 @@ export class CameraComponent {
             .forEach((track: { stop: () => any }) => track.stop());
           clearInterval(interval);
         } catch (e) {
-          // console.log(e);
         }
       }, 1000);
     }
@@ -108,7 +107,6 @@ export class CameraComponent {
         .getTracks()
         .forEach((track: { stop: () => any }) => track.stop());
     } catch (e) {
-      // console.log(e);
     }
   }
 

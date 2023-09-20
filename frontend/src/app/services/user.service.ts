@@ -200,7 +200,6 @@ export class UserService {
       this.hashPassword(newPassword, salt)
     ).subscribe({
       next: (response: HttpResponse<any>) => {
-        // console.log('forgotPass response: ', response);
         if (response.status === 200) {
           this.messageService.add({
             severity: 'success',
@@ -386,7 +385,6 @@ export class UserService {
     return new Promise<boolean>(async (resolve, reject) => {
       this.sendPasswordResetData(token, password, salt).subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response);
           if (response.status === 200) {
             this.messageService.add({
               severity: 'success',
@@ -482,7 +480,6 @@ export class UserService {
         this.sendRefreshTokenRequest().subscribe({
           next: (response: HttpResponse<any>) => {
             if (response.status === 200) {
-              // console.log(response);
               this.authToken = response.body.Token;
               this.expiresAt = this.jwtHelper.decodeToken(
                 response.body.Token
