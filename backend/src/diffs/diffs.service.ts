@@ -109,6 +109,23 @@ export class DiffsService {
 
   ///===-----------------------------------------------------
 
+  async resetDiffs(
+    markdownID: string,
+    snapshotID: string,
+  ) {
+    await this.diffRepository.update(
+      {
+        MarkdownID: markdownID,
+        SnapshotID: snapshotID,
+      },
+      {
+        HasBeenUsed: false,
+      },
+    );
+  }
+
+  ///===-----------------------------------------------------
+
   async getAllDiffs(markdownID: string) {
     return await this.diffRepository.find({
       where: {
