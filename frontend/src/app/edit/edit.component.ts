@@ -372,8 +372,8 @@ export class EditComponent implements AfterViewInit, OnInit {
       );
 
       this.versionControlService.saveDiff(
-        this.fileService.encryptSafeLockDocument(readablePatch, pass),
-        markdownID ? (markdownID as string) : ''
+        markdownID ? (markdownID as string) : '',
+        this.fileService.encryptSafeLockDocument(readablePatch, pass)
       );
     } else {
       await this.fileService.saveDocument(
@@ -384,8 +384,8 @@ export class EditComponent implements AfterViewInit, OnInit {
       );
 
       this.versionControlService.saveDiff(
-        readablePatch,
-        markdownID ? (markdownID as string) : ''
+        markdownID ? (markdownID as string) : '',
+        readablePatch
       );
     }
 
