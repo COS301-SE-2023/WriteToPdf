@@ -82,6 +82,52 @@ export class SnapshotService {
 
   ///===-----------------------------------------------------
 
+  async resetSnapshot(
+    markdownID: string,
+    nextSnapshotID: number,
+  ) {
+    const snapshot =
+      await this.snapshotRepository.findOne({
+        where: {
+          MarkdownID: markdownID,
+          S3SnapshotID: nextSnapshotID,
+        },
+      });
+
+    snapshot.HasBeenUsed = false;
+    await this.snapshotRepository.save(snapshot);
+    return snapshot;
+  }
+
+  ///===-----------------------------------------------------
+
+  async getSnapshotByS3SnapshotID(
+    markdownID: string,
+    s3SnapshotID: number,
+  ) {
+    return await this.snapshotRepository.findOne({
+      where: {
+        MarkdownID: markdownID,
+        S3SnapshotID: s3SnapshotID,
+      },
+    });
+  }
+
+  ///===-----------------------------------------------------
+
+  async getNextSnapshotID(markdownID: string) {
+    const markdownFile =
+      await this.snapshotRepository.findOne({
+        where: {
+          MarkdownID: markdownID,
+          HasBeenUsed: false,
+        },
+      });
+    return markdownFile.S3SnapshotID;
+  }
+
+  ///===-----------------------------------------------------
+
   async deleteSnapshots(
     markdownFileDTO: MarkdownFileDTO,
   ) {
