@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Snapshot } from './entities/snapshots.entity';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import * as CryptoJS from 'crypto-js';
+import { SnapshotDTO } from './dto/snapshot.dto';
 
 @Injectable()
 export class SnapshotService {
@@ -21,7 +22,7 @@ export class SnapshotService {
     const snapshotRecords = [];
     for (
       let i = 0;
-      i < parseInt(process.env.MAX_SNAPSHOTS);
+      i < parseInt(process.env.MAX_SNAPSHOTS) + 1;
       i++
     ) {
       const snapshotID = CryptoJS.SHA256(
@@ -87,6 +88,53 @@ export class SnapshotService {
     await this.snapshotRepository.delete({
       MarkdownID: markdownFileDTO.MarkdownID,
       HasBeenUsed: true,
+    });
+  }
+
+  ///===-----------------------------------------------------
+
+  getLogicalIndex(
+    s3Index: number,
+    nextSnapshotID: number,
+    arr_len: number,
+  ): number {
+    return (
+      (s3Index - nextSnapshotID + arr_len) %
+      arr_len
+    );
+  }
+
+  ///===-----------------------------------------------------
+
+  async getLogicalSnapshotOrder(
+    snapshotDTOs: SnapshotDTO[],
+    nextDiffID: number,
+  ) {
+    const arrLength = parseInt(
+      process.env.MAX_DIFFS,
+    );
+    const logicalOrder: SnapshotDTO[] = new Array(
+      arrLength,
+    ).fill(0);
+    for (let idx = 0; idx < arrLength; idx++) {
+      const logicalIndex = this.getLogicalIndex(
+        snapshotDTOs[idx].S3SnapshotID,
+        nextDiffID,
+        arrLength,
+      );
+      logicalOrder[logicalIndex] =
+        snapshotDTOs[idx];
+    }
+    return logicalOrder;
+  }
+
+  ///===-----------------------------------------------------
+
+  async getSnapshotByID(snapshotID: string) {
+    return await this.snapshotRepository.findOne({
+      where: {
+        SnapshotID: snapshotID,
+      },
     });
   }
 }
