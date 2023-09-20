@@ -45,7 +45,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   noAssetsAvailable: boolean = false;
   isTouchScreen: boolean = false;
   sideBarTab: boolean = false;
-  prevVersion: string = '';
+  previousVersion: string = '';
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
@@ -108,7 +108,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.prevVersion = this.editService.getContent() as string;
+    this.previousVersion = this.editService.getContent() as string;
     this.speedDialItems = [
       {
         icon: 'pi pi-pencil',
@@ -354,11 +354,11 @@ export class EditComponent implements AfterViewInit, OnInit {
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
 
     const diff = this.versionControlService.getReadablePatch(
-      this.prevVersion as string,
+      this.previousVersion as string,
       this.editor.getData()
     );
 
-    this.prevVersion = this.editor.getData();
+    this.previousVersion = this.editor.getData();
     let contents = this.editor.getData();
     let pass = this.editService.getDocumentPassword();
     if (pass != '' && pass != undefined) {
