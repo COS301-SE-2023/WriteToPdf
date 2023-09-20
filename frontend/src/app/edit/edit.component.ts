@@ -83,6 +83,17 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
   }
 
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    // Check if the Ctrl key is pressed and the 's' key (or 'S') is pressed simultaneously
+    if (event.ctrlKey && (event.key === 's' || event.key === 'S')) {
+      event.preventDefault();
+      this.saveDocumentContents();
+
+    }
+  }
+
+
   showImageUploadPopup(): void {
     const ref = this.dialogService.open(ImageUploadPopupComponent, {
       header: 'Upload Images',
