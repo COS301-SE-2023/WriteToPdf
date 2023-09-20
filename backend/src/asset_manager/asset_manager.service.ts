@@ -84,7 +84,10 @@ export class AssetManagerService {
     }
 
     for (let j = 0; j < assets.length; j++) {
-      if (assets[j].Format === 'text') {
+      if (
+        assets[j].Format === 'text' ||
+        assets[j].Format === 'table'
+      ) {
         const assetDTO = new AssetDTO();
         assetDTO.AssetID = assets[j].AssetID; // for the text image data file
         assetDTO.TextID = assets[j].TextID; // for the OCR text data file
