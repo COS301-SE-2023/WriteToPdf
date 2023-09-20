@@ -640,13 +640,22 @@ export class EditComponent implements AfterViewInit, OnInit {
               diff[j].HasSnapshot = true;
             }
           }
-          snapshot[0].ChildDiffs.sort((a, b) => {
-            return a.VersionNumber < b.VersionNumber
+          snapshot.sort((a, b) => {
+            return a.OrderNumber < b.OrderNumber
               ? 1
-              : a.VersionNumber > b.VersionNumber
+              : a.OrderNumber > b.OrderNumber
               ? -1
               : 0;
           });
+          snapshot.map((a) =>
+            a.ChildDiffs.sort((a, b) => {
+              return a.VersionNumber < b.VersionNumber
+                ? 1
+                : a.VersionNumber > b.VersionNumber
+                ? -1
+                : 0;
+            })
+          );
         }
 
         let diffNumber = 0;

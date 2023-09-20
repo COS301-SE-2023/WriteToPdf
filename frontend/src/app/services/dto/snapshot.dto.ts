@@ -11,6 +11,7 @@ export class SnapshotDTO {
   LastModifiedString: string;
   Name: string;
   ChildDiffs: DiffDTO[];
+  OrderNumber: number;
 
   constructor() {
     this.SnapshotID = '';
@@ -23,5 +24,6 @@ export class SnapshotDTO {
     this.LastModifiedString = '';
     this.Name = '';
     this.ChildDiffs = [];
+    this.OrderNumber = 0;
   }
 }
