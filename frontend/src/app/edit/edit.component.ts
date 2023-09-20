@@ -67,6 +67,22 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.saveDocumentContents();
   }
 
+  @HostListener('window:mousewheel', ['$event'])
+  onMouseWheel(event: WheelEvent) {
+    console.log(event)
+    if(event.shiftKey)
+    {
+      if(event.deltaY > 0)
+      {
+        this.zoomOut();
+      }
+      else
+      {
+        this.zoomIn();
+      }
+    }
+  }
+
   showImageUploadPopup(): void {
     const ref = this.dialogService.open(ImageUploadPopupComponent, {
       header: 'Upload Images',
