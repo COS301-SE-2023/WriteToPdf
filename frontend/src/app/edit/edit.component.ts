@@ -652,8 +652,8 @@ export class EditComponent implements AfterViewInit, OnInit {
               : a.LastModified > b.LastModified
               ? -1
               : 0;
-          }).map((a, i) => {
-            a.VersionNumber = i + 1;
+          }).map((a, i, arr) => {
+            a.VersionNumber = arr.length - i + 1;
             a.Name = 'Version ' + a.VersionNumber;
           })
         );
