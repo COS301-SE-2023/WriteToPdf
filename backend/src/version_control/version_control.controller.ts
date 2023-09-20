@@ -82,16 +82,16 @@ export class VersionControlController {
         snapshots,
       );
 
-    if (
-      snapshotDTOs.length ===
-      parseInt(process.env.MAX_SNAPSHOTS)
-    ) {
-      snapshotDTOs =
-        await this.snapshotService.getLogicalSnapshotOrder(
-          snapshotDTOs,
-          nextSnapshotID,
-        );
-    }
+    // if (
+    //   snapshotDTOs.length ===
+    //   parseInt(process.env.MAX_SNAPSHOTS)
+    // ) {
+    //   snapshotDTOs =
+    //     await this.snapshotService.getLogicalSnapshotOrder(
+    //       snapshotDTOs,
+    //       nextSnapshotID,
+    //     );
+    // }
 
     versionHistoryDTO.SnapshotHistory =
       snapshotDTOs;
@@ -113,26 +113,18 @@ export class VersionControlController {
         diffs,
       );
 
-    if (
-      diffDTOs.length ===
-      parseInt(process.env.MAX_DIFFS)
-    ) {
-      diffDTOs =
-        await this.diffService.getLogicalDiffOrder(
-          diffDTOs,
-          nextDiffID,
-        );
-    }
+    // if (
+    //   diffDTOs.length ===
+    //   parseInt(process.env.MAX_DIFFS)
+    // ) {
+    //   diffDTOs =
+    //     await this.diffService.getLogicalDiffOrder(
+    //       diffDTOs,
+    //       nextDiffID,
+    //     );
+    // }
 
     versionHistoryDTO.DiffHistory = diffDTOs;
-    //==-------------------------------
-    console.log(
-      'nextSnapshotID: ',
-      nextSnapshotID,
-    );
-    console.log('nextDiffID: ', nextDiffID);
-    console.log(versionHistoryDTO);
-    //==-------------------------------
     return versionHistoryDTO;
   }
 }
