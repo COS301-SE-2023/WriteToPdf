@@ -622,16 +622,14 @@ export class EditComponent implements AfterViewInit, OnInit {
         ) as SnapshotDTO[];
         const diff = JSON.parse(JSON.stringify(data.DiffHistory)) as DiffDTO[];
 
-        for (let i = 0; i < snapshot.length; i++) {
-          snapshot[i].LastModifiedString = this.formatDate(
-            snapshot[i].LastModified
-          );
-          snapshot[i].Name = 'Snapshot ' + (i + 1);
-          snapshot[i].ChildDiffs = [];
+        snapshot.map((a, i) => {
+          a.LastModifiedString = this.formatDate(a.LastModified);
+          a.Name = 'Snapshot ' + (i + 1);
+          a.ChildDiffs = [];
           let versionNumber = 0;
           for (let j = 0; j < diff.length; j++) {
-            if (snapshot[i].SnapshotID === diff[j].SnapshotID) {
-              snapshot[i].ChildDiffs.push(diff[j]);
+            if (a.SnapshotID === diff[j].SnapshotID) {
+              a.ChildDiffs.push(diff[j]);
               diff[j].LastModifiedString = this.formatDate(
                 diff[j].LastModified
               );
@@ -640,23 +638,25 @@ export class EditComponent implements AfterViewInit, OnInit {
               diff[j].HasSnapshot = true;
             }
           }
-          snapshot.sort((a, b) => {
-            return a.OrderNumber < b.OrderNumber
-              ? 1
-              : a.OrderNumber > b.OrderNumber
-              ? -1
-              : 0;
-          });
-          snapshot.map((a) =>
-            a.ChildDiffs.sort((a, b) => {
-              return a.VersionNumber < b.VersionNumber
+          snapshot
+            .sort((a, b) => {
+              return a.OrderNumber < b.OrderNumber
                 ? 1
-                : a.VersionNumber > b.VersionNumber
+                : a.OrderNumber > b.OrderNumber
                 ? -1
                 : 0;
             })
-          );
-        }
+            .map((a) =>
+              a.ChildDiffs.sort((a, b) => {
+                return a.VersionNumber < b.VersionNumber
+                  ? 1
+                  : a.VersionNumber > b.VersionNumber
+                  ? -1
+                  : 0;
+              })
+            );
+        });
+        // for (let i = 0; i < snapshot.length; i++)
 
         let diffNumber = 0;
         for (let i = 0; i < diff.length; i++) {
