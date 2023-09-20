@@ -622,42 +622,41 @@ export class EditComponent implements AfterViewInit, OnInit {
         ) as SnapshotDTO[];
         const diff = JSON.parse(JSON.stringify(data.DiffHistory)) as DiffDTO[];
 
+        snapshot.sort((a, b) => {
+          return a.LastModified < b.LastModified
+            ? 1
+            : a.LastModified > b.LastModified
+            ? -1
+            : 0;
+        });
+
         snapshot.map((a, i) => {
           a.LastModifiedString = this.formatDate(a.LastModified);
           a.OrderNumber = i + 1;
           a.Name = 'Snapshot ' + a.OrderNumber;
           a.ChildDiffs = [];
-          let versionNumber = 0;
           for (let j = 0; j < diff.length; j++) {
             if (a.SnapshotID === diff[j].SnapshotID) {
               a.ChildDiffs.push(diff[j]);
               diff[j].LastModifiedString = this.formatDate(
                 diff[j].LastModified
               );
-              diff[j].VersionNumber = ++versionNumber;
-              diff[j].Name = 'Version ' + diff[j].VersionNumber;
               diff[j].HasSnapshot = true;
             }
           }
         });
-        snapshot
-          .sort((a, b) => {
-            return a.OrderNumber < b.OrderNumber
+        snapshot.map((a) =>
+          a.ChildDiffs.sort((a, b) => {
+            return a.LastModified < b.LastModified
               ? 1
-              : a.OrderNumber > b.OrderNumber
+              : a.LastModified > b.LastModified
               ? -1
               : 0;
+          }).map((a, i) => {
+            a.VersionNumber = i + 1;
+            a.Name = 'Version ' + a.VersionNumber;
           })
-          .map((a) =>
-            a.ChildDiffs.sort((a, b) => {
-              return a.VersionNumber < b.VersionNumber
-                ? 1
-                : a.VersionNumber > b.VersionNumber
-                ? -1
-                : 0;
-            })
-          );
-        // for (let i = 0; i < snapshot.length; i++)
+        );
 
         let diffNumber = 0;
         for (let i = 0; i < diff.length; i++) {
