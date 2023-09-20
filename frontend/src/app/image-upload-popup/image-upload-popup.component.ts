@@ -62,7 +62,7 @@ export class ImageUploadPopupComponent {
         parentFolderId = '';
 
       let format = 'image';
-      if (this.extractText) {
+      if (this.extractText && !this.extractTable) {
         format = 'text';
       }
       else if(this.extractTable){

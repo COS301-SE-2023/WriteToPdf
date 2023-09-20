@@ -40,6 +40,9 @@ export class EditComponent implements AfterViewInit, OnInit {
   noAssetsAvailable: boolean = false;
   isTouchScreen: boolean = false;
   sideBarTab: boolean = false;
+  //TODO - use to load spinner whilst assets are being retrieved.
+  retrievingAssets: boolean = false;
+
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;

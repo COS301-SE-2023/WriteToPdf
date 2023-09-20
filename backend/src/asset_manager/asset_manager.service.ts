@@ -103,7 +103,6 @@ export class AssetManagerService {
           );
       }
     }
-
     return assets;
   }
 
