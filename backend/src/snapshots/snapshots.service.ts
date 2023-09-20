@@ -22,7 +22,7 @@ export class SnapshotService {
     const snapshotRecords = [];
     for (
       let i = 0;
-      i < parseInt(process.env.MAX_SNAPSHOTS) + 1;
+      i < parseInt(process.env.MAX_SNAPSHOTS);
       i++
     ) {
       const snapshotID = CryptoJS.SHA256(
