@@ -35,7 +35,10 @@ export class VersionControlService {
         nextDiffID,
       );
 
-    this.s3Service.saveDiff(diffDTO, nextDiffID);
+    await this.s3Service.saveDiff(
+      diffDTO,
+      nextDiffID,
+    );
 
     if (
       nextDiffID !== 0 ||
@@ -48,7 +51,7 @@ export class VersionControlService {
           ) ===
         0
       ) {
-        this.saveSnapshot(diffDTO);
+        await this.saveSnapshot(diffDTO);
       }
     }
 
