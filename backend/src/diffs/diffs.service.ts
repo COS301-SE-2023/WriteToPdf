@@ -14,6 +14,8 @@ export class DiffsService {
     private diffRepository: Repository<Diff>,
   ) {}
 
+  ///===-----------------------------------------------------
+
   async getDiff(
     diffDTO: DiffDTO,
     nextDiffID: number,
@@ -28,6 +30,8 @@ export class DiffsService {
 
     return diff;
   }
+
+  ///===-----------------------------------------------------
 
   async updateDiff(
     diffDTO: DiffDTO,
@@ -50,6 +54,8 @@ export class DiffsService {
     diff.HasBeenUsed = true;
     await this.diffRepository.save(diff);
   }
+
+  ///===-----------------------------------------------------
 
   async createDiffs(
     markdownFileDTO: MarkdownFileDTO,
@@ -91,6 +97,8 @@ export class DiffsService {
     await this.diffRepository.insert(diffRecords);
   }
 
+  ///===-----------------------------------------------------
+
   async deleteDiffs(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -99,14 +107,51 @@ export class DiffsService {
     });
   }
 
+  ///===-----------------------------------------------------
+
   async getAllDiffs(
-    markdownFileDTO: MarkdownFileDTO,
+    markdownID: string,
   ) {
     return await this.diffRepository.find({
       where: {
-        MarkdownID: markdownFileDTO.MarkdownID,
+        MarkdownID: markdownID,
         HasBeenUsed: true,
       },
     });
+  }
+
+  ///===-----------------------------------------------------
+
+  getLogicalIndex(
+    s3Index: number,
+    nextDiffID: number,
+    arr_len: number,
+  ): number {
+    return (
+      (s3Index - nextDiffID + arr_len) % arr_len
+    );
+  }
+
+  ///===-----------------------------------------------------
+
+  async getLogicalDiffOrder(
+    diffDTOs: DiffDTO[],
+    nextDiffID: number,
+  ) {
+    const arrLength = parseInt(
+      process.env.MAX_DIFFS,
+    );
+    const logicalOrder: DiffDTO[] = new Array(
+      arrLength,
+    ).fill(0);
+    for (let idx = 0; idx < arrLength; idx++) {
+      const logicalIndex = this.getLogicalIndex(
+        diffDTOs[idx].S3DiffID,
+        nextDiffID,
+        arrLength,
+      );
+      logicalOrder[logicalIndex] = diffDTOs[idx];
+    }
+    return logicalOrder;
   }
 }
