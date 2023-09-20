@@ -11,6 +11,7 @@ import { MarkdownFileDTO } from './dto/markdown_file.dto';
 import { FileService } from './file.service';
 import { VersionDTO } from './dto/version.dto';
 import { environment } from 'src/environments/environment';
+import { VersionSetDTO } from './dto/version_set.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -313,6 +314,36 @@ export class VersionControlService {
 
     body.UserID = this.userService.getUserID() as number;
     body.MarkdownID = markdownID;
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+  loadHistoryContent(markdownID:string, diffHistory: string[], snapshotID: string) {
+    return new Promise<any>((resolve, reject) => {
+      this.sendLoadHistoryContent(markdownID, diffHistory, snapshotID).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          if (response.status === 200) {
+            resolve(response.body);
+          } else {
+            resolve(null);
+          }
+        },
+      });
+    });
+  }
+
+  sendLoadHistoryContent(markdownID:string, diffHistory: string[], snapshotID: string): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}version_control/get_history_set`;
+    const body = new VersionSetDTO();
+
+    body.UserID = this.userService.getUserID() as number;
+    body.MarkdownID = markdownID;
+    body.DiffHistory = diffHistory;
+    body.SnapshotID = snapshotID;
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
