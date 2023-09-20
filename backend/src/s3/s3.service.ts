@@ -7,7 +7,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-import * as fs from 'fs/promises'; // for local storage
+// import * as fs from 'fs/promises'; // for local storage
 import * as CryptoJS from 'crypto-js';
 import { AssetDTO } from '../assets/dto/asset.dto';
 import { DiffDTO } from '../diffs/dto/diffs.dto';
@@ -277,7 +277,7 @@ export class S3Service {
   ) {
     const filePath = `${userID}/${markdownID}`;
 
-    let diffDTOs: DiffDTO[] = [];
+    const diffDTOs: DiffDTO[] = [];
 
     for (let i = 0; i < S3DiffIDs.length; i++) {
       try {
@@ -396,11 +396,10 @@ export class S3Service {
 
   async getAllDiffsForSnapshot(
     snapshotDTO: SnapshotDTO,
-    isOldestSnapshot: boolean,
   ) {
     const filePath = `${snapshotDTO.UserID}/${snapshotDTO.MarkdownID}`;
 
-    let diffDTOs: DiffDTO[] = [];
+    const diffDTOs: DiffDTO[] = [];
 
     const firstDiffID =
       snapshotDTO.S3SnapshotID *
@@ -551,7 +550,7 @@ export class S3Service {
   ) {
     const filePath = `${snapshotDTO.UserID}/${snapshotDTO.MarkdownID}`;
 
-    let snapshotDTOs: SnapshotDTO[] = [];
+    const snapshotDTOs: SnapshotDTO[] = [];
 
     for (
       let i = 0;
