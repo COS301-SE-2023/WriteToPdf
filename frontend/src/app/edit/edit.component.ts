@@ -646,7 +646,6 @@ export class EditComponent implements AfterViewInit, OnInit {
               : 0;
           });
         }
-        this.history = snapshot;
 
         let diffNumber = 0;
         for (let i = 0; i < diff.length; i++) {
@@ -657,6 +656,7 @@ export class EditComponent implements AfterViewInit, OnInit {
             this.history.push(diff[i]);
           }
         }
+        snapshot.map((a) => this.history.push(a));
 
         console.log(this.history);
       });
