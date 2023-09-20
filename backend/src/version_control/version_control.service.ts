@@ -35,15 +35,6 @@ export class VersionControlService {
         nextDiffID,
       );
 
-    // Special case: first diff, first pass
-    if (
-      nextDiffID === 0 &&
-      !nextDiff.HasBeenUsed
-    ) {
-      this.s3Service.saveOldestSnapshot(diffDTO);
-      // return ?
-    }
-
     this.s3Service.saveDiff(diffDTO, nextDiffID);
 
     if (
