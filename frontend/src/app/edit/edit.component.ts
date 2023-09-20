@@ -638,24 +638,24 @@ export class EditComponent implements AfterViewInit, OnInit {
               diff[j].HasSnapshot = true;
             }
           }
-          snapshot
-            .sort((a, b) => {
-              return a.OrderNumber < b.OrderNumber
+        });
+        snapshot
+          .sort((a, b) => {
+            return a.OrderNumber < b.OrderNumber
+              ? 1
+              : a.OrderNumber > b.OrderNumber
+              ? -1
+              : 0;
+          })
+          .map((a) =>
+            a.ChildDiffs.sort((a, b) => {
+              return a.VersionNumber < b.VersionNumber
                 ? 1
-                : a.OrderNumber > b.OrderNumber
+                : a.VersionNumber > b.VersionNumber
                 ? -1
                 : 0;
             })
-            .map((a) =>
-              a.ChildDiffs.sort((a, b) => {
-                return a.VersionNumber < b.VersionNumber
-                  ? 1
-                  : a.VersionNumber > b.VersionNumber
-                  ? -1
-                  : 0;
-              })
-            );
-        });
+          );
         // for (let i = 0; i < snapshot.length; i++)
 
         let diffNumber = 0;
