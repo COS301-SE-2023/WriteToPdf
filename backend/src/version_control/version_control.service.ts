@@ -36,7 +36,8 @@ export class VersionControlService {
     this.s3Service.saveDiff(diffDTO, nextDiffID);
 
     if (
-      !(nextDiffID === 0 && !nextDiff.HasBeenUsed)
+      nextDiffID !== 0 ||
+      nextDiff.HasBeenUsed
     ) {
       if (
         nextDiffID %
