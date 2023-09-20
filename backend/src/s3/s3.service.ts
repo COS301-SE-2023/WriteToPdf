@@ -270,6 +270,124 @@ export class S3Service {
 
   ///===----------------------------------------------------
 
+  async getDiffSet(
+    S3DiffIDs: number[],
+    userID: number,
+    markdownID: string,
+  ) {
+    const filePath = `${userID}/${markdownID}`;
+
+    let diffDTOs: DiffDTO[] = [];
+
+    for (let i = 0; i < S3DiffIDs.length; i++) {
+      try {
+        const response = await this.s3Client.send(
+          new GetObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/diff/${S3DiffIDs[i]}`,
+          }),
+        );
+
+        const diffDTO = new DiffDTO();
+        diffDTO.Content =
+          await response.Body.transformToString();
+        diffDTOs.push(diffDTO);
+      } catch (err) {
+        console.log(
+          `S3 diff ${i} read error: ` + err,
+        );
+        return undefined;
+      }
+    }
+    return diffDTOs;
+  }
+
+  ///===----------------------------------------------------
+
+  async getSnapshot(
+    S3SnapshotID: number,
+    userID: number,
+    markdownID: string,
+  ) {
+    const filePath = `${userID}/${markdownID}`;
+
+    try {
+      const response = await this.s3Client.send(
+        new GetObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/snapshot/${S3SnapshotID}`,
+        }),
+      );
+
+      const snapshotDTO = new SnapshotDTO();
+      snapshotDTO.Content =
+        await response.Body.transformToString();
+      return snapshotDTO;
+    } catch (err) {
+      console.log(
+        `S3 snapshot ${S3SnapshotID} read error: ` +
+          err,
+      );
+      return undefined;
+    }
+  }
+
+  ///===----------------------------------------------------
+
+  async saveOldestSnapshot(diffDTO: DiffDTO) {
+    const filePath = `${diffDTO.UserID}/${diffDTO.MarkdownID}`;
+
+    const markdownFileDTO = new MarkdownFileDTO();
+    markdownFileDTO.UserID = diffDTO.UserID;
+    markdownFileDTO.MarkdownID =
+      diffDTO.MarkdownID;
+
+    const file = await this.retrieveFile(
+      markdownFileDTO,
+    );
+
+    try {
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/snapshot/${process.env.MAX_SNAPSHOTS}`,
+          Body: file.Content,
+        }),
+      );
+    } catch (err) {
+      console.log('Write File Error: ' + err);
+      return undefined;
+    }
+    return diffDTO;
+  }
+
+  ///===----------------------------------------------------
+
+  async retrieveOldestSnapshot(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+
+    try {
+      const response = await this.s3Client.send(
+        new GetObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/snapshot/${process.env.MAX_SNAPSHOTS}`,
+        }),
+      );
+
+      markdownFileDTO.Content =
+        await response.Body.transformToString();
+      markdownFileDTO.Size =
+        response.ContentLength;
+    } catch (err) {
+      console.log('Read File Error: ' + err);
+      return undefined;
+    }
+  }
+
+  ///===----------------------------------------------------
+
   /**
    * @notes every snapshot is associated with n previous diffs.
    * The IDs of the associated diffs do not change unless
@@ -278,6 +396,7 @@ export class S3Service {
 
   async getAllDiffsForSnapshot(
     snapshotDTO: SnapshotDTO,
+    isOldestSnapshot: boolean,
   ) {
     const filePath = `${snapshotDTO.UserID}/${snapshotDTO.MarkdownID}`;
 
@@ -353,7 +472,7 @@ export class S3Service {
     // Create snapshot objects
     for (
       let j = 0;
-      j < parseInt(process.env.MAX_SNAPSHOTS);
+      j < parseInt(process.env.MAX_SNAPSHOTS) + 1; // one extra for the oldest snapshot
       j++
     ) {
       try {
@@ -420,6 +539,7 @@ export class S3Service {
       console.log('Write File Error: ' + err);
       return undefined;
     }
+
     return diffDTO;
   }
 
