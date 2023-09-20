@@ -65,7 +65,8 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
-    this.saveDocumentContents();
+    if (this.editService.getContent() !== '') this.saveDocumentContents();
+    console.log('END');
   }
 
   @HostListener('window:mousewheel', ['$event'])
@@ -374,10 +375,11 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editService.getSafeLock()
       );
 
-      this.versionControlService.saveDiff(
-        markdownID ? (markdownID as string) : '',
-        this.fileService.encryptSafeLockDocument(readablePatch, pass)
-      );
+      if (readablePatch !== '')
+        this.versionControlService.saveDiff(
+          markdownID ? (markdownID as string) : '',
+          this.fileService.encryptSafeLockDocument(readablePatch, pass)
+        );
     } else {
       await this.fileService.saveDocument(
         contents,
@@ -386,10 +388,11 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editService.getSafeLock()
       );
 
-      this.versionControlService.saveDiff(
-        markdownID ? (markdownID as string) : '',
-        readablePatch
-      );
+      if (readablePatch !== '')
+        this.versionControlService.saveDiff(
+          markdownID ? (markdownID as string) : '',
+          readablePatch
+        );
     }
 
     this.versionControlService.setLatestVersionContent(contents);
@@ -656,7 +659,15 @@ export class EditComponent implements AfterViewInit, OnInit {
             this.history.push(diff[i]);
           }
         }
-        snapshot.map((a) => this.history.push(a));
+        snapshot
+          .sort((a, b) => {
+            return a.SnapshotNumber < b.SnapshotNumber
+              ? 1
+              : a.SnapshotNumber > b.SnapshotNumber
+              ? -1
+              : 0;
+          })
+          .map((a) => this.history.push(a));
 
         console.log(this.history);
       });
