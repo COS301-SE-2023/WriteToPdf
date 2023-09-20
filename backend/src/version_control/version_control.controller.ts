@@ -83,17 +83,6 @@ export class VersionControlController {
       );
 
     if (
-      snapshotDTOs.length <
-      parseInt(process.env.MAX_SNAPSHOTS)
-    ) {
-      const baseSnapshotDTO = new SnapshotDTO();
-      baseSnapshotDTO.MarkdownID =
-        markdownFileDTO.MarkdownID;
-      baseSnapshotDTO.OldestSnapshot = true;
-      snapshotDTOs.unshift(baseSnapshotDTO);
-    }
-
-    if (
       snapshotDTOs.length ===
       parseInt(process.env.MAX_SNAPSHOTS)
     ) {
