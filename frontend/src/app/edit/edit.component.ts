@@ -383,21 +383,21 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editService.getMarkdownID() as string,
         diff
       );
-      // const latestVersionContent =
-      //   this.versionControlService.getLatestVersionContent();
+      const latestVersionContent =
+        this.versionControlService.getLatestVersionContent();
 
-      // const readablePatch = this.versionControlService.getReadablePatch(
-      //   latestVersionContent,
-      //   contents
-      // );
-      // const markdownID = this.editService.getMarkdownID();
+      const readablePatch = this.versionControlService.getReadablePatch(
+        latestVersionContent,
+        contents
+      );
+      const markdownID = this.editService.getMarkdownID();
 
-      // this.versionControlService.saveDiff(
-      //   readablePatch,
-      //   markdownID ? (markdownID as string) : ''
-      // );
+      this.versionControlService.saveDiff(
+        readablePatch,
+        markdownID ? (markdownID as string) : ''
+      );
 
-      // this.versionControlService.setLatestVersionContent(contents);
+      this.versionControlService.setLatestVersionContent(contents);
     }
   }
 
