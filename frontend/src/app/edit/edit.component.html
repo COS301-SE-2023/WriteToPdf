@@ -251,7 +251,7 @@
       <div *ngFor="let obj of history">
         <div  class="historyObject" [ngClass]="{'selectedHistory':obj.isCurrent}" (click)="insertContent(obj)">
           <img class="dropdownArrow" src="assets/Icons/homeIcons/navbar/indicatorArrowNavBar.png" alt="" (click)="expandSnapshot(obj, $event)">
-          <p>{{obj.Name}}</p>
+          <p>{{obj.LastModified}}</p>
           <p>{{obj.LastModifiedString}}</p>
           <img class="historyIcon" src="assets/Icons/editIcons/ellipse.svg" alt="" />
 
