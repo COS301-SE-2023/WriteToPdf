@@ -16,9 +16,6 @@ export class Snapshot {
   UserID: string;
 
   @Column()
-  DisplayID: string;
-
-  @Column()
   S3SnapshotID: number;
 
   @Column('timestamp', {
@@ -27,4 +24,7 @@ export class Snapshot {
     onUpdate: 'CURRENT_TIMESTAMP(3)',
   })
   LastModified: Date;
+
+  @Column()
+  HasBeenUsed: boolean;
 }

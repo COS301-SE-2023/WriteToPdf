@@ -16,9 +16,6 @@ export class Diff {
   UserID: string;
 
   @Column()
-  DisplayID: string;
-
-  @Column()
   S3DiffID: number;
 
   @Column('timestamp', {
@@ -27,4 +24,10 @@ export class Diff {
     onUpdate: 'CURRENT_TIMESTAMP(3)',
   })
   LastModified: Date;
+
+  @Column()
+  HasBeenUsed: boolean;
+
+  @Column()
+  SnapshotID: string;
 }
