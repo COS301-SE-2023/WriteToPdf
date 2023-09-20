@@ -353,12 +353,27 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     let contents = this.editor.getData();
     let pass = this.editService.getDocumentPassword();
+
+    const latestVersionContent =
+      this.versionControlService.getLatestVersionContent();
+
+    const readablePatch = this.versionControlService.getReadablePatch(
+      latestVersionContent,
+      contents
+    );
+    const markdownID = this.editService.getMarkdownID();
+
     if (pass != '' && pass != undefined) {
       await this.fileService.saveDocument(
         this.fileService.encryptSafeLockDocument(contents, pass),
         this.editService.getMarkdownID(),
         this.editService.getPath(),
         this.editService.getSafeLock()
+      );
+
+      this.versionControlService.saveDiff(
+        this.fileService.encryptSafeLockDocument(readablePatch, pass),
+        markdownID ? (markdownID as string) : ''
       );
     } else {
       await this.fileService.saveDocument(
@@ -367,22 +382,14 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editService.getPath(),
         this.editService.getSafeLock()
       );
-      const latestVersionContent =
-        this.versionControlService.getLatestVersionContent();
-
-      const readablePatch = this.versionControlService.getReadablePatch(
-        latestVersionContent,
-        contents
-      );
-      const markdownID = this.editService.getMarkdownID();
 
       this.versionControlService.saveDiff(
         readablePatch,
         markdownID ? (markdownID as string) : ''
       );
-
-      this.versionControlService.setLatestVersionContent(contents);
     }
+
+    this.versionControlService.setLatestVersionContent(contents);
   }
 
   hideSideBar() {
