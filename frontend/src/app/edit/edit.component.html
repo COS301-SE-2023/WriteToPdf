@@ -180,9 +180,9 @@
               />
             </div>
 
-            <div class="deleteAsset" [ngClass]="{'deleteAssetHover': obj.Format === 'text'}" title="View Text" (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)">
+            <div class="deleteAsset" [ngClass]="{'deleteAssetHover': obj.Format === 'text'||obj.Format === 'table'}" title="View Text" (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)">
               <img
-                *ngIf="obj.Format === 'text'"
+                *ngIf="obj.Format === 'text'||obj.Format === 'table'"
                 class="copyAssetIcon"
                 src="assets/Icons/editIcons/view.png"
                 alt=""
@@ -205,7 +205,7 @@
               />
             </div>
 
-            <div *ngIf="obj.Format==='text'" class="copyTextAsset" title="Copy All Text" (click)="copyAllText(obj.AssetID, obj.Format, obj.TextID)">
+            <div *ngIf="obj.Format==='text'||obj.Format === 'table'" class="copyTextAsset" title="Copy All Text" (click)="copyAllText(obj.AssetID, obj.Format, obj.TextID)">
               <img
                 class="copyTextIcon"
                 src="assets/Icons/editIcons/copy.svg"
