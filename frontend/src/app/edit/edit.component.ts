@@ -622,7 +622,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
         for (let i = 0; i < snapshot.length; i++) {
           snapshot[i].LastModifiedString = this.formatDate(
-            snapshot[i].LastModified.toDateString()
+            snapshot[i].LastModified
           );
           snapshot[i].Name = 'Snapshot ' + (i + 1);
           snapshot[i].ChildDiffs = [];
@@ -631,9 +631,9 @@ export class EditComponent implements AfterViewInit, OnInit {
             if (snapshot[i].SnapshotID === diff[j].SnapshotID) {
               snapshot[i].ChildDiffs.push(diff[j]);
               diff[j].LastModifiedString = this.formatDate(
-                diff[j].LastModified.toDateString()
+                diff[j].LastModified
               );
-              diff[j].VersionNumber = versionNumber++;
+              diff[j].VersionNumber = ++versionNumber;
               diff[j].Name = 'Version ' + diff[j].VersionNumber;
               diff[j].HasSnapshot = true;
             }
@@ -651,10 +651,8 @@ export class EditComponent implements AfterViewInit, OnInit {
         let diffNumber = 0;
         for (let i = 0; i < diff.length; i++) {
           if (!diff[i].HasSnapshot) {
-            diff[i].LastModifiedString = this.formatDate(
-              diff[i].LastModified.toDateString()
-            );
-            diff[i].VersionNumber = diffNumber++;
+            diff[i].LastModifiedString = this.formatDate(diff[i].LastModified);
+            diff[i].VersionNumber = ++diffNumber;
             diff[i].Name = 'Diff ' + diff[i].VersionNumber;
             this.history.push(diff[i]);
           }
@@ -745,8 +743,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     return inputString.charAt(0).toUpperCase() + inputString.slice(1);
   }
 
-  formatDate(dateString: string): string {
-    if (!dateString || dateString.length === 0) {
+  formatDate(dateString: Date): string {
+    if (!dateString) {
       return dateString; // Return the input string as-is if it's empty or null.
     }
 
