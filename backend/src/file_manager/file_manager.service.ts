@@ -85,9 +85,10 @@ export class FileManagerService {
       markdownFileDTO,
     );
 
-    const snapshotIDs: string[] = await this.snapshotService.createSnapshots(
-      markdownFileDTO,
-    );
+    const snapshotIDs: string[] =
+      await this.snapshotService.createSnapshots(
+        markdownFileDTO,
+      );
 
     await this.diffsService.createDiffs(
       markdownFileDTO,
