@@ -67,62 +67,40 @@ export class VersionControlController {
 
     // Populate snapshot history
 
-    const nextSnapshotID =
-      await this.markdownFileService.getNextSnapshotID(
-        markdownFileDTO.MarkdownID,
-      );
+    // const nextSnapshotID =
+    //   await this.markdownFileService.getNextSnapshotID(
+    //     markdownFileDTO.MarkdownID,
+    //   );
 
     const snapshots =
       await this.snapshotService.getAllSnapshots(
         markdownFileDTO,
       );
 
-    let snapshotDTOs =
+    const snapshotDTOs =
       await this.versionControlService.convertSnapshotsToSnapshotDTOs(
         snapshots,
       );
-
-    // if (
-    //   snapshotDTOs.length ===
-    //   parseInt(process.env.MAX_SNAPSHOTS)
-    // ) {
-    //   snapshotDTOs =
-    //     await this.snapshotService.getLogicalSnapshotOrder(
-    //       snapshotDTOs,
-    //       nextSnapshotID,
-    //     );
-    // }
 
     versionHistoryDTO.SnapshotHistory =
       snapshotDTOs;
 
     // Populate diff history
 
-    const nextDiffID =
-      await this.markdownFileService.getNextDiffID(
-        markdownFileDTO.MarkdownID,
-      );
+    // const nextDiffID =
+    //   await this.markdownFileService.getNextDiffID(
+    //     markdownFileDTO.MarkdownID,
+    //   );
 
     const diffs =
       await this.diffService.getAllDiffs(
         markdownFileDTO.MarkdownID,
       );
 
-    let diffDTOs =
+    const diffDTOs =
       await this.versionControlService.convertDiffsToDiffDTOs(
         diffs,
       );
-
-    // if (
-    //   diffDTOs.length ===
-    //   parseInt(process.env.MAX_DIFFS)
-    // ) {
-    //   diffDTOs =
-    //     await this.diffService.getLogicalDiffOrder(
-    //       diffDTOs,
-    //       nextDiffID,
-    //     );
-    // }
 
     versionHistoryDTO.DiffHistory = diffDTOs;
     return versionHistoryDTO;

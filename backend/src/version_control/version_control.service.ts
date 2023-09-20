@@ -52,6 +52,22 @@ export class VersionControlService {
         0
       ) {
         await this.saveSnapshot(diffDTO);
+
+        const nextSnapshotID =
+          await this.snapshotService.getNextSnapshotID(
+            diffDTO.MarkdownID,
+          );
+
+        const nextSnapshot =
+          await this.snapshotService.resetSnapshot(
+            diffDTO.MarkdownID,
+            nextSnapshotID,
+          );
+
+        await this.diffService.resetDiffs(
+          diffDTO.MarkdownID,
+          nextSnapshot.SnapshotID,
+        );
       }
     }
 
