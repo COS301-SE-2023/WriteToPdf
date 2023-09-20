@@ -110,6 +110,10 @@ export class SnapshotService {
     snapshotDTOs: SnapshotDTO[],
     nextDiffID: number,
   ) {
+    console.log(
+      'snapshots.service snapshotDTOS: ',
+      snapshotDTOs,
+    );
     const arrLength = parseInt(
       process.env.MAX_DIFFS,
     );
