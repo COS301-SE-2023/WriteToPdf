@@ -67,6 +67,26 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.saveDocumentContents();
   }
 
+  @HostListener('window:mousewheel', ['$event'])
+  onMouseWheel(event: WheelEvent) {
+    if (event.shiftKey) {
+      if (event.deltaY > 0) {
+        this.zoomOut();
+      } else {
+        this.zoomIn();
+      }
+    }
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    // Check if the Ctrl key is pressed and the 's' key (or 'S') is pressed simultaneously
+    if (event.ctrlKey && (event.key === 's' || event.key === 'S')) {
+      event.preventDefault();
+      this.saveDocumentContents();
+    }
+  }
+
   showImageUploadPopup(): void {
     const ref = this.dialogService.open(ImageUploadPopupComponent, {
       header: 'Upload Images',
@@ -312,7 +332,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   exitToHome() {
-    console.log('Exit To Home.');
     this.confirmationService.confirm({
       message: 'Do you want to save before you leave?',
       header: 'Save Confirmation',
@@ -334,13 +353,10 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
 
-    console.log(this.prevVersion);
-    console.log(this.editor.getData());
     const diff = this.versionControlService.getReadablePatch(
       this.prevVersion as string,
       this.editor.getData()
     );
-    console.log(diff);
     this.versionControlService.saveDiff(
       this.editService.getMarkdownID() as string,
       diff,
@@ -601,7 +617,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.versionControlService
       .retrieveAllHistory(this.editService.getMarkdownID() as string)
       .then((data) => {
-        console.log('Response body: ', data);
         const snapshot = JSON.parse(JSON.stringify(data.SnapshotHistory));
         const diff = JSON.parse(JSON.stringify(data.DiffHistory));
 
