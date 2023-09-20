@@ -8,6 +8,9 @@ import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 import { SnapshotService } from '../snapshots/snapshots.service';
 import { Snapshot } from '../snapshots/entities/snapshots.entity';
 import { Diff } from '../diffs/entities/diffs.entity';
+import { VersionHistoryDTO } from './dto/version_history.dto';
+import { VersionSetDTO } from './dto/version_set.dto';
+import { version } from 'os';
 
 @Injectable()
 export class VersionControlService {
@@ -33,6 +36,15 @@ export class VersionControlService {
         nextDiffID,
       );
 
+    // Special case: first diff, first pass
+    if (
+      nextDiffID === 0 &&
+      !nextDiff.HasBeenUsed
+    ) {
+      this.s3Service.saveOldestSnapshot(diffDTO);
+      // return ?
+    }
+
     this.s3Service.saveDiff(diffDTO, nextDiffID);
 
     if (
@@ -40,7 +52,7 @@ export class VersionControlService {
       nextDiff.HasBeenUsed
     ) {
       if (
-        nextDiffID %
+        (nextDiffID + 1) %
           parseInt(
             process.env.DIFFS_PER_SNAPSHOT,
           ) ===
@@ -236,7 +248,7 @@ export class VersionControlService {
   ///===----------------------------------------------------
 
   async convertDiffsToDiffDTOs(diffs: Diff[]) {
-    const diffDTOs = [];
+    const diffDTOs: DiffDTO[] = [];
     for (let i = 0; i < diffs.length; i++) {
       const diff = diffs[i];
       const diffDTO = new DiffDTO();
@@ -249,5 +261,48 @@ export class VersionControlService {
       diffDTOs.push(diffDTO);
     }
     return diffDTOs;
+  }
+
+  ///===----------------------------------------------------
+
+  async getHistorySet(
+    versionSetDTO: VersionSetDTO,
+  ) {
+    const diffs =
+      await this.diffService.getAllDiffs(
+        versionSetDTO.MarkdownID,
+      );
+
+    const S3DiffIDs: number[] = diffs.map(
+      (diff) => diff.S3DiffID,
+    );
+
+    const diffDTOs =
+      await this.s3Service.getDiffSet(
+        S3DiffIDs,
+        versionSetDTO.UserID,
+        versionSetDTO.MarkdownID,
+      );
+
+    const snapshot =
+      await this.snapshotService.getSnapshotByID(
+        versionSetDTO.SnapshotID,
+      );
+
+    const snapshotDTO =
+      await this.s3Service.getSnapshot(
+        snapshot.S3SnapshotID,
+        versionSetDTO.UserID,
+        versionSetDTO.MarkdownID,
+      );
+
+    const versionHistoryDTO =
+      new VersionHistoryDTO();
+
+    versionHistoryDTO.DiffHistory = diffDTOs;
+    versionHistoryDTO.SnapshotHistory = [
+      snapshotDTO,
+    ];
+    return versionHistoryDTO;
   }
 }
