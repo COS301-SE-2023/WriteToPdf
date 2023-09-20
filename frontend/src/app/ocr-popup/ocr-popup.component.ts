@@ -111,7 +111,14 @@ export class OcrPopupComponent implements OnInit {
       this.assetObject = this.passedOverAsset;
     }
 
-    ngOnInit() {
+  get dialogContainer() {
+    const elementRef = this.elementRef.nativeElement as HTMLElement;
+    const dialogContainer = elementRef?.parentNode?.parentNode?.parentNode as HTMLElement;
+    return dialogContainer;
+  }
+
+
+  ngOnInit() {
       this.assetObjectJSON = JSON.parse(this.assetObject.Content);
       console.log("Parsed JSON:", this.assetObjectJSON);
       this.assetImage = "data:image/png;base64," + this.assetObject.Image;

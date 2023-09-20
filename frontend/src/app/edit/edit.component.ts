@@ -290,6 +290,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
         editor.setAttribute('style', 'padding-right: 0px;left:260px');
         sidebar.setAttribute('style', 'display:block');
+        sidebar.setAttribute('style', 'z-index: -1000');
         showAssetSidebar.setAttribute('style', 'left:-10px');
         this.sidebarVisible = true;
       }

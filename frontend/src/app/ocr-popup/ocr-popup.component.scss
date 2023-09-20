@@ -1,3 +1,12 @@
+.cdk-overlay-container {
+  z-index: 1000000000000; /* Adjust the value as needed */
+}
+
+.mat-dialog-container {
+  z-index: 1000; /* Adjust the value as needed */
+}
+
+
 .container {
   margin:auto;
   display: flex;
@@ -9,6 +18,7 @@
   box-shadow: 5px 5px 10px lightblue;
   height:100%;
   padding-bottom:50px;
+  z-index:100000000;
 }
 
 .popup-heading {
@@ -42,7 +52,7 @@
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid black;
-  z-index: 10000;
+  //z-index: 10000;
 }
 .vertical-line{
   border-left: 1px solid black;
