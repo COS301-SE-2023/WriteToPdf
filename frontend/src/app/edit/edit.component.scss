@@ -740,7 +740,7 @@ Preserve the relative scale, though. */
 .historyObject {
     transition: 0.2s;
     display: grid;
-    grid-template-columns: 0.5fr 2fr 2fr 0.5fr;
+    grid-template-columns: 0.5fr 4fr 0.5fr;
     justify-content: space-around;
     width: $sidebar-content-width;
     border-radius: 8px;
