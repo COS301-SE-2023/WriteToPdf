@@ -639,9 +639,9 @@ export class EditComponent implements AfterViewInit, OnInit {
             }
           }
           snapshot[0].ChildDiffs.sort((a, b) => {
-            return a.VersionNumber > b.VersionNumber
+            return a.VersionNumber < b.VersionNumber
               ? 1
-              : a.VersionNumber < b.VersionNumber
+              : a.VersionNumber > b.VersionNumber
               ? -1
               : 0;
           });
