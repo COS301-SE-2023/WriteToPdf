@@ -200,7 +200,7 @@ export class TextManagerService {
           Top: table.Top,
           rows: numRows,
           cols: numCols,
-          Table: table,
+          Table: table.Table,
         },
       };
       elements.push(tableElement);
