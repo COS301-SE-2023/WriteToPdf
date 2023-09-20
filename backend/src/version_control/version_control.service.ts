@@ -10,7 +10,6 @@ import { Snapshot } from '../snapshots/entities/snapshots.entity';
 import { Diff } from '../diffs/entities/diffs.entity';
 import { VersionHistoryDTO } from './dto/version_history.dto';
 import { VersionSetDTO } from './dto/version_set.dto';
-import { version } from 'os';
 
 @Injectable()
 export class VersionControlService {

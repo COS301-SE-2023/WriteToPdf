@@ -10,7 +10,6 @@ import { DiffDTO } from '../diffs/dto/diffs.dto';
 import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 import { MarkdownFileDTO } from 'src/markdown_files/dto/markdown_file.dto';
 import { VersionHistoryDTO } from './dto/version_history.dto';
-import { version } from 'os';
 import { SnapshotService } from '../snapshots/snapshots.service';
 import { DiffsService } from '../diffs/diffs.service';
 import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
@@ -87,8 +86,7 @@ export class VersionControlController {
       snapshotDTOs.length <
       parseInt(process.env.MAX_SNAPSHOTS)
     ) {
-      const baseSnapshotDTO = 
-        new SnapshotDTO();
+      const baseSnapshotDTO = new SnapshotDTO();
       baseSnapshotDTO.MarkdownID =
         markdownFileDTO.MarkdownID;
       baseSnapshotDTO.OldestSnapshot = true;
