@@ -154,20 +154,20 @@ export class S3Service {
       return undefined;
     }
 
-    try {
-      // await fs.writeFile(
-      //   `./storage/${filePath}/diff/${markdownFileDTO.NextDiffID}`,
-      //   fileData,
-      //   'utf-8',
-      // );
-      /*const response = */ await this.s3Client.send(
-        new PutObjectCommand({
-          Bucket: this.awsS3BucketName,
-          Key: `${filePath}/diff/${markdownFileDTO.NextDiffID}`,
-          Body: markdownFileDTO.NewDiff,
-        }),
-      );
-    } catch (err) {}
+    // try {
+    //   // await fs.writeFile(
+    //   //   `./storage/${filePath}/diff/${markdownFileDTO.NextDiffID}`,
+    //   //   fileData,
+    //   //   'utf-8',
+    //   // );
+    //   /*const response = */ await this.s3Client.send(
+    //     new PutObjectCommand({
+    //       Bucket: this.awsS3BucketName,
+    //       Key: `${filePath}/diff/${markdownFileDTO.NextDiffID}`,
+    //       Body: markdownFileDTO.NewDiff,
+    //     }),
+    //   );
+    // } catch (err) {}
 
     return markdownFileDTO;
   }
@@ -253,6 +253,10 @@ export class S3Service {
   ) {
     const filePath = `${diffDTO.UserID}/${diffDTO.MarkdownID}`;
 
+    console.log(
+      'diffDTO.Content: ',
+      diffDTO.Content,
+    );
     try {
       await this.s3Client.send(
         new PutObjectCommand({
@@ -471,7 +475,7 @@ export class S3Service {
     // Create snapshot objects
     for (
       let j = 0;
-      j < parseInt(process.env.MAX_SNAPSHOTS) + 1; // one extra for the oldest snapshot
+      j < parseInt(process.env.MAX_SNAPSHOTS);
       j++
     ) {
       try {
@@ -524,14 +528,28 @@ export class S3Service {
     diffDTO: DiffDTO,
     nextSnapshotID: number,
   ) {
+    const markdownFileDTO: MarkdownFileDTO =
+      new MarkdownFileDTO();
+    markdownFileDTO.UserID = diffDTO.UserID;
+    markdownFileDTO.MarkdownID =
+      diffDTO.MarkdownID;
+    const fileDTO = await this.retrieveFile(
+      markdownFileDTO,
+    );
+
     const filePath = `${diffDTO.UserID}/${diffDTO.MarkdownID}`;
+
+    console.log(
+      'fileDTO.Content: ',
+      fileDTO.Content,
+    );
 
     try {
       await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
           Key: `${filePath}/snapshot/${nextSnapshotID}`,
-          Body: diffDTO.SnapshotPayload,
+          Body: fileDTO.Content,
         }),
       );
     } catch (err) {
