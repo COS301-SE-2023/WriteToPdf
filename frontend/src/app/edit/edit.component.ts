@@ -148,6 +148,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     const pf = localStorage.getItem('parentFolderID');
     const sl = localStorage.getItem('safeLock');
     const dp = localStorage.getItem('encryptedDocumentPassword');
+    this.versionControlService.setLatestVersionContent(c ? (c as string) : '');
 
     if (
       c != null &&
