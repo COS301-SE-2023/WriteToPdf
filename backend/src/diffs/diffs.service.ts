@@ -109,9 +109,7 @@ export class DiffsService {
 
   ///===-----------------------------------------------------
 
-  async getAllDiffs(
-    markdownID: string,
-  ) {
+  async getAllDiffs(markdownID: string) {
     return await this.diffRepository.find({
       where: {
         MarkdownID: markdownID,
