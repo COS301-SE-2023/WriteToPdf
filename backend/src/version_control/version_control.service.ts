@@ -58,11 +58,21 @@ export class VersionControlService {
             diffDTO.MarkdownID,
           );
 
+        console.log(
+          'version_control: nextsnapshotID ',
+          nextSnapshotID,
+        );
+
         const nextSnapshot =
           await this.snapshotService.resetSnapshot(
             diffDTO.MarkdownID,
             nextSnapshotID,
           );
+
+        console.log(
+          'nextSnapshot: ',
+          nextSnapshot,
+        );
 
         await this.diffService.resetDiffs(
           diffDTO.MarkdownID,
