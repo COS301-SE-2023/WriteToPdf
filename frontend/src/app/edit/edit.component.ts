@@ -45,7 +45,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   noAssetsAvailable: boolean = false;
   isTouchScreen: boolean = false;
   sideBarTab: boolean = false;
-  previousVersion: string = '';
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
@@ -108,7 +107,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.previousVersion = this.editService.getContent() as string;
     this.speedDialItems = [
       {
         icon: 'pi pi-pencil',
@@ -353,12 +351,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
 
-    const diff = this.versionControlService.getReadablePatch(
-      this.previousVersion as string,
-      this.editor.getData()
-    );
-
-    this.previousVersion = this.editor.getData();
     let contents = this.editor.getData();
     let pass = this.editService.getDocumentPassword();
     if (pass != '' && pass != undefined) {
@@ -368,20 +360,12 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editService.getPath(),
         this.editService.getSafeLock()
       );
-      await this.versionControlService.saveDiff(
-        this.editService.getMarkdownID() as string,
-        diff
-      );
     } else {
       await this.fileService.saveDocument(
         contents,
         this.editService.getMarkdownID(),
         this.editService.getPath(),
         this.editService.getSafeLock()
-      );
-      await this.versionControlService.saveDiff(
-        this.editService.getMarkdownID() as string,
-        diff
       );
       const latestVersionContent =
         this.versionControlService.getLatestVersionContent();
