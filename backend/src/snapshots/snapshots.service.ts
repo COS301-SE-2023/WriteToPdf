@@ -113,18 +113,17 @@ export class SnapshotService {
     });
   }
 
-  ///===-----------------------------------------------------
+  // ///===-----------------------------------------------------
 
-  async getNextSnapshotID(markdownID: string) {
-    const markdownFile =
-      await this.snapshotRepository.findOne({
-        where: {
-          MarkdownID: markdownID,
-          HasBeenUsed: false,
-        },
-      });
-    return markdownFile.S3SnapshotID;
-  }
+  // async getNextSnapshotID(markdownID: string) {
+  //   const markdownFile =
+  //     await this.snapshotRepository.findOne({
+  //       where: {
+  //         MarkdownID: markdownID,
+  //       },
+  //     });
+  //   return markdownFile.S3SnapshotID;
+  // }
 
   ///===-----------------------------------------------------
 

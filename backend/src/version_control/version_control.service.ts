@@ -54,7 +54,7 @@ export class VersionControlService {
         await this.saveSnapshot(diffDTO);
 
         const nextSnapshotID =
-          await this.snapshotService.getNextSnapshotID(
+          await this.markdownFileService.getNextSnapshotID(
             diffDTO.MarkdownID,
           );
 
