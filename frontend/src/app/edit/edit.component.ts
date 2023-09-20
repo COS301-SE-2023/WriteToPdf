@@ -25,6 +25,8 @@ import html2pdf from 'html2pdf.js/dist/html2pdf';
 
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 import { parse } from 'path';
+import { SnapshotDTO } from '../services/dto/snapshot.dto';
+import { DiffDTO } from '../services/dto/diff.dto';
 
 @Component({
   selector: 'app-edit',
@@ -613,30 +615,51 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.versionControlService
       .retrieveAllHistory(this.editService.getMarkdownID() as string)
       .then((data) => {
-        const snapshot = JSON.parse(JSON.stringify(data.SnapshotHistory));
-        const diff = JSON.parse(JSON.stringify(data.DiffHistory));
+        const snapshot = JSON.parse(
+          JSON.stringify(data.SnapshotHistory)
+        ) as SnapshotDTO[];
+        const diff = JSON.parse(JSON.stringify(data.DiffHistory)) as DiffDTO[];
 
         for (let i = 0; i < snapshot.length; i++) {
-          snapshot[i].LastModified = this.formatDate(snapshot[i].LastModified);
+          snapshot[i].LastModifiedString = this.formatDate(
+            snapshot[i].LastModified.toDateString()
+          );
           snapshot[i].Name = 'Snapshot ' + (i + 1);
           snapshot[i].ChildDiffs = [];
+          let versionNumber = 0;
           for (let j = 0; j < diff.length; j++) {
             if (snapshot[i].SnapshotID === diff[j].SnapshotID) {
               snapshot[i].ChildDiffs.push(diff[j]);
-              diff[j].LastModified = this.formatDate(diff[j].LastModified);
-              diff[j].Name = 'Version ' + (j + 1);
-              diff[j].hasSnapshot = true;
+              diff[j].LastModifiedString = this.formatDate(
+                diff[j].LastModified.toDateString()
+              );
+              diff[j].VersionNumber = versionNumber++;
+              diff[j].Name = 'Version ' + diff[j].VersionNumber;
+              diff[j].HasSnapshot = true;
             }
           }
+          snapshot[0].ChildDiffs.sort((a, b) => {
+            return a.VersionNumber > b.VersionNumber
+              ? 1
+              : a.VersionNumber < b.VersionNumber
+              ? -1
+              : 0;
+          });
         }
         this.history = snapshot;
+
+        let diffNumber = 0;
         for (let i = 0; i < diff.length; i++) {
-          if (!diff[i].hasSnapshot) {
-            diff[i].LastModified = this.formatDate(diff[i].LastModified);
-            diff[i].Name = 'Diff ' + (i + 1);
+          if (!diff[i].HasSnapshot) {
+            diff[i].LastModifiedString = this.formatDate(
+              diff[i].LastModified.toDateString()
+            );
+            diff[i].VersionNumber = diffNumber++;
+            diff[i].Name = 'Diff ' + diff[i].VersionNumber;
             this.history.push(diff[i]);
           }
         }
+
         console.log(this.history);
       });
   }

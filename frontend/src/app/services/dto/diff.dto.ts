@@ -5,6 +5,12 @@ export class DiffDTO {
   SnapshotNumber: number;
   Content: string;
   SnapshotPayload: string;
+  LastModified: Date;
+  LastModifiedString: string;
+  Name: string;
+  SnapshotID: string;
+  VersionNumber: number;
+  HasSnapshot: boolean;
 
   constructor() {
     this.UserID = 0;
@@ -13,5 +19,11 @@ export class DiffDTO {
     this.SnapshotNumber = 0;
     this.Content = '';
     this.SnapshotPayload = '';
+    this.LastModified = new Date();
+    this.LastModifiedString = '';
+    this.Name = '';
+    this.SnapshotID = '';
+    this.VersionNumber = 0;
+    this.HasSnapshot = false;
   }
 }

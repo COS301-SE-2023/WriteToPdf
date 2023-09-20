@@ -6,7 +6,7 @@ export class SnapshotDTO {
   S3SnapshotID: number;
   LastModified: Date;
   Content: string;
-  OldestSnapshot: boolean
+  OldestSnapshot: boolean;
 
   constructor() {
     this.SnapshotID = undefined;
