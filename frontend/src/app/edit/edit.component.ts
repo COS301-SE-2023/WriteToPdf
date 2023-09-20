@@ -66,7 +66,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
     if (this.editService.getContent() !== '') this.saveDocumentContents();
-    console.log('END');
   }
 
   @HostListener('window:mousewheel', ['$event'])
