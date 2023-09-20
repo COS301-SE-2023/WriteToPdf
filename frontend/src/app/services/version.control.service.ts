@@ -320,9 +320,9 @@ export class VersionControlService {
     );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
-  loadHistoryContent(markdownID:string, diffHistory: string[], snapshotID: string) {
+  loadHistorySet(markdownID:string, diffHistory: string[], snapshotID: string) {
     return new Promise<any>((resolve, reject) => {
-      this.sendLoadHistoryContent(markdownID, diffHistory, snapshotID).subscribe({
+      this.sendLoadHistorySet(markdownID, diffHistory, snapshotID).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
           if (response.status === 200) {
@@ -335,7 +335,7 @@ export class VersionControlService {
     });
   }
 
-  sendLoadHistoryContent(markdownID:string, diffHistory: string[], snapshotID: string): Observable<HttpResponse<any>> {
+  sendLoadHistorySet(markdownID:string, diffHistory: string[], snapshotID: string): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}version_control/get_history_set`;
     const body = new VersionSetDTO();
