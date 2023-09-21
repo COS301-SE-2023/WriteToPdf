@@ -777,6 +777,17 @@ export class EditComponent implements AfterViewInit, OnInit {
     return `${dd} ${months[mm]}, ${hh}:${min}:${ss}`;
   }
 
+  formatAssetDate(dateString: Date): string {
+    if(!dateString) return '';
+    const date = new Date(dateString);
+
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = date.getMonth() ; // January is 0!
+    const yyyy = date.getFullYear();
+
+    return `${dd}-${mm}-${yyyy}`;
+  }
+
   enableReadOnly() {
     this.editor.enableReadOnlyMode('');
   }
