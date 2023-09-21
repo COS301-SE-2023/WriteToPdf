@@ -86,7 +86,6 @@ export class SnapshotService {
     markdownID: string,
     nextSnapshotID: number,
   ) {
-    console.log('resetSnapshot', nextSnapshotID);
     const snapshot =
       await this.snapshotRepository.findOne({
         where: {
