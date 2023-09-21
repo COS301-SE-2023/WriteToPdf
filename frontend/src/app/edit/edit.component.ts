@@ -583,6 +583,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         detail: 'Asset deleted',
       });
       this.assets.splice(currAssetIndex, 1);
+      if(this.assets.length === 0) this.noAssetsAvailable = true;
     } else {
       this.assets[currAssetIndex].Deleted = false;
     }
