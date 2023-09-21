@@ -55,7 +55,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private assetService: AssetService,
     private clipboard: Clipboard,
     private messageService: MessageService,
-    private OCRDialog: OCRDialogService
+    private OCRDialog: OCRDialogService,
   ) { }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -77,6 +77,11 @@ export class EditComponent implements AfterViewInit, OnInit {
       closeOnEscape: true,
       dismissableMask: true,
     });
+    ref.onClose.subscribe(
+        ()=>{
+          this.refreshSidebar();
+        }
+    )
   }
 
   showFileUploadPopup(): void {

@@ -37,7 +37,6 @@ export class AssetService {
         format
       ).subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 201) {
             this.messageService.add({
               severity: 'success',
