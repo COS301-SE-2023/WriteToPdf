@@ -35,6 +35,7 @@ enum ResetScope {
 describe('FileManagerController (integration)', () => {
   let app: INestApplication;
   let markdownFileRepository: Repository<MarkdownFile>;
+  let snapshotRepository: Repository<Snapshot>;
   let s3Service: S3ServiceMock;
 
   beforeAll(async () => {
@@ -63,6 +64,9 @@ describe('FileManagerController (integration)', () => {
     >(getRepositoryToken(MarkdownFile));
     s3Service = new S3ServiceMock();
 
+    snapshotRepository = moduleFixture.get<
+      Repository<Snapshot>
+    >(getRepositoryToken(Snapshot));
     await resetUser(ResetScope.ALL);
   });
 

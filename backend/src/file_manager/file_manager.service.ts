@@ -66,35 +66,45 @@ export class FileManagerService {
       markdownFileDTO.NextSnapshotID === undefined
     )
       markdownFileDTO.NextSnapshotID = 0;
-      
+
     if (isTest) {
       await this.s3ServiceMock.createFile(
         markdownFileDTO,
       );
+      const returnMD_DTO = new MarkdownFileDTO();
+      returnMD_DTO.MarkdownID = 'testID';
+      returnMD_DTO.Name = 'New Document';
+      returnMD_DTO.Content = 'testContent';
+      returnMD_DTO.Path = '';
+      returnMD_DTO.DateCreated = new Date();
+      returnMD_DTO.LastModified = new Date();
+      returnMD_DTO.Size = 0;
+      returnMD_DTO.ParentFolderID = '';
+      returnMD_DTO.UserID = 0;
+      return returnMD_DTO;
     } else {
       await this.s3service.createFile(
         markdownFileDTO,
       );
-    }
 
-    await this.s3service.createDiffObjectsForFile(
-      markdownFileDTO,
-    );
-
-    await this.s3service.createSnapshotObjectsForFile(
-      markdownFileDTO,
-    );
-
-    const snapshotIDs: string[] =
-      await this.snapshotService.createSnapshots(
+      await this.s3service.createDiffObjectsForFile(
         markdownFileDTO,
       );
 
-    await this.diffsService.createDiffs(
-      markdownFileDTO,
-      snapshotIDs,
-    );
+      await this.s3service.createSnapshotObjectsForFile(
+        markdownFileDTO,
+      );
 
+      const snapshotIDs: string[] =
+        await this.snapshotService.createSnapshots(
+          markdownFileDTO,
+        );
+
+      await this.diffsService.createDiffs(
+        markdownFileDTO,
+        snapshotIDs,
+      );
+    }
     return await this.markdownFilesService.create(
       markdownFileDTO,
     );
