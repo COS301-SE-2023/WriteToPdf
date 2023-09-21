@@ -53,6 +53,7 @@ export class VersionControlService {
       ) {
         await this.saveSnapshot(diffDTO);
 
+        // Reset next snapshot and associated diffs
         const nextSnapshotID =
           await this.markdownFileService.getNextSnapshotID(
             diffDTO.MarkdownID,
@@ -80,16 +81,6 @@ export class VersionControlService {
       diffDTO.MarkdownID,
     );
   }
-
-  ///===-----------------------------------------------------
-
-  // getDiff(diffDTO: DiffDTO) {}
-
-  ///===-----------------------------------------------------
-
-  // getAllDiffsForSnapshot(
-  //   snapshotDTO: SnapshotDTO,
-  // ) {}
 
   ///===-----------------------------------------------------
 
