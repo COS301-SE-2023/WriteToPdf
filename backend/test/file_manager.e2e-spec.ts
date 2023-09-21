@@ -18,6 +18,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { MarkdownFile } from '../src/markdown_files/entities/markdown_file.entity';
 // import { S3Service } from '../src/s3/s3.service';
 import { S3ServiceMock } from '../src/s3/__mocks__/s3.service';
+import { Snapshot } from '../src/snapshots/entities/snapshots.entity';
 // import { FileDTO } from '../src/s3/dto/file.dto';
 
 // let startTime: string;
@@ -45,6 +46,10 @@ describe('FileManagerController (integration)', () => {
           {
             provide:
               getRepositoryToken(MarkdownFile),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(Snapshot),
             useClass: Repository,
           },
         ],
