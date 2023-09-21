@@ -43,6 +43,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   noAssetsAvailable: boolean = false;
   isTouchScreen: boolean = false;
   sideBarTab: boolean = false;
+  loading: boolean = false;
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
@@ -364,6 +365,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     const markdownID = this.editService.getMarkdownID();
     localStorage.setItem('content', contents);
     if (pass != '' && pass != undefined) {
+      this.loading = true;
       await this.fileService.saveDocument(
         this.fileService.encryptSafeLockDocument(contents, pass),
         this.editService.getMarkdownID(),
@@ -376,7 +378,9 @@ export class EditComponent implements AfterViewInit, OnInit {
           markdownID ? (markdownID as string) : '',
           this.fileService.encryptSafeLockDocument(readablePatch, pass)
         );
+      this.loading = false;
     } else {
+      this.loading = true;
       await this.fileService.saveDocument(
         contents,
         this.editService.getMarkdownID(),
@@ -389,6 +393,7 @@ export class EditComponent implements AfterViewInit, OnInit {
           markdownID ? (markdownID as string) : '',
           readablePatch
         );
+        this.loading = false;
     }
 
     this.versionControlService.setLatestVersionContent(contents);

@@ -1,3 +1,7 @@
+<div *ngIf="loading" class="loading-overlay">
+  <img class="loadingIcon" src="assets/Spinner/loading2.gif" title="Loading..." alt="Loading..." />
+</div>
+
 <div class="container">
   <p-toast
     [breakpoints]="{ '600px': { width: '300px' }, '350px': { width: '90%' } }"
