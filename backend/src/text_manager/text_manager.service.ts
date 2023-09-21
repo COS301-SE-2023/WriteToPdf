@@ -89,7 +89,7 @@ export class TextManagerService {
       );
 
     const s3TextractResponse =
-      this.s3Service.saveTextractResponse(
+      await this.s3Service.saveTextractResponse(
         savedAssetDTO,
         textractResponse,
       );
