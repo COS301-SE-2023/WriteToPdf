@@ -11,6 +11,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Diff } from '../diffs/entities/diffs.entity';
 import { Repository } from 'typeorm';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
+import { SnapshotService } from '../snapshots/snapshots.service';
+import { Snapshot } from '../snapshots/entities/snapshots.entity';
 
 describe('VersionControlService', () => {
   let service: VersionControlService;
@@ -28,6 +30,7 @@ describe('VersionControlService', () => {
           MarkdownFilesService,
           S3Service,
           S3ServiceMock,
+          SnapshotService,
           {
             provide: getRepositoryToken(Diff),
             useClass: Repository,
@@ -35,6 +38,10 @@ describe('VersionControlService', () => {
           {
             provide:
               getRepositoryToken(MarkdownFile),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(Snapshot),
             useClass: Repository,
           },
         ],
