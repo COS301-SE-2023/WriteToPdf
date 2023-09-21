@@ -658,14 +658,19 @@ export class EditComponent implements AfterViewInit, OnInit {
         );
 
         let diffNumber = 0;
+        let currentSnapshot = new SnapshotDTO();
+        currentSnapshot.ChildDiffs = [];
         for (let i = 0; i < diff.length; i++) {
           if (!diff[i].HasSnapshot) {
             diff[i].LastModifiedString = this.formatDate(diff[i].LastModified);
             diff[i].VersionNumber = ++diffNumber;
             diff[i].Name = 'Diff ' + diff[i].VersionNumber;
-            this.history.push(diff[i]);
+            currentSnapshot.ChildDiffs.push(diff[i]);
           }
         }
+        currentSnapshot.Name = 'Latest';
+        currentSnapshot.LastModifiedString = 'now';
+        this.history.push(currentSnapshot);
         snapshot.forEach((a) => this.history.push(a));
 
         console.log(this.history);
@@ -754,16 +759,22 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   formatDate(dateString: Date): string {
-    if (!dateString) {
-      return dateString; // Return the input string as-is if it's empty or null.
-    }
-
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    if(!dateString) return '';
     const date = new Date(dateString);
-    const year = date.getFullYear().toString();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
 
-    return `${year}-${month}-${day}`;
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = date.getMonth() ; // January is 0!
+    const yyyy = date.getFullYear();
+
+    const hh = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    const ss = String(date.getSeconds()).padStart(2, '0');
+
+    return `${dd} ${months[mm]}, ${hh}:${min}:${ss}`;
   }
 
   enableReadOnly() {
@@ -775,15 +786,17 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   insertContent(obj: any) {
-    this.deselectAllHistory();
-    obj.isCurrent = true;
-    if (obj.SnapshotID === 'LATEST') {
-      this.disableReadOnly();
-      this.editor.setData(obj.Content);
-      return;
-    }
-    this.enableReadOnly();
-    this.editor.setData(obj.Content);
+
+    console.log("Just clicked on: " , obj);
+    // this.deselectAllHistory();
+    // obj.isCurrent = true;
+    // if (obj.SnapshotID === 'LATEST') {
+    //   this.disableReadOnly();
+    //   this.editor.setData(obj.Content);
+    //   return;
+    // }
+    // this.enableReadOnly();
+    // this.editor.setData(obj.Content);
   }
 
   deselectAllHistory() {
@@ -804,5 +817,20 @@ export class EditComponent implements AfterViewInit, OnInit {
     arrowElement.classList.toggle('expanded');
 
     event.stopPropagation();
+
+    //retrieve all diff content and previous snapshot content
+    this.versioningApiService.loadHistorySet(this.editService.getMarkdownID() as string, snapshot.ChildDiffs, snapshot.snapshotID).then((data) => {
+      if(data !== null){
+        console.log("Process diff data.");
+      }
+      else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error retrieving history set',
+        });
+        return;
+      }
+    });
   }
 }

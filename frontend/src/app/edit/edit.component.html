@@ -377,8 +377,13 @@
             alt=""
             (click)="expandSnapshot(obj, $event)"
           />
-          <p>{{ obj.LastModified }}</p>
-          <!-- <p>{{obj.LastModifiedString}}</p> -->
+          <img
+            class="snapshotIcon"
+            src="assets/Icons/editIcons/snapshot.png"
+            alt=""
+          />
+          <!-- <p>{{ obj.LastModified }}</p> -->
+          <p>{{obj.LastModifiedString}}</p>
           <img
             class="historyIcon"
             src="assets/Icons/editIcons/ellipse.svg"
@@ -392,9 +397,14 @@
             [ngClass]="{ selectedHistory: diffObj.isCurrent }"
             (click)="insertContent(diffObj)"
           >
+            <img
+              class="snapshotIcon"
+              src="assets/Icons/editIcons/diffArrow.png"
+              alt=""
+            />
             <!-- <p>{{ diffObj.Name }}</p> -->
-            <!-- <p>{{ diffObj.LastModifiedString }}</p> -->
-            <p>{{ diffObj.LastModified }}</p>
+            <p>{{ diffObj.LastModifiedString }}</p>
+            <!-- <p>{{ diffObj.LastModified }}</p> -->
             <img
               class="historyIcon"
               src="assets/Icons/editIcons/ellipse.svg"
