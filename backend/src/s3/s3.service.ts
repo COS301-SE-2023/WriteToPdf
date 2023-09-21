@@ -7,9 +7,11 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-import * as fs from 'fs/promises'; // for local storage
+// import * as fs from 'fs/promises'; // for local storage
 import * as CryptoJS from 'crypto-js';
 import { AssetDTO } from '../assets/dto/asset.dto';
+import { DiffDTO } from '../diffs/dto/diffs.dto';
+import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 
 @Injectable()
 export class S3Service {
@@ -22,6 +24,8 @@ export class S3Service {
   awsS3SecretAccessKey =
     process.env.AWS_S3_SECRET_ACCESS_KEY;
 
+  ///===----------------------------------------------------
+
   private readonly s3Client = new S3Client({
     credentials: {
       accessKeyId: this.awsS3AccessKeyId,
@@ -29,6 +33,8 @@ export class S3Service {
     },
     region: this.awsS3BucketRegion,
   });
+
+  ///===----------------------------------------------------
 
   async deleteFile(
     markdownFileDTO: MarkdownFileDTO,
@@ -57,9 +63,10 @@ export class S3Service {
       console.log('Delete Error: ' + err);
       return undefined;
     }
-
     return markdownFileDTO;
   }
+
+  ///===----------------------------------------------------
 
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
@@ -103,27 +110,12 @@ export class S3Service {
       return undefined;
     }
 
-    for (let i = 0; i < 10; i++) {
-      try {
-        await this.s3Client.send(
-          new PutObjectCommand({
-            Bucket: this.awsS3BucketName,
-            Key: `${filePath}/diff/${i}`,
-            Body: new Uint8Array(Buffer.from('')),
-          }),
-        );
-      } catch (err) {
-        console.log(
-          `S3 diff ${i} file creation error: ` +
-            err,
-        );
-        return undefined;
-      }
-    }
     markdownFileDTO.Content = '';
     markdownFileDTO.Size = 0;
     return markdownFileDTO;
   }
+
+  ///===----------------------------------------------------
 
   async saveFile(
     markdownFileDTO: MarkdownFileDTO,
@@ -162,23 +154,25 @@ export class S3Service {
       return undefined;
     }
 
-    try {
-      // await fs.writeFile(
-      //   `./storage/${filePath}/diff/${markdownFileDTO.NextDiffID}`,
-      //   fileData,
-      //   'utf-8',
-      // );
-      /*const response = */ await this.s3Client.send(
-        new PutObjectCommand({
-          Bucket: this.awsS3BucketName,
-          Key: `${filePath}/diff/${markdownFileDTO.NextDiffID}`,
-          Body: markdownFileDTO.NewDiff,
-        }),
-      );
-    } catch (err) {}
+    // try {
+    //   // await fs.writeFile(
+    //   //   `./storage/${filePath}/diff/${markdownFileDTO.NextDiffID}`,
+    //   //   fileData,
+    //   //   'utf-8',
+    //   // );
+    //   /*const response = */ await this.s3Client.send(
+    //     new PutObjectCommand({
+    //       Bucket: this.awsS3BucketName,
+    //       Key: `${filePath}/diff/${markdownFileDTO.NextDiffID}`,
+    //       Body: markdownFileDTO.NewDiff,
+    //     }),
+    //   );
+    // } catch (err) {}
 
     return markdownFileDTO;
   }
+
+  ///===----------------------------------------------------
 
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
@@ -222,6 +216,393 @@ export class S3Service {
     return markdownFileDTO;
   }
 
+  ///===----------------------------------------------------
+
+  async createDiffObjectsForFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+    for (
+      let i = 0;
+      i < parseInt(process.env.MAX_DIFFS);
+      i++
+    ) {
+      try {
+        await this.s3Client.send(
+          new PutObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/diff/${i}`,
+            Body: new Uint8Array(Buffer.from('')),
+          }),
+        );
+      } catch (err) {
+        console.log(
+          `S3 diff ${i} object creation error: ` +
+            err,
+        );
+        return undefined;
+      }
+    }
+  }
+
+  ///===----------------------------------------------------
+
+  async saveDiff(
+    diffDTO: DiffDTO,
+    nextDiffID: number,
+  ) {
+    const filePath = `${diffDTO.UserID}/${diffDTO.MarkdownID}`;
+
+    console.log(
+      'diffDTO.Content: ',
+      diffDTO.Content,
+    );
+    try {
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/diff/${nextDiffID}`,
+          Body: diffDTO.Content,
+        }),
+      );
+    } catch (err) {
+      console.log('Write File Error: ' + err);
+      return undefined;
+    }
+    return diffDTO;
+  }
+
+  ///===----------------------------------------------------
+
+  async getDiffSet(
+    S3DiffIDs: number[],
+    userID: number,
+    markdownID: string,
+  ) {
+    const filePath = `${userID}/${markdownID}`;
+
+    const diffDTOs: DiffDTO[] = [];
+
+    for (let i = 0; i < S3DiffIDs.length; i++) {
+      try {
+        const response = await this.s3Client.send(
+          new GetObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/diff/${S3DiffIDs[i]}`,
+          }),
+        );
+
+        const diffDTO = new DiffDTO();
+        diffDTO.Content =
+          await response.Body.transformToString();
+        diffDTOs.push(diffDTO);
+      } catch (err) {
+        console.log(
+          `S3 diff ${i} read error: ` + err,
+        );
+        return undefined;
+      }
+    }
+    return diffDTOs;
+  }
+
+  ///===----------------------------------------------------
+
+  async getSnapshot(
+    S3SnapshotID: number,
+    userID: number,
+    markdownID: string,
+  ) {
+    const filePath = `${userID}/${markdownID}`;
+
+    try {
+      const response = await this.s3Client.send(
+        new GetObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/snapshot/${S3SnapshotID}`,
+        }),
+      );
+
+      const snapshotDTO = new SnapshotDTO();
+      snapshotDTO.Content =
+        await response.Body.transformToString();
+      return snapshotDTO;
+    } catch (err) {
+      console.log(
+        `S3 snapshot ${S3SnapshotID} read error: ` +
+          err,
+      );
+      return undefined;
+    }
+  }
+
+  ///===----------------------------------------------------
+
+  async saveOldestSnapshot(diffDTO: DiffDTO) {
+    const filePath = `${diffDTO.UserID}/${diffDTO.MarkdownID}`;
+
+    const markdownFileDTO = new MarkdownFileDTO();
+    markdownFileDTO.UserID = diffDTO.UserID;
+    markdownFileDTO.MarkdownID =
+      diffDTO.MarkdownID;
+
+    const file = await this.retrieveFile(
+      markdownFileDTO,
+    );
+
+    try {
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/snapshot/${process.env.MAX_SNAPSHOTS}`,
+          Body: file.Content,
+        }),
+      );
+    } catch (err) {
+      console.log('Write File Error: ' + err);
+      return undefined;
+    }
+    return diffDTO;
+  }
+
+  ///===----------------------------------------------------
+
+  async retrieveOldestSnapshot(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+
+    try {
+      const response = await this.s3Client.send(
+        new GetObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/snapshot/${process.env.MAX_SNAPSHOTS}`,
+        }),
+      );
+
+      markdownFileDTO.Content =
+        await response.Body.transformToString();
+      markdownFileDTO.Size =
+        response.ContentLength;
+    } catch (err) {
+      console.log('Read File Error: ' + err);
+      return undefined;
+    }
+  }
+
+  ///===----------------------------------------------------
+
+  /**
+   * @notes every snapshot is associated with n previous diffs.
+   * The IDs of the associated diffs do not change unless
+   * a change is made to the relevant versioning env variables.
+   */
+
+  async getAllDiffsForSnapshot(
+    snapshotDTO: SnapshotDTO,
+  ) {
+    const filePath = `${snapshotDTO.UserID}/${snapshotDTO.MarkdownID}`;
+
+    const diffDTOs: DiffDTO[] = [];
+
+    const firstDiffID =
+      snapshotDTO.S3SnapshotID *
+      parseInt(process.env.DIFFS_PER_SNAPSHOT);
+
+    for (
+      let j = firstDiffID;
+      j <
+      firstDiffID +
+        parseInt(process.env.DIFFS_PER_SNAPSHOT);
+      j++
+    ) {
+      try {
+        const response = await this.s3Client.send(
+          new GetObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/diff/${j}`,
+          }),
+        );
+
+        const diffDTO = new DiffDTO();
+        diffDTO.Content =
+          await response.Body.transformToString();
+        diffDTOs.push(diffDTO);
+      } catch (err) {
+        console.log(
+          `S3 diff ${j} read error: ` + err,
+        );
+        return undefined;
+      }
+    }
+    return diffDTOs;
+  }
+
+  ///===----------------------------------------------------
+
+  async deleteDiffObjectsForFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+    for (
+      let i = 0;
+      i < parseInt(process.env.MAX_DIFFS);
+      i++
+    ) {
+      try {
+        await this.s3Client.send(
+          new DeleteObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/diff/${i}`,
+          }),
+        );
+      } catch (err) {
+        console.log(
+          'Delete all diffs error: ' + err,
+        );
+        return undefined;
+      }
+    }
+  }
+
+  ///===----------------------------------------------------
+
+  async createSnapshotObjectsForFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+
+    // Create snapshot objects
+    for (
+      let j = 0;
+      j < parseInt(process.env.MAX_SNAPSHOTS);
+      j++
+    ) {
+      try {
+        await this.s3Client.send(
+          new PutObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/snapshot/${j}`,
+            Body: new Uint8Array(Buffer.from('')),
+          }),
+        );
+      } catch (err) {
+        console.log(
+          `S3 snapshot ${j} object creation error`,
+        );
+        return undefined;
+      }
+    }
+  }
+
+  ///===----------------------------------------------------
+
+  async deleteSnapshotObjectsForFile(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    const filePath = `${markdownFileDTO.UserID}/${markdownFileDTO.MarkdownID}`;
+    for (
+      let i = 0;
+      i < parseInt(process.env.MAX_SNAPSHOTS);
+      i++
+    ) {
+      try {
+        await this.s3Client.send(
+          new DeleteObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/snapshot/${i}`,
+          }),
+        );
+      } catch (err) {
+        console.log(
+          'Delete all snapshots error: ' + err,
+        );
+        return undefined;
+      }
+    }
+  }
+
+  ///===----------------------------------------------------
+
+  async saveSnapshot(
+    diffDTO: DiffDTO,
+    nextSnapshotID: number,
+  ) {
+    const markdownFileDTO: MarkdownFileDTO =
+      new MarkdownFileDTO();
+    markdownFileDTO.UserID = diffDTO.UserID;
+    markdownFileDTO.MarkdownID =
+      diffDTO.MarkdownID;
+    const fileDTO = await this.retrieveFile(
+      markdownFileDTO,
+    );
+
+    const filePath = `${diffDTO.UserID}/${diffDTO.MarkdownID}`;
+
+    console.log(
+      'fileDTO.Content: ',
+      fileDTO.Content,
+    );
+
+    try {
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/snapshot/${nextSnapshotID}`,
+          Body: fileDTO.Content,
+        }),
+      );
+    } catch (err) {
+      console.log('Write File Error: ' + err);
+      return undefined;
+    }
+
+    return diffDTO;
+  }
+
+  ///===----------------------------------------------------
+
+  async retrieveAllSnapshots(
+    logicalOrder: number[],
+    snapshotDTO: SnapshotDTO,
+  ) {
+    const filePath = `${snapshotDTO.UserID}/${snapshotDTO.MarkdownID}`;
+
+    const snapshotDTOs: SnapshotDTO[] = [];
+
+    for (
+      let i = 0;
+      i < logicalOrder.length;
+      i++
+    ) {
+      console.log(
+        'Trying to retrieve snapshot on path ',
+        `${filePath}/snapshot/${logicalOrder[i]}`,
+      );
+      try {
+        const response = await this.s3Client.send(
+          new GetObjectCommand({
+            Bucket: this.awsS3BucketName,
+            Key: `${filePath}/snapshot/${logicalOrder[i]}`,
+          }),
+        );
+
+        const snapshotDTO = new SnapshotDTO();
+        snapshotDTO.Content =
+          await response.Body.transformToString();
+        snapshotDTOs.push(snapshotDTO);
+      } catch (err) {
+        console.log(
+          `S3 snapshot ${i} read error: ` + err,
+        );
+        return undefined;
+      }
+    }
+    return snapshotDTOs;
+  }
+
+  ///===----------------------------------------------------
+
   async createAsset(assetDTO: AssetDTO) {
     // Generate new AssetID
     const newAssetDTO = new AssetDTO();
@@ -250,6 +631,8 @@ export class S3Service {
     newAssetDTO.Size = 0;
     return newAssetDTO;
   }
+
+  ///===----------------------------------------------------
 
   async saveTextractResponse(
     saveAssetDTO: AssetDTO,
@@ -299,6 +682,8 @@ export class S3Service {
     return saveAssetDTO;
   }
 
+  ///===----------------------------------------------------
+
   async saveImageAsset(saveAssetDTO: AssetDTO) {
     let filePath = `${saveAssetDTO.UserID}`;
 
@@ -344,6 +729,8 @@ export class S3Service {
     saveAssetDTO.Content = '';
     return saveAssetDTO;
   }
+
+  ///===----------------------------------------------------
 
   async saveTextAssetImage(
     saveAssetDTO: AssetDTO,
@@ -392,6 +779,8 @@ export class S3Service {
     saveAssetDTO.Content = '';
     return saveAssetDTO;
   }
+
+  ///===----------------------------------------------------
 
   async retrieveAssetByID(
     assetID: string,
@@ -446,6 +835,8 @@ export class S3Service {
     }
   }
 
+  ///===----------------------------------------------------
+
   async retrieveAsset(
     retrieveAssetDTO: AssetDTO,
   ) {
@@ -492,6 +883,8 @@ export class S3Service {
 
     return retrieveAssetDTO;
   }
+
+  ///===----------------------------------------------------
 
   async deleteAsset(assetDTO: AssetDTO) {
     console.log('Delete Asset (s3)');

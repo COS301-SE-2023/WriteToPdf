@@ -28,6 +28,13 @@ import { TextractService } from './textract/textract.service';
 import { ResetPasswordModule } from './reset_password/reset_password.module';
 import { ResetPasswordRequest } from './reset_password/entities/reset_password_request.entity';
 import { MailService } from './mail/mail.service';
+import { DiffsService } from './diffs/diffs.service';
+import { SnapshotService } from './snapshots/snapshots.service';
+import { Diff } from './diffs/entities/diffs.entity';
+import { Snapshot } from './snapshots/entities/snapshots.entity';
+import { VersionControlModule } from './version_control/version_control.module';
+import { VersionControlService } from './version_control/version_control.service';
+import { VersionControlController } from './version_control/version_control.controller';
 
 @Module({
   imports: [
@@ -41,17 +48,21 @@ import { MailService } from './mail/mail.service';
     TypeOrmModule.forFeature([
       ResetPasswordRequest,
     ]),
+    TypeOrmModule.forFeature([Diff]),
+    TypeOrmModule.forFeature([Snapshot]),
     MarkdownFilesModule,
     FoldersModule,
     S3Module,
     FileManagerModule,
     AssetManagerModule,
+    VersionControlModule,
     ResetPasswordModule,
   ],
   controllers: [
     AuthController,
     S3Controller,
     FileManagerController,
+    VersionControlController
   ],
   providers: [
     FileManagerService,
@@ -62,6 +73,9 @@ import { MailService } from './mail/mail.service';
     ConversionService,
     TextractService,
     MailService,
+    DiffsService,
+    SnapshotService,
+    VersionControlService,
   ],
 })
 export class AppModule {}

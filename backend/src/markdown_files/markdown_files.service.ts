@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
+import 'dotenv/config';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
 import { MarkdownFile } from './entities/markdown_file.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -90,8 +91,6 @@ export class MarkdownFilesService {
       );
     markdownToUpdate.LastModified = new Date();
     markdownToUpdate.Size = markdownDTO.Size;
-    markdownToUpdate.NextDiffID =
-      (markdownToUpdate.NextDiffID + 1) % 10;
     return this.markdownFileRepository.save(
       markdownToUpdate,
     );
@@ -118,6 +117,66 @@ export class MarkdownFilesService {
       markdownFileDTO.SafeLock;
     return this.markdownFileRepository.save(
       markdownToUpdate,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async getNextDiffID(markdownID: string) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    return markdownFile.NextDiffID;
+  }
+
+  ///===----------------------------------------------------
+
+  async getNextSnapshotID(markdownID: string) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    return markdownFile.NextSnapshotID;
+  }
+
+  ///===----------------------------------------------------
+
+  async incrementNextDiffID(markdownID: string) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    markdownFile.NextDiffID =
+      (markdownFile.NextDiffID + 1) %
+      parseInt(process.env.MAX_DIFFS);
+    return await this.markdownFileRepository.save(
+      markdownFile,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async incrementNextSnapshotID(
+    markdownID: string,
+  ) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    markdownFile.NextSnapshotID =
+      (markdownFile.NextSnapshotID + 1) %
+      parseInt(process.env.MAX_SNAPSHOTS);
+    return this.markdownFileRepository.save(
+      markdownFile,
     );
   }
 }

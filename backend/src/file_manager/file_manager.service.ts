@@ -18,6 +18,8 @@ import { ExportDTO } from './dto/export.dto';
 import * as CryptoJS from 'crypto-js';
 import { ConversionService } from '../conversion/conversion.service';
 import { ImportDTO } from './dto/import.dto';
+import { DiffsService } from '../diffs/diffs.service';
+import { SnapshotService } from '../snapshots/snapshots.service';
 
 @Injectable()
 export class FileManagerService {
@@ -28,14 +30,11 @@ export class FileManagerService {
     private conversionService: ConversionService,
     private userService: UsersService,
     private s3ServiceMock: S3ServiceMock,
+    private diffsService: DiffsService,
+    private snapshotService: SnapshotService,
   ) {}
 
   // File operations: ###########################################################
-
-  // DB Requires the following fields to be initialised in the DTO:
-  // Path: string; .. TO PLACE THE FILE IN S3
-  // Name: string; .. THE NEW NAME OF THE FILE
-  // Size: number; .. THE SIZE OF THE FILE IN MEGABYTES
   async createFile(
     markdownFileDTO: MarkdownFileDTO,
     isTest = false,
@@ -72,19 +71,45 @@ export class FileManagerService {
       await this.s3ServiceMock.createFile(
         markdownFileDTO,
       );
+      const returnMD_DTO = new MarkdownFileDTO();
+      returnMD_DTO.MarkdownID = 'testID';
+      returnMD_DTO.Name = 'New Document';
+      returnMD_DTO.Content = 'testContent';
+      returnMD_DTO.Path = '';
+      returnMD_DTO.DateCreated = new Date();
+      returnMD_DTO.LastModified = new Date();
+      returnMD_DTO.Size = 0;
+      returnMD_DTO.ParentFolderID = '';
+      returnMD_DTO.UserID = 0;
+      return returnMD_DTO;
     } else {
       await this.s3service.createFile(
         markdownFileDTO,
       );
-    }
 
+      await this.s3service.createDiffObjectsForFile(
+        markdownFileDTO,
+      );
+
+      await this.s3service.createSnapshotObjectsForFile(
+        markdownFileDTO,
+      );
+
+      const snapshotIDs: string[] =
+        await this.snapshotService.createSnapshots(
+          markdownFileDTO,
+        );
+
+      await this.diffsService.createDiffs(
+        markdownFileDTO,
+        snapshotIDs,
+      );
+    }
     return await this.markdownFilesService.create(
       markdownFileDTO,
-    ); // return the file to know ID;
+    );
   }
 
-  // This function will need to return the latest diffs for
-  // the specified file (at most, 10 diffs)
   async retrieveFile(
     markdownFileDTO: MarkdownFileDTO,
     isTest = false,
@@ -236,8 +261,6 @@ export class FileManagerService {
       );
     }
 
-    // Assuming frontend will send the NextDiffID
-
     return await this.markdownFilesService.updateAfterModification(
       markdownFileDTO,
     );
@@ -257,8 +280,27 @@ export class FileManagerService {
       await this.s3ServiceMock.deleteFile(
         markdownFileDTO,
       );
+
+      // TODO: decide on a return value here, otherwise two calls to remove md file are made
+      // OR remove the mdservice.remove call from s3serviceMock.deleteFile
     } else {
       await this.s3service.deleteFile(
+        markdownFileDTO,
+      );
+
+      await this.s3service.deleteDiffObjectsForFile(
+        markdownFileDTO,
+      );
+
+      await this.s3service.deleteSnapshotObjectsForFile(
+        markdownFileDTO,
+      );
+
+      await this.diffsService.deleteDiffs(
+        markdownFileDTO,
+      );
+
+      await this.snapshotService.deleteSnapshots(
         markdownFileDTO,
       );
     }

@@ -4,10 +4,10 @@ import {
   ElementRef,
   HostListener,
   OnInit,
-  ViewChild,
+  Inject,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService, ConfirmationService } from 'primeng/api';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
 import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -15,15 +15,14 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
 import { AssetService } from '../services/asset.service';
-import { Inject } from '@angular/core';
-import { MessageService } from 'primeng/api';
-import { set } from 'cypress/types/lodash';
-import { PageBreak } from '@ckeditor/ckeditor5-page-break';
+import { VersionControlService } from '../services/version.control.service';
+import { VersioningApiService } from '../services/versioning-api.service';
 
 import html2pdf from 'html2pdf.js/dist/html2pdf';
 
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-import { parse } from 'path';
+import { SnapshotDTO } from '../services/dto/snapshot.dto';
+import { DiffDTO } from '../services/dto/diff.dto';
 
 @Component({
   selector: 'app-edit',
@@ -55,12 +54,35 @@ export class EditComponent implements AfterViewInit, OnInit {
     private editService: EditService,
     private assetService: AssetService,
     private clipboard: Clipboard,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private versionControlService: VersionControlService,
+    private confirmationService: ConfirmationService,
+    private versioningApiService: VersioningApiService
   ) {}
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
-    this.saveDocumentContents();
+    if (this.editService.getContent() !== '') this.saveDocumentContents();
+  }
+
+  @HostListener('window:mousewheel', ['$event'])
+  onMouseWheel(event: WheelEvent) {
+    if (event.shiftKey) {
+      if (event.deltaY > 0) {
+        this.zoomOut();
+      } else {
+        this.zoomIn();
+      }
+    }
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    // Check if the Ctrl key is pressed and the 's' key (or 'S') is pressed simultaneously
+    if (event.ctrlKey && (event.key === 's' || event.key === 'S')) {
+      event.preventDefault();
+      this.saveDocumentContents();
+    }
   }
 
   showImageUploadPopup(): void {
@@ -84,7 +106,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-
     this.speedDialItems = [
       {
         icon: 'pi pi-pencil',
@@ -116,10 +137,9 @@ export class EditComponent implements AfterViewInit, OnInit {
     ];
 
     //get window width
-    this.isTouchScreen=window.matchMedia('(pointer: coarse)').matches;
+    this.isTouchScreen = window.matchMedia('(pointer: coarse)').matches;
     const width = window.innerWidth;
-    if (width < 800) 
-      this.hideSideBar();
+    if (width < 800) this.hideSideBar();
     const c = localStorage.getItem('content');
     const m = localStorage.getItem('markdownID');
     const n = localStorage.getItem('name');
@@ -127,21 +147,83 @@ export class EditComponent implements AfterViewInit, OnInit {
     const pf = localStorage.getItem('parentFolderID');
     const sl = localStorage.getItem('safeLock');
     const dp = localStorage.getItem('encryptedDocumentPassword');
+    this.versionControlService.setLatestVersionContent(c ? (c as string) : '');
 
-    if (c != null && m != null && n != null && p != null && pf != null && sl != null && dp != null)
-      this.editService.setAll(c, m, n, p, pf, sl === 'true', this.editService.decryptPassword(dp));
+    if (
+      c != null &&
+      m != null &&
+      n != null &&
+      p != null &&
+      pf != null &&
+      sl != null &&
+      dp != null
+    )
+      this.editService.setAll(
+        c,
+        m,
+        n,
+        p,
+        pf,
+        sl === 'true',
+        this.editService.decryptPassword(dp)
+      );
     this.fileName = this.editService.getName();
 
-    this.history.push({ name: 'Latest', date: 'now', html: this.editService.getContent(), id: 'LATEST', isCurrent: true });
-    this.history.push({name: 'Version 7', date: '01-01-1977', html: '',  id: '8'});
-    this.history.push({name: 'Version 6', date: '01-01-1976', html: '<s><p><span style="background-color:hsl(0, 75%, 60%);">Text added from V0 to V1.</span style="background-color:hsl(0, 75%, 60%);"></p> <p><span style="background-color:hsl(0, 75%, 60%);">More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(0, 75%, 60%);">Addition from V3 to V4</span></p></s>',  id: '7'});
-    this.history.push({ name: 'Version 5', date: '01-01-1975', html: '<p><span style="background-color:hsl(0, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span >Addition from V3 to V4</span></p>', id: '6' });
-    this.history.push({ name: 'Version 4', date: '01-01-1974', html: '<p><span >Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(120, 75%, 60%);">Addition from V3 to V4</span></p>', id: '5' });
-    this.history.push({ name: 'Version 3', date: '01-01-1973', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p>', id: '4' });
-    this.history.push({ name: 'Version 2', date: '01-01-1972', html: '<p><span>Text added from V0 to V1.</span></p> <p><span style="background-color:hsl(120, 75%, 60%);">More Text added from V1 to V2.</span></p>', id: '3' });
-    this.history.push({ name: 'Version 1', date: '01-01-1971', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text added from V0 to V1.</span></p>', id: '2' });
-    this.history.push({ name: 'Version 0', date: '01-01-1970', html: '', id: '1' });
-
+    this.history.push({
+      name: 'Latest',
+      date: 'now',
+      html: this.editService.getContent(),
+      id: 'LATEST',
+      isCurrent: true,
+    });
+    this.history.push({
+      name: 'Version 7',
+      date: '01-01-1977',
+      html: '',
+      id: '8',
+    });
+    this.history.push({
+      name: 'Version 6',
+      date: '01-01-1976',
+      html: '<s><p><span style="background-color:hsl(0, 75%, 60%);">Text added from V0 to V1.</span style="background-color:hsl(0, 75%, 60%);"></p> <p><span style="background-color:hsl(0, 75%, 60%);">More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(0, 75%, 60%);">Addition from V3 to V4</span></p></s>',
+      id: '7',
+    });
+    this.history.push({
+      name: 'Version 5',
+      date: '01-01-1975',
+      html: '<p><span style="background-color:hsl(0, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span >Addition from V3 to V4</span></p>',
+      id: '6',
+    });
+    this.history.push({
+      name: 'Version 4',
+      date: '01-01-1974',
+      html: '<p><span >Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(120, 75%, 60%);">Addition from V3 to V4</span></p>',
+      id: '5',
+    });
+    this.history.push({
+      name: 'Version 3',
+      date: '01-01-1973',
+      html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p>',
+      id: '4',
+    });
+    this.history.push({
+      name: 'Version 2',
+      date: '01-01-1972',
+      html: '<p><span>Text added from V0 to V1.</span></p> <p><span style="background-color:hsl(120, 75%, 60%);">More Text added from V1 to V2.</span></p>',
+      id: '3',
+    });
+    this.history.push({
+      name: 'Version 1',
+      date: '01-01-1971',
+      html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text added from V0 to V1.</span></p>',
+      id: '2',
+    });
+    this.history.push({
+      name: 'Version 0',
+      date: '01-01-1970',
+      html: '',
+      id: '1',
+    });
   }
 
   ngAfterViewInit() {
@@ -227,6 +309,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
       '#E3E3E3';
     this.elementRef.nativeElement.ownerDocument.body.style.overflow = 'hidden';
+    this.refreshSidebarHistory();
     this.refreshSidebar();
   }
 
@@ -246,27 +329,69 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.router.navigate(['/camera'], { state: data });
   }
 
-  saveDocumentContents() {
+  exitToHome() {
+    this.confirmationService.confirm({
+      message: 'Do you want to save before you leave?',
+      header: 'Save Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Exit and Save',
+      rejectLabel: 'Exit without Saving',
+      accept: () => {
+        this.editService.setContent(this.editor.getData());
+        this.saveDocumentContents();
+        this.router.navigate(['/home']);
+      },
+      reject: (type: any) => {
+        if (type === 1) this.router.navigate(['/home']);
+      },
+    });
+  }
+
+  async saveDocumentContents() {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+
     let contents = this.editor.getData();
     let pass = this.editService.getDocumentPassword();
-    if(pass != '' && pass != undefined) {
-      this.fileService.saveDocument(
+
+    const latestVersionContent =
+      this.versionControlService.getLatestVersionContent();
+
+    const readablePatch = this.versionControlService.getReadablePatch(
+      latestVersionContent,
+      contents
+    );
+    const markdownID = this.editService.getMarkdownID();
+    localStorage.setItem('content', contents);
+    if (pass != '' && pass != undefined) {
+      await this.fileService.saveDocument(
         this.fileService.encryptSafeLockDocument(contents, pass),
         this.editService.getMarkdownID(),
         this.editService.getPath(),
         this.editService.getSafeLock()
+      );
+
+      if (readablePatch !== '')
+        this.versioningApiService.saveDiff(
+          markdownID ? (markdownID as string) : '',
+          this.fileService.encryptSafeLockDocument(readablePatch, pass)
         );
-    }
-    else {
-      this.fileService.saveDocument(
+    } else {
+      await this.fileService.saveDocument(
         contents,
         this.editService.getMarkdownID(),
         this.editService.getPath(),
         this.editService.getSafeLock()
+      );
+
+      if (readablePatch !== '')
+        this.versioningApiService.saveDiff(
+          markdownID ? (markdownID as string) : '',
+          readablePatch
         );
     }
+
+    this.versionControlService.setLatestVersionContent(contents);
   }
 
   hideSideBar() {
@@ -305,6 +430,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       .then((Boolean) => {
         if (Boolean) {
           this.editService.setName(this.fileName);
+          localStorage.setItem('name', this.fileName as string);
         }
       });
   }
@@ -455,6 +581,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         detail: 'Asset deleted',
       });
       this.assets.splice(currAssetIndex, 1);
+      if(this.assets.length === 0) this.noAssetsAvailable = true;
     } else {
       this.assets[currAssetIndex].Deleted = false;
     }
@@ -485,7 +612,69 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async refreshSidebarHistory() {
-    console.log('refreshing history');
+    this.history = [];
+    this.versioningApiService
+      .retrieveAllHistory(this.editService.getMarkdownID() as string)
+      .then((data) => {
+        const snapshot = JSON.parse(
+          JSON.stringify(data.SnapshotHistory)
+        ) as SnapshotDTO[];
+        const diff = JSON.parse(JSON.stringify(data.DiffHistory)) as DiffDTO[];
+
+        snapshot.sort((a, b) => {
+          return a.LastModified < b.LastModified
+            ? 1
+            : a.LastModified > b.LastModified
+            ? -1
+            : 0;
+        });
+
+        snapshot.forEach((a, i) => {
+          a.LastModifiedString = this.formatDate(a.LastModified);
+          a.OrderNumber = i + 1;
+          a.Name = 'Snapshot ' + a.OrderNumber;
+          a.ChildDiffs = [];
+          for (let j = 0; j < diff.length; j++) {
+            if (a.SnapshotID === diff[j].SnapshotID) {
+              a.ChildDiffs.push(diff[j]);
+              diff[j].LastModifiedString = this.formatDate(
+                diff[j].LastModified
+              );
+              diff[j].HasSnapshot = true;
+            }
+          }
+        });
+        snapshot.forEach((a) =>
+          a.ChildDiffs.sort((a, b) => {
+            return a.LastModified < b.LastModified
+              ? 1
+              : a.LastModified > b.LastModified
+              ? -1
+              : 0;
+          }).forEach((a, i, arr) => {
+            a.VersionNumber = arr.length - i + 1;
+            a.Name = 'Version ' + a.VersionNumber;
+          })
+        );
+
+        let diffNumber = 0;
+        let currentSnapshot = new SnapshotDTO();
+        currentSnapshot.ChildDiffs = [];
+        for (let i = 0; i < diff.length; i++) {
+          if (!diff[i].HasSnapshot) {
+            diff[i].LastModifiedString = this.formatDate(diff[i].LastModified);
+            diff[i].VersionNumber = ++diffNumber;
+            diff[i].Name = 'Diff ' + diff[i].VersionNumber;
+            currentSnapshot.ChildDiffs.push(diff[i]);
+          }
+        }
+        currentSnapshot.Name = 'Latest';
+        currentSnapshot.LastModifiedString = 'now';
+        this.history.push(currentSnapshot);
+        snapshot.forEach((a) => this.history.push(a));
+
+        console.log(this.history);
+      });
   }
 
   pageBreak() {
@@ -569,17 +758,23 @@ export class EditComponent implements AfterViewInit, OnInit {
     return inputString.charAt(0).toUpperCase() + inputString.slice(1);
   }
 
-  formatDate(dateString: string): string {
-    if (!dateString || dateString.length === 0) {
-      return dateString; // Return the input string as-is if it's empty or null.
-    }
-
+  formatDate(dateString: Date): string {
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    if(!dateString) return '';
     const date = new Date(dateString);
-    const year = date.getFullYear().toString();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
 
-    return `${year}-${month}-${day}`;
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = date.getMonth() ; // January is 0!
+    const yyyy = date.getFullYear();
+
+    const hh = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    const ss = String(date.getSeconds()).padStart(2, '0');
+
+    return `${dd} ${months[mm]}, ${hh}:${min}:${ss}`;
   }
 
   enableReadOnly() {
@@ -591,20 +786,54 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   insertContent(obj: any) {
+
+    console.log("Just clicked on: " , obj);
+    if(!obj.Content) return;
     this.deselectAllHistory();
     obj.isCurrent = true;
-    if(obj.id === 'LATEST') {
+    if (obj.Name === 'Latest') {
       this.disableReadOnly();
-      this.editor.setData(obj.html);
+      this.editor.setData(obj.Content);
       return;
     }
     this.enableReadOnly();
-    this.editor.setData(obj.html);
+    this.editor.setData(obj.Content);
   }
 
   deselectAllHistory() {
-    for(let i = 0; i < this.history.length; i++) {
+    for (let i = 0; i < this.history.length; i++) {
       this.history[i].isCurrent = false;
     }
+  }
+
+  expandSnapshot(snapshot: any, event: any) {
+    if (snapshot.expanded) {
+      snapshot.expanded = false;
+    } else {
+      snapshot.expanded = true;
+    }
+
+    const arrowElement = event.target;
+
+    arrowElement.classList.toggle('expanded');
+
+    event.stopPropagation();
+
+    //retrieve all diff content and previous snapshot content
+    this.versioningApiService.loadHistorySet(this.editService.getMarkdownID() as string, snapshot.ChildDiffs, snapshot.snapshotID).then((data) => {
+      if(data !== null){
+        console.log("Process diff data.", data);
+        snapshot.Content =data.SnapshotHistory[0].Content;
+        
+      }
+      else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error retrieving history set',
+        });
+        return;
+      }
+    });
   }
 }

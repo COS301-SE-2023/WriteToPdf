@@ -90,7 +90,7 @@ $top-bottom-color: #202221;
 }
 
 .previewImg {
-    max-height: calc(100svh - 140px);
+    max-height: calc(100svh - 265px);
     width: 80svw;
     height: 80svh;
     object-fit: contain;
@@ -156,4 +156,12 @@ $top-bottom-color: #202221;
 
 .flipButton {
     margin: auto;
+}
+
+.slider{
+    width:100%;
+}
+.editImage{
+    margin: auto;
+    width: 50%;
 }

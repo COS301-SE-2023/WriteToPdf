@@ -33,6 +33,10 @@ import { JwtService } from '@nestjs/jwt';
 import { ResetPasswordService } from '../reset_password/reset_password.service';
 import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
 import { MailService } from '../mail/mail.service';
+import { DiffsService } from '../diffs/diffs.service';
+import { SnapshotService } from '../snapshots/snapshots.service';
+import { Diff } from '../diffs/entities/diffs.entity';
+import { Snapshot } from '../snapshots/entities/snapshots.entity';
 
 describe('FileManagerController', () => {
   let controller: FileManagerController;
@@ -54,6 +58,8 @@ describe('FileManagerController', () => {
           JwtService,
           ResetPasswordService,
           MailService,
+          DiffsService,
+          SnapshotService,
           {
             provide: 'FileManagerService',
             useValue: {
@@ -72,6 +78,14 @@ describe('FileManagerController', () => {
           },
           {
             provide: getRepositoryToken(User),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(Diff),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(Snapshot),
             useClass: Repository,
           },
           {

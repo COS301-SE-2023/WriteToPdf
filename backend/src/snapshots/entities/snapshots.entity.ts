@@ -13,10 +13,7 @@ export class Snapshot {
   MarkdownID: string;
 
   @Column()
-  UserID: string;
-
-  @Column()
-  DisplayID: string;
+  UserID: number;
 
   @Column()
   S3SnapshotID: number;
@@ -27,4 +24,7 @@ export class Snapshot {
     onUpdate: 'CURRENT_TIMESTAMP(3)',
   })
   LastModified: Date;
+
+  @Column()
+  HasBeenUsed: boolean;
 }

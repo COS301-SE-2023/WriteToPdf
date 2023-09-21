@@ -17,6 +17,8 @@ import { ExportDTO } from '../dto/export.dto';
 import * as CryptoJS from 'crypto-js';
 import { ConversionService } from '../../conversion/conversion.service';
 import { ImportDTO } from '../dto/import.dto';
+import { DiffsService } from '../../diffs/diffs.service';
+import { SnapshotService } from '../../snapshots/snapshots.service';
 
 @Injectable()
 export class FileManagerServiceMock {
@@ -26,6 +28,8 @@ export class FileManagerServiceMock {
     private s3service: S3Service,
     private conversionService: ConversionService,
     private userService: UsersService,
+    private diffsService: DiffsService,
+    private snapshotService: SnapshotService,
   ) {}
 
   // File operations: ###########################################################
@@ -230,6 +234,22 @@ export class FileManagerServiceMock {
       );
 
     await this.s3service.deleteFile(
+      markdownFileDTO,
+    );
+
+    await this.s3service.deleteDiffObjectsForFile(
+      markdownFileDTO,
+    );
+
+    await this.s3service.deleteSnapshotObjectsForFile(
+      markdownFileDTO,
+    );
+
+    await this.diffsService.deleteDiffs(
+      markdownFileDTO,
+    );
+
+    await this.snapshotService.deleteSnapshots(
       markdownFileDTO,
     );
 

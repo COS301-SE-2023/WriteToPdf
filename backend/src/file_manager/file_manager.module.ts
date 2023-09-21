@@ -15,6 +15,10 @@ import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { ResetPasswordService } from '../reset_password/reset_password.service';
 import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
 import { MailService } from '../mail/mail.service';
+import { DiffsService } from '../diffs/diffs.service';
+import { SnapshotService } from '../snapshots/snapshots.service';
+import { Diff } from '../diffs/entities/diffs.entity';
+import { Snapshot } from '../snapshots/entities/snapshots.entity';
 
 @Module({
   imports: [
@@ -24,6 +28,8 @@ import { MailService } from '../mail/mail.service';
     TypeOrmModule.forFeature([
       ResetPasswordRequest,
     ]),
+    TypeOrmModule.forFeature([Diff]),
+    TypeOrmModule.forFeature([Snapshot]),
   ],
   controllers: [FileManagerController],
   providers: [
@@ -37,6 +43,8 @@ import { MailService } from '../mail/mail.service';
     S3ServiceMock,
     ResetPasswordService,
     MailService,
+    DiffsService,
+    SnapshotService,
   ],
 })
 export class FileManagerModule {}

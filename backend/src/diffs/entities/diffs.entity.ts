@@ -13,10 +13,7 @@ export class Diff {
   MarkdownID: string;
 
   @Column()
-  UserID: string;
-
-  @Column()
-  DisplayID: string;
+  UserID: number;
 
   @Column()
   S3DiffID: number;
@@ -27,4 +24,10 @@ export class Diff {
     onUpdate: 'CURRENT_TIMESTAMP(3)',
   })
   LastModified: Date;
+
+  @Column()
+  HasBeenUsed: boolean;
+
+  @Column()
+  SnapshotID: string;
 }
