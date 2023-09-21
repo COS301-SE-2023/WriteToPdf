@@ -632,7 +632,7 @@ export class EditComponent implements AfterViewInit, OnInit {
             : 0;
         });
 
-        snapshot.map((a, i) => {
+        snapshot.forEach((a, i) => {
           a.LastModifiedString = this.formatDate(a.LastModified);
           a.OrderNumber = i + 1;
           a.Name = 'Snapshot ' + a.OrderNumber;
@@ -647,14 +647,14 @@ export class EditComponent implements AfterViewInit, OnInit {
             }
           }
         });
-        snapshot.map((a) =>
+        snapshot.forEach((a) =>
           a.ChildDiffs.sort((a, b) => {
             return a.LastModified < b.LastModified
               ? 1
               : a.LastModified > b.LastModified
               ? -1
               : 0;
-          }).map((a, i, arr) => {
+          }).forEach((a, i, arr) => {
             a.VersionNumber = arr.length - i + 1;
             a.Name = 'Version ' + a.VersionNumber;
           })
@@ -669,7 +669,7 @@ export class EditComponent implements AfterViewInit, OnInit {
             this.history.push(diff[i]);
           }
         }
-        snapshot.map((a) => this.history.push(a));
+        snapshot.forEach((a) => this.history.push(a));
 
         console.log(this.history);
       });
