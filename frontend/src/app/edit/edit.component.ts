@@ -788,15 +788,16 @@ export class EditComponent implements AfterViewInit, OnInit {
   insertContent(obj: any) {
 
     console.log("Just clicked on: " , obj);
-    // this.deselectAllHistory();
-    // obj.isCurrent = true;
-    // if (obj.SnapshotID === 'LATEST') {
-    //   this.disableReadOnly();
-    //   this.editor.setData(obj.Content);
-    //   return;
-    // }
-    // this.enableReadOnly();
-    // this.editor.setData(obj.Content);
+    if(!obj.Content) return;
+    this.deselectAllHistory();
+    obj.isCurrent = true;
+    if (obj.Name === 'Latest') {
+      this.disableReadOnly();
+      this.editor.setData(obj.Content);
+      return;
+    }
+    this.enableReadOnly();
+    this.editor.setData(obj.Content);
   }
 
   deselectAllHistory() {
@@ -821,7 +822,9 @@ export class EditComponent implements AfterViewInit, OnInit {
     //retrieve all diff content and previous snapshot content
     this.versioningApiService.loadHistorySet(this.editService.getMarkdownID() as string, snapshot.ChildDiffs, snapshot.snapshotID).then((data) => {
       if(data !== null){
-        console.log("Process diff data.");
+        console.log("Process diff data.", data);
+        snapshot.Content =data.SnapshotHistory[0].Content;
+        
       }
       else {
         this.messageService.add({
