@@ -365,7 +365,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       contents
     );
     const markdownID = this.editService.getMarkdownID();
-
+    localStorage.setItem('content', contents);
     if (pass != '' && pass != undefined) {
       await this.fileService.saveDocument(
         this.fileService.encryptSafeLockDocument(contents, pass),
@@ -433,6 +433,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       .then((Boolean) => {
         if (Boolean) {
           this.editService.setName(this.fileName);
+          localStorage.setItem('name', this.fileName as string);
         }
       });
   }
