@@ -4,10 +4,10 @@ import {
   ElementRef,
   HostListener,
   OnInit,
-  ViewChild,
+  Inject,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService, ConfirmationService } from 'primeng/api';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
 import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -16,15 +16,11 @@ import { FileService } from '../services/file.service';
 import { EditService } from '../services/edit.service';
 import { AssetService } from '../services/asset.service';
 import { VersionControlService } from '../services/version.control.service';
-import { Inject } from '@angular/core';
-import { MessageService, ConfirmationService } from 'primeng/api';
-import { set } from 'cypress/types/lodash';
-import { PageBreak } from '@ckeditor/ckeditor5-page-break';
+import { VersioningApiService } from '../services/versioning-api.service';
 
 import html2pdf from 'html2pdf.js/dist/html2pdf';
 
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-import { parse } from 'path';
 import { SnapshotDTO } from '../services/dto/snapshot.dto';
 import { DiffDTO } from '../services/dto/diff.dto';
 
@@ -60,7 +56,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     private clipboard: Clipboard,
     private messageService: MessageService,
     private versionControlService: VersionControlService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private versioningApiService: VersioningApiService
   ) {}
 
   @HostListener('window:beforeunload', ['$event'])
@@ -375,7 +372,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       );
 
       if (readablePatch !== '')
-        this.versionControlService.saveDiff(
+        this.versioningApiService.saveDiff(
           markdownID ? (markdownID as string) : '',
           this.fileService.encryptSafeLockDocument(readablePatch, pass)
         );
@@ -388,7 +385,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       );
 
       if (readablePatch !== '')
-        this.versionControlService.saveDiff(
+        this.versioningApiService.saveDiff(
           markdownID ? (markdownID as string) : '',
           readablePatch
         );
@@ -616,7 +613,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   async refreshSidebarHistory() {
     this.history = [];
-    this.versionControlService
+    this.versioningApiService
       .retrieveAllHistory(this.editService.getMarkdownID() as string)
       .then((data) => {
         const snapshot = JSON.parse(
