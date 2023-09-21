@@ -66,10 +66,6 @@ export class FileManagerService {
       markdownFileDTO.NextSnapshotID === undefined
     )
       markdownFileDTO.NextSnapshotID = 0;
-
-
-
-
       
     if (isTest) {
       await this.s3ServiceMock.createFile(
