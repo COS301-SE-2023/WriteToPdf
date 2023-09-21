@@ -14,6 +14,7 @@ export class CameraComponent {
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef;
 
   sysImage = '';
+  originalImage = '';
   public sidebarVisible = false;
   assetName: string = '';
   videoRef: any;
@@ -24,7 +25,8 @@ export class CameraComponent {
   flipCamera: boolean = false;
   cameraAvailable: boolean = false;
   settingCamera: boolean = false;
-
+  contrastValue: number = 0;
+  brightnessValue: number = 100;
   constructor(
     private elementRef: ElementRef,
     private assetService: AssetService,
@@ -59,7 +61,7 @@ export class CameraComponent {
   }
 
   setupCamera() {
-    this.settingCamera=true;
+    this.settingCamera = true;
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       console.error("getUserMedia is not supported in this browser.");
       this.cameraAvailable = false;
@@ -76,7 +78,7 @@ export class CameraComponent {
         // Access granted, display the camera stream
         this.cameraAvailable = true;
         this.videoRef.srcObject = stream;
-        this.settingCamera=false;
+        this.settingCamera = false;
       })
       .catch((error) => {
         // Handle errors and permission denial
@@ -89,15 +91,14 @@ export class CameraComponent {
 
 
   disableCamera() {
-    if(this.settingCamera){
-      let interval=setInterval(() => {
+    if (this.settingCamera) {
+      let interval = setInterval(() => {
         try {
           this.videoRef.srcObject
             .getTracks()
             .forEach((track: { stop: () => any }) => track.stop());
           clearInterval(interval);
         } catch (e) {
-          // console.log(e);
         }
       }, 1000);
     }
@@ -106,7 +107,6 @@ export class CameraComponent {
         .getTracks()
         .forEach((track: { stop: () => any }) => track.stop());
     } catch (e) {
-      // console.log(e);
     }
   }
 
@@ -126,6 +126,7 @@ export class CameraComponent {
     const dataUrl = canvas.toDataURL('image/jpeg', 1); // Adjust the quality (0.0 to 1.0)
 
     this.sysImage = dataUrl;
+    this.originalImage = dataUrl;
     this.captured = true;
   }
 
@@ -162,6 +163,86 @@ export class CameraComponent {
       this.getSnapshot();
       this.sidebarVisible = true;
     }
+  }
+
+  async adjustContrast(dataImage: string): Promise<string> {
+    return new Promise<string>((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const img = new Image();
+        img.src = dataImage;
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+
+          // Adjust contrast
+          const factor = (259 * (this.contrastValue + 255)) / (255 * (259 - this.contrastValue));
+          for (let i = 0; i < data.length; i += 4) {
+            data[i] = this.clamp(factor * (data[i] - 128) + 128);
+            data[i + 1] = this.clamp(factor * (data[i + 1] - 128) + 128);
+            data[i + 2] = this.clamp(factor * (data[i + 2] - 128) + 128);
+          }
+
+          ctx.putImageData(imageData, 0, 0);
+          resolve(canvas.toDataURL());
+        };
+      } else {
+        resolve(dataImage); // Return the original dataURL if the canvas context cannot be obtained
+      }
+    });
+  }
+
+
+  async adjustBrightness(dataImage: string): Promise<string> {
+    return new Promise<string>((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const img = new Image();
+        img.src = dataImage;
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+
+          // Adjust brightness
+          const factor = (this.brightnessValue - 100) / 100; // Calculate the brightness factor
+          for (let i = 0; i < data.length; i += 4) {
+            data[i] = this.clamp(data[i] + 255 * factor);
+            data[i + 1] = this.clamp(data[i + 1] + 255 * factor);
+            data[i + 2] = this.clamp(data[i + 2] + 255 * factor);
+          }
+
+          ctx.putImageData(imageData, 0, 0);
+          resolve(canvas.toDataURL());
+        };
+      } else {
+        resolve(dataImage); // Return the original dataURL if the canvas context cannot be obtained
+      }
+    });
+  }
+
+
+  async applyFilters() {
+    const contrastImage = await this.adjustBrightness(this.originalImage);
+    const brightnessImage = await this.adjustContrast(contrastImage);
+    this.sysImage = brightnessImage;
+  }
+
+  clamp(value: number, min = 0, max = 255): number {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  resetFilters() {
+    this.contrastValue = 0;
+    this.brightnessValue = 100;
+    this.sysImage = this.originalImage;
   }
 
 }

@@ -35,7 +35,7 @@ export class MarkdownFile {
   Size: number;
 
   @Column()
-  SafeLock: boolean; // document locking
+  SafeLock: boolean;
 
   @Column()
   ParentFolderID: string; // hash string

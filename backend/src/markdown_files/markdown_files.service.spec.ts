@@ -209,7 +209,7 @@ describe('MarkdownFilesService', () => {
     });
   });
 
-  describe('updateLastModified', () => {
+  describe('updateAfterModification', () => {
     it('should find the markdown file and update the last modified', async () => {
       const markdownFile = new MarkdownFileDTO();
       markdownFile.MarkdownID = '1';
@@ -230,7 +230,7 @@ describe('MarkdownFilesService', () => {
         .mockResolvedValue(updatedMarkdownFile);
 
       const result =
-        await service.updateLastModified(
+        await service.updateAfterModification(
           markdownFile,
         );
 

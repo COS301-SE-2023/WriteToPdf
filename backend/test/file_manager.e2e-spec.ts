@@ -18,6 +18,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { MarkdownFile } from '../src/markdown_files/entities/markdown_file.entity';
 // import { S3Service } from '../src/s3/s3.service';
 import { S3ServiceMock } from '../src/s3/__mocks__/s3.service';
+import { Snapshot } from '../src/snapshots/entities/snapshots.entity';
 // import { FileDTO } from '../src/s3/dto/file.dto';
 
 // let startTime: string;
@@ -34,6 +35,7 @@ enum ResetScope {
 describe('FileManagerController (integration)', () => {
   let app: INestApplication;
   let markdownFileRepository: Repository<MarkdownFile>;
+  let snapshotRepository: Repository<Snapshot>;
   let s3Service: S3ServiceMock;
 
   beforeAll(async () => {
@@ -47,6 +49,10 @@ describe('FileManagerController (integration)', () => {
               getRepositoryToken(MarkdownFile),
             useClass: Repository,
           },
+          {
+            provide: getRepositoryToken(Snapshot),
+            useClass: Repository,
+          },
         ],
       }).compile();
 
@@ -58,6 +64,9 @@ describe('FileManagerController (integration)', () => {
     >(getRepositoryToken(MarkdownFile));
     s3Service = new S3ServiceMock();
 
+    snapshotRepository = moduleFixture.get<
+      Repository<Snapshot>
+    >(getRepositoryToken(Snapshot));
     await resetUser(ResetScope.ALL);
   });
 

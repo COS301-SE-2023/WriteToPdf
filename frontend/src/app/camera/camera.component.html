@@ -6,7 +6,7 @@
     <p-button class="backButton" icon="pi pi-arrow-left" label="Back" styleClass="p-button-rounded"
       (click)="goBack()"></p-button>
     <p-button *ngIf="captured" class="retakeButton" icon="pi pi-refresh" label="Retake" styleClass="p-button-rounded"
-      (click)="captured=false"></p-button>
+      (click)="captured=false;resetFilters()"></p-button>
   </div>
 
   <p *ngIf="!cameraAvailable" style="text-align: center; width:100%;color:white;"><br /><br />Camera Not
@@ -31,8 +31,19 @@
   </div>
 
   <div class="imageWrapper" [ngClass]="{ 'notVisible': !captured }">
-    <img class="previewImg" [src]="sysImage" alt="" />
+    <img class="previewImg" [src]="sysImage" alt="" id="image"/>
   </div>
+
+    <div class="editImage"  [ngClass]="{ 'notVisible': !captured }">
+      <p style="margin:0">Adjust Contrast</p>
+      <input class="slider" type="range" min="-100" max="100" [(ngModel)]="contrastValue" (input)="applyFilters()" placeholder="0" title="Adjust Contrast"/>
+      <p style="margin:0">Adjust Brightness</p>
+      <input class="slider" type="range" min="50" max="150" [(ngModel)]="brightnessValue" (input)="applyFilters()" placeholder="0" title="Adjust Brightness"/>
+      <div style="width:143px;margin:auto;">
+        <p-button icon="pi pi-refresh" label="Reset Filters" (click)="resetFilters()" [style]="{margin:'auto'}"></p-button>
+
+      </div>
+    </div>
 
   <div class="footer" [ngClass]="{ 'notVisible': !captured }">
     <p-checkbox class="checkbox" [(ngModel)]="isAsset" [binary]="true" label="Extract Text"

@@ -626,12 +626,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onOpenFileSelect(MarkdownID: string | undefined | null): void {
     const file = this.nodeService.getFileDTOByID(MarkdownID);
-    this.loading = true;
     if (file.SafeLock) {
       this.openLockedDocumentPopup = true;
       this.documentPromise = this.fileService.retrieveDocument(file.MarkdownID, file.Path);
       return;
     }
+    this.loading = true;
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
@@ -1133,7 +1133,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   // @HostListener('document:keydown.enter', ['$event'])
   // handleEnterKeyPress(event: KeyboardEvent) {
   //   const selected = this.getSelected();
-  //   console.log(selected);
   //   if (selected.length === 1) {
   //     if (selected[0].Type === 'file') {
   //       this.onOpenFileSelect(selected[0].MarkdownID);
@@ -1147,7 +1146,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   // @HostListener('document:keydown.delete', ['$event'])
   // handleDeleteKeyPress(event: KeyboardEvent) {
   //   const selected = this.getSelected();
-  //   console.log(selected);
   //   if (selected.length === 1) {
   //     this.deleteSelectedEntity(selected[0]);
   //   }
@@ -1594,9 +1592,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
     let count = 0;
     for (let i = j; i < x.length; i++) {
-      console.log(i);
       setTimeout(() => {
-        console.log(startSelecting);
         const element = x[i];
         if (element === this.shiftClickStart || element === node) {
           startSelecting = !startSelecting;
@@ -1752,7 +1748,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   out(x: number) {
-    console.log(x);
   }
 
   async lockDocument() {
