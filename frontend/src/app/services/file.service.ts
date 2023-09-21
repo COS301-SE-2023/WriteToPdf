@@ -607,9 +607,9 @@ export class FileService {
                 summary: 'File unlocked successfully',
               });
             }
-            true;
+            resolve(true);
           } else {
-            false;
+            resolve(false);
           }
         },
       });
