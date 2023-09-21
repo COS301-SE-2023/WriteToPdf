@@ -626,12 +626,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onOpenFileSelect(MarkdownID: string | undefined | null): void {
     const file = this.nodeService.getFileDTOByID(MarkdownID);
-    this.loading = true;
     if (file.SafeLock) {
       this.openLockedDocumentPopup = true;
       this.documentPromise = this.fileService.retrieveDocument(file.MarkdownID, file.Path);
       return;
     }
+    this.loading = true;
     this.fileService
       .retrieveDocument(file.MarkdownID, file.Path)
       .then((data) => {
