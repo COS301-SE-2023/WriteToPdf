@@ -1,9 +1,14 @@
 <div class="container">
-    <p-toast [breakpoints]="{'600px': {width: '300px'}, '350px': {width: '90%'}}"></p-toast>
+  <p-toast
+    [breakpoints]="{ '600px': { width: '300px' }, '350px': { width: '90%' } }"
+  ></p-toast>
+  <p-confirmDialog
+    [style]="{ width: '50vw', minWidth: '300px' }"
+  ></p-confirmDialog>
   <div class="header">
     <div class="toolbarWrapper">
       <div class="titleWrapper">
-        <div class="logoWrapper" (click)="navigateToPage('home')" title="Return Home">
+        <div class="logoWrapper" (click)="exitToHome()" title="Return Home">
           <img
             class="logo"
             src="assets/Logos/WriteToPdf_Logo_white.png"
@@ -25,12 +30,22 @@
           />
         </div>
         <div class="exitEditPage">
-              <p-button class="backButton" icon="pi pi-times" label="Exit" styleClass="p-button-rounded"
-                (click)="navigateToPage('home')"></p-button>
+          <p-button
+            class="backButton"
+            icon="pi pi-times"
+            label="Exit"
+            styleClass="p-button-rounded"
+            (click)="exitToHome()"
+          ></p-button>
         </div>
       </div>
       <div class="toolsWrapper">
-        <div class="tool" (click)="showDialog()" label="Show" title="Download Document">
+        <div
+          class="tool"
+          (click)="showDialog()"
+          label="Show"
+          title="Download Document"
+        >
           <!-- Download -->
           <img src="assets/Icons/editIcons/download.svg" alt="" />
         </div>
@@ -39,7 +54,7 @@
           [(visible)]="exportDialogVisible"
           [focusOnShow]="true"
           [modal]="true"
-          [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
+          [style]="{ width: '50vw', minWidth: 'min(500px,100vw)' }"
         >
           <div class="flex py-2 justify-content-center"></div>
           <!-- <input type="text" pInputText [(ngModel)]="fileType" /> -->
@@ -77,7 +92,11 @@
           </div>
         </p-dialog>
 
-        <div class="tool" (click)="saveDocumentContents()" title="Save Document">
+        <div
+          class="tool"
+          (click)="saveDocumentContents()"
+          title="Save Document"
+        >
           <!-- Save -->
           <img src="assets/Icons/editIcons/save.png" alt="" />
         </div>
@@ -106,19 +125,60 @@
     </div> -->
   </div>
 
-  <p-button class="showAssetSidebar" icon="pi pi-arrow-right" (click)="hideSideBar()" title="Show Asset Bar"></p-button>
+  <p-button
+    class="showAssetSidebar"
+    icon="pi pi-arrow-right"
+    (click)="hideSideBar()"
+    title="Show Asset Bar"
+  ></p-button>
   <div class="assetSidebar">
     <div class="sidebarHeaderWrapper">
+      <div class="sidebarTabs">
+        <div
+          (click)="sideBarTab = false"
+          [ngClass]="{
+            unselectedButton: sideBarTab,
+            selectedButton: !sideBarTab
+          }"
+          title="Asset Sidebar"
+        >
+          <p class="tabText">Assets</p>
+        </div>
+        <div
+          (click)="sideBarTab = true"
+          [ngClass]="{
+            unselectedButton: !sideBarTab,
+            selectedButton: sideBarTab
+          }"
+          title="History Sidebar"
+        >
+          <p class="tabText">History</p>
+        </div>
+      </div>
+
       <div class="sidebarHeader">
-        <div class="sidebarHeaderIconWrapper backWrapper" (click)="hideSideBar()" title="Hide Asset Bar">
-          <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/back.svg" alt="" />
+        <div
+          class="sidebarHeaderIconWrapper backWrapper"
+          (click)="hideSideBar()"
+          title="Hide Asset Bar"
+        >
+          <img
+            class="sidebarHeaderIcon"
+            src="assets/Icons/editIcons/back.svg"
+            alt=""
+          />
         </div>
 
         <div class="sidebarHeaderTextWrapper">
-          <h4 class="sidebarHeaderText">Assets</h4>
+          <h4 *ngIf="!sideBarTab" class="sidebarHeaderText">Assets</h4>
+          <h4 *ngIf="sideBarTab" class="sidebarHeaderText">History</h4>
         </div>
-        <div class="uploadAssetIcon">
-          <div *ngIf="!isTouchScreen; else mobileUpload" class="sidebarHeaderIconWrapper" title="Upload Image">
+        <div *ngIf="!sideBarTab" class="uploadAssetIcon">
+          <div
+            *ngIf="!isTouchScreen; else mobileUpload"
+            class="sidebarHeaderIconWrapper"
+            title="Upload Image"
+          >
             <img
               class="sidebarHeaderIcon"
               src="assets/Icons/editIcons/plus.png"
@@ -128,16 +188,20 @@
 
           <div *ngIf="!isTouchScreen" class="dropdownContent">
             <div class="dropdownInput" (click)="navigateToPage('camera')">
-              <img class="dropdownIcon1" src="assets/Icons/editIcons/addAsset.png" alt="">
-              <p class="dropdownOptions" >
-                Camera
-              </p>
+              <img
+                class="dropdownIcon1"
+                src="assets/Icons/editIcons/addAsset.png"
+                alt=""
+              />
+              <p class="dropdownOptions">Camera</p>
             </div>
             <div class="dropdownInput" (click)="showImageUploadPopup()">
-              <img class="dropdownIcon2" src="assets/Icons/editIcons/upload.png" alt="">
-              <p class="dropdownOptions" >
-                Upload
-              </p>
+              <img
+                class="dropdownIcon2"
+                src="assets/Icons/editIcons/upload.png"
+                alt=""
+              />
+              <p class="dropdownOptions">Upload</p>
             </div>
           </div>
 
@@ -153,91 +217,218 @@
           </ng-template>
         </div>
 
-
-
-        <div class="sidebarHeaderIconWrapper" (click)="refreshSidebar()" title="Refresh">
-          <img class="sidebarHeaderIcon" src="assets/Icons/editIcons/refresh.svg" alt="" />
+        <div
+          *ngIf="!sideBarTab"
+          class="sidebarHeaderIconWrapper"
+          (click)="refreshSidebar()"
+          title="Refresh Assets"
+        >
+          <img
+            class="sidebarHeaderIcon"
+            src="assets/Icons/editIcons/refresh.svg"
+            alt=""
+          />
+        </div>
+        <div
+          *ngIf="sideBarTab"
+          class="sidebarHeaderIconWrapper"
+          (click)="refreshSidebarHistory()"
+          title="Refresh History"
+        >
+          <img
+            class="sidebarHeaderIcon"
+            src="assets/Icons/editIcons/refresh.svg"
+            alt=""
+          />
         </div>
       </div>
       <hr />
     </div>
 
     <div class="alignDiv"></div>
-    <p *ngIf="noAssetsAvailable" style="text-align: center;">No Assets Available</p>
-    <div class="spinnerWrapper" *ngIf = "assets.length === 0 && !noAssetsAvailable" ><img class="spinner" src="assets/Spinner/loading2.gif" title="Loading..."></div>
-    
-    <div *ngFor="let obj of assets" class="assetWrapper" title="{{ 'File Name: '+obj.FileName }}">
-      <div *ngIf="obj.Deleted||obj.NotRetrieving" class="deleteSpinnerWrapper" ><img class="spinner" src="assets/Spinner/loading2.gif" title="Loading..."></div>
-      <div *ngIf="!obj.Deleted&&!obj.NotRetrieving" style="margin:0; padding:0;">
-        <div class="assetHeader">
-          <div class="assetName">
-            <!-- <h4 class="assetNameText"></h4> -->
-            <label for="editAsset" class="displayNone">b</label>
-            <input
-              type="text"
-              editable="true"
-              id="editAssetMock"
-              class="assetNameText"
-              value="{{ obj.FileName }}"
-              maxlength="50"
-              (blur)="renameAsset(obj.AssetID, $event)"
-              title="{{ obj.FileName }}"
-            />
-          </div>
 
-          <div class="deleteAsset" [ngClass]="{'deleteAssetHover': obj.Format === 'text'}" title="View Text" (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)">
-            <img
+    <div *ngIf="!sideBarTab" class="allAssets">
+      <p *ngIf="noAssetsAvailable" style="text-align: center; margin-top: 25px">
+        No Assets Available
+      </p>
+      <div
+        class="spinnerWrapper"
+        *ngIf="assets.length === 0 && !noAssetsAvailable"
+      >
+        <img
+          class="spinner"
+          src="assets/Spinner/loading2.gif"
+          title="Loading..."
+          alt="Loading..."
+        />
+      </div>
+
+      <div
+        *ngFor="let obj of assets"
+        class="assetWrapper"
+        title="{{ 'File Name: ' + obj.FileName }}"
+      >
+        <div
+          *ngIf="obj.Deleted || obj.NotRetrieving"
+          class="deleteSpinnerWrapper"
+        >
+          <img
+            class="spinner"
+            src="assets/Spinner/loading2.gif"
+            title="Loading..."
+            alt="Loading..."
+          />
+        </div>
+        <div
+          *ngIf="!obj.Deleted && !obj.NotRetrieving"
+          style="margin: 0; padding: 0"
+        >
+          <div class="assetHeader">
+            <div class="assetName">
+              <!-- <h4 class="assetNameText"></h4> -->
+              <label for="editAsset" class="displayNone">b</label>
+              <input
+                type="text"
+                editable="true"
+                id="editAssetMock"
+                class="assetNameText"
+                value="{{ obj.FileName }}"
+                maxlength="50"
+                (blur)="renameAsset(obj.AssetID, $event)"
+                title="{{ obj.FileName }}"
+              />
+            </div>
+
+            <div
+              class="deleteAsset"
+              [ngClass]="{ deleteAssetHover: obj.Format === 'text' }"
+              title="View Text"
+              (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)"
+            >
+              <img
+                *ngIf="obj.Format === 'text'"
+                class="copyAssetIcon"
+                src="assets/Icons/editIcons/view.png"
+                alt=""
+              />
+            </div>
+
+            <div
+              class="copyAsset"
+              title="Delete Asset"
+              (click)="deleteAsset(obj.AssetID)"
+            >
+              <img
+                class="deleteAssetIcon"
+                src="assets/Icons/editIcons/delete.png"
+                alt=""
+              />
+            </div>
+
+            <div
+              class="copyTextAsset"
+              title="Copy Image"
+              *ngIf="obj.Format === 'image'"
+              (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)"
+            >
+              <img
+                class="copyTextIcon"
+                src="assets/Icons/editIcons/copy.svg"
+                alt=""
+              />
+            </div>
+
+            <div
               *ngIf="obj.Format === 'text'"
-              class="copyAssetIcon"
-              src="assets/Icons/editIcons/view.png"
-              alt=""
-            />
+              class="copyTextAsset"
+              title="Copy All Text"
+              (click)="copyAllText(obj.AssetID, obj.Format, obj.TextID)"
+            >
+              <img
+                class="copyTextIcon"
+                src="assets/Icons/editIcons/copy.svg"
+                alt=""
+              />
+            </div>
           </div>
-
-          <div class="copyAsset" title="Delete Asset" (click)="deleteAsset(obj.AssetID)">
-            <img
-              class="deleteAssetIcon"
-              src="assets/Icons/editIcons/delete.png"
-              alt=""
-            />
-          </div>
-
-          <div class="copyTextAsset" title="Copy Image" *ngIf="obj.Format === 'image'" (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)">
-            <img
-              class="copyTextIcon"
-              src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
-          </div>
-          
-          <div *ngIf="obj.Format==='text'" class="copyTextAsset" title="Copy All Text" (click)="copyAllText(obj.AssetID, obj.Format, obj.TextID)">
-            <img
-              class="copyTextIcon"
-              src="assets/Icons/editIcons/copy.svg"
-              alt=""
-            />
+          <div class="assetContent">
+            <img class="assetImage" src="{{ obj.Image }}" alt="" />
+            <div class="assetDescription">
+              <p class="assetDescription">
+                {{ capitalizeFirstLetter(obj.Format) }}
+              </p>
+              <p class="assetDescription">{{ formatDate(obj.DateCreated) }}</p>
+            </div>
           </div>
         </div>
-        <div class="assetContent">
-          <img class="assetImage" src="{{ obj.Image }}" alt="" />
-          <div class="assetDescription">
-            
-            <p class="assetDescription">{{ capitalizeFirstLetter(obj.Format) }}</p>
-            <p class="assetDescription">{{ formatDate(obj.DateCreated) }}</p>
+      </div>
+    </div>
+
+    <div *ngIf="sideBarTab" class="allHistory">
+      <div *ngFor="let obj of history">
+        <div
+          class="historyObject"
+          [ngClass]="{ selectedHistory: obj.isCurrent }"
+          (click)="insertContent(obj)"
+        >
+          <img
+            class="dropdownArrow"
+            src="assets/Icons/homeIcons/navbar/indicatorArrowNavBar.png"
+            alt=""
+            (click)="expandSnapshot(obj, $event)"
+          />
+          <img
+            class="snapshotIcon"
+            src="assets/Icons/editIcons/snapshot.png"
+            alt=""
+          />
+          <!-- <p>{{ obj.LastModified }}</p> -->
+          <p>{{obj.LastModifiedString}}</p>
+          <img
+            class="historyIcon"
+            src="assets/Icons/editIcons/ellipse.svg"
+            alt=""
+          />
+        </div>
+        <div *ngIf="obj.expanded">
+          <div
+            *ngFor="let diffObj of obj.ChildDiffs"
+            class="diffObject"
+            [ngClass]="{ selectedHistory: diffObj.isCurrent }"
+            (click)="insertContent(diffObj)"
+          >
+            <img
+              class="snapshotIcon"
+              src="assets/Icons/editIcons/diffArrow.png"
+              alt=""
+            />
+            <!-- <p>{{ diffObj.Name }}</p> -->
+            <p>{{ diffObj.LastModifiedString }}</p>
+            <!-- <p>{{ diffObj.LastModified }}</p> -->
+            <img
+              class="historyIcon"
+              src="assets/Icons/editIcons/ellipse.svg"
+              alt=""
+            />
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="editor">
-
-
     <!--    Below is the code that allows me to work with CKEditor    -->
     <div class="center-page">
       <div class="document-editor" style="overflow: hidden">
         <div class="document-editor__toolbar"></div>
-        <div class="document-editor__editable-container" style="overflow: hidden">
-          <div class="document-editor__editable" id="editor-contents" style="overflow: hidden"></div>
+        <div
+          class="document-editor__editable-container"
+          style="overflow: hidden"
+        >
+          <div
+            class="document-editor__editable"
+            id="editor-contents"
+            style="overflow: hidden"
+          ></div>
         </div>
       </div>
       <br />
@@ -252,7 +443,7 @@
   header="Extracted Text:"
   [(visible)]="textCopyDialog"
   [modal]="true"
-  [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
+  [style]="{ width: '50vw', minWidth: 'min(500px,100vw)' }"
   [focusOnShow]="true"
 >
   <div *ngFor="let text of textFromAsset" class="copyTextWrapper">
@@ -266,5 +457,5 @@
       />
     </div>
   </div>
-  <p *ngIf="textFromAsset.length===0">No text detected :(</p>
+  <p *ngIf="textFromAsset.length === 0">No text detected :(</p>
 </p-dialog>

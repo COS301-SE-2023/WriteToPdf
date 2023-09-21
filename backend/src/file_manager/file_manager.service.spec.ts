@@ -36,6 +36,10 @@ import * as CryptoJS from 'crypto-js';
 import { ResetPasswordService } from '../reset_password/reset_password.service';
 import { ResetPasswordRequest } from '../reset_password/entities/reset_password_request.entity';
 import { MailService } from '../mail/mail.service';
+import { DiffsService } from '../diffs/diffs.service';
+import { SnapshotService } from '../snapshots/snapshots.service';
+import { Diff } from '../diffs/entities/diffs.entity';
+import { Snapshot } from '../snapshots/entities/snapshots.entity';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -67,6 +71,8 @@ describe('FileManagerService', () => {
   let s3ServiceMock: S3ServiceMock;
   let conversionService: ConversionService;
   let usersService: UsersService;
+  let snapshotService: SnapshotService;
+  let diffService: DiffsService;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -82,6 +88,8 @@ describe('FileManagerService', () => {
           AuthService,
           JwtService,
           ResetPasswordService,
+          DiffsService,
+          SnapshotService,
           MailService,
           {
             provide: 'FileManagerService',
@@ -92,6 +100,7 @@ describe('FileManagerService', () => {
               createFolder: jest.fn(),
               retrieveAllFolders: jest.fn(),
               convertFoldersToDTOs: jest.fn(),
+              deleteFile: jest.fn(),
             },
           },
           {
@@ -127,7 +136,7 @@ describe('FileManagerService', () => {
               updateName: jest.fn(),
               updatePath: jest.fn(),
               remove: jest.fn(),
-              updateLastModified: jest.fn(),
+              updateAfterModification: jest.fn(),
             },
           },
           {
@@ -137,6 +146,24 @@ describe('FileManagerService', () => {
               deleteFile: jest.fn(),
               createFile: jest.fn(),
               retrieveFile: jest.fn(),
+              createDiffObjectsForFile: jest.fn(),
+              createSnapshotObjectsForFile:
+                jest.fn(),
+            },
+          },
+          {
+            provide: 'DiffsService',
+            useValue: {
+              deleteFile: jest.fn(),
+              createDiffs: jest.fn(),
+              deleteDiffs: jest.fn(),
+            },
+          },
+          {
+            provide: 'SnapshotService',
+            useValue: {
+              deleteFile: jest.fn(),
+              createSnapshots: jest.fn(),
             },
           },
           {
@@ -150,6 +177,14 @@ describe('FileManagerService', () => {
           },
           {
             provide: getRepositoryToken(User),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(Diff),
+            useClass: Repository,
+          },
+          {
+            provide: getRepositoryToken(Snapshot),
             useClass: Repository,
           },
           {
@@ -181,6 +216,15 @@ describe('FileManagerService', () => {
       );
     usersService =
       module.get<UsersService>(UsersService);
+    module.close();
+
+    snapshotService = module.get<SnapshotService>(
+      SnapshotService,
+    );
+    module.close();
+
+    diffService =
+      module.get<DiffsService>(DiffsService);
     module.close();
   });
 
@@ -629,7 +673,6 @@ describe('FileManagerService', () => {
     it('should throw an error if UserID is undefined', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();
-
       try {
         await service.createFile(markdownFileDTO);
         expect(true).toBe(false);
@@ -655,6 +698,23 @@ describe('FileManagerService', () => {
       returnFile.Path = '';
       returnFile.Name = 'New Document';
       returnFile.Size = 0;
+
+      jest.spyOn(
+        s3Service,
+        'createSnapshotObjectsForFile',
+      );
+
+      jest.spyOn(
+        s3Service,
+        'createDiffObjectsForFile',
+      );
+      jest
+        .spyOn(snapshotService, 'createSnapshots')
+        .mockResolvedValue([] as number[]);
+
+      jest
+        .spyOn(diffService, 'createDiffs')
+        .mockResolvedValue([] as any);
 
       const createFileSpy = jest.spyOn(
         s3Service,
@@ -712,6 +772,36 @@ describe('FileManagerService', () => {
         )
         .mockResolvedValueOnce(markdownFileDTO);
 
+      jest.spyOn(
+        s3Service,
+        'createSnapshotObjectsForFile',
+      );
+
+      jest.spyOn(
+        s3Service,
+        'createDiffObjectsForFile',
+      );
+      jest
+        .spyOn(snapshotService, 'createSnapshots')
+        .mockResolvedValue([] as number[]);
+
+      jest
+        .spyOn(diffService, 'createDiffs')
+        .mockResolvedValue([] as any);
+
+      jest
+        .spyOn(markdownFilesService, 'create')
+        .mockResolvedValueOnce(markdownFileDTO);
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockResolvedValueOnce(markdownFileDTO);
+
+      const createFileSpy = jest.spyOn(
+        s3Service,
+        'createFile',
+      );
+
       const response = await service.createFile(
         markdownFileDTO,
         true,
@@ -745,6 +835,22 @@ describe('FileManagerService', () => {
       createSpy.mockResolvedValue(
         markdownFileDTO,
       );
+      jest.spyOn(
+        s3Service,
+        'createSnapshotObjectsForFile',
+      ).mockResolvedValue([] as any);
+
+      jest.spyOn(
+        s3Service,
+        'createDiffObjectsForFile',
+      ).mockResolvedValue([] as any);
+      jest
+        .spyOn(snapshotService, 'createSnapshots')
+        .mockResolvedValue([] as number[]);
+
+      jest
+        .spyOn(diffService, 'createDiffs')
+        .mockResolvedValue([] as any);
 
       const response = await service.createFile(
         markdownFileDTO,
@@ -1271,7 +1377,7 @@ describe('FileManagerService', () => {
       jest
         .spyOn(
           markdownFilesService,
-          'updateLastModified',
+          'updateAfterModification',
         )
         .mockResolvedValue(new MarkdownFile());
 
@@ -1299,7 +1405,7 @@ describe('FileManagerService', () => {
       jest
         .spyOn(
           markdownFilesService,
-          'updateLastModified',
+          'updateAfterModification',
         )
         .mockResolvedValue(new MarkdownFile());
 
@@ -1313,7 +1419,7 @@ describe('FileManagerService', () => {
       ).toHaveBeenCalledWith(markdownFileDTO);
     });
 
-    it('should call updateLastModified method', async () => {
+    it('should call updateAfterModification method', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();
       markdownFileDTO.MarkdownID = '1';
@@ -1329,7 +1435,7 @@ describe('FileManagerService', () => {
       jest
         .spyOn(
           markdownFilesService,
-          'updateLastModified',
+          'updateAfterModification',
         )
         .mockResolvedValue(new MarkdownFile());
 
@@ -1340,7 +1446,7 @@ describe('FileManagerService', () => {
         MarkdownFile,
       );
       expect(
-        markdownFilesService.updateLastModified,
+        markdownFilesService.updateAfterModification,
       ).toHaveBeenCalledWith(markdownFileDTO);
     });
   });
@@ -1382,8 +1488,35 @@ describe('FileManagerService', () => {
         .mockResolvedValue(new MarkdownFileDTO());
 
       jest
+        .spyOn(
+          s3Service,
+          'deleteDiffObjectsForFile',
+        )
+        .mockResolvedValue([] as any);
+      jest
+        .spyOn(
+          s3Service,
+          'deleteSnapshotObjectsForFile',
+        )
+        .mockResolvedValue([] as any);
+
+      jest
+        .spyOn(diffService, 'deleteDiffs')
+        .mockResolvedValue([] as any);
+
+      jest
+        .spyOn(snapshotService, 'deleteSnapshots')
+        .mockResolvedValue([] as any);
+
+      jest
         .spyOn(markdownFilesService, 'remove')
         .mockResolvedValue(new MarkdownFile());
+
+      jest
+        .spyOn(Repository.prototype, 'delete')
+        .mockResolvedValueOnce(
+          markdownFileDTO as any,
+        );
 
       const response = await service.deleteFile(
         markdownFileDTO,
@@ -1434,6 +1567,24 @@ describe('FileManagerService', () => {
       jest
         .spyOn(markdownFilesService, 'remove')
         .mockResolvedValue(new MarkdownFile());
+
+      jest.spyOn(Repository.prototype, 'delete');
+
+      jest.spyOn(
+        s3Service,
+        'deleteSnapshotObjectsForFile',
+      );
+      jest.spyOn(
+        s3Service,
+        'deleteDiffObjectsForFile',
+      );
+      jest.spyOn(
+        snapshotService,
+        'deleteSnapshots',
+      );
+      jest
+        .spyOn(diffService, 'deleteDiffs')
+        .mockResolvedValue([] as any);
 
       const response = await service.deleteFile(
         markdownFileDTO,

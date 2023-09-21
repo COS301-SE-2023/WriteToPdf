@@ -28,11 +28,25 @@ export class TextManagerService {
         uploadTextDTO,
       );
 
+    if (!imageDataFile) {
+      throw new HttpException(
+        'Failed to save image in S3',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
     // Create S3 text data file
     const textDataFile =
       await this.s3Service.createAsset(
         uploadTextDTO,
       );
+
+    if (!textDataFile) {
+      throw new HttpException(
+        'Failed to save text in S3',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
 
     // Save text asset in database
     uploadTextDTO.AssetID = imageDataFile.AssetID;
@@ -59,6 +73,13 @@ export class TextManagerService {
         uploadTextDTO,
       );
 
+    if (!savedAssetDTO) {
+      throw new HttpException(
+        'Failed to save image in S3',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
     // Send textract to classify s3 image
     const textractResponse =
       await this.textractService.extractDocument(
@@ -67,10 +88,18 @@ export class TextManagerService {
         'text',
       );
 
-    this.s3Service.saveTextractResponse(
-      savedAssetDTO,
-      textractResponse,
-    );
+    const s3TextractResponse =
+      await this.s3Service.saveTextractResponse(
+        savedAssetDTO,
+        textractResponse,
+      );
+
+    if (!s3TextractResponse) {
+      throw new HttpException(
+        'Failed to save textract response in S3',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
 
     return textractResponse;
   }

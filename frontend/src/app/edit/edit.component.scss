@@ -64,12 +64,12 @@ $page-height: 29.7cm;
     background-color: #00000000;
     width: 35vw;
     max-width: 300px;
-    min-width:200px;
+    min-width: 200px;
 }
 
 @media only screen and (max-width: 360px) {
-    .documentTitle{
-        min-width:100px;
+    .documentTitle {
+        min-width: 100px;
 
     }
 }
@@ -149,6 +149,7 @@ $page-height: 29.7cm;
     margin-left: 0;
     margin-right: 5px;
 }
+
 .dropdownIcon2 {
     margin: auto;
     height: 20px;
@@ -236,13 +237,20 @@ div[contenteditable="true"]:focus {
 
 .sidebarHeader {
     display: flex;
+    justify-content: space-evenly;
     margin: auto;
     width: $sidebar-content-width;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .sidebarHeaderText {
     margin: auto;
-    font-size: 22px;
+    font-size: 28px;
     font-weight: bold;
     width: 100%;
 }
@@ -282,7 +290,7 @@ div[contenteditable="true"]:focus {
 }
 
 .alignDiv {
-    height: 80px;
+    height: 122px;
 }
 
 .assetWrapper {
@@ -301,7 +309,7 @@ div[contenteditable="true"]:focus {
 }
 
 .assetNameText {
-    padding-left:10px;
+    padding-left: 10px;
     max-width: 100px;
     margin: auto;
     font-size: 15px;
@@ -316,7 +324,8 @@ div[contenteditable="true"]:focus {
     border: 1px solid #000000;
 }
 
-.copyAsset,.copyTextAsset {
+.copyAsset,
+.copyTextAsset {
     margin-left: 10px;
 }
 
@@ -327,7 +336,7 @@ div[contenteditable="true"]:focus {
 
 .deleteAsset,
 .copyAsset,
-.copyTextAsset{
+.copyTextAsset {
     border-radius: 5px;
     // display:flex;
     width: 30px;
@@ -668,7 +677,139 @@ Preserve the relative scale, though. */
 }
 
 .deleteSpinnerWrapper {
-    display:flex;
-    height:100%;
+    display: flex;
+    height: 100%;
     margin: auto;
+}
+
+.sidebarTabs {
+    display: flex;
+    margin: auto;
+    padding-top: 6px;
+    justify-content: space-around;
+    background: #ddd;
+    width: 260px;
+}
+
+.selectedButton,
+.unselectedButton {
+    display: flex;
+    transition: 0.2s;
+    border-radius: 5px 5px 0 0;
+    flex: 1;
+    text-align: center;
+    height: 30px;
+    vertical-align: center;
+    align-items: center;
+    /* Vertical centering */
+    cursor: pointer;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.tabText {
+    margin: auto;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.selectedButton {
+    background-color: #fff;
+}
+
+.selectedButton:hover {
+    background-color: #eee;
+}
+
+.unselectedButton {
+    background-color: #d8d8d8;
+    border-bottom: #999 1px solid;
+    color: #999
+}
+
+.unselectedButton:hover {
+    background-color: #ccc;
+    color: #000
+}
+
+.diffObject,
+.historyObject {
+    transition: 0.2s;
+    display: grid;
+    grid-template-columns: 0.5fr 0.5fr 3.5fr 0.5fr;
+    justify-content: space-around;
+    width: $sidebar-content-width;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+    margin: auto;
+    margin-bottom: 10px;
+    text-align: center;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.diffObject:hover,
+.historyObject:hover {
+    cursor: pointer;
+    // scale: 1.1;
+    background-color: darken($light-grey, 10%);
+}
+
+.diffObject{
+    margin-left: 20px;
+    grid-template-columns:0.5fr 2fr 0.5fr;
+}
+
+.selectedHistory {
+    background-color: #dfd;
+}
+
+.selectedHistory:hover {
+    background-color: #dfd;
+}
+
+.historyIcon,
+.snapshotIcon {
+    margin: 0;
+    margin: auto 0;
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+
+    border-radius: 5px;
+}
+
+.historyIcon:hover {
+    cursor: pointer;
+    background-color: #ddf;
+    transition: 0.5s;
+}
+
+.dropdownArrow {
+    transition: transform 0.3s ease;
+    margin: 0;
+    margin: auto 0;
+    width: 20px;
+    height: 20px;
+    padding: 4px;
+
+    border-radius: 5px;
+}
+
+.dropdownArrow:hover {
+    cursor: pointer;
+    background-color: #ddf;
+}
+
+.dropdownArrow.expanded {
+    transform: rotate(90deg);
+    /* Rotate 180 degrees when expanded */
 }
