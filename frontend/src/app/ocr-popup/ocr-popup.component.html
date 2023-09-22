@@ -1,93 +1,85 @@
 <div class="container">
-  <div class="popup-heading">
-    <h2>Extracted Features</h2>
-    <p-button (click)="closeDialog()" class="backButton" icon="pi pi-times" label="Back"
-              styleClass="p-button-rounded"></p-button>
-  </div>
-  <div class="dialog-container">
-    <div class="left-section">
-      <img alt="Image" [src] ="assetImage">
+    <div class="popup-heading">
+        <h2>Extracted Features</h2>
+        <p-button (click)="closeDialog()" class="backButton" icon="pi pi-times" label="Back"
+                  styleClass="p-button-rounded"></p-button>
     </div>
-    <div>
-      <div class="vertical-line"></div>
-    </div>
-    <div class="right-section">
-      <mat-tab-group class="centered-tabs" [(selectedIndex)]="activeTab">
-        <mat-tab label="Text" (click) = "activeTab =0">
-          <ng-template mat-tab-label >
-            <span [ngClass] = "{'activeTab':activeTab === 0}">
+    <div class="dialog-wrapper">
+        <div class="dialog-container">
+            <div class="left-section">
+                <img [src]="assetImage" alt="Image">
+            </div>
+            <div class="right-section">
+                <mat-tab-group [(selectedIndex)]="activeTab" class="centered-tabs">
+                    <mat-tab (click)="activeTab =0" label="Text">
+                        <ng-template mat-tab-label>
+            <span [ngClass]="{'activeTab':activeTab === 0}">
               Text
             </span>
-          </ng-template>
-          <br>
-          <textarea [(ngModel)]="paragraphText" class="editableForm" cols="40" rows="6"></textarea>
-          <p-button (click)="copyFormDataAndRenderToHtml()" class="copyFormData" icon="pi pi-copy" label="Copy"
-                    styleClass="p-button-rounded"></p-button>
-        </mat-tab>
-        <mat-tab label="Tables"  (click) = "activeTab =1">
-          <ng-template mat-tab-label>
-            <span [ngClass] = "{'activeTab':activeTab === 1}">
+                        </ng-template>
+                        <br>
+                        <textarea [(ngModel)]="paragraphText" class="editableForm" cols="40" rows="6"></textarea>
+                        <p-button (click)="copyFormDataAndRenderToHtml()" class="copyFormData" icon="pi pi-copy"
+                                  label="Copy"
+                                  styleClass="p-button-rounded"></p-button>
+                    </mat-tab>
+                    <mat-tab (click)="activeTab =1" label="Tables">
+                        <ng-template mat-tab-label>
+            <span [ngClass]="{'activeTab':activeTab === 1}">
               Tables
             </span>
-          </ng-template>
-          <ng-template matTabContent>
-            <br>
-            <br>
-            <div class="card">
-              <p-table [value] = "products" class = "tableCreated" [tableStyle]="{ 'min-width': '35rem' }"  dataKey="id">
-                <ng-template let-editing="editing" let-product pTemplate="body">
-                  <tr>
-                    <td [pEditableColumn]="product.code" pEditableColumnField="code">
-                      <p-cellEditor>
-                        <ng-template pTemplate="input">
-                          <input [(ngModel)]="product.code" pInputText type="text"/>
                         </ng-template>
-                        <ng-template pTemplate="output">
-                          {{ product.code }}
+                        <ng-template matTabContent>
+                            <div id="tableDropDown">
+                                <p-dropdown *ngIf="convertedRenderableTables.length > 1" [(ngModel)]="selectedTable" [options]="tableOptions"
+                                            placeholder="Select a table">
+                                    <ng-template let-option pTemplate="dropdownItem">
+                                        <i class="pi pi-table"></i> {{ option }}
+                                    </ng-template>
+                                </p-dropdown>
+                            </div>
+                            <br>
+                            <br>
+                            <div class="card">
+                                <p-table [tableStyle]="{ 'min-width': '35rem' }" [value]="activeTable"
+                                         class="tableCreated" dataKey="id">
+                                    <ng-template let-product pTemplate="body">
+                                        <tr>
+                                            <td [pEditableColumn]="product.col1" pEditableColumnField="col1">
+                                                <p-cellEditor>
+                                                    <ng-template pTemplate="input">
+                                                        <input [(ngModel)]="product.col1" pInputText type="text"/>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="output">
+                                                        {{ product.col1 }}
+                                                    </ng-template>
+                                                </p-cellEditor>
+                                            </td>
+                                            <td [pEditableColumn]="product.col2" pEditableColumnField="col2">
+                                                <p-cellEditor>
+                                                    <ng-template pTemplate="input">
+                                                        <input [(ngModel)]="product.col2" pInputText type="text"/>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="output">
+                                                        {{ product.col2 }}
+                                                    </ng-template>
+                                                </p-cellEditor>
+                                            </td>
+                                            <!-- Add more editable columns as needed -->
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+
+
+                            <br>
+                            <p-button (click)="constructTableHtml()" class="copyButton" icon="pi pi-copy" label="Copy"
+                                      styleClass="p-button-rounded"></p-button>
                         </ng-template>
-                      </p-cellEditor>
-                    </td>
-                    <td [pEditableColumn]="product.name" pEditableColumnField="name">
-                      <p-cellEditor>
-                        <ng-template pTemplate="input">
-                          <input [(ngModel)]="product.name" pInputText required type="text"/>
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                          {{ product.name }}
-                        </ng-template>
-                      </p-cellEditor>
-                    </td>
-                    <td [pEditableColumn]="product.inventoryStatus" pEditableColumnField="inventoryStatus">
-                      <p-cellEditor>
-                        <ng-template pTemplate="input">
-                          <input [(ngModel)]="product.inventoryStatus" pInputText/>
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                          {{ product.inventoryStatus }}
-                        </ng-template>
-                      </p-cellEditor>
-                    </td>
-                    <td [pEditableColumn]="product.price" pEditableColumnField="price">
-                      <p-cellEditor>
-                        <ng-template pTemplate="input">
-                          <input [(ngModel)]="product.price" pInputText type="text"/>
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                          {{ product.price | currency: 'USD' }}
-                        </ng-template>
-                      </p-cellEditor>
-                    </td>
-                  </tr>
-                </ng-template>
-              </p-table>
+                    </mat-tab>
+                </mat-tab-group>
             </div>
-            <br>
-            <p-button (click)="constructTableHtml()" class="copyButton" icon="pi pi-copy" label="Copy"
-                      styleClass="p-button-rounded"></p-button>
-          </ng-template>
-        </mat-tab>
-      </mat-tab-group>
+            <div class="buttons"></div>
+        </div>
     </div>
-    <div class="buttons"></div>
-  </div>
 </div>

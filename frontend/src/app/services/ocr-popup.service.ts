@@ -15,10 +15,10 @@ export class OCRDialogService {
         if (!this.CheckDialogOpen()) {
             const ref = this.dialog.open(OcrPopupComponent, {
                 height: '580px',
-                width: '75%',
+                width: '83%',
                 position: {
                     top: '12%',
-                    left: '17%',
+                    left: '12%',
                 },
                 data: data
             });
