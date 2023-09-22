@@ -64,9 +64,12 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   showOCRPopup(textractResponse: any): void{
+    let ocrDataPassedOver = [];
+    ocrDataPassedOver.push(textractResponse);
+    ocrDataPassedOver.push(this.editor);
     // TODO find the relevant button on the asset that retrieves the textract response,
     // and pass that response to the OCRDialogService.
-    this.OCRDialog.openDialog(textractResponse);
+    this.OCRDialog.openDialog(ocrDataPassedOver);
   }
 
   showImageUploadPopup(): void {
@@ -95,37 +98,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-
-    this.speedDialItems = [
-      {
-        icon: 'pi pi-pencil',
-        command: () => {
-          this.navigateToPage('edit');
-        },
-      },
-      {
-        icon: 'pi pi-refresh',
-        command: () => {
-          // this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
-        },
-      },
-      {
-        icon: 'pi pi-trash',
-        command: () => {
-          // this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
-        },
-      },
-      {
-        icon: 'pi pi-upload',
-        command: () => {
-          this.showFileUploadPopup();
-        },
-      },
-      {
-        icon: 'pi pi-external-link',
-      },
-    ];
-
     //get window width
     this.isTouchScreen=window.matchMedia('(pointer: coarse)').matches;
     const width = window.innerWidth;

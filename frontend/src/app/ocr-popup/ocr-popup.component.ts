@@ -1,7 +1,9 @@
-import {Component, ElementRef, Inject, Renderer2, OnInit} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Clipboard} from "@angular/cdk/clipboard";
 import {OCRDialogService} from "../services/ocr-popup.service";
+import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document";
+
 
 
 interface TableRow {
@@ -25,14 +27,13 @@ export class OcrPopupComponent implements OnInit {
     paragraphText: string = '';
     tableOptions: any = [];
     selectedTable: string = 'Table 1';
-    products: any[] = [];// Use this property to bind to the textarea
-
+    public editor: DecoupledEditor;
     constructor(private dialog: OCRDialogService,
                 private clipboard: Clipboard,
                 private elementRef: ElementRef,
-                private renderer: Renderer2,
-                @Inject(MAT_DIALOG_DATA) private passedOverAsset: any) {
-        this.assetObject = this.passedOverAsset;
+                @Inject(MAT_DIALOG_DATA) private passedOverAssetandEditor: any) {
+        this.assetObject = this.passedOverAssetandEditor[0]
+        this.editor = this.passedOverAssetandEditor[1];
     }
 
     get dialogContainer() {
@@ -117,12 +118,23 @@ export class OcrPopupComponent implements OnInit {
 
 
     pasteCurrentTable(): void {
-        let tableToConvert = this.activeTable;
-
+        let tableHtml = this.generateHtmlTable(this.activeTable);
+        const currentEditorContents = this.editor.getData();
+        const updatedData = currentEditorContents +'<p>\n</p>'+ tableHtml +'<p>\n</p>';
+        this.editor.setData(updatedData);
     }
 
     pasteAllTables(): void {
-
+        let tableHtmls = [];
+        for (let i = 0; i < this.convertedRenderableTables.length; i++) {
+            tableHtmls.push(this.generateHtmlTable(this.convertedRenderableTables[i]));
+        }
+        const currentEditorContents = this.editor.getData();
+        let updatedData = currentEditorContents;
+        for (let i = 0; i < tableHtmls.length; i++) {
+            updatedData += '<p>\n</p>' + tableHtmls[i] + '<p>\n</p>';
+        }
+        this.editor.setData(updatedData);
     }
 
     generateHtmlTable(tableData: any[]): string {

@@ -57,10 +57,15 @@
                             </div>
                         </div>
                         <br>
-                        <p-button (click)="pasteCurrentTable()" class="copyButton" icon="pi pi-copy" label="Copy"
+                        <div class = "pasteOperations">
+                        <p class = "pasteDescriptor">Add To Document:</p>
+                        <div class = "pasteButtons">
+                        <p-button (click)="pasteCurrentTable()" class="copyButton" icon="pi pi-copy" label="Paste Table"
                                   styleClass="p-button-rounded"></p-button>
-                        <p-button (click)="pasteAllTables()" class="copyButton" icon="pi pi-copy" label="Copy All"
+                        <p-button (click)="pasteAllTables()" class="copyButton" icon="pi pi-copy" label="Paste All Tables"
                                   styleClass="p-button-rounded"></p-button>
+                        </div>
+                        </div>
                     </ng-template>
                 </mat-tab>
             </mat-tab-group>
