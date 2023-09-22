@@ -3,9 +3,7 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Clipboard} from "@angular/cdk/clipboard";
 import {OCRDialogService} from "../services/ocr-popup.service";
 import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document";
-
-
-
+import { MessageService } from 'primeng/api';
 interface TableRow {
     [key: string]: string;
 }
@@ -31,6 +29,7 @@ export class OcrPopupComponent implements OnInit {
     constructor(private dialog: OCRDialogService,
                 private clipboard: Clipboard,
                 private elementRef: ElementRef,
+                private messageService: MessageService,
                 @Inject(MAT_DIALOG_DATA) private passedOverAssetandEditor: any) {
         this.assetObject = this.passedOverAssetandEditor[0]
         this.editor = this.passedOverAssetandEditor[1];
@@ -122,6 +121,7 @@ export class OcrPopupComponent implements OnInit {
         const currentEditorContents = this.editor.getData();
         const updatedData = currentEditorContents +'<p>\n</p>'+ tableHtml +'<p>\n</p>';
         this.editor.setData(updatedData);
+        this.messageService.add({severity:'success', summary:'Table Pasted', detail:'Table has been pasted into the editor'});
     }
 
     pasteAllTables(): void {
@@ -135,6 +135,7 @@ export class OcrPopupComponent implements OnInit {
             updatedData += '<p>\n</p>' + tableHtmls[i] + '<p>\n</p>';
         }
         this.editor.setData(updatedData);
+        this.messageService.add({severity:'success', summary:'Tables Pasted', detail:'All tables have been pasted into the editor'});
     }
 
     generateHtmlTable(tableData: any[]): string {
@@ -154,13 +155,6 @@ export class OcrPopupComponent implements OnInit {
 
         tableHtml += '</tbody></table>';
         return tableHtml;
-    }
-
-
-    constructTableHtml(): void {
-        let tableHtml = '<table>\n';
-        this.clipboard.copy(tableHtml);
-        console.log(tableHtml);
     }
 
     closeDialog(): void {
