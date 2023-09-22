@@ -15,6 +15,26 @@ export class SnapshotService {
 
   ///===-----------------------------------------------------
 
+  async createSnapshot(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    const snapshotID = CryptoJS.SHA256(
+      markdownFileDTO.UserID.toString() +
+        new Date().getTime().toString(),
+    ).toString();
+
+    await this.snapshotRepository.insert({
+      SnapshotID: snapshotID,
+      MarkdownID: markdownFileDTO.MarkdownID,
+      UserID: markdownFileDTO.UserID,
+      S3SnapshotIndex:
+        markdownFileDTO.NextSnapshotIndex,
+      HasBeenUsed: false,
+    });
+
+    return snapshotID;
+  }
+
   async createSnapshots(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -35,7 +55,8 @@ export class SnapshotService {
         SnapshotID: snapshotID,
         MarkdownID: markdownFileDTO.MarkdownID,
         UserID: markdownFileDTO.UserID,
-        S3SnapshotID: i,
+        S3SnapshotIndex:
+          markdownFileDTO.NextSnapshotIndex,
         HasBeenUsed: false,
       });
 
@@ -52,13 +73,13 @@ export class SnapshotService {
 
   async updateSnapshot(
     markdownID: string,
-    nextSnapshotID: number,
+    nextSnapshotIndex: number,
   ) {
     const snapshot =
       await this.snapshotRepository.findOne({
         where: {
           MarkdownID: markdownID,
-          S3SnapshotID: nextSnapshotID,
+          S3SnapshotIndex: nextSnapshotIndex,
         },
       });
 
@@ -84,13 +105,13 @@ export class SnapshotService {
 
   async resetSnapshot(
     markdownID: string,
-    nextSnapshotID: number,
+    nextSnapshotIndex: number,
   ) {
     const snapshot =
       await this.snapshotRepository.findOne({
         where: {
           MarkdownID: markdownID,
-          S3SnapshotID: nextSnapshotID,
+          S3SnapshotIndex: nextSnapshotIndex,
         },
       });
 
@@ -103,12 +124,12 @@ export class SnapshotService {
 
   async getSnapshotByS3SnapshotID(
     markdownID: string,
-    s3SnapshotID: number,
+    s3SnapshotIndex: number,
   ) {
     return await this.snapshotRepository.findOne({
       where: {
         MarkdownID: markdownID,
-        S3SnapshotID: s3SnapshotID,
+        S3SnapshotIndex: s3SnapshotIndex,
       },
     });
   }
