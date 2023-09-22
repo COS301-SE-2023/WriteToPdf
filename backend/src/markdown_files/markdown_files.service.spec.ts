@@ -322,4 +322,26 @@ describe('MarkdownFilesService', () => {
       });
     });
   });
+
+  describe('getNextSnapshotID', () => {
+    it('should find the markdown file and return the next snapshot id', async () => {
+      const markdownFile = new MarkdownFileDTO();
+      markdownFile.MarkdownID = '1';
+      markdownFile.NextSnapshotIndex = 0;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(markdownFile);
+
+      const result =
+        await service.getNextSnapshotID('1');
+
+      expect(result).toBe(0);
+      expect(
+        Repository.prototype.findOneBy,
+      ).toBeCalledWith({
+        MarkdownID: '1',
+      });
+    });
+  });
 });
