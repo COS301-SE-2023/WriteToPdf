@@ -6,7 +6,7 @@
     </div>
     <div class="dialog-wrapper">
         <div class="dialog-container">
-            <div class="left-section">
+            <div *ngIf="activeTab==0" class="left-section">
                 <img [src]="assetImage" alt="Image">
             </div>
             <div class="right-section">
@@ -19,7 +19,7 @@
                         </ng-template>
                         <br>
                         <textarea [(ngModel)]="paragraphText" class="editableForm" cols="40" rows="6"></textarea>
-                        <p-button (click)="copyFormDataAndRenderToHtml()" class="copyFormData" icon="pi pi-copy"
+                        <p-button (click)="copyFormData()" class="copyFormData" icon="pi pi-copy"
                                   label="Copy"
                                   styleClass="p-button-rounded"></p-button>
                     </mat-tab>
@@ -62,8 +62,6 @@
                                     </ng-template>
                                 </p-table>
                             </div>
-
-
                             <br>
                             <p-button (click)="constructTableHtml()" class="copyButton" icon="pi pi-copy" label="Copy"
                                       styleClass="p-button-rounded"></p-button>

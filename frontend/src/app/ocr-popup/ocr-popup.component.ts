@@ -106,7 +106,7 @@ export class OcrPopupComponent implements OnInit {
     }
 
 
-    copyFormDataAndRenderToHtml(): void {
+    copyFormData(): void {
         let retrievedAsset = this.dialog.passedOverAsset;
         this.clipboard.copy(this.paragraphText);
         // console.log(retrievedAsset.ocrJSONResponse);
