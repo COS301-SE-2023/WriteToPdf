@@ -4,7 +4,6 @@
         <p-button (click)="closeDialog()" class="backButton" icon="pi pi-times" label="Back"
                   styleClass="p-button-rounded"></p-button>
     </div>
-    <div class="dialog-wrapper">
         <div class="dialog-container">
             <div *ngIf="activeTab==0" class="left-section">
                 <img [src]="assetImage" alt="Image">
@@ -31,8 +30,9 @@
                         </ng-template>
                         <ng-template matTabContent>
                             <div id="tableDropDown">
-                                <p-dropdown *ngIf="convertedRenderableTables.length > 1" [(ngModel)]="selectedTable"
+                                <p-dropdown  [(ngModel)]="selectedTable"
                                             [options]="tableOptions"
+                                            (ngModelChange)="onTableSelectionChange()"
                                             placeholder="Select a table">
                                     <ng-template let-option pTemplate="dropdownItem">
                                         <i class="pi pi-table"></i> {{ option }}
@@ -71,5 +71,4 @@
             </div>
             <div class="buttons"></div>
         </div>
-    </div>
 </div>

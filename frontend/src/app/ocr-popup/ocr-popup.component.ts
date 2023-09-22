@@ -25,7 +25,6 @@ export class OcrPopupComponent implements OnInit {
     paragraphText: string = '';
     tableOptions: any = [];
     selectedTable: string = 'Table 1';
-    moreThanOneTable: boolean = false;
     products: any[] = [];// Use this property to bind to the textarea
 
     constructor(private dialog: OCRDialogService,
@@ -46,7 +45,10 @@ export class OcrPopupComponent implements OnInit {
         return Object.keys(row);
     }
 
-
+    onTableSelectionChange(){
+        let tableIndex = parseInt(this.selectedTable.split(" ")[1]) - 1;
+        this.activeTable = this.convertedRenderableTables[tableIndex];
+    }
 
     ngOnInit() {
         this.assetObjectJSON = JSON.parse(this.assetObject.Content);
@@ -78,6 +80,7 @@ export class OcrPopupComponent implements OnInit {
                 this.tableOptions.push("Table " + (i + 1));
             }
             console.log("Rendered Table:", this.convertedRenderableTables[0]);
+
             this.activeTable = this.convertedRenderableTables[0];
         }
     }
