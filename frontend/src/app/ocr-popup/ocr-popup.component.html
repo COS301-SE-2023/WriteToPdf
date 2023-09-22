@@ -4,57 +4,58 @@
         <p-button (click)="closeDialog()" class="backButton" icon="pi pi-times" label="Back"
                   styleClass="p-button-rounded"></p-button>
     </div>
-        <div class="dialog-container">
-            <div *ngIf="activeTab==0" class="left-section">
-                <img [src]="assetImage" alt="Image">
-            </div>
-            <div class="right-section">
-                <mat-tab-group [(selectedIndex)]="activeTab" class="centered-tabs">
-                    <mat-tab (click)="activeTab =0" label="Text">
-                        <ng-template mat-tab-label>
+    <div class="dialog-container">
+        <div class="left-section">
+            <img [src]="assetImage" alt="Image">
+        </div>
+        <div class="right-section">
+            <mat-tab-group [(selectedIndex)]="activeTab" class="centered-tabs">
+                <mat-tab (click)="activeTab =0" label="Text">
+                    <ng-template mat-tab-label>
             <span [ngClass]="{'activeTab':activeTab === 0}">
               Text
             </span>
-                        </ng-template>
-                        <br>
-                        <textarea [(ngModel)]="paragraphText" class="editableForm" cols="40" rows="6"></textarea>
-                        <p-button (click)="copyFormData()" class="copyFormData" icon="pi pi-copy"
-                                  label="Copy"
-                                  styleClass="p-button-rounded"></p-button>
-                    </mat-tab>
-                    <mat-tab (click)="activeTab =1" label="Tables">
-                        <ng-template mat-tab-label>
+                    </ng-template>
+                    <br>
+                    <textarea [(ngModel)]="paragraphText" class="editableForm" cols="40" rows="6"></textarea>
+                    <p-button (click)="copyFormData()" class="copyFormData" icon="pi pi-copy"
+                              label="Copy"
+                              styleClass="p-button-rounded"></p-button>
+                </mat-tab>
+                <mat-tab (click)="activeTab =1" label="Tables">
+                    <ng-template mat-tab-label>
             <span [ngClass]="{'activeTab':activeTab === 1}">
               Tables
             </span>
-                        </ng-template>
-                        <ng-template matTabContent>
-                            <div id="tableDropDown">
-                                <p-dropdown  [(ngModel)]="selectedTable"
-                                            [options]="tableOptions"
-                                            (ngModelChange)="onTableSelectionChange()"
-                                            placeholder="Select a table">
-                                    <ng-template let-option pTemplate="dropdownItem">
-                                        <i class="pi pi-table"></i> {{ option }}
-                                    </ng-template>
-                                </p-dropdown>
-                            </div>
-                            <br>
-                            <br>
+                    </ng-template>
+                    <ng-template matTabContent>
+                        <div id="tableDropDown">
+                            <p-dropdown (ngModelChange)="onTableSelectionChange()"
+                                        [(ngModel)]="selectedTable"
+                                        [options]="tableOptions"
+                                        placeholder="Select a table">
+                                <ng-template let-option pTemplate="dropdownItem">
+                                    <i class="pi pi-table"></i> {{ option }}
+                                </ng-template>
+                            </p-dropdown>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="card">
                             <div class="card">
                                 <p-table [tableStyle]="{ 'min-width': '25rem', 'max-width': '33rem' }"
                                          [value]="activeTable"
                                          class="tableCreated" dataKey="id">
-                                    <ng-template let-product pTemplate="body">
-                                        <tr *ngFor="let row of activeTable">
-                                            <td *ngFor="let col of getColumnKeys(row)" [pEditableColumnField]="col"
-                                                [pEditableColumn]="row[col]">
+                                    <ng-template let-rowData pTemplate="body">
+                                        <tr>
+                                            <td *ngFor="let col of getColumnKeys(rowData)" [pEditableColumnField]="col"
+                                                [pEditableColumn]="rowData[col]">
                                                 <p-cellEditor>
                                                     <ng-template pTemplate="input">
-                                                        <input [(ngModel)]="row[col]" pInputText type="text"/>
+                                                        <input [(ngModel)]="rowData[col]" pInputText type="text"/>
                                                     </ng-template>
                                                     <ng-template pTemplate="output">
-                                                        {{ row[col] }}
+                                                        {{ rowData[col] }}
                                                     </ng-template>
                                                 </p-cellEditor>
                                             </td>
@@ -62,13 +63,15 @@
                                     </ng-template>
                                 </p-table>
                             </div>
-                            <br>
-                            <p-button (click)="constructTableHtml()" class="copyButton" icon="pi pi-copy" label="Copy"
-                                      styleClass="p-button-rounded"></p-button>
-                        </ng-template>
-                    </mat-tab>
-                </mat-tab-group>
-            </div>
-            <div class="buttons"></div>
+
+                        </div>
+                        <br>
+                        <p-button (click)="constructTableHtml()" class="copyButton" icon="pi pi-copy" label="Copy"
+                                  styleClass="p-button-rounded"></p-button>
+                    </ng-template>
+                </mat-tab>
+            </mat-tab-group>
         </div>
+        <div class="buttons"></div>
+    </div>
 </div>

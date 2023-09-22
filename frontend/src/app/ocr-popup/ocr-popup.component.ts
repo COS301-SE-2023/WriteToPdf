@@ -80,8 +80,8 @@ export class OcrPopupComponent implements OnInit {
                 this.tableOptions.push("Table " + (i + 1));
             }
             console.log("Rendered Table:", this.convertedRenderableTables[0]);
-
             this.activeTable = this.convertedRenderableTables[0];
+            console.log(this.activeTable);
         }
     }
 
