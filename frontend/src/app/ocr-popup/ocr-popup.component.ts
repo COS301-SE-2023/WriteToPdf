@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Clipboard} from "@angular/cdk/clipboard";
 import {OCRDialogService} from "../services/ocr-popup.service";
 
+
 interface TableRow {
     [key: string]: string;
 }
@@ -40,6 +41,11 @@ export class OcrPopupComponent implements OnInit {
         const dialogContainer = elementRef?.parentNode?.parentNode?.parentNode as HTMLElement;
         return dialogContainer;
     }
+
+    getColumnKeys(row: any): string[] {
+        return Object.keys(row);
+    }
+
 
 
     ngOnInit() {
