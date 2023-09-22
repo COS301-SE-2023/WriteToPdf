@@ -299,4 +299,27 @@ describe('MarkdownFilesService', () => {
       ).toBeCalled();
     });
   });
+
+  describe('getNextDiffID', () => {
+    it('should find the markdown file and return the next diff id', async () => {
+      const markdownFile = new MarkdownFileDTO();
+      markdownFile.MarkdownID = '1';
+      markdownFile.NextDiffIndex = 0;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(markdownFile);
+
+      const result = await service.getNextDiffID(
+        '1',
+      );
+
+      expect(result).toBe(0);
+      expect(
+        Repository.prototype.findOneBy,
+      ).toBeCalledWith({
+        MarkdownID: '1',
+      });
+    });
+  });
 });
