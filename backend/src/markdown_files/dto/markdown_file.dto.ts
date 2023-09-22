@@ -11,8 +11,10 @@ export class MarkdownFileDTO {
   SafeLock: boolean;
   NewDiff: string;
   PreviousDiffs: string[];
-  NextDiffID: number;
-  NextSnapshotID: number;
+  NextDiffIndex: number;
+  NextSnapshotIndex: number
+  TotalNumDiffs: number;
+  TotalNumSnapshots: number;
 
   constructor() {
     this.MarkdownID = undefined;
@@ -27,7 +29,9 @@ export class MarkdownFileDTO {
     this.SafeLock = false;
     this.NewDiff = undefined;
     this.PreviousDiffs = undefined;
-    this.NextDiffID = undefined;
-    this.NextSnapshotID = undefined;
+    this.NextDiffIndex = undefined;
+    this.NextSnapshotIndex = undefined;
+    this.TotalNumDiffs = undefined;
+    this.TotalNumSnapshots = undefined;
   }
 }

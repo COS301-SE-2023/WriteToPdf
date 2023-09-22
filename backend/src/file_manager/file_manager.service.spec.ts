@@ -40,6 +40,7 @@ import { DiffsService } from '../diffs/diffs.service';
 import { SnapshotService } from '../snapshots/snapshots.service';
 import { Diff } from '../diffs/entities/diffs.entity';
 import { Snapshot } from '../snapshots/entities/snapshots.entity';
+import { VersionControlService } from 'src/version_control/version_control.service';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -713,6 +714,13 @@ describe('FileManagerService', () => {
         .mockResolvedValue([] as number[]);
 
       jest
+        .spyOn(
+          service,
+          'setupVersioningResources',
+        )
+        .mockResolvedValue([] as any);
+
+      jest
         .spyOn(diffService, 'createDiffs')
         .mockResolvedValue([] as any);
 
@@ -835,15 +843,26 @@ describe('FileManagerService', () => {
       createSpy.mockResolvedValue(
         markdownFileDTO,
       );
-      jest.spyOn(
-        s3Service,
-        'createSnapshotObjectsForFile',
-      ).mockResolvedValue([] as any);
+      jest
+        .spyOn(
+          s3Service,
+          'createSnapshotObjectsForFile',
+        )
+        .mockResolvedValue([] as any);
 
-      jest.spyOn(
-        s3Service,
-        'createDiffObjectsForFile',
-      ).mockResolvedValue([] as any);
+      jest
+        .spyOn(
+          service,
+          'setupVersioningResources',
+        )
+        .mockResolvedValue([] as any);
+
+      jest
+        .spyOn(
+          s3Service,
+          'createDiffObjectsForFile',
+        )
+        .mockResolvedValue([] as any);
       jest
         .spyOn(snapshotService, 'createSnapshots')
         .mockResolvedValue([] as number[]);
@@ -944,8 +963,10 @@ describe('FileManagerService', () => {
         ParentFolderID: '1',
         Size: 100,
         SafeLock: false,
-        NextDiffID: 0,
-        NextSnapshotID: 0,
+        NextDiffIndex: 0,
+        NextSnapshotIndex: 0,
+        TotalNumDiffs: 0,
+        TotalNumSnapshots: 0,
       };
       const file2: MarkdownFile = {
         MarkdownID: '2',
@@ -957,8 +978,10 @@ describe('FileManagerService', () => {
         ParentFolderID: '1',
         Size: 100,
         SafeLock: false,
-        NextDiffID: 0,
-        NextSnapshotID: 0,
+        NextDiffIndex: 0,
+        NextSnapshotIndex: 0,
+        TotalNumDiffs: 0,
+        TotalNumSnapshots: 0,
       };
       const files = [file1, file2];
 
@@ -1069,8 +1092,10 @@ describe('FileManagerService', () => {
           ParentFolderID: '1',
           Size: 100,
           SafeLock: false,
-          NextDiffID: 0,
-          NextSnapshotID: 0,
+          NextDiffIndex: 0,
+          NextSnapshotIndex: 0,
+          TotalNumDiffs: 0,
+          TotalNumSnapshots: 0,
         },
         {
           MarkdownID: '2',
@@ -1082,8 +1107,10 @@ describe('FileManagerService', () => {
           ParentFolderID: '1',
           Size: 100,
           SafeLock: false,
-          NextDiffID: 0,
-          NextSnapshotID: 0,
+          NextDiffIndex: 0,
+          NextSnapshotIndex: 0,
+          TotalNumDiffs: 0,
+          TotalNumSnapshots: 0,
         },
       ];
 

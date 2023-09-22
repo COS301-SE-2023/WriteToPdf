@@ -111,9 +111,11 @@ export class FileManagerServiceMock {
         Content: '',
         SafeLock: false,
         NewDiff: '',
-        NextDiffID: file.NextDiffID,
+        NextDiffIndex: file.NextDiffIndex,
         PreviousDiffs: [],
-        NextSnapshotID: file.NextSnapshotID,
+        NextSnapshotIndex: file.NextSnapshotIndex,
+        TotalNumDiffs: file.TotalNumDiffs,
+        TotalNumSnapshots: file.TotalNumSnapshots,
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
@@ -464,7 +466,7 @@ export class FileManagerServiceMock {
       Content: encryptedContent,
       PreviousDiffs: [],
       NewDiff: '',
-      NextDiffID: 0,
+      NextDiffIndex: 0,
     };
 
     return returnedDTO;

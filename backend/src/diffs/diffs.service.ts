@@ -6,6 +6,7 @@ import 'dotenv/config';
 import * as CryptoJS from 'crypto-js';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { DiffDTO } from './dto/diffs.dto';
+import { DiffieHellmanGroup } from 'crypto';
 
 @Injectable()
 export class DiffsService {
@@ -24,7 +25,7 @@ export class DiffsService {
       await this.diffRepository.findOne({
         where: {
           MarkdownID: diffDTO.MarkdownID,
-          S3DiffID: nextDiffID,
+          S3DiffIndex: nextDiffID,
         },
       });
 
@@ -53,6 +54,27 @@ export class DiffsService {
     diff.LastModified = new Date();
     diff.HasBeenUsed = true;
     await this.diffRepository.save(diff);
+  }
+
+  ///===-----------------------------------------------------
+
+  async createDiff(
+    markdownFileDTO: MarkdownFileDTO,
+    nextSnapshotID: string,
+  ) {
+    const diffID = CryptoJS.SHA256(
+      markdownFileDTO.UserID.toString() +
+        new Date().getTime().toString(),
+    ).toString();
+
+    await this.diffRepository.insert({
+      DiffID: diffID,
+      MarkdownID: markdownFileDTO.MarkdownID,
+      UserID: markdownFileDTO.UserID,
+      S3DiffIndex: markdownFileDTO.NextDiffIndex,
+      HasBeenUsed: false,
+      SnapshotID: nextSnapshotID,
+    });
   }
 
   ///===-----------------------------------------------------

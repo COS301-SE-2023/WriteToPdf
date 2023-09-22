@@ -16,7 +16,7 @@ export class Snapshot {
   UserID: number;
 
   @Column()
-  S3SnapshotID: number;
+  S3SnapshotIndex: number;
 
   @Column('timestamp', {
     precision: 3,
