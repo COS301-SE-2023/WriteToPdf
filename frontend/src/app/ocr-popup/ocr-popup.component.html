@@ -48,25 +48,18 @@
                                          class="tableCreated" dataKey="id">
                                     <ng-template let-rowData pTemplate="body">
                                         <tr>
-                                            <td *ngFor="let col of getColumnKeys(rowData)" [pEditableColumnField]="col"
-                                                [pEditableColumn]="rowData[col]">
-                                                <p-cellEditor>
-                                                    <ng-template pTemplate="input">
-                                                        <input [(ngModel)]="rowData[col]" pInputText type="text"/>
-                                                    </ng-template>
-                                                    <ng-template pTemplate="output">
-                                                        {{ rowData[col] }}
-                                                    </ng-template>
-                                                </p-cellEditor>
+                                            <td *ngFor="let col of getColumnKeys(rowData)">
+                                                {{ rowData[col] }}
                                             </td>
                                         </tr>
                                     </ng-template>
                                 </p-table>
                             </div>
-
                         </div>
                         <br>
-                        <p-button (click)="constructTableHtml()" class="copyButton" icon="pi pi-copy" label="Copy"
+                        <p-button (click)="pasteCurrentTable()" class="copyButton" icon="pi pi-copy" label="Copy"
+                                  styleClass="p-button-rounded"></p-button>
+                        <p-button (click)="pasteAllTables()" class="copyButton" icon="pi pi-copy" label="Copy All"
                                   styleClass="p-button-rounded"></p-button>
                     </ng-template>
                 </mat-tab>

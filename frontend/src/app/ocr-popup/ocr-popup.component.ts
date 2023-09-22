@@ -116,6 +116,35 @@ export class OcrPopupComponent implements OnInit {
     }
 
 
+    pasteCurrentTable(): void {
+        let tableToConvert = this.activeTable;
+
+    }
+
+    pasteAllTables(): void {
+
+    }
+
+    generateHtmlTable(tableData: any[]): string {
+        if (!tableData || tableData.length === 0) {
+            return ''; // Return an empty string if the table data is empty or undefined
+        }
+
+        // Generate the table rows
+        let tableHtml = '<table border="1"><tbody>';
+        tableData.forEach((row) => {
+            tableHtml += '<tr>';
+            Object.keys(row).forEach((key) => {
+                tableHtml += `<td>${row[key]}</td>`;
+            });
+            tableHtml += '</tr>';
+        });
+
+        tableHtml += '</tbody></table>';
+        return tableHtml;
+    }
+
+
     constructTableHtml(): void {
         let tableHtml = '<table>\n';
         this.clipboard.copy(tableHtml);
