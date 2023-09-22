@@ -19,13 +19,13 @@ export class DiffsService {
 
   async getDiff(
     diffDTO: DiffDTO,
-    nextDiffID: number,
+    nextDiffIndex: number,
   ) {
     const diff =
       await this.diffRepository.findOne({
         where: {
           MarkdownID: diffDTO.MarkdownID,
-          S3DiffIndex: nextDiffID,
+          S3DiffIndex: nextDiffIndex,
         },
       });
 
