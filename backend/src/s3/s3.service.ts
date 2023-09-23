@@ -316,6 +316,7 @@ export class S3Service {
         const diffDTO = new DiffDTO();
         diffDTO.Content =
           await response.Body.transformToString();
+        diffDTO.S3DiffIndex = S3DiffIDs[i];
         diffDTOs.push(diffDTO);
       } catch (err) {
         console.log(
