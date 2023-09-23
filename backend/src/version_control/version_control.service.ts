@@ -272,7 +272,7 @@ export class VersionControlService {
       snapshotDTO.MarkdownID =
         snapshot.MarkdownID;
       snapshotDTO.UserID = snapshot.UserID;
-      snapshotDTO.S3SnapshotID =
+      snapshotDTO.S3SnapshotIndex =
         snapshot.S3SnapshotIndex;
       snapshotDTO.LastModified =
         snapshot.LastModified;
@@ -291,7 +291,7 @@ export class VersionControlService {
       diffDTO.DiffID = diff.DiffID;
       diffDTO.MarkdownID = diff.MarkdownID;
       diffDTO.UserID = diff.UserID;
-      diffDTO.S3DiffID = diff.S3DiffIndex;
+      diffDTO.S3DiffIndex = diff.S3DiffIndex;
       diffDTO.LastModified = diff.LastModified;
       diffDTO.SnapshotID = diff.SnapshotID;
       diffDTOs.push(diffDTO);

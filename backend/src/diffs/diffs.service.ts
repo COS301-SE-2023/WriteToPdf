@@ -183,7 +183,7 @@ export class DiffsService {
     ).fill(0);
     for (let idx = 0; idx < arrLength; idx++) {
       const logicalIndex = this.getLogicalIndex(
-        diffDTOs[idx].S3DiffID,
+        diffDTOs[idx].S3DiffIndex,
         nextDiffID,
         arrLength,
       );

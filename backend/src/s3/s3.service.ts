@@ -427,7 +427,7 @@ export class S3Service {
     const diffDTOs: DiffDTO[] = [];
 
     const firstDiffID =
-      snapshotDTO.S3SnapshotID *
+      snapshotDTO.S3SnapshotIndex *
       parseInt(process.env.DIFFS_PER_SNAPSHOT);
 
     for (
@@ -583,11 +583,6 @@ export class S3Service {
     );
 
     const filePath = `${diffDTO.UserID}/${diffDTO.MarkdownID}`;
-
-    console.log(
-      'fileDTO.Content: ',
-      fileDTO.Content,
-    );
 
     try {
       await this.s3Client.send(

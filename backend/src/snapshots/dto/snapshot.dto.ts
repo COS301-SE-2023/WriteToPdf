@@ -3,7 +3,7 @@ export class SnapshotDTO {
   MarkdownID: string;
   UserID: number;
   DisplayID: number;
-  S3SnapshotID: number;
+  S3SnapshotIndex: number;
   LastModified: Date;
   Content: string;
   OldestSnapshot: boolean;
@@ -13,7 +13,7 @@ export class SnapshotDTO {
     this.MarkdownID = undefined;
     this.UserID = undefined;
     this.DisplayID = undefined;
-    this.S3SnapshotID = undefined;
+    this.S3SnapshotIndex = undefined;
     this.LastModified = undefined;
     this.Content = undefined;
     this.OldestSnapshot = false;

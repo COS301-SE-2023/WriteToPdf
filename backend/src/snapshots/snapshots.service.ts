@@ -188,7 +188,7 @@ export class SnapshotService {
     ).fill(0);
     for (let idx = 0; idx < arrLength; idx++) {
       const logicalIndex = this.getLogicalIndex(
-        snapshotDTOs[idx].S3SnapshotID,
+        snapshotDTOs[idx].S3SnapshotIndex,
         nextDiffID,
         arrLength,
       );
