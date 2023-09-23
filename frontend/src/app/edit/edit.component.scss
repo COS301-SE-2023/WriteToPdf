@@ -241,12 +241,16 @@ div[contenteditable="true"]:focus {
     position: fixed;
 }
 
+.allAssets{
+    margin-top:35px;
+}
+
 .sidebarHeader {
     display: flex;
     justify-content: space-evenly;
     margin: auto;
     width: $sidebar-content-width;
-
+    padding-bottom:10px;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -moz-user-select: none;
