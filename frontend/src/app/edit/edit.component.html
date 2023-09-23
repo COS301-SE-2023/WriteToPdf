@@ -370,6 +370,7 @@
             class="historyIcon"
             src="assets/Icons/editIcons/ellipse.svg"
             alt=""
+            (click)="getSnapshotContent(obj)"
           />
         </div>
         <div *ngIf="obj.expanded">
@@ -391,6 +392,7 @@
               class="historyIcon"
               src="assets/Icons/editIcons/ellipse.svg"
               alt=""
+              (click)="getDiffContent(diffObj)"
             />
           </div>
         </div>
