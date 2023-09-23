@@ -19,6 +19,7 @@ import {
 } from '@nestjs/common';
 import { RetrieveAllDTO } from '../asset_manager/dto/retrieve_all.dto';
 import * as sharp from 'sharp';
+import { remove } from 'cheerio/lib/api/manipulation';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -63,6 +64,34 @@ describe('ImageManagerService', () => {
   });
 
   describe('upload', () => {
+    it('should throw an error if the s3 upload fails', async () => {
+      const uploadImage = new AssetDTO();
+      uploadImage.Image = 'test';
+      uploadImage.UserID = 1;
+
+      jest
+        .spyOn(assetsService, 'saveAsset')
+        .mockResolvedValue(new Asset());
+
+      jest
+        .spyOn(s3Service, 'saveImageAsset')
+        .mockReturnValue(undefined);
+
+      try {
+        await service.upload(uploadImage);
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Failed to save image in S3',
+        );
+        expect(error.status).toBe(
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    });
     it('should set undefined values to empty strings', async () => {
       const uploadImage = new AssetDTO();
       uploadImage.Image = 'test';
@@ -202,6 +231,32 @@ describe('ImageManagerService', () => {
   });
 
   describe('deleteAsset', () => {
+    it('should throw error if s3 call fails', async () => {
+      const removeAssetDTO = new AssetDTO();
+      removeAssetDTO.AssetID = '1';
+
+      jest
+        .spyOn(assetsService, 'removeOne')
+        .mockResolvedValue(undefined);
+
+      jest
+        .spyOn(s3Service, 'deleteAsset')
+        .mockResolvedValue(undefined);
+
+      try {
+        await service.deleteAsset(removeAssetDTO);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Failed to delete image in S3',
+        );
+        expect(error.status).toBe(
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    });
     it('should remove specified asset', () => {
       const assetDTO = new AssetDTO();
       jest
