@@ -67,9 +67,6 @@ export class TextManagerService {
         uploadTextDTO.Format,
       );
 
-    const s3TextractResponse =
-      await this.s3Service.saveTextractResponse(
-        savedAssetDTO,
     const formattedTextractResponse =
       this.formatTextractResponse(
         textractResponse,
