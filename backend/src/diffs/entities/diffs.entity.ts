@@ -16,7 +16,7 @@ export class Diff {
   UserID: number;
 
   @Column()
-  S3DiffID: number;
+  S3DiffIndex: number;
 
   @Column('timestamp', {
     precision: 3,

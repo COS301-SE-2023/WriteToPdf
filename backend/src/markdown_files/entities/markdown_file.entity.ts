@@ -38,11 +38,17 @@ export class MarkdownFile {
   SafeLock: boolean;
 
   @Column()
-  ParentFolderID: string; // hash string
+  ParentFolderID: string;
 
   @Column()
-  NextDiffID: number;
+  NextDiffIndex: number;
 
   @Column()
-  NextSnapshotID: number;
+  NextSnapshotIndex: number;
+
+  @Column()
+  TotalNumDiffs: number;
+
+  @Column()
+  TotalNumSnapshots: number;
 }

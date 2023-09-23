@@ -10,6 +10,7 @@ import { Snapshot } from '../snapshots/entities/snapshots.entity';
 import { Diff } from '../diffs/entities/diffs.entity';
 import { VersionHistoryDTO } from './dto/version_history.dto';
 import { VersionSetDTO } from './dto/version_set.dto';
+import { MarkdownFileDTO } from 'src/markdown_files/dto/markdown_file.dto';
 
 @Injectable()
 export class VersionControlService {
@@ -23,73 +24,108 @@ export class VersionControlService {
 
   ///===-----------------------------------------------------
 
-  async saveDiff(diffDTO: DiffDTO) {
-    const nextDiffID =
-      await this.markdownFileService.getNextDiffID(
-        diffDTO.MarkdownID,
-      );
+  // async saveDiff(diffDTO: DiffDTO) {
+  //   // 1. Get information necessary for saving a diff
+  //   const versioningInfoDTO =
+  //     await this.markdownFileService.getSaveDiffInfo(
+  //       diffDTO.MarkdownID,
+  //     );
 
-    const nextDiff =
-      await this.diffService.getDiff(
-        diffDTO,
-        nextDiffID,
-      );
+  //   // 2. If this is the first pass through the array, create diff
+  //   //    else retrieve diff from S3
+  //   let nextDiff;
+  //   if (
+  //     versioningInfoDTO.totalNumDiffs <
+  //     parseInt(process.env.MAX_DIFFS)
+  //   ) {
+  //     nextDiff =
+  //       await this.diffService.createNewDiff(
+  //         diffDTO,
 
-    await this.s3Service.saveDiff(
-      diffDTO,
-      nextDiffID,
-    );
+  //       );
+  //   } else {
+  //     nextDiff = await this.diffService.getDiff(
+  //       diffDTO,
+  //       versioningInfoDTO.nextDiffID,
+  //     );
+  //   }
 
-    if (
-      nextDiffID !== 0 ||
-      nextDiff.HasBeenUsed
-    ) {
-      if (
-        (nextDiffID + 1) %
-          parseInt(
-            process.env.DIFFS_PER_SNAPSHOT,
-          ) ===
-        0
-      ) {
-        await this.saveSnapshot(diffDTO);
+  //   await this.s3Service.saveDiff(
+  //     diffDTO,
+  //     versioningInfoDTO.nextDiffID,
+  //   );
 
-        // Reset next snapshot and associated diffs
-        const nextSnapshotID =
-          await this.markdownFileService.getNextSnapshotID(
-            diffDTO.MarkdownID,
-          );
+  //   if (
+  //     nextDiffID !== 0 ||
+  //     nextDiff.HasBeenUsed
+  //   ) {
+  //     if (
+  //       (nextDiffID + 1) %
+  //         parseInt(
+  //           process.env.DIFFS_PER_SNAPSHOT,
+  //         ) ===
+  //       0
+  //     ) {
+  //       const nextSnapshotID =
+  //         await this.markdownFileService.getNextSnapshotID(
+  //           diffDTO.MarkdownID,
+  //         );
 
-        const nextSnapshot =
-          await this.snapshotService.resetSnapshot(
-            diffDTO.MarkdownID,
-            nextSnapshotID,
-          );
+  //       // Create snapshot if not created already
+  //       if (
+  //         !nextDiff.HasBeenUsed &&
+  //         nextSnapshotID !== 0
+  //       ) {
+  //         const markdownFileDTO: MarkdownFileDTO =
+  //           new MarkdownFileDTO();
 
-        await this.diffService.resetDiffs(
-          diffDTO.MarkdownID,
-          nextSnapshot.SnapshotID,
-        );
-      }
-    }
+  //         markdownFileDTO.MarkdownID =
+  //           diffDTO.MarkdownID;
+  //         markdownFileDTO.UserID = diffDTO.UserID;
+  //         markdownFileDTO.NextSnapshotIndex =
+  //           nextSnapshotIndex;
 
-    await this.diffService.updateDiff(
-      diffDTO,
-      nextDiffID,
-    );
+  //         this.snapshotService.createSnapshot(
+  //           markdownFileDTO,
+  //         );
+  //       }
 
-    await this.markdownFileService.incrementNextDiffID(
-      diffDTO.MarkdownID,
-    );
-  }
+  //       await this.saveSnapshot(
+  //         diffDTO,
+  //         nextSnapshotID,
+  //       );
+
+  //       // Reset next snapshot and associated diffs
+
+  //       const nextSnapshot =
+  //         await this.snapshotService.resetSnapshot(
+  //           diffDTO.MarkdownID,
+  //           nextSnapshotID,
+  //         );
+
+  //       await this.diffService.resetDiffs(
+  //         diffDTO.MarkdownID,
+  //         nextSnapshot.SnapshotID,
+  //       );
+  //     }
+  //   }
+
+  //   // await this.diffService.updateDiff(
+  //   //   diffDTO,
+  //   //   nextDiffID,
+  //   // );
+
+  //   await this.markdownFileService.incrementNextDiffID(
+  //     diffDTO.MarkdownID,
+  //   );
+  // }
 
   ///===-----------------------------------------------------
 
-  async saveSnapshot(diffDTO: DiffDTO) {
-    const nextSnapshotID =
-      await this.markdownFileService.getNextSnapshotID(
-        diffDTO.MarkdownID,
-      );
-
+  async saveSnapshot(
+    diffDTO: DiffDTO,
+    nextSnapshotID: number,
+  ) {
     await this.s3Service.saveSnapshot(
       diffDTO,
       nextSnapshotID,
@@ -236,8 +272,8 @@ export class VersionControlService {
       snapshotDTO.MarkdownID =
         snapshot.MarkdownID;
       snapshotDTO.UserID = snapshot.UserID;
-      snapshotDTO.S3SnapshotID =
-        snapshot.S3SnapshotID;
+      snapshotDTO.S3SnapshotIndex =
+        snapshot.S3SnapshotIndex;
       snapshotDTO.LastModified =
         snapshot.LastModified;
       snapshotDTOs.push(snapshotDTO);
@@ -255,7 +291,7 @@ export class VersionControlService {
       diffDTO.DiffID = diff.DiffID;
       diffDTO.MarkdownID = diff.MarkdownID;
       diffDTO.UserID = diff.UserID;
-      diffDTO.S3DiffID = diff.S3DiffID;
+      diffDTO.S3DiffIndex = diff.S3DiffIndex;
       diffDTO.LastModified = diff.LastModified;
       diffDTO.SnapshotID = diff.SnapshotID;
       diffDTOs.push(diffDTO);
@@ -274,7 +310,7 @@ export class VersionControlService {
       );
 
     const S3DiffIDs: number[] = diffs.map(
-      (diff) => diff.S3DiffID,
+      (diff) => diff.S3DiffIndex,
     );
 
     const diffDTOs =
@@ -291,7 +327,7 @@ export class VersionControlService {
 
     const snapshotDTO =
       await this.s3Service.getSnapshot(
-        snapshot.S3SnapshotID,
+        snapshot.S3SnapshotIndex,
         versionSetDTO.UserID,
         versionSetDTO.MarkdownID,
       );
@@ -305,4 +341,6 @@ export class VersionControlService {
     ];
     return versionHistoryDTO;
   }
+
+  ///===----------------------------------------------------
 }

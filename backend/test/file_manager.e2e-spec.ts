@@ -151,8 +151,10 @@ describe('FileManagerController (integration)', () => {
       createFileDTO.Size = 0;
       createFileDTO.ParentFolderID = '';
       createFileDTO.SafeLock = false;
-      createFileDTO.NextDiffID = 0;
-      createFileDTO.NextSnapshotID = 0;
+      createFileDTO.NextDiffIndex = 0;
+      createFileDTO.NextSnapshotIndex = 0;
+      createFileDTO.TotalNumDiffs = 0;
+      createFileDTO.TotalNumSnapshots = 0;
 
       const s3Response =
         await s3Service.createFile(createFileDTO);
@@ -166,7 +168,7 @@ describe('FileManagerController (integration)', () => {
       // console.log('s3Response: ', s3Response);
 
       await markdownFileRepository.query(
-        'INSERT INTO MARKDOWN_FILES (MarkdownID, Name, Path, Size, ParentFolderID, UserID, SafeLock, NextDiffID, NextSnapshotID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO MARKDOWN_FILES (MarkdownID, Name, Path, Size, ParentFolderID, UserID, SafeLock, NextDiffIndex, NextSnapshotIndex, TotalNumDiffs, TotalNumSnapshots) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [
           s3Response.MarkdownID,
           createFileDTO.Name,
@@ -175,8 +177,10 @@ describe('FileManagerController (integration)', () => {
           createFileDTO.ParentFolderID,
           createFileDTO.UserID,
           createFileDTO.SafeLock,
-          createFileDTO.NextDiffID,
-          createFileDTO.NextSnapshotID,
+          createFileDTO.NextDiffIndex,
+          createFileDTO.NextSnapshotIndex,
+          createFileDTO.TotalNumDiffs,
+          createFileDTO.TotalNumSnapshots,
         ],
       );
     }
@@ -249,8 +253,8 @@ describe('FileManagerController (integration)', () => {
           process.env.TEST_USERID,
         );
 
-        requestMarkdownFileDTO.NextDiffID = 0;
-        requestMarkdownFileDTO.NextSnapshotID = 0;
+        requestMarkdownFileDTO.NextDiffIndex = 0;
+        requestMarkdownFileDTO.NextSnapshotIndex = 0;
 
         const response = await request(
           app.getHttpServer(),
