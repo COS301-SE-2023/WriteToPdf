@@ -25,6 +25,9 @@ export class VersionControlService {
   ///===-----------------------------------------------------
 
   async saveDiff(diffDTO: DiffDTO) {
+    console.log(
+      '///===------------------version_control.saveDiff',
+    );
     // 1. Get necessary info for saving a diff
     const saveDiffInfoDTO =
       await this.markdownFileService.getSaveDiffInfo(
@@ -94,7 +97,7 @@ export class VersionControlService {
     }
     ///===----------------------------------------------------
     // Save diff content to S3 and increment nextIndex and TotalNumDiffs
-    this.saveDiffContent(
+    await this.saveDiffContent(
       diffDTO,
       saveDiffInfoDTO.nextDiffIndex,
       nextSnapshot.SnapshotID,
@@ -109,7 +112,7 @@ export class VersionControlService {
       0
     ) {
       // Populate snapshot in DB and S3
-      this.saveSnapshot(
+      await this.saveSnapshot(
         diffDTO,
         saveDiffInfoDTO.nextSnapshotIndex,
       );
@@ -376,15 +379,10 @@ export class VersionControlService {
     markdownFileDTO.NextDiffIndex = nextDiffIndex;
 
     // Create diff in s3 and save content
-    this.s3Service.saveDiff(
+    await this.s3Service.saveDiff(
       diffDTO,
       nextDiffIndex,
     );
-
-    // // Increment num diffs
-    // await this.markdownFileService.incrementTotalNumDiffs(
-    //   markdownFileDTO.MarkdownID,
-    // );
 
     // Create diff in db
     return await this.diffService.createDiffWithoutSnapshotID(
@@ -398,8 +396,6 @@ export class VersionControlService {
     diffDTO: DiffDTO,
     nextSnapshotIndex: number,
   ) {
-    const tempDTO = diffDTO;
-    tempDTO.Content = '';
     const markdownFileDTO = new MarkdownFileDTO();
     markdownFileDTO.MarkdownID =
       diffDTO.MarkdownID;
@@ -409,7 +405,7 @@ export class VersionControlService {
 
     // Create snapshot in s3 and save content
     await this.s3Service.saveSnapshot(
-      tempDTO,
+      diffDTO,
       nextSnapshotIndex,
     );
 
