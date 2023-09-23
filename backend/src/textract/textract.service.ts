@@ -62,7 +62,7 @@ export class TextractService {
     let textCommand: StartDocumentTextDetectionCommand;
     let tableCommand: StartDocumentAnalysisCommand;
     const filePath = `${assetDTO.UserID}/${assetDTO.AssetID}`;
-
+    console.log(extractType);
     if (extractType === 'text') {
       textCommand =
         new StartDocumentTextDetectionCommand({
@@ -173,7 +173,6 @@ export class TextractService {
     let textCommand: DetectDocumentTextCommand;
     let tableCommand: AnalyzeDocumentCommand;
     const filePath = `${assetDTO.UserID}/${assetDTO.AssetID}`;
-
     if (extractType === 'text') {
       textCommand = new DetectDocumentTextCommand(
         {

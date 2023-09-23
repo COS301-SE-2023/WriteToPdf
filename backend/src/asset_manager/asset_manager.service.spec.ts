@@ -68,7 +68,7 @@ describe('AssetManagerService', () => {
 
       jest
         .spyOn(textManagerService, 'upload')
-        .mockResolvedValue(assetDTO);
+        .mockResolvedValue(assetDTO as any);
 
       const response = await service.upload_asset(
         assetDTO,

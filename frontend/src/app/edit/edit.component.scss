@@ -170,6 +170,8 @@ $page-height: 29.7cm;
     cursor: pointer;
 }
 
+
+
 .logo {
     width: 50px;
 }
@@ -213,7 +215,11 @@ $page-height: 29.7cm;
     border-right: 1px solid #c7c7c7;
     box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-    z-index: 20;
+    z-index: -10000;
+}
+
+.alignDiv {
+  margin-bottom:-35px;
 }
 
 .pageName {
@@ -298,9 +304,8 @@ div[contenteditable="true"]:focus {
     width: $sidebar-content-width;
     height: 157px;
     border-radius: 8px;
-
     background-color: #f0f0f0;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .assetHeader {
@@ -411,6 +416,7 @@ div[contenteditable="true"]:focus {
     left: 0;
     bottom: 0;
     display: none;
+    z-index:20;
     left: 0;
     margin: 10px;
     height: 37.7px;

@@ -17,9 +17,10 @@ import { EditService } from '../services/edit.service';
 import { AssetService } from '../services/asset.service';
 import { VersionControlService } from '../services/version.control.service';
 import { VersioningApiService } from '../services/versioning-api.service';
-
 import html2pdf from 'html2pdf.js/dist/html2pdf';
-
+import { Inject } from '@angular/core';
+import { MessageService } from 'primeng/api';
+import {OCRDialogService} from "../services/ocr-popup.service";
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 import { SnapshotDTO } from '../services/dto/snapshot.dto';
 import { DiffDTO } from '../services/dto/diff.dto';
@@ -43,6 +44,9 @@ export class EditComponent implements AfterViewInit, OnInit {
   noAssetsAvailable: boolean = false;
   isTouchScreen: boolean = false;
   sideBarTab: boolean = false;
+  //TODO - use to load spinner whilst assets are being retrieved.
+  retrievingAssets: boolean = false;
+
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
@@ -58,8 +62,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     private versionControlService: VersionControlService,
     private confirmationService: ConfirmationService,
     private versioningApiService: VersioningApiService
-  ) {}
-
+    private OCRDialog: OCRDialogService,
+  ) { }
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
     if (this.editService.getContent() !== '') this.saveDocumentContents();
@@ -85,6 +89,15 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
   }
 
+  showOCRPopup(textractResponse: any): void{
+    let ocrDataPassedOver = [];
+    ocrDataPassedOver.push(textractResponse);
+    ocrDataPassedOver.push(this.editor);
+    // TODO find the relevant button on the asset that retrieves the textract response,
+    // and pass that response to the OCRDialogService.
+    this.OCRDialog.openDialog(ocrDataPassedOver);
+  }
+
   showImageUploadPopup(): void {
     const ref = this.dialogService.open(ImageUploadPopupComponent, {
       header: 'Upload Images',
@@ -93,6 +106,11 @@ export class EditComponent implements AfterViewInit, OnInit {
       closeOnEscape: true,
       dismissableMask: true,
     });
+    ref.onClose.subscribe(
+        ()=>{
+          this.refreshSidebar();
+        }
+    )
   }
 
   showFileUploadPopup(): void {
@@ -106,36 +124,6 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.speedDialItems = [
-      {
-        icon: 'pi pi-pencil',
-        command: () => {
-          this.navigateToPage('edit');
-        },
-      },
-      {
-        icon: 'pi pi-refresh',
-        command: () => {
-          // this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
-        },
-      },
-      {
-        icon: 'pi pi-trash',
-        command: () => {
-          // this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
-        },
-      },
-      {
-        icon: 'pi pi-upload',
-        command: () => {
-          this.showFileUploadPopup();
-        },
-      },
-      {
-        icon: 'pi pi-external-link',
-      },
-    ];
-
     //get window width
     this.isTouchScreen = window.matchMedia('(pointer: coarse)').matches;
     const width = window.innerWidth;
@@ -412,6 +400,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
         editor.setAttribute('style', 'padding-right: 0px;left:260px');
         sidebar.setAttribute('style', 'display:block');
+        sidebar.setAttribute('style', 'z-index: -1000');
         showAssetSidebar.setAttribute('style', 'left:-10px');
         this.sidebarVisible = true;
       }
@@ -450,16 +439,16 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     this.assets[currAssetIndex].NotRetrieving = true;
     // const asset = true;
-    if (format === 'text') {
+    if (format === 'text' || format === 'table'){
       let asset = this.assets[currAssetIndex];
       if (!asset.Blocks) {
-        asset = await this.assetService.retrieveAsset(assetId, format, textId);
+        var assetResponse = await this.assetService.retrieveAsset(assetId, format, textId);
         this.assets[currAssetIndex].Blocks = asset.Blocks;
       }
-      this.parseAssetText(asset);
-      this.textCopyDialog = true;
       this.assets[currAssetIndex].NotRetrieving = false;
-    } else if (format === 'image') {
+      this.showOCRPopup(assetResponse);
+    }
+    else if (format === 'image') {
       let asset = this.assets[currAssetIndex];
       if (!asset.CopyContent) {
         asset = await this.assetService.retrieveAsset(assetId, format, textId);
@@ -734,6 +723,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     const rect = element.getBoundingClientRect();
     return rect.left;
   }
+
 
   //Functions for exporting from HTML
   convertToFileType(fileType: string) {
