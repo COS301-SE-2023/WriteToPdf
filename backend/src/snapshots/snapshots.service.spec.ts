@@ -8,6 +8,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import * as CryptoJS from 'crypto-js';
+import { SnapshotDTO } from './dto/snapshot.dto';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -256,6 +257,72 @@ describe('SnapshotService', () => {
           SnapshotID: snapshotID,
         },
       });
+    });
+  });
+
+  describe('createSnapshots', () => {
+    it('should create snapshots', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '0';
+      markdownFileDTO.UserID = 0;
+      markdownFileDTO.NextSnapshotIndex = 0;
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockResolvedValueOnce(undefined);
+
+      const originalMaxSnapshots =
+        process.env.MAX_SNAPSHOTS;
+      process.env.MAX_SNAPSHOTS = '1';
+
+      try {
+        const result =
+          await service.createSnapshots(
+            markdownFileDTO,
+          );
+
+        expect(result).toEqual(expect.any(Array));
+        expect(
+          Repository.prototype.save,
+        ).toBeCalledWith(expect.any(Object));
+      } finally {
+        process.env.MAX_SNAPSHOTS =
+          originalMaxSnapshots;
+      }
+    });
+  });
+
+  describe('getLogicalSnapshotOrder', () => {
+    it('should return the logical snapshot order', async () => {
+      const snapshotDTO1 = new SnapshotDTO();
+      snapshotDTO1.S3SnapshotIndex = 0;
+
+      const snapshotDTO2 = new SnapshotDTO();
+      snapshotDTO2.S3SnapshotIndex = 1;
+
+      const snapshotDTOs = [
+        snapshotDTO1,
+        snapshotDTO2,
+      ];
+
+      const nextDiffID = 2;
+
+      const originalMaxDiffs =
+        process.env.MAX_DIFFS;
+      process.env.MAX_DIFFS = '1';
+
+      try {
+        const result =
+          await service.getLogicalSnapshotOrder(
+            snapshotDTOs,
+            nextDiffID,
+          );
+
+        expect(result).toEqual(expect.any(Array));
+      } finally {
+        process.env.MAX_DIFFS = originalMaxDiffs;
+      }
     });
   });
 });
