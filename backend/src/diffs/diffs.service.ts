@@ -39,6 +39,8 @@ export class DiffsService {
     nextDiffIndex: number,
     nextSnapshotID: string,
   ) {
+    diffDTO.SnapshotID = nextSnapshotID;
+    diffDTO.S3DiffIndex = nextDiffIndex;
     const diff = await this.getDiff(
       diffDTO,
       nextDiffIndex,
