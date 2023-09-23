@@ -160,7 +160,9 @@ export class MarkdownFilesService {
 
   ///===----------------------------------------------------
 
-  async incrementNextDiffID(markdownID: string) {
+  async incrementNextDiffIndex(
+    markdownID: string,
+  ) {
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
         {
@@ -177,7 +179,7 @@ export class MarkdownFilesService {
 
   ///===----------------------------------------------------
 
-  async incrementNextSnapshotID(
+  async incrementNextSnapshotIndex(
     markdownID: string,
   ) {
     const markdownFile =
