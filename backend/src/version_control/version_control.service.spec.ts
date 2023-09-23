@@ -14,6 +14,7 @@ import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { SnapshotService } from '../snapshots/snapshots.service';
 import { Snapshot } from '../snapshots/entities/snapshots.entity';
 import { DiffDTO } from '../diffs/dto/diffs.dto';
+import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 
 describe('VersionControlService', () => {
   let service: VersionControlService;
@@ -118,7 +119,38 @@ describe('VersionControlService', () => {
       );
 
       expect(response).toEqual(undefined);
-      expect(s3Service.saveSnapshot).toHaveBeenCalled();
+      expect(
+        s3Service.saveSnapshot,
+      ).toHaveBeenCalled();
+    });
+
+    it('should get all snapshots', async () => {
+      const snapshotDTO = new SnapshotDTO();
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValueOnce(
+          new MarkdownFile(),
+        );
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'getNextSnapshotID',
+        )
+        .mockResolvedValueOnce(0);
+
+      jest
+        .spyOn(service, 'getLogicalOrder')
+        .mockResolvedValueOnce(
+          new Array<number>() as never,
+        );
+
+      const response =
+        await service.getAllSnapshots(
+          snapshotDTO,
+        );
+
+      expect(response).toEqual([]);
     });
   });
 });
