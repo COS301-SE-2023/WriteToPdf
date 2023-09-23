@@ -28,7 +28,7 @@ export class VersionControlController {
 
   @Post('save_diff')
   saveDiff(@Body() diffDTO: DiffDTO) {
-    //this.versionControlService.saveDiff(diffDTO);
+    this.versionControlService.saveDiff(diffDTO);
   }
 
   ///===----------------------------------------------------
