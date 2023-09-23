@@ -122,7 +122,7 @@ export class SnapshotService {
 
   ///===-----------------------------------------------------
 
-  async getSnapshotByS3SnapshotID(
+  async getSnapshot(
     markdownID: string,
     s3SnapshotIndex: number,
   ) {
