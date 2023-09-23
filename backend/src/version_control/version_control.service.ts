@@ -38,10 +38,8 @@ export class VersionControlService {
         saveDiffInfoDTO.nextDiffIndex,
       );
 
-    console.log('next diff === undefined: ', nextDiff === undefined);
-
     // 3. Check if next diff exists
-    if (nextDiff === undefined) {
+    if (nextDiff === null) {
       this.createDiff(
         diffDTO,
         saveDiffInfoDTO.nextDiffIndex,
