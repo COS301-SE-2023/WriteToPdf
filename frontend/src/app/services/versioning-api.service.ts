@@ -9,19 +9,12 @@ import { SnapshotDTO } from './dto/snapshot.dto';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VersioningApiService {
+  constructor(private http: HttpClient, private userService: UserService) {}
 
-  constructor(
-    private http: HttpClient,
-    private userService: UserService
-  ) { }
-
-  saveDiff(
-    fileID: string,
-    content: string
-  ): Promise<boolean> {
+  saveDiff(fileID: string, content: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSaveDiff(fileID, content).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -114,6 +107,7 @@ export class VersioningApiService {
     );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
+
   loadHistorySet(
     markdownID: string,
     diffHistory: string[],
@@ -152,5 +146,4 @@ export class VersioningApiService {
     );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
-  
 }
