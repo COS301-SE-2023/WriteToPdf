@@ -82,6 +82,26 @@ export class OcrPopupComponent implements OnInit {
     }
   }
 
+  copyHtmlToClipboard(html: string) {
+    // Use the Clipboard API to copy the data to the clipboard
+    navigator.clipboard
+        .write([
+          new ClipboardItem({
+            'text/html': new Blob([html], {type: 'text/html'}),
+          }),
+        ])
+        .then(
+            () => {
+            },
+            (error) => {
+              console.error(
+                  'Could not copy HTML data (image) to clipboard: ',
+                  error
+              );
+            }
+        );
+  }
+
   onTableSelectionChange() {
     setTimeout(() => {
       let tableIndex = parseInt(this.selectedTable.split(" ")[1]) - 1;
@@ -113,39 +133,35 @@ export class OcrPopupComponent implements OnInit {
 
 
   copyFormData(): void {
-    let retrievedAsset = this.dialog.passedOverAsset;
     this.clipboard.copy(this.paragraphText);
     // console.log(retrievedAsset.ocrJSONResponse);
   }
 
 
-  pasteCurrentTable(): void {
+  copyCurrentTable(): void {
     let tableHtml = this.generateHtmlTable(this.activeTable);
-    const currentEditorContents = this.editor.getData();
-    const updatedData = currentEditorContents + '<p>\n</p>' + tableHtml + '<p>\n</p>';
-    this.editor.setData(updatedData);
+    this.copyHtmlToClipboard(tableHtml);
     this.messageService.add({
       severity: 'success',
-      summary: 'Table Pasted',
-      detail: 'Table has been pasted into the editor'
+      summary: 'Table Copied',
+      detail: 'Table has been copied to the clipboard'
     });
   }
 
-  pasteAllTables(): void {
+  copyAllTables(): void {
     let tableHtmls = [];
     for (let i = 0; i < this.convertedRenderableTables.length; i++) {
       tableHtmls.push(this.generateHtmlTable(this.convertedRenderableTables[i]));
     }
-    const currentEditorContents = this.editor.getData();
-    let updatedData = currentEditorContents;
+    let updatedData = '';
     for (let i = 0; i < tableHtmls.length; i++) {
       updatedData += '<p>\n</p>' + tableHtmls[i] + '<p>\n</p>';
     }
-    this.editor.setData(updatedData);
+    this.copyHtmlToClipboard(updatedData);
     this.messageService.add({
       severity: 'success',
-      summary: 'Tables Pasted',
-      detail: 'All tables have been pasted into the editor'
+      summary: 'Tables Copied',
+      detail: 'All tables have been copied onto the clipboard'
     });
   }
 
