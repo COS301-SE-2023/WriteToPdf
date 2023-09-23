@@ -10,7 +10,7 @@ import { ImportDTO } from './dto/import.dto';
 // import { resolve } from 'path';
 // import { ExportDTO } from './dto/export.dto';
 import { MessageService } from 'primeng/api';
-import { environment } from '../../environments/environment';
+import { environment } from "../../environments/environment";
 import * as CryptoJS from 'crypto-js';
 
 import { ConversionService } from './conversion.service';
@@ -181,6 +181,7 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendDeleteData(markdownID).subscribe({
         next: (response: HttpResponse<any>) => {
+          console.log(response);
           if (response.status === 200) {
             resolve(true);
           } else {
@@ -426,6 +427,7 @@ export class FileService {
     body.Content = this.encryptDocument(content);
     body.Type = type;
 
+    console.log('body', body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()

@@ -59,13 +59,13 @@ export class FileManagerService {
     if (markdownFileDTO.Size === undefined)
       markdownFileDTO.Size = 0;
 
-    if (markdownFileDTO.NextDiffID === undefined)
-      markdownFileDTO.NextDiffID = 0;
+    if (markdownFileDTO.NextDiffIndex === undefined)
+      markdownFileDTO.NextDiffIndex = 0;
 
     if (
-      markdownFileDTO.NextSnapshotID === undefined
+      markdownFileDTO.NextSnapshotIndex === undefined
     )
-      markdownFileDTO.NextSnapshotID = 0;
+      markdownFileDTO.NextSnapshotIndex = 0;
 
     if (isTest) {
       await this.s3ServiceMock.createFile(
@@ -87,23 +87,26 @@ export class FileManagerService {
         markdownFileDTO,
       );
 
-      await this.s3service.createDiffObjectsForFile(
+      await this.setupVersioningResources(
         markdownFileDTO,
       );
+      // await this.s3service.createDiffObjectsForFile(
+      //   markdownFileDTO,
+      // );
 
-      await this.s3service.createSnapshotObjectsForFile(
-        markdownFileDTO,
-      );
+      // await this.s3service.createSnapshotObjectsForFile(
+      //   markdownFileDTO,
+      // );
 
-      const snapshotIDs: string[] =
-        await this.snapshotService.createSnapshots(
-          markdownFileDTO,
-        );
+      // const snapshotIDs: string[] =
+      //   await this.snapshotService.createSnapshots(
+      //     markdownFileDTO,
+      //   );
 
-      await this.diffsService.createDiffs(
-        markdownFileDTO,
-        snapshotIDs,
-      );
+      // await this.diffsService.createDiffs(
+      //   markdownFileDTO,
+      //   snapshotIDs,
+      // );
     }
     return await this.markdownFilesService.create(
       markdownFileDTO,
@@ -155,8 +158,10 @@ export class FileManagerService {
         SafeLock: file.SafeLock,
         NewDiff: '',
         PreviousDiffs: [],
-        NextDiffID: file.NextDiffID,
-        NextSnapshotID: file.NextSnapshotID,
+        NextDiffIndex: file.NextDiffIndex,
+        NextSnapshotIndex: file.NextSnapshotIndex,
+        TotalNumDiffs: file.TotalNumDiffs,
+        TotalNumSnapshots: file.TotalNumSnapshots,
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
@@ -521,7 +526,7 @@ export class FileManagerService {
     const returnedDTO: MarkdownFileDTO = {
       ...savedFile,
       Content: encryptedContent,
-      NextDiffID: 0,
+      NextDiffIndex: 0,
       PreviousDiffs: [],
       NewDiff: '',
     };
@@ -572,6 +577,35 @@ export class FileManagerService {
     ).toString();
 
     return encryptionKey;
+  }
+
+  async setupVersioningResources(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    // 1. Create snapshot reference in db
+    const firstSnapshotID =
+      await this.snapshotService.createSnapshot(
+        markdownFileDTO,
+      );
+
+    // 2. Create snapshot reference in s3
+    await this.s3service.createSnapshot(
+      markdownFileDTO,
+    );
+
+    // 3. Create diff reference in db
+    await this.diffsService.createDiff(
+      markdownFileDTO,
+      firstSnapshotID,
+    );
+
+    // 4. Create diff reference in s3
+    this.s3service.createDiff(markdownFileDTO);
+
+    // 5. Increment nextDiffID
+    this.markdownFilesService.incrementNextDiffID(
+      markdownFileDTO.MarkdownID,
+    );
   }
 
   async exportFile(exportDTO: ExportDTO) {

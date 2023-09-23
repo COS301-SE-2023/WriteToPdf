@@ -173,12 +173,8 @@
           <h4 *ngIf="!sideBarTab" class="sidebarHeaderText">Assets</h4>
           <h4 *ngIf="sideBarTab" class="sidebarHeaderText">History</h4>
         </div>
-        <div *ngIf="!sideBarTab" class="uploadAssetIcon">
-          <div
-            *ngIf="!isTouchScreen; else mobileUpload"
-            class="sidebarHeaderIconWrapper"
-            title="Upload Image"
-          >
+        <div class="uploadAssetIcon">
+          <div *ngIf="!isTouchScreen; else mobileUpload" class="sidebarHeaderIconWrapper" title="Upload Image">
             <img
               class="sidebarHeaderIcon"
               src="assets/Icons/editIcons/plus.png"
@@ -299,25 +295,16 @@
               />
             </div>
 
-            <div
-              class="deleteAsset"
-              [ngClass]="{ deleteAssetHover: obj.Format === 'text' }"
-              title="View Text"
-              (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)"
-            >
+            <div class="deleteAsset" [ngClass]="{'deleteAssetHover': obj.Format === 'text'||obj.Format === 'table'}" title="View Text" (click)="retrieveAsset(obj.AssetID, obj.Format, obj.TextID)">
               <img
-                *ngIf="obj.Format === 'text'"
+                *ngIf="obj.Format === 'text'||obj.Format === 'table'"
                 class="copyAssetIcon"
                 src="assets/Icons/editIcons/view.png"
                 alt=""
               />
             </div>
 
-            <div
-              class="copyAsset"
-              title="Delete Asset"
-              (click)="deleteAsset(obj.AssetID)"
-            >
+            <div class="copyAsset" title="Delete Asset" (click)="deleteAsset(obj.AssetID)">
               <img
                 class="deleteAssetIcon"
                 src="assets/Icons/editIcons/delete.png"
@@ -338,12 +325,7 @@
               />
             </div>
 
-            <div
-              *ngIf="obj.Format === 'text'"
-              class="copyTextAsset"
-              title="Copy All Text"
-              (click)="copyAllText(obj.AssetID, obj.Format, obj.TextID)"
-            >
+            <div *ngIf="obj.Format==='text'||obj.Format === 'table'" class="copyTextAsset" title="Copy All Text" (click)="retrieveAssetTextToCopy(obj.AssetID, obj.Format, obj.TextID)">
               <img
                 class="copyTextIcon"
                 src="assets/Icons/editIcons/copy.svg"
@@ -352,7 +334,7 @@
             </div>
           </div>
           <div class="assetContent">
-            <img class="assetImage" src="{{ obj.Image }}" alt="" />
+            <img class="assetImage" src="{{ obj.Image }}" alt="Asset Image" />
             <div class="assetDescription">
               <p class="assetDescription">
                 {{ capitalizeFirstLetter(obj.Format) }}
@@ -438,24 +420,3 @@
   </div>
 </div>
 
-<p-dialog
-  class="extractedTextDialog"
-  header="Extracted Text:"
-  [(visible)]="textCopyDialog"
-  [modal]="true"
-  [style]="{ width: '50vw', minWidth: 'min(500px,100vw)' }"
-  [focusOnShow]="true"
->
-  <div *ngFor="let text of textFromAsset" class="copyTextWrapper">
-    <p class="copyText">{{ text }}</p>
-    <div class="copyTextIconWrapper">
-      <img
-        class="copyTextIcon"
-        (click)="copyTextToClipboard(text)"
-        src="assets/Icons/editIcons/copy.svg"
-        alt=""
-      />
-    </div>
-  </div>
-  <p *ngIf="textFromAsset.length === 0">No text detected :(</p>
-</p-dialog>

@@ -3,10 +3,9 @@ export class DiffDTO {
   MarkdownID: string;
   UserID: number;
   DisplayID: number;
-  S3DiffID: number;
+  S3DiffIndex: number;
   LastModified: Date;
   Content: string;
-  SnapshotPayload: string;
   SnapshotID: string;
 
   constructor() {
@@ -14,10 +13,9 @@ export class DiffDTO {
     this.MarkdownID = undefined;
     this.UserID = undefined;
     this.DisplayID = undefined;
-    this.S3DiffID = undefined;
+    this.S3DiffIndex = undefined;
     this.LastModified = undefined;
     this.Content = undefined;
-    this.SnapshotPayload = undefined;
     this.SnapshotID = undefined;
   }
 }

@@ -122,7 +122,7 @@ export class EditService {
     if(documentPassword == undefined) {
       documentPassword = '';
     }
-    
+
     localStorage.setItem('content', this.content);
     localStorage.setItem('markdownID', this.markdownID);
     localStorage.setItem('name', this.name);
@@ -148,7 +148,7 @@ export class EditService {
     localStorage.setItem('parentFolderID', this.parentFolderID);
     localStorage.setItem('safeLock', this.safeLock.toString());
     localStorage.setItem('encryptedDocumentPassword', this.encryptPassword(this.documentPassword));
-    
+
   }
 
   encryptPassword(content: string | undefined): string {
