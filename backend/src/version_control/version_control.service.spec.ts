@@ -116,6 +116,9 @@ describe('VersionControlService', () => {
         diffDTO,
         nextSnaphshotID,
       );
+
+      expect(response).toEqual(undefined);
+      expect(s3Service.saveSnapshot).toHaveBeenCalled();
     });
   });
 });
