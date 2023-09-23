@@ -18,8 +18,6 @@ import { AssetService } from '../services/asset.service';
 import { VersionControlService } from '../services/version.control.service';
 import { VersioningApiService } from '../services/versioning-api.service';
 import html2pdf from 'html2pdf.js/dist/html2pdf';
-import { Inject } from '@angular/core';
-import { MessageService } from 'primeng/api';
 import {OCRDialogService} from "../services/ocr-popup.service";
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 import { SnapshotDTO } from '../services/dto/snapshot.dto';
@@ -61,8 +59,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     private messageService: MessageService,
     private versionControlService: VersionControlService,
     private confirmationService: ConfirmationService,
-    private versioningApiService: VersioningApiService
-    private OCRDialog: OCRDialogService,
+    private versioningApiService: VersioningApiService,
+    private OCRDialog: OCRDialogService
   ) { }
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
@@ -814,7 +812,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       if(data !== null){
         console.log("Process diff data.", data);
         snapshot.Content =data.SnapshotHistory[0].Content;
-        
+
       }
       else {
         this.messageService.add({
