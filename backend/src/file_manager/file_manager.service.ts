@@ -59,13 +59,28 @@ export class FileManagerService {
     if (markdownFileDTO.Size === undefined)
       markdownFileDTO.Size = 0;
 
-    if (markdownFileDTO.NextDiffIndex === undefined)
+    if (
+      markdownFileDTO.NextDiffIndex === undefined
+    )
       markdownFileDTO.NextDiffIndex = 0;
 
     if (
-      markdownFileDTO.NextSnapshotIndex === undefined
+      markdownFileDTO.NextSnapshotIndex ===
+      undefined
     )
       markdownFileDTO.NextSnapshotIndex = 0;
+
+    // Set to one to reflect that this function creates one diff and one snapshot
+    if (
+      markdownFileDTO.TotalNumDiffs === undefined
+    )
+      markdownFileDTO.TotalNumDiffs = 1;
+
+    if (
+      markdownFileDTO.TotalNumSnapshots ===
+      undefined
+    )
+      markdownFileDTO.TotalNumSnapshots = 1;
 
     if (isTest) {
       await this.s3ServiceMock.createFile(
@@ -90,23 +105,6 @@ export class FileManagerService {
       await this.setupVersioningResources(
         markdownFileDTO,
       );
-      // await this.s3service.createDiffObjectsForFile(
-      //   markdownFileDTO,
-      // );
-
-      // await this.s3service.createSnapshotObjectsForFile(
-      //   markdownFileDTO,
-      // );
-
-      // const snapshotIDs: string[] =
-      //   await this.snapshotService.createSnapshots(
-      //     markdownFileDTO,
-      //   );
-
-      // await this.diffsService.createDiffs(
-      //   markdownFileDTO,
-      //   snapshotIDs,
-      // );
     }
     return await this.markdownFilesService.create(
       markdownFileDTO,
@@ -601,11 +599,6 @@ export class FileManagerService {
 
     // 4. Create diff reference in s3
     this.s3service.createDiff(markdownFileDTO);
-
-    // 5. Increment nextDiffID
-    this.markdownFilesService.incrementNextDiffID(
-      markdownFileDTO.MarkdownID,
-    );
   }
 
   async exportFile(exportDTO: ExportDTO) {
