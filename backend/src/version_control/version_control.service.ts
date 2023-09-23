@@ -31,20 +31,29 @@ export class VersionControlService {
         diffDTO.MarkdownID,
       );
 
-    // 2. Check if next diff exists
-    const nextDiff =
-      await this.diffService.getDiff(
+    // 2. Get next diff
+    let nextDiff = await this.diffService.getDiff(
+      diffDTO,
+      saveDiffInfoDTO.nextDiffIndex,
+    );
+
+    // 3. Check if next diff exists
+    if (nextDiff === null) {
+      await this.createDiff(
         diffDTO,
         saveDiffInfoDTO.nextDiffIndex,
       );
 
-    // 3. Check if next diff exists
-    if (nextDiff === null) {
-      this.createDiff(
+      nextDiff = await this.diffService.getDiff(
         diffDTO,
         saveDiffInfoDTO.nextDiffIndex,
       );
     }
+
+    console.log(
+      'saveDiffInfo.nextSnapshotID: ',
+      saveDiffInfoDTO,
+    );
 
     this.s3Service.saveDiff(
       diffDTO,
@@ -58,32 +67,19 @@ export class VersionControlService {
         saveDiffInfoDTO.nextSnapshotIndex,
       );
 
-    if (
-      saveDiffInfoDTO.nextDiffIndex !== 0 ||
-      nextDiff.HasBeenUsed
-    ) {
-      if (
-        saveDiffInfoDTO.nextDiffIndex %
-          parseInt(
-            process.env.DIFFS_PER_SNAPSHOT,
-          ) ===
-        0
-      ) {
-        // 4a. Create next snapshot if it doesn't exist
-        if (nextSnapshot === undefined) {
-          nextSnapshot =
-            await this.createSnapshot(
-              diffDTO,
-              saveDiffInfoDTO.nextSnapshotIndex,
-            );
-        }
+    if (nextSnapshot === null) {
+      // 4a. Create next snapshot if it doesn't exist
+      console.log('creating snapshot');
+      nextSnapshot = await this.createSnapshot(
+        diffDTO,
+        saveDiffInfoDTO.nextSnapshotIndex,
+      );
 
-        // 4b. Update snapshot in db
-        this.saveSnapshot(
-          diffDTO,
-          saveDiffInfoDTO.nextSnapshotIndex,
-        );
-      }
+      // 4b. Update snapshot in db
+      this.saveSnapshot(
+        diffDTO,
+        saveDiffInfoDTO.nextSnapshotIndex,
+      );
     }
 
     console.log(
@@ -92,16 +88,31 @@ export class VersionControlService {
     );
 
     // 5. Update diff's SnapshotID in db
-    await this.diffService.updateDiff(
-      diffDTO,
-      saveDiffInfoDTO.nextDiffIndex,
-      nextSnapshot.SnapshotID,
-    );
+    const updatedDiff =
+      await this.diffService.updateDiff(
+        diffDTO,
+        saveDiffInfoDTO.nextDiffIndex,
+        nextSnapshot.SnapshotID,
+      );
 
-    // 6. Update markdown file in db
+    // 6. Update markdownFile.NextDiffID in db
     await this.markdownFileService.incrementNextDiffID(
       diffDTO.MarkdownID,
     );
+
+    // 7. Update markdownFile.NextSnapshotID in db
+    if (
+      updatedDiff.S3DiffIndex !== 0 &&
+      (updatedDiff.S3DiffIndex + 1) %
+        parseInt(
+          process.env.DIFFS_PER_SNAPSHOT,
+        ) ===
+        0
+    ) {
+      await this.markdownFileService.incrementNextSnapshotID(
+        diffDTO.MarkdownID,
+      );
+    }
   }
 
   ///===-----------------------------------------------------
@@ -345,7 +356,7 @@ export class VersionControlService {
     );
 
     // Create diff in db
-    await this.diffService.createDiffWithoutSnapshotID(
+    return await this.diffService.createDiffWithoutSnapshotID(
       markdownFileDTO,
     );
   }

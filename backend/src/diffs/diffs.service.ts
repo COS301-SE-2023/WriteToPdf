@@ -39,7 +39,6 @@ export class DiffsService {
     nextDiffIndex: number,
     nextSnapshotID: string,
   ) {
-
     const diff = await this.getDiff(
       diffDTO,
       nextDiffIndex,
@@ -48,7 +47,7 @@ export class DiffsService {
     diff.LastModified = new Date();
     diff.HasBeenUsed = true;
     diff.SnapshotID = nextSnapshotID;
-    await this.diffRepository.save(diff);
+    return await this.diffRepository.save(diff);
   }
 
   ///===-----------------------------------------------------
@@ -82,7 +81,7 @@ export class DiffsService {
         new Date().getTime().toString(),
     ).toString();
 
-    await this.diffRepository.insert({
+    return await this.diffRepository.insert({
       DiffID: diffID,
       MarkdownID: markdownFileDTO.MarkdownID,
       UserID: markdownFileDTO.UserID,
