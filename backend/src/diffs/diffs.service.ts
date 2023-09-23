@@ -36,23 +36,18 @@ export class DiffsService {
 
   async updateDiff(
     diffDTO: DiffDTO,
-    nextDiffID: number,
+    nextDiffIndex: number,
+    nextSnapshotID: string,
   ) {
-    // const diff =
-    //   await this.diffRepository.findOne({
-    //     where: {
-    //       MarkdownID: diffDTO.MarkdownID,
-    //       S3DiffID: nextDiffID,
-    //     },
-    //   });
 
     const diff = await this.getDiff(
       diffDTO,
-      nextDiffID,
+      nextDiffIndex,
     );
 
     diff.LastModified = new Date();
     diff.HasBeenUsed = true;
+    diff.SnapshotID = nextSnapshotID;
     await this.diffRepository.save(diff);
   }
 
@@ -79,44 +74,22 @@ export class DiffsService {
 
   ///===-----------------------------------------------------
 
-  async createDiffs(
+  async createDiffWithoutSnapshotID(
     markdownFileDTO: MarkdownFileDTO,
-    snapshotIDs: string[],
   ) {
-    const diffRecords = [];
-    let snapshotIndex = 0;
-    for (
-      let i = 0;
-      i < parseInt(process.env.MAX_DIFFS);
-      i++
-    ) {
-      const diffID = CryptoJS.SHA256(
-        markdownFileDTO.UserID.toString() +
-          new Date().getTime().toString() +
-          i.toString(),
-      ).toString();
+    const diffID = CryptoJS.SHA256(
+      markdownFileDTO.UserID.toString() +
+        new Date().getTime().toString(),
+    ).toString();
 
-      if (
-        i %
-          parseInt(
-            process.env.DIFFS_PER_SNAPSHOT,
-          ) ===
-          0 &&
-        i !== 0
-      ) {
-        snapshotIndex++;
-      }
-
-      diffRecords.push({
-        DiffID: diffID,
-        MarkdownID: markdownFileDTO.MarkdownID,
-        UserID: markdownFileDTO.UserID,
-        S3DiffID: i,
-        HasBeenUsed: false,
-        SnapshotID: snapshotIDs[snapshotIndex],
-      });
-    }
-    await this.diffRepository.insert(diffRecords);
+    await this.diffRepository.insert({
+      DiffID: diffID,
+      MarkdownID: markdownFileDTO.MarkdownID,
+      UserID: markdownFileDTO.UserID,
+      S3DiffIndex: markdownFileDTO.NextDiffIndex,
+      HasBeenUsed: false,
+      SnapshotID: 'temp',
+    });
   }
 
   ///===-----------------------------------------------------
