@@ -4,7 +4,7 @@ import {
   ElementRef,
   HostListener,
   OnInit,
-  Inject,
+  ViewChild, Inject,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem, MessageService, ConfirmationService } from 'primeng/api';
@@ -22,6 +22,7 @@ import {OCRDialogService} from "../services/ocr-popup.service";
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 import { SnapshotDTO } from '../services/dto/snapshot.dto';
 import { DiffDTO } from '../services/dto/diff.dto';
+import {parse} from 'path';
 
 @Component({
   selector: 'app-edit',
@@ -42,12 +43,12 @@ export class EditComponent implements AfterViewInit, OnInit {
   noAssetsAvailable: boolean = false;
   isTouchScreen: boolean = false;
   sideBarTab: boolean = false;
-  //TODO - use to load spinner whilst assets are being retrieved.
-  retrievingAssets: boolean = false;
+
 
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
+
   constructor(
     private elementRef: ElementRef,
     @Inject(Router) private router: Router,
@@ -87,7 +88,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
   }
 
-  showOCRPopup(textractResponse: any): void{
+  showOCRPopup(textractResponse: any): void {
     let ocrDataPassedOver = [];
     ocrDataPassedOver.push(textractResponse);
     ocrDataPassedOver.push(this.editor);
@@ -105,9 +106,9 @@ export class EditComponent implements AfterViewInit, OnInit {
       dismissableMask: true,
     });
     ref.onClose.subscribe(
-        ()=>{
-          this.refreshSidebar();
-        }
+      () => {
+        this.refreshSidebar();
+      }
     )
   }
 
@@ -135,81 +136,20 @@ export class EditComponent implements AfterViewInit, OnInit {
     const dp = localStorage.getItem('encryptedDocumentPassword');
     this.versionControlService.setLatestVersionContent(c ? (c as string) : '');
 
-    if (
-      c != null &&
-      m != null &&
-      n != null &&
-      p != null &&
-      pf != null &&
-      sl != null &&
-      dp != null
-    )
-      this.editService.setAll(
-        c,
-        m,
-        n,
-        p,
-        pf,
-        sl === 'true',
-        this.editService.decryptPassword(dp)
-      );
+    if (c != null && m != null && n != null && p != null && pf != null && sl != null && dp != null)
+      this.editService.setAll(c, m, n, p, pf, sl === 'true', this.editService.decryptPassword(dp));
     this.fileName = this.editService.getName();
 
-    this.history.push({
-      name: 'Latest',
-      date: 'now',
-      html: this.editService.getContent(),
-      id: 'LATEST',
-      isCurrent: true,
-    });
-    this.history.push({
-      name: 'Version 7',
-      date: '01-01-1977',
-      html: '',
-      id: '8',
-    });
-    this.history.push({
-      name: 'Version 6',
-      date: '01-01-1976',
-      html: '<s><p><span style="background-color:hsl(0, 75%, 60%);">Text added from V0 to V1.</span style="background-color:hsl(0, 75%, 60%);"></p> <p><span style="background-color:hsl(0, 75%, 60%);">More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(0, 75%, 60%);">Addition from V3 to V4</span></p></s>',
-      id: '7',
-    });
-    this.history.push({
-      name: 'Version 5',
-      date: '01-01-1975',
-      html: '<p><span style="background-color:hsl(0, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span >Addition from V3 to V4</span></p>',
-      id: '6',
-    });
-    this.history.push({
-      name: 'Version 4',
-      date: '01-01-1974',
-      html: '<p><span >Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(120, 75%, 60%);">Addition from V3 to V4</span></p>',
-      id: '5',
-    });
-    this.history.push({
-      name: 'Version 3',
-      date: '01-01-1973',
-      html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p>',
-      id: '4',
-    });
-    this.history.push({
-      name: 'Version 2',
-      date: '01-01-1972',
-      html: '<p><span>Text added from V0 to V1.</span></p> <p><span style="background-color:hsl(120, 75%, 60%);">More Text added from V1 to V2.</span></p>',
-      id: '3',
-    });
-    this.history.push({
-      name: 'Version 1',
-      date: '01-01-1971',
-      html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text added from V0 to V1.</span></p>',
-      id: '2',
-    });
-    this.history.push({
-      name: 'Version 0',
-      date: '01-01-1970',
-      html: '',
-      id: '1',
-    });
+    this.history.push({ name: 'Latest', date: 'now', html: this.editService.getContent(), id: 'LATEST', isCurrent: true });
+    this.history.push({name: 'Version 7', date: '01-01-1977', html: '',  id: '8'});
+    this.history.push({name: 'Version 6', date: '01-01-1976', html: '<s><p><span style="background-color:hsl(0, 75%, 60%);">Text added from V0 to V1.</span style="background-color:hsl(0, 75%, 60%);"></p> <p><span style="background-color:hsl(0, 75%, 60%);">More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(0, 75%, 60%);">Addition from V3 to V4</span></p></s>',  id: '7'});
+    this.history.push({ name: 'Version 5', date: '01-01-1975', html: '<p><span style="background-color:hsl(0, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span >Addition from V3 to V4</span></p>', id: '6' });
+    this.history.push({ name: 'Version 4', date: '01-01-1974', html: '<p><span >Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(120, 75%, 60%);">Addition from V3 to V4</span></p>', id: '5' });
+    this.history.push({ name: 'Version 3', date: '01-01-1973', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p>', id: '4' });
+    this.history.push({ name: 'Version 2', date: '01-01-1972', html: '<p><span>Text added from V0 to V1.</span></p> <p><span style="background-color:hsl(120, 75%, 60%);">More Text added from V1 to V2.</span></p>', id: '3' });
+    this.history.push({ name: 'Version 1', date: '01-01-1971', html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text added from V0 to V1.</span></p>', id: '2' });
+    this.history.push({ name: 'Version 0', date: '01-01-1970', html: '', id: '1' });
+
   }
 
   ngAfterViewInit() {
@@ -426,6 +366,77 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.exportDialogVisible = true;
   }
 
+  constructHTMLTable(table: any): string {
+    let returnString = '';
+    for(let eachRow of table["Table"]) {
+      returnString += "<tr>";
+      for(let eachCol of eachRow) {
+        returnString += "<td>" + eachCol + "</td>";
+      }
+      returnString += "</tr>";
+    }
+    return returnString;
+  }
+
+  async retrieveAssetTextToCopy(assetId: string, format: string, textId: string) {
+    let currAssetIndex: number = 0;
+    for (let i = 0; i < this.assets.length; i++) {
+      if (this.assets[i].AssetID === assetId) {
+        currAssetIndex = i;
+        break;
+      }
+      this.assets[currAssetIndex].NotRetrieving = true;
+      // const asset = true;
+      if (format === 'text' || format === 'table') {
+        let asset = this.assets[currAssetIndex];
+        if (!asset.Blocks) {
+          var assetResponse = await this.assetService.retrieveAsset(assetId, format, textId);
+          this.assets[currAssetIndex].Blocks = asset.Blocks;
+        }
+        this.assets[currAssetIndex].NotRetrieving = false;
+        let assetObjectJSON = JSON.parse(assetResponse.Content);
+        let textElements: any = [];
+        let tableElements = [];
+        let copyText = '';
+        for (let i = 0; i < assetObjectJSON.elements.length; i++) {
+          if (assetObjectJSON.elements[i].hasOwnProperty("Text Element")) {
+            textElements.push(assetObjectJSON.elements[i]["Text Element"]);
+          }
+        }
+        for (let i = 0; i < textElements.length; i++) {
+          copyText += "<p>" + textElements[i]["Lines"] + "\n</p>";
+        }
+        if (assetObjectJSON["Table Indices"].length != 0){
+          let eachIndex;
+          for (eachIndex of assetObjectJSON["Table Indices"]) {
+            tableElements.push(assetObjectJSON.elements[eachIndex]["Table Element"]);
+          }
+          for (let i = 0; i < tableElements.length; i++) {
+            if (tableElements[i].hasOwnProperty("Table")) {
+              let htmlTable = this.constructHTMLTable(tableElements[i]);
+              copyText +=  htmlTable + "<p>\n</p>";
+            }
+          }
+        }
+        this.copyHtmlToClipboard(copyText);
+      } else if (format === 'image') {
+        let asset = this.assets[currAssetIndex];
+        if (!asset.CopyContent) {
+          asset = await this.assetService.retrieveAsset(assetId, format, textId);
+          this.assets[currAssetIndex].CopyContent = asset.Content;
+          asset.CopyContent = asset.Content;
+        }
+        this.copyHtmlToClipboard(`<img src="${asset.CopyContent}" alt="Image">`);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Image copied to clipboard',
+        });
+        this.assets[currAssetIndex].NotRetrieving = false;
+      }
+    }
+  }
+
   async retrieveAsset(assetId: string, format: string, textId: string) {
     let currAssetIndex: number = 0;
     for (let i = 0; i < this.assets.length; i++) {
@@ -437,7 +448,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     this.assets[currAssetIndex].NotRetrieving = true;
     // const asset = true;
-    if (format === 'text' || format === 'table'){
+    if (format === 'text' || format === 'table') {
       let asset = this.assets[currAssetIndex];
       if (!asset.Blocks) {
         var assetResponse = await this.assetService.retrieveAsset(assetId, format, textId);
@@ -445,8 +456,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       }
       this.assets[currAssetIndex].NotRetrieving = false;
       this.showOCRPopup(assetResponse);
-    }
-    else if (format === 'image') {
+    } else if (format === 'image') {
       let asset = this.assets[currAssetIndex];
       if (!asset.CopyContent) {
         asset = await this.assetService.retrieveAsset(assetId, format, textId);
@@ -463,61 +473,17 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
   }
 
-  async copyAllText(assetId: string, format: string, textId: string) {
-    let currAssetIndex: number = 0;
-    for (let i = 0; i < this.assets.length; i++) {
-      if (this.assets[i].AssetID === assetId) {
-        currAssetIndex = i;
-        break;
-      }
-    }
-    this.assets[currAssetIndex].NotRetrieving = true;
-    if (this.assets[currAssetIndex].Blocks) {
-      this.parseAssetText(this.assets[currAssetIndex]);
-
-      let text = '';
-      for (let i = 0; i < this.textFromAsset.length; i++) {
-        text += this.textFromAsset[i] + '\n';
-      }
-      this.copyTextToClipboard(text);
-    } else {
-      const asset = await this.assetService.retrieveAsset(
-        assetId,
-        format,
-        textId
-      );
-
-      this.assets[currAssetIndex].Blocks = asset.Blocks;
-      this.parseAssetText(asset);
-
-      let text = '';
-      for (let i = 0; i < this.textFromAsset.length; i++) {
-        text += this.textFromAsset[i] + '\n';
-      }
-      this.copyTextToClipboard(text);
-    }
-    this.assets[currAssetIndex].NotRetrieving = false;
-    return;
-  }
-
-  parseAssetText(asset: any) {
-    this.textFromAsset = [];
-    for (let i = 0; i < asset.Blocks.length; i++) {
-      if (asset.Blocks[i].BlockType === 'LINE')
-        this.textFromAsset.push(asset.Blocks[i].Text);
-    }
-  }
-
   copyHtmlToClipboard(html: string) {
     // Use the Clipboard API to copy the data to the clipboard
     navigator.clipboard
       .write([
         new ClipboardItem({
-          'text/html': new Blob([html], { type: 'text/html' }),
+          'text/html': new Blob([html], {type: 'text/html'}),
         }),
       ])
       .then(
-        () => {},
+        () => {
+        },
         (error) => {
           console.error(
             'Could not copy HTML data (image) to clipboard: ',
@@ -532,7 +498,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     navigator.clipboard
       .write([
         new ClipboardItem({
-          'text/plain': new Blob([text], { type: 'text/plain' }),
+          'text/plain': new Blob([text], {type: 'text/plain'}),
         }),
       ])
       .then(

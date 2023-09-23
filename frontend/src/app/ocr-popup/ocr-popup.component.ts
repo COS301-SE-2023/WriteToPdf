@@ -50,17 +50,16 @@ export class OcrPopupComponent implements OnInit {
 
   ngOnInit() {
     this.assetObjectJSON = JSON.parse(this.assetObject.Content);
-    console.log("Parsed JSON:", this.assetObjectJSON);
     this.assetImage = "data:image/png;base64," + this.assetObject.Image;
     for (let i = 0; i < this.assetObjectJSON.elements.length; i++) {
       if (this.assetObjectJSON.elements[i].hasOwnProperty("Text Element")) {
-        this.textElements.push(this.assetObjectJSON.elements[i]["Text Element"]);
+        this.textElements.push(this.assetObjectJSON.elements[i]["Text Element"] );
       }
     }
 
     this.paragraphText = '';
     for (let i = 0; i < this.textElements.length; i++) {
-      this.paragraphText += this.textElements[i]["Lines"];
+      this.paragraphText += this.textElements[i]["Lines"]+ "\n";
     }
     if (this.assetObjectJSON["Table Indices"].length != 0) {
       let eachIndex;
