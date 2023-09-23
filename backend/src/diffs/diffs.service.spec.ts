@@ -8,12 +8,8 @@ import { DiffDTO } from './dto/diffs.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {
-  isWithinInterval,
-  subMilliseconds,
-  addMilliseconds,
-} from 'date-fns';
 import * as CryptoJS from 'crypto-js';
+import 'dotenv/config';
 
 jest.mock('crypto-js', () => {
   const mockedHash = jest.fn(
@@ -144,6 +140,31 @@ describe('DiffService', () => {
     });
   });
 
+  describe('createDiffs', () => {
+    it('should insert an array of diffs', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '0';
+      markdownFileDTO.UserID = 0;
+
+      const snapshotIDs = ['0', '1'];
+
+      jest
+        .spyOn(Repository.prototype, 'insert')
+        .mockResolvedValueOnce(undefined);
+
+      await service.createDiffs(
+        markdownFileDTO,
+        snapshotIDs,
+      );
+
+      expect(CryptoJS.SHA256).toBeCalled();
+      expect(
+        Repository.prototype.insert,
+      ).toBeCalledWith(expect.any(Array));
+    });
+  });
+
   describe('deleteDiffs', () => {
     it('should delete diffs', async () => {
       const markdownDTO = new MarkdownFileDTO();
@@ -228,6 +249,48 @@ describe('DiffService', () => {
         (s3Index - nextDiffID + arr_len) %
           arr_len,
       );
+    });
+  });
+
+  describe('getLogicalDiffOrder', () => {
+    it('should return a logical diff order', async () => {
+      const diffDTO1 = new DiffDTO();
+      diffDTO1.DiffID = '0';
+      diffDTO1.S3DiffIndex = 0;
+
+      const diffDTO2 = new DiffDTO();
+      diffDTO2.DiffID = '1';
+      diffDTO2.S3DiffIndex = 1;
+
+      const diffDTOs = [];
+      diffDTOs.push(diffDTO1);
+      diffDTOs.push(diffDTO2);
+
+      const nextDiffID = 2;
+
+      jest
+        .spyOn(service, 'getLogicalIndex')
+        .mockReturnValueOnce(0)
+        .mockReturnValueOnce(1);
+
+      const originalMaxDiffs =
+        process.env.MAX_DIFFS;
+      process.env.MAX_DIFFS = '2';
+
+      try {
+        const result =
+          await service.getLogicalDiffOrder(
+            diffDTOs,
+            nextDiffID,
+          );
+
+        expect(result).toEqual(expect.any(Array));
+        expect(result.length).toBe(
+          diffDTOs.length,
+        );
+      } finally {
+        process.env.MAX_DIFFS = originalMaxDiffs;
+      }
     });
   });
 });
