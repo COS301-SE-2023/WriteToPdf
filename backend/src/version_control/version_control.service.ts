@@ -24,101 +24,87 @@ export class VersionControlService {
 
   ///===-----------------------------------------------------
 
-  // async saveDiff(diffDTO: DiffDTO) {
-  //   // 1. Get information necessary for saving a diff
-  //   const versioningInfoDTO =
-  //     await this.markdownFileService.getSaveDiffInfo(
-  //       diffDTO.MarkdownID,
-  //     );
+  async saveDiff(diffDTO: DiffDTO) {
+    // 1. Get necessary info for saving a diff
+    const saveDiffInfoDTO =
+      await this.markdownFileService.getSaveDiffInfo(
+        diffDTO.MarkdownID,
+      );
 
-  //   // 2. If this is the first pass through the array, create diff
-  //   //    else retrieve diff from S3
-  //   let nextDiff;
-  //   if (
-  //     versioningInfoDTO.totalNumDiffs <
-  //     parseInt(process.env.MAX_DIFFS)
-  //   ) {
-  //     nextDiff =
-  //       await this.diffService.createNewDiff(
-  //         diffDTO,
+    // 2. Check if next diff exists
+    const nextDiff =
+      await this.diffService.getDiff(
+        diffDTO,
+        saveDiffInfoDTO.nextDiffIndex,
+      );
 
-  //       );
-  //   } else {
-  //     nextDiff = await this.diffService.getDiff(
-  //       diffDTO,
-  //       versioningInfoDTO.nextDiffID,
-  //     );
-  //   }
+    console.log('next diff === undefined: ', nextDiff === undefined);
 
-  //   await this.s3Service.saveDiff(
-  //     diffDTO,
-  //     versioningInfoDTO.nextDiffID,
-  //   );
+    // 3. Check if next diff exists
+    if (nextDiff === undefined) {
+      this.createDiff(
+        diffDTO,
+        saveDiffInfoDTO.nextDiffIndex,
+      );
+    }
 
-  //   if (
-  //     nextDiffID !== 0 ||
-  //     nextDiff.HasBeenUsed
-  //   ) {
-  //     if (
-  //       (nextDiffID + 1) %
-  //         parseInt(
-  //           process.env.DIFFS_PER_SNAPSHOT,
-  //         ) ===
-  //       0
-  //     ) {
-  //       const nextSnapshotID =
-  //         await this.markdownFileService.getNextSnapshotID(
-  //           diffDTO.MarkdownID,
-  //         );
+    this.s3Service.saveDiff(
+      diffDTO,
+      saveDiffInfoDTO.nextDiffIndex,
+    );
 
-  //       // Create snapshot if not created already
-  //       if (
-  //         !nextDiff.HasBeenUsed &&
-  //         nextSnapshotID !== 0
-  //       ) {
-  //         const markdownFileDTO: MarkdownFileDTO =
-  //           new MarkdownFileDTO();
+    // 4. Check if new snapshot needs to be created
+    let nextSnapshot =
+      await this.snapshotService.getSnapshot(
+        diffDTO.MarkdownID,
+        saveDiffInfoDTO.nextSnapshotIndex,
+      );
 
-  //         markdownFileDTO.MarkdownID =
-  //           diffDTO.MarkdownID;
-  //         markdownFileDTO.UserID = diffDTO.UserID;
-  //         markdownFileDTO.NextSnapshotIndex =
-  //           nextSnapshotIndex;
+    if (
+      saveDiffInfoDTO.nextDiffIndex !== 0 ||
+      nextDiff.HasBeenUsed
+    ) {
+      if (
+        saveDiffInfoDTO.nextDiffIndex %
+          parseInt(
+            process.env.DIFFS_PER_SNAPSHOT,
+          ) ===
+        0
+      ) {
+        // 4a. Create next snapshot if it doesn't exist
+        if (nextSnapshot === undefined) {
+          nextSnapshot =
+            await this.createSnapshot(
+              diffDTO,
+              saveDiffInfoDTO.nextSnapshotIndex,
+            );
+        }
 
-  //         this.snapshotService.createSnapshot(
-  //           markdownFileDTO,
-  //         );
-  //       }
+        // 4b. Update snapshot in db
+        this.saveSnapshot(
+          diffDTO,
+          saveDiffInfoDTO.nextSnapshotIndex,
+        );
+      }
+    }
 
-  //       await this.saveSnapshot(
-  //         diffDTO,
-  //         nextSnapshotID,
-  //       );
+    console.log(
+      'updating diff with s3 index of : ',
+      saveDiffInfoDTO.nextDiffIndex,
+    );
 
-  //       // Reset next snapshot and associated diffs
+    // 5. Update diff's SnapshotID in db
+    await this.diffService.updateDiff(
+      diffDTO,
+      saveDiffInfoDTO.nextDiffIndex,
+      nextSnapshot.SnapshotID,
+    );
 
-  //       const nextSnapshot =
-  //         await this.snapshotService.resetSnapshot(
-  //           diffDTO.MarkdownID,
-  //           nextSnapshotID,
-  //         );
-
-  //       await this.diffService.resetDiffs(
-  //         diffDTO.MarkdownID,
-  //         nextSnapshot.SnapshotID,
-  //       );
-  //     }
-  //   }
-
-  //   // await this.diffService.updateDiff(
-  //   //   diffDTO,
-  //   //   nextDiffID,
-  //   // );
-
-  //   await this.markdownFileService.incrementNextDiffID(
-  //     diffDTO.MarkdownID,
-  //   );
-  // }
+    // 6. Update markdown file in db
+    await this.markdownFileService.incrementNextDiffID(
+      diffDTO.MarkdownID,
+    );
+  }
 
   ///===-----------------------------------------------------
 
@@ -343,4 +329,51 @@ export class VersionControlService {
   }
 
   ///===----------------------------------------------------
+
+  async createDiff(
+    diffDTO: DiffDTO,
+    nextDiffIndex: number,
+  ) {
+    const markdownFileDTO = new MarkdownFileDTO();
+    markdownFileDTO.MarkdownID =
+      diffDTO.MarkdownID;
+    markdownFileDTO.UserID = diffDTO.UserID;
+    markdownFileDTO.NextDiffIndex = nextDiffIndex;
+
+    // Create diff in s3 and save content
+    this.s3Service.saveDiff(
+      diffDTO,
+      nextDiffIndex,
+    );
+
+    // Create diff in db
+    await this.diffService.createDiffWithoutSnapshotID(
+      markdownFileDTO,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async createSnapshot(
+    diffDTO: DiffDTO,
+    nextSnapshotIndex: number,
+  ) {
+    const markdownFileDTO = new MarkdownFileDTO();
+    markdownFileDTO.MarkdownID =
+      diffDTO.MarkdownID;
+    markdownFileDTO.UserID = diffDTO.UserID;
+    markdownFileDTO.NextSnapshotIndex =
+      nextSnapshotIndex;
+
+    // Create snapshot in s3 and save content
+    this.s3Service.saveSnapshot(
+      diffDTO,
+      nextSnapshotIndex,
+    );
+
+    // Create snapshot in db
+    return await this.snapshotService.createSnapshot(
+      markdownFileDTO,
+    );
+  }
 }
