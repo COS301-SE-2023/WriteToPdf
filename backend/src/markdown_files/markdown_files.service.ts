@@ -262,7 +262,9 @@ export class MarkdownFilesService {
         },
       );
     return {
-      nextDiffID: markdownFile.NextDiffIndex,
+      nextDiffIndex: markdownFile.NextDiffIndex,
+      nextSnapshotIndex:
+        markdownFile.NextSnapshotIndex,
       totalNumDiffs: markdownFile.TotalNumDiffs,
       totalNumSnapshots:
         markdownFile.TotalNumSnapshots,
