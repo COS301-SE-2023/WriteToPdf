@@ -602,6 +602,40 @@ export class S3Service {
   }
 
   ///===----------------------------------------------------
+  async backupSnapshot(
+    diffDTO: DiffDTO,
+    nextSnapshotID: number,
+  ) {
+    const markdownFileDTO: MarkdownFileDTO =
+      new MarkdownFileDTO();
+    markdownFileDTO.UserID = diffDTO.UserID;
+    markdownFileDTO.MarkdownID =
+      diffDTO.MarkdownID;
+    const fileDTO = await this.getSnapshot(
+      nextSnapshotID,
+      markdownFileDTO.UserID,
+      markdownFileDTO.MarkdownID,
+    );
+
+    const filePath = `${diffDTO.UserID}/${diffDTO.MarkdownID}`;
+
+    try {
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/snapshot/-1`,
+          Body: fileDTO.Content,
+        }),
+      );
+    } catch (err) {
+      console.log('Write File Error: ' + err);
+      return undefined;
+    }
+
+    return diffDTO;
+  }
+
+  ///===----------------------------------------------------
 
   async retrieveAllSnapshots(
     logicalOrder: number[],
