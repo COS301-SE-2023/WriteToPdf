@@ -349,6 +349,10 @@ export class VersionControlService {
   async getPreviousSnapshot(
     versionSetDTO: VersionSetDTO,
   ) {
+    console.log(
+      'version_control.getPreviousSnapshot.versionSetDTO: ',
+      versionSetDTO,
+    );
     if (versionSetDTO.IsHeadSnapshot) {
       return await this.s3Service.getSnapshot(
         -1,
