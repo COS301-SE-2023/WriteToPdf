@@ -436,4 +436,16 @@ export class VersionControlService {
       snapshotID,
     );
   }
+
+  ///===----------------------------------------------------
+
+  async getSnapshot(
+    snapshotDTO: SnapshotDTO,
+  ) {
+    return await this.s3Service.getSnapshot(
+      snapshotDTO.S3SnapshotIndex,
+      snapshotDTO.UserID,
+      snapshotDTO.MarkdownID,
+    );
+  }
 }

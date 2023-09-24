@@ -59,6 +59,18 @@ export class VersionControlController {
 
   ///===----------------------------------------------------
 
+  @Post('get_snapshot')
+  @HttpCode(HttpStatus.OK)
+  async getSnapshot(
+    @Body() snapshotDTO: SnapshotDTO,
+  ) {
+    return this.versionControlService.getSnapshot(
+      snapshotDTO,
+    );
+  }
+
+  ///===----------------------------------------------------
+
   @Post('load_history')
   @HttpCode(HttpStatus.OK)
   async loadHistory(
@@ -66,13 +78,6 @@ export class VersionControlController {
   ) {
     const versionHistoryDTO =
       new VersionHistoryDTO();
-
-    // Populate snapshot history
-
-    // const nextSnapshotID =
-    //   await this.markdownFileService.getNextSnapshotID(
-    //     markdownFileDTO.MarkdownID,
-    //   );
 
     const snapshots =
       await this.snapshotService.getAllSnapshots(
@@ -86,13 +91,6 @@ export class VersionControlController {
 
     versionHistoryDTO.SnapshotHistory =
       snapshotDTOs;
-
-    // Populate diff history
-
-    // const nextDiffID =
-    //   await this.markdownFileService.getNextDiffID(
-    //     markdownFileDTO.MarkdownID,
-    //   );
 
     const diffs =
       await this.diffService.getAllDiffs(
