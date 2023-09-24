@@ -345,4 +345,637 @@ describe('TextManagerService', () => {
       ]);
     });
   });
+
+  describe('findFreeLines', () => {
+    it('should find free lines', () => {
+      const allBlocks = [
+        {
+          BlockType: 'LINE',
+          Id: '1',
+          Text: 'mock text',
+        },
+        {
+          BlockType: 'LINE',
+          Id: '2',
+          Text: 'mock text',
+        },
+        {
+          BlockType: 'LINE',
+          Id: '3',
+          Text: 'mock text',
+        },
+        {
+          BlockType: 'TABLE',
+          Id: '4',
+          Text: 'mock text',
+        },
+      ];
+      const rawLines = [
+        allBlocks[0],
+        allBlocks[1],
+        allBlocks[2],
+      ];
+
+      const tableRoots = [allBlocks[3]];
+
+      jest
+        .spyOn(service, 'isPartOfTable')
+        .mockReturnValueOnce(false)
+        .mockReturnValueOnce(false)
+        .mockReturnValueOnce(true);
+
+      const result = service.findFreeLines(
+        rawLines,
+        tableRoots,
+        allBlocks,
+      );
+
+      expect(result).toStrictEqual([
+        allBlocks[0],
+        allBlocks[1],
+      ]);
+    });
+  });
+
+  describe('groupLines', () => {
+    it('should group lines', () => {
+      const freeLines = [
+        {
+          BlockType: 'LINE',
+          Id: '1',
+          Text: 'mock text',
+          Geometry: {
+            BoundingBox: {
+              Top: 0,
+            },
+          },
+        },
+        {
+          BlockType: 'LINE',
+          Id: '2',
+          Text: 'mock text',
+          Geometry: {
+            BoundingBox: {
+              Top: 0,
+            },
+          },
+        },
+        {
+          BlockType: 'LINE',
+          Id: '3',
+          Text: 'mock text',
+          Geometry: {
+            BoundingBox: {
+              Top: 1,
+            },
+          },
+        },
+      ];
+
+      const result =
+        service.groupLines(freeLines);
+
+      expect(result).toStrictEqual([
+        [freeLines[0], freeLines[1]],
+        [freeLines[2]],
+      ]);
+    });
+  });
+
+  describe('concatenateTextLines', () => {
+    it('should concatenate text lines', () => {
+      const lines = [
+        [
+          {
+            Text: 'mock text',
+            Geometry: {
+              BoundingBox: {
+                Top: 0,
+              },
+            },
+          },
+          {
+            Text: 'mock text',
+            Geometry: {
+              BoundingBox: {
+                Top: 0,
+              },
+            },
+          },
+        ],
+        [
+          {
+            Text: 'mock text',
+            Geometry: {
+              BoundingBox: {
+                Top: 1,
+              },
+            },
+          },
+        ],
+      ];
+
+      const result =
+        service.concatenateTextLines(lines);
+
+      expect(result).toStrictEqual([
+        {
+          Lines: 'mock text\tmock text',
+          Top: 0,
+        },
+        {
+          Lines: 'mock text',
+          Top: 1,
+        },
+      ]);
+    });
+  });
+
+  describe('constructTables', () => {
+    it('should construct tables', () => {
+      const allBlocks = [
+        {
+          BlockType: 'TABLE',
+          Id: '1',
+          Geometry: {
+            BoundingBox: {
+              Top: 0,
+            },
+          },
+        },
+        {
+          BlockType: 'TABLE',
+          Id: '2',
+          Geometry: {
+            BoundingBox: {
+              Top: 1,
+            },
+          },
+        },
+      ];
+      const tableRoots = [
+        allBlocks[0],
+        allBlocks[1],
+      ];
+
+      const table1: string[][] = [];
+      table1.push(['mock text1']);
+      const table2: string[][] = [];
+      table2.push(['mock text2']);
+
+      jest
+        .spyOn(service, 'createTable')
+        .mockReturnValueOnce(table1)
+        .mockReturnValueOnce(table2);
+
+      const result = service.constructTables(
+        tableRoots,
+        allBlocks,
+      );
+
+      expect(result).toStrictEqual([
+        {
+          Top: tableRoots[0].Geometry.BoundingBox
+            .Top,
+          Table: table1,
+        },
+        {
+          Top: tableRoots[1].Geometry.BoundingBox
+            .Top,
+          Table: table2,
+        },
+      ]);
+    });
+  });
+
+  describe('sortElements', () => {
+    it('should sort elements', () => {
+      const elements = [
+        {
+          'Text Element': {
+            Top: 1,
+          },
+        },
+        {
+          'Text Element': {
+            Top: 0,
+          },
+        },
+        {
+          'Table Element': {
+            Top: 0.5,
+          },
+        },
+      ];
+
+      service.sortElements(elements);
+
+      expect(elements).toStrictEqual([
+        {
+          'Text Element': {
+            Top: 0,
+          },
+        },
+        {
+          'Table Element': {
+            Top: 0.5,
+          },
+        },
+        {
+          'Text Element': {
+            Top: 1,
+          },
+        },
+      ]);
+    });
+  });
+
+  describe('findTableIndices', () => {
+    it('should find table indices', () => {
+      const elements = [
+        {
+          'Text Element': {
+            Top: 0,
+          },
+        },
+        {
+          'Table Element': {
+            Top: 0.5,
+          },
+        },
+        {
+          'Text Element': {
+            Top: 1,
+          },
+        },
+      ];
+
+      const result =
+        service.findTableIndices(elements);
+
+      expect(result).toStrictEqual([1]);
+    });
+  });
+
+  describe('mergeTextElements', () => {
+    it('should merge text elements', () => {
+      const elements = [
+        {
+          'Text Element': {
+            Top: 0,
+            Lines: 'mock text',
+          },
+        },
+        {
+          'Text Element': {
+            Top: 0,
+            Lines: 'mock text',
+          },
+        },
+        {
+          'Table Element': {
+            Top: 0.5,
+          },
+        },
+        {
+          'Text Element': {
+            Top: 1,
+            Lines: 'mock text',
+          },
+        },
+        {
+          'Text Element': {
+            Top: 1,
+            Lines: 'mock text',
+          },
+        },
+      ];
+
+      const result =
+        service.mergeTextElements(elements);
+
+      expect(result).toStrictEqual([
+        {
+          'Text Element': {
+            Top: 0,
+            Lines: 'mock text\nmock text',
+          },
+        },
+        {
+          'Table Element': {
+            Top: 0.5,
+          },
+        },
+        {
+          'Text Element': {
+            Top: 1,
+            Lines: 'mock text\nmock text',
+          },
+        },
+      ]);
+    });
+  });
+
+  describe('createTable', () => {
+    it('should create table', () => {
+      const allBlocks = [
+        {
+          BlockType: 'CELL',
+          Id: '1',
+          Text: 'mock text',
+          Geometry: {
+            BoundingBox: {
+              Top: 0,
+            },
+          },
+          Relationships: ['line1'],
+        },
+        {
+          BlockType: 'CELL',
+          Id: '2',
+          Text: 'mock text',
+          Geometry: {
+            BoundingBox: {
+              Top: 0.5,
+            },
+          },
+          Relationships: ['line2'],
+        },
+        {
+          BlockType: 'CELL',
+          Id: '3',
+          Text: 'mock text',
+          Geometry: {
+            BoundingBox: {
+              Top: 1,
+            },
+          },
+          Relationships: ['line3'],
+        },
+        {
+          BlockType: 'TABLE',
+          Id: 'mock id',
+          Relationships: [
+            {
+              Type: 'CHILD',
+              Ids: ['1', '2', '3'],
+            },
+          ],
+        },
+      ];
+
+      const tableRoot = allBlocks[3];
+
+      jest
+        .spyOn(service, 'findBlockByID')
+        .mockReturnValueOnce(allBlocks[0])
+        .mockReturnValueOnce(allBlocks[1])
+        .mockReturnValueOnce(allBlocks[2]);
+
+      jest
+        .spyOn(service, 'findTextBlocksInCell')
+        .mockReturnValueOnce([allBlocks[0].Text])
+        .mockReturnValueOnce([allBlocks[1].Text])
+        .mockReturnValueOnce([allBlocks[2].Text]);
+
+      jest
+        .spyOn(service, 'fillCell')
+        .mockImplementation(
+          (table, cell, text) => {
+            table.push([text]);
+          },
+        );
+
+      const result = service.createTable(
+        tableRoot,
+        allBlocks,
+      );
+
+      expect(result).toStrictEqual([
+        ['mock text'],
+        ['mock text'],
+        ['mock text'],
+      ]);
+    });
+  });
+
+  describe('findTextBlocksInCell', () => {
+    it('should find text blocks in cell', () => {
+      const allBlocks = [
+        {
+          BlockType: 'LINE',
+          Id: '1',
+          Text: 'mock text1',
+        },
+        {
+          BlockType: 'LINE',
+          Id: '2',
+          Text: 'mock text2',
+        },
+        {
+          BlockType: 'LINE',
+          Id: '3',
+          Text: 'mock text3',
+        },
+        {
+          BlockType: 'CELL',
+          Id: 'mock id',
+          Relationships: [
+            {
+              Type: 'CHILD',
+              Ids: ['1', '2', '3'],
+            },
+          ],
+        },
+      ];
+
+      const cell = allBlocks[3];
+
+      jest
+        .spyOn(service, 'findBlockByID')
+        .mockReturnValueOnce(allBlocks[0])
+        .mockReturnValueOnce(allBlocks[1])
+        .mockReturnValueOnce(allBlocks[2]);
+
+      const result = service.findTextBlocksInCell(
+        cell,
+        allBlocks,
+      );
+
+      expect(result).toStrictEqual([
+        allBlocks[0].Text,
+        allBlocks[1].Text,
+        allBlocks[2].Text,
+      ]);
+    });
+  });
+
+  describe('fillCell', () => {
+    it('should fill cell', () => {
+      const cellBlock = {
+        BlockType: 'CELL',
+        RowIndex: 1,
+        ColumnIndex: 1,
+      };
+
+      const table = [];
+
+      jest
+        .spyOn(service, 'fillMissingCols')
+        .mockImplementation();
+
+      service.fillCell(
+        table,
+        cellBlock,
+        'mock text',
+      );
+    });
+  });
+
+  describe('fillMissingCols', () => {
+    it('should fill missing cols', () => {
+      const table = [['r1c1', 'r1c2']];
+      const rowIndex = 0;
+      const colIndex = 2;
+
+      service.fillMissingCols(
+        table,
+        rowIndex,
+        colIndex,
+      );
+
+      expect(table).toStrictEqual([
+        ['r1c1', 'r1c2', ' '],
+      ]);
+    });
+  });
+
+  describe('isPartOfTable', () => {
+    it('should return false if block is not part of table', () => {
+      const allBlocks = [
+        {
+          BlockType: 'TABLE',
+          Id: '1',
+          Relationships: [
+            {
+              Type: 'CHILD',
+              Ids: ['2', '3'],
+            },
+          ],
+        },
+        {
+          BlockType: 'CELL',
+          Id: '2',
+          Relationships: [
+            {
+              Type: 'CHILD',
+              Ids: ['5'],
+            },
+          ],
+        },
+        {
+          BlockType: 'CELL',
+          Id: '3',
+        },
+        {
+          BlockType: 'WORD',
+          Id: '5',
+          Text: 'mock text',
+        },
+        {
+          BlockType: 'LINE',
+          Id: '6',
+          Relationships: [
+            {
+              Type: 'WORD',
+              Ids: ['7'],
+            },
+          ],
+        },
+        {
+          BlockType: 'WORD',
+          Id: '7',
+          Text: 'mock text',
+        },
+      ];
+
+      const table = allBlocks[0];
+      const line = allBlocks[4];
+
+      jest
+        .spyOn(service, 'findBlockByID')
+        .mockReturnValueOnce(allBlocks[1])
+        .mockReturnValueOnce(allBlocks[2])
+        .mockReturnValueOnce(allBlocks[3]);
+
+      const result = service.isPartOfTable(
+        table,
+        line,
+        allBlocks,
+      );
+
+      expect(result).toBe(false);
+    });
+    it('should return true if block is part of table', () => {
+      const allBlocks = [
+        {
+          BlockType: 'TABLE',
+          Id: '1',
+          Relationships: [
+            {
+              Type: 'CHILD',
+              Ids: ['2', '3'],
+            },
+          ],
+        },
+        {
+          BlockType: 'CELL',
+          Id: '2',
+          Relationships: [
+            {
+              Type: 'CHILD',
+              Ids: ['5'],
+            },
+          ],
+        },
+        {
+          BlockType: 'CELL',
+          Id: '3',
+        },
+        {
+          BlockType: 'LINE',
+          Id: '4',
+          Relationships: [
+            {
+              Type: 'WORD',
+              Ids: ['5'],
+            },
+          ],
+        },
+        {
+          BlockType: 'WORD',
+          Id: '5',
+          Text: 'mock text',
+        },
+      ];
+
+      const table = allBlocks[0];
+      const line = allBlocks[3];
+
+      jest
+        .spyOn(service, 'findBlockByID')
+        .mockReturnValueOnce(allBlocks[1])
+        .mockReturnValueOnce(allBlocks[2])
+        .mockReturnValueOnce(allBlocks[3])
+        .mockReturnValueOnce(allBlocks[4]);
+
+      const result = service.isPartOfTable(
+        table,
+        line,
+        allBlocks,
+      );
+
+      expect(result).toBe(true);
+    });
+  });
 });
