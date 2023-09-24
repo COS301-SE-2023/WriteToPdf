@@ -86,6 +86,7 @@ export class VersionControlService {
       await this.saveSnapshot(
         diffDTO,
         saveDiffInfoDTO.nextSnapshotIndex,
+        saveDiffInfoDTO.totalNumDiffs,
       );
     }
   }
@@ -95,7 +96,17 @@ export class VersionControlService {
   async saveSnapshot(
     diffDTO: DiffDTO,
     nextSnapshotIndex: number,
+    totalNumDiffs: number,
   ) {
+    // Backup if not in first pass
+    if (
+      totalNumDiffs >=
+      parseInt(process.env.MAX_DIFFS)
+    )
+      await this.s3Service.backupSnapshot(
+        diffDTO,
+        nextSnapshotIndex,
+      );
     await this.s3Service.saveSnapshot(
       diffDTO,
       nextSnapshotIndex,
