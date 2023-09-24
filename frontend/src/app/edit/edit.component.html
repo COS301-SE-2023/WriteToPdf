@@ -177,8 +177,12 @@
           <h4 *ngIf="!sideBarTab" class="sidebarHeaderText">Assets</h4>
           <h4 *ngIf="sideBarTab" class="sidebarHeaderText">History</h4>
         </div>
-        <div class="uploadAssetIcon">
-          <div *ngIf="!isTouchScreen; else mobileUpload" class="sidebarHeaderIconWrapper" title="Upload Image">
+        <div *ngIf="!sideBarTab" class="uploadAssetIcon">
+          <div
+            *ngIf="!isTouchScreen; else mobileUpload"
+            class="sidebarHeaderIconWrapper"
+            title="Upload Image"
+          >
             <img
               class="sidebarHeaderIcon"
               src="assets/Icons/editIcons/plus.png"
@@ -241,8 +245,7 @@
             alt=""
           />
         </div>
-      </div>
-      <hr />
+      </div><hr />
     </div>
 
     <div class="alignDiv"></div>

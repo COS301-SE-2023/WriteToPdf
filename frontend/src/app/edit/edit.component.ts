@@ -30,39 +30,37 @@ import {parse} from 'path';
     styleUrls: ['./edit.component.scss'],
 })
 export class EditComponent implements AfterViewInit, OnInit {
-  fileName: string | undefined = '';
-  text: any;
-  sidebarVisible: boolean = true;
-  currentZoom: number = 1;
-  exportDialogVisible: boolean = false;
-  public speedDialItems!: MenuItem[];
-  assets: any[] = [];
-  history: any[] = [];
-  textFromAsset: any[] = [];
-  textCopyDialog: boolean = false;
-  noAssetsAvailable: boolean = false;
-  isTouchScreen: boolean = false;
-  sideBarTab: boolean = false;
-  loading: boolean = false;
-
-  public editor: DecoupledEditor = {} as DecoupledEditor;
-  public globalAreaReference!: HTMLElement;
-
-  constructor(
-    private elementRef: ElementRef,
-    @Inject(Router) private router: Router,
-    private dialogService: DialogService,
-    private fileService: FileService,
-    private editService: EditService,
-    private assetService: AssetService,
-    private clipboard: Clipboard,
-    private messageService: MessageService,
-    private versionControlService: VersionControlService,
-    private confirmationService: ConfirmationService,
-    private versioningApiService: VersioningApiService,
-    private OCRDialog: OCRDialogService
-  ) {}
-
+    fileName: string | undefined = '';
+    text: any;
+    sidebarVisible: boolean = true;
+    currentZoom: number = 1;
+    exportDialogVisible: boolean = false;
+    public speedDialItems!: MenuItem[];
+    assets: any[] = [];
+    history: any[] = [];
+    textFromAsset: any[] = [];
+    textCopyDialog: boolean = false;
+    noAssetsAvailable: boolean = false;
+    isTouchScreen: boolean = false;
+    sideBarTab: boolean = false;
+    loading: boolean = false;
+    public editor: DecoupledEditor = {} as DecoupledEditor;
+    public globalAreaReference!: HTMLElement;
+    constructor(
+        private elementRef: ElementRef,
+        @Inject(Router) private router: Router,
+        private dialogService: DialogService,
+        private fileService: FileService,
+        private editService: EditService,
+        private assetService: AssetService,
+        private clipboard: Clipboard,
+        private messageService: MessageService,
+        private versionControlService: VersionControlService,
+        private confirmationService: ConfirmationService,
+        private versioningApiService: VersioningApiService,
+        private OCRDialog: OCRDialogService
+    ) {
+    }
 
     @HostListener('window:beforeunload', ['$event'])
     beforeUnloadHandler(event: BeforeUnloadEvent) {
@@ -97,6 +95,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         // and pass that response to the OCRDialogService.
         this.OCRDialog.openDialog(ocrDataPassedOver);
     }
+
     showImageUploadPopup(): void {
         const ref = this.dialogService.open(ImageUploadPopupComponent, {
             header: 'Upload Images',
@@ -104,123 +103,6 @@ export class EditComponent implements AfterViewInit, OnInit {
             closable: true,
             closeOnEscape: true,
             dismissableMask: true,
-
-
-
-  async ngOnInit(): Promise<void> {
-
-    //get window width
-    this.isTouchScreen = window.matchMedia('(pointer: coarse)').matches;
-    const width = window.innerWidth;
-    if (width < 800) this.hideSideBar();
-    const c = localStorage.getItem('content');
-    const m = localStorage.getItem('markdownID');
-    const n = localStorage.getItem('name');
-    const p = localStorage.getItem('path');
-    const pf = localStorage.getItem('parentFolderID');
-    const sl = localStorage.getItem('safeLock');
-    const dp = localStorage.getItem('encryptedDocumentPassword');
-    this.versionControlService.setLatestVersionContent(c ? (c as string) : '');
-
-    if (
-      c != null &&
-      m != null &&
-      n != null &&
-      p != null &&
-      pf != null &&
-      sl != null &&
-      dp != null
-    )
-      this.editService.setAll(
-        c,
-        m,
-        n,
-        p,
-        pf,
-        sl === 'true',
-        this.editService.decryptPassword(dp)
-      );
-    this.fileName = this.editService.getName();
-  }
-      
-  ngAfterViewInit() {
-    //Waits a small amount of time to fetch content from editService.
-    let editableArea = this.elementRef.nativeElement.querySelector(
-      '.document-editor__editable'
-    );
-    this.globalAreaReference = editableArea; //set to avoid constant referencing
-    const toolbarContainer: HTMLElement =
-      this.elementRef.nativeElement.querySelector('.document-editor__toolbar');
-    if (editableArea && toolbarContainer) {
-      DecoupledEditor.create(editableArea, {
-        toolbar: {
-          items: [
-            'undo',
-            'redo',
-            '|',
-            'heading',
-            '|',
-            'fontfamily',
-            'fontsize',
-            'fontColor',
-            'fontBackgroundColor',
-            '|',
-            'bold',
-            'italic',
-            'underline',
-            'strikethrough',
-            '|',
-            'link',
-            'insertTable',
-            'blockQuote',
-            '|',
-            'alignment',
-            '|',
-            'bulletedList',
-            'numberedList',
-            'todoList',
-            'outdent',
-            'indent',
-          ],
-          shouldNotGroupWhenFull: false,
-        },
-        cloudServices: {
-          //TODO Great for Collaboration features.
-        },
-        // plugins: [PageBreak],
-        link: {
-          // Automatically add target="_blank" and rel="noopener noreferrer" to all external links.
-          addTargetToExternalLinks: true,
-        },
-      })
-        .then((editor) => {
-          // Apply assertion for toolbarContainer
-          // (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
-          editor.ui.view.toolbar.element?.style.setProperty(
-            'background',
-            '#00000000'
-          );
-          editor.ui.view.toolbar.element?.style.setProperty('border', 'none');
-          editor.ui.view.toolbar.element?.style.setProperty(
-            'width',
-            'calc(100vw - 300px)'
-          );
-          editor.ui.view.toolbar.element?.style.setProperty(
-            'overflow-x',
-            'hidden !important'
-          );
-          this.elementRef.nativeElement.ownerDocument.body.style.height = '0';
-
-          document
-            .getElementsByClassName('toolsWrapper')[0]
-            .appendChild(editor.ui.view.toolbar.element as Node);
-          (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
-          // Set the saved content after the editor is ready
-          editor.setData(<string>this.editService.getContent());
-          this.editor = editor;
-        })
-        .catch((err) => {
-          console.error(err);
         });
         ref.onClose.subscribe(
             () => {
@@ -359,24 +241,46 @@ export class EditComponent implements AfterViewInit, OnInit {
     navigateToPage(pageName: string) {
         this.editService.setContent(this.editor.getData());
         this.saveDocumentContents();
+        this.router.navigate([`/${pageName}`]);
+    }
 
-        this.router.navigate(['/home']);
-      },
-      reject: (type: any) => {
-        if (type === 1) this.router.navigate(['/home']);
-      },
-    });
-  }
+    navigateToCameraPage() {
+        this.editService.setContent(this.editor.getData());
+        this.saveDocumentContents();
+        const data = {
+            ParentFolderId: this.editService.getParentFolderID(),
+            Path: this.editService.getPath(),
+        };
+        this.router.navigate(['/camera'], {state: data});
+    }
 
-  async saveDocumentContents() {
-    // Save the document quill content to localStorage when changes occur
-    // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+    exitToHome() {
+        this.confirmationService.confirm({
+            message: 'Do you want to save before you leave?',
+            header: 'Save Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Exit and Save',
+            rejectLabel: 'Exit without Saving',
+            accept: () => {
+                this.editService.setContent(this.editor.getData());
+                this.saveDocumentContents();
+                this.router.navigate(['/home']);
+            },
+            reject: (type: any) => {
+                if (type === 1) this.router.navigate(['/home']);
+            },
+        });
+    }
 
-    let contents = this.editor.getData();
-    let pass = this.editService.getDocumentPassword();
+    async saveDocumentContents() {
+        // Save the document quill content to localStorage when changes occur
+        // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
 
-    const latestVersionContent =
-      this.versionControlService.getLatestVersionContent();
+        let contents = this.editor.getData();
+        let pass = this.editService.getDocumentPassword();
+
+        const latestVersionContent =
+            this.versionControlService.getLatestVersionContent();
 
     const readablePatch = this.versionControlService.getReadablePatch(
       latestVersionContent,
@@ -414,6 +318,9 @@ export class EditComponent implements AfterViewInit, OnInit {
           readablePatch
         );
         this.loading = false;
+    }
+
+        this.versionControlService.setLatestVersionContent(contents);
     }
 
     hideSideBar() {
@@ -474,23 +381,38 @@ export class EditComponent implements AfterViewInit, OnInit {
         return "<table>" + returnString + "</table>";
     }
 
-    async retrieveAssetTextToCopy(assetId: string, format: string, textId: string) {
-        let currAssetIndex: number = 0;
-        for (let i = 0; i < this.assets.length; i++) {
-            if (this.assets[i].AssetID === assetId) {
-                currAssetIndex = i;
-                break;
-            }
+    async retrieveAssetObject(assetId: string, format:string, textId: string){
+      let currAssetIndex: number = 0;
+      for (let i = 0; i < this.assets.length; i++) {
+        if (this.assets[i].AssetID === assetId) {
+          currAssetIndex = i;
+          break;
         }
-        this.assets[currAssetIndex].NotRetrieving = true;
-        // const asset = true;
-        if (format === 'text' || format === 'table') {
-            let asset = this.assets[currAssetIndex];
-            if (!asset.Blocks) {
-                var assetResponse = await this.assetService.retrieveAsset(assetId, format, textId);
-                this.assets[currAssetIndex].Blocks = asset.Blocks;
-            }
-            this.assets[currAssetIndex].NotRetrieving = false;
+      }
+      this.assets[currAssetIndex].NotRetrieving = true;
+      // const asset = true;
+      if (format === 'text' || format === 'table') {
+        let asset = this.assets[currAssetIndex];
+        if (!asset.Blocks) {
+          var assetResponse = await this.assetService.retrieveAsset(assetId, format, textId);
+          this.assets[currAssetIndex].Blocks = asset.Blocks;
+        }
+        this.assets[currAssetIndex].NotRetrieving = false;
+        return assetResponse;
+      } else if (format === 'image') {
+        let asset = this.assets[currAssetIndex];
+        if (!asset.CopyContent) {
+          asset = await this.assetService.retrieveAsset(assetId, format, textId);
+          this.assets[currAssetIndex].CopyContent = asset.Content;
+          asset.CopyContent = asset.Content;
+        }
+        this.assets[currAssetIndex].NotRetrieving = false;
+        return asset.CopyContent;
+      }
+    }
+
+    async retrieveAssetTextToCopy(assetId: string, format: string, textId: string) {
+            let assetResponse = await this.retrieveAssetObject(assetId, format, textId);
             let assetObjectJSON = JSON.parse(assetResponse.Content);
             let allElements = assetObjectJSON.elements;
             let copyText = '';
@@ -509,42 +431,19 @@ export class EditComponent implements AfterViewInit, OnInit {
                     detail: 'All OCR components copied to clipboard',
                 }
             )
-        }
     }
 
     async retrieveAsset(assetId: string, format: string, textId: string) {
-        let currAssetIndex: number = 0;
-        for (let i = 0; i < this.assets.length; i++) {
-            if (this.assets[i].AssetID === assetId) {
-                currAssetIndex = i;
-                break;
-            }
-        }
-
-        this.assets[currAssetIndex].NotRetrieving = true;
-        // const asset = true;
-        if (format === 'text' || format === 'table') {
-            let asset = this.assets[currAssetIndex];
-            if (!asset.Blocks) {
-                var assetResponse = await this.assetService.retrieveAsset(assetId, format, textId);
-                this.assets[currAssetIndex].Blocks = asset.Blocks;
-            }
-            this.assets[currAssetIndex].NotRetrieving = false;
+      let assetResponse = await this.retrieveAssetObject(assetId, format, textId);
+      if (format === 'text' || format === 'table') {
             this.showOCRPopup(assetResponse);
         } else if (format === 'image') {
-            let asset = this.assets[currAssetIndex];
-            if (!asset.CopyContent) {
-                asset = await this.assetService.retrieveAsset(assetId, format, textId);
-                this.assets[currAssetIndex].CopyContent = asset.Content;
-                asset.CopyContent = asset.Content;
-            }
-            this.copyHtmlToClipboard(`<img src="${asset.CopyContent}" alt="Image">`);
+            this.copyHtmlToClipboard(`<img src="${assetResponse}" alt="Image">`);
             this.messageService.add({
                 severity: 'success',
                 summary: 'Success',
                 detail: 'Image copied to clipboard',
             });
-            this.assets[currAssetIndex].NotRetrieving = false;
         }
     }
 
@@ -709,34 +608,35 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editor.execute('pageBreak');
     }
 
-      zoomIn() {
-    if (this.currentZoom >= 2) return;
-    this.currentZoom += 0.1; // Increase zoom by 10% (adjust as needed)
-    this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
-    const element = document.getElementsByClassName(
-      'center-page'
-    )[0] as HTMLElement;
-    element.style.transform = `scale(${this.currentZoom})`;
-    element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
-    element.style.marginLeft = 'auto';
-    this.reCenterPage();
-  }
+    zoomIn() {
+        if (this.currentZoom >= 2) return;
+        this.currentZoom += 0.1; // Increase zoom by 10% (adjust as needed)
+        this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
+        const element = document.getElementsByClassName(
+            'center-page'
+        )[0] as HTMLElement;
+        element.style.transform = `scale(${this.currentZoom})`;
+        element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
+        element.style.marginLeft = 'auto';
+        this.reCenterPage();
+    }
 
-  zoomOut() {
-    if (this.currentZoom <= 0.5) return;
-    this.currentZoom -= 0.1; // Decrease zoom by 10% (adjust as needed)
-    this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
-    const element = document.getElementsByClassName(
-      'center-page'
-    )[0] as HTMLElement;
-    element.style.transform = `scale(${this.currentZoom})`;
-    element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
-    this.reCenterPage();
-  }
+    zoomOut() {
+        if (this.currentZoom <= 0.5) return;
+        this.currentZoom -= 0.1; // Decrease zoom by 10% (adjust as needed)
+        this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
+        const element = document.getElementsByClassName(
+            'center-page'
+        )[0] as HTMLElement;
+        element.style.transform = `scale(${this.currentZoom})`;
+        element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
+        this.reCenterPage();
+    }
 
-  getZoom() {
-    return `${Math.floor(this.currentZoom * 100)}%`;
-  }
+    getZoom() {
+        return `${Math.floor(this.currentZoom * 100)}%`;
+    }
+
     reCenterPage() {
         const element = document.getElementsByClassName(
             'center-page'
@@ -756,76 +656,8 @@ export class EditComponent implements AfterViewInit, OnInit {
             }
         }
     }
-    
-    
-  formatDate(dateString: Date): string {
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    if(!dateString) return '';
-    const date = new Date(dateString);
 
-    const dd = String(date.getDate()).padStart(2, '0');
-    const mm = date.getMonth() ; // January is 0!
-    const yyyy = date.getFullYear();
-
-    const hh = String(date.getHours()).padStart(2, '0');
-    const min = String(date.getMinutes()).padStart(2, '0');
-    const ss = String(date.getSeconds()).padStart(2, '0');
-
-    return `${dd} ${months[mm]}, ${hh}:${min}:${ss}`;
-  }
-
-  formatAssetDate(dateString: Date): string {
-    if(!dateString) return '';
-    const date = new Date(dateString);
-
-    const dd = String(date.getDate()).padStart(2, '0');
-    const mm = date.getMonth() ; // January is 0!
-    const yyyy = date.getFullYear();
-
-    return `${dd}-${mm}-${yyyy}`;
-  }
-    
-        capitalizeFirstLetter(inputString: string): string {
-        if (!inputString || inputString.length === 0) {
-            return inputString; // Return the input string as-is if it's empty or null.
-        }
-
-        return inputString.charAt(0).toUpperCase() + inputString.slice(1);
-    }
-    
-        enableReadOnly() {
-        this.editor.enableReadOnlyMode('');
-    }
-
-    disableReadOnly() {
-        this.editor.disableReadOnlyMode('');
-    }
-
-    insertContent(obj: any) {
-
-        console.log("Just clicked on: ", obj);
-        if (!obj.Content) return;
-        this.deselectAllHistory();
-        obj.isCurrent = true;
-        if (obj.Name === 'Latest') {
-            this.disableReadOnly();
-            this.editor.setData(obj.Content);
-            return;
-        }
-        this.enableReadOnly();
-        this.editor.setData(obj.Content);
-    }
-    
-    deselectAllHistory() {
-        for (let i = 0; i < this.history.length; i++) {
-            this.history[i].isCurrent = false;
-        }
-    }
-    
-        getLeftPosition(element: HTMLElement): number {
+    getLeftPosition(element: HTMLElement): number {
         const rect = element.getBoundingClientRect();
         return rect.left;
     }
@@ -845,34 +677,101 @@ export class EditComponent implements AfterViewInit, OnInit {
             );
         }
     }
-  expandSnapshot(snapshot: any, event: any) {
-    if (snapshot.expanded) {
-      snapshot.expanded = false;
-    } else {
-      snapshot.expanded = true;
+
+    capitalizeFirstLetter(inputString: string): string {
+        if (!inputString || inputString.length === 0) {
+            return inputString; // Return the input string as-is if it's empty or null.
+        }
+
+        return inputString.charAt(0).toUpperCase() + inputString.slice(1);
     }
 
-    const arrowElement = event.target;
+    formatDate(dateString: Date): string {
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        if (!dateString) return '';
+        const date = new Date(dateString);
 
-    arrowElement.classList.toggle('expanded');
+        const dd = String(date.getDate()).padStart(2, '0');
+        const mm = date.getMonth(); // January is 0!
+        const yyyy = date.getFullYear();
 
-    event.stopPropagation();
+        const hh = String(date.getHours()).padStart(2, '0');
+        const min = String(date.getMinutes()).padStart(2, '0');
+        const ss = String(date.getSeconds()).padStart(2, '0');
 
-    //retrieve all diff content and previous snapshot content
-    this.versioningApiService.loadHistorySet(this.editService.getMarkdownID() as string, snapshot.ChildDiffs, snapshot.snapshotID).then((data) => {
-      if(data !== null){
-        console.log("Process diff data.", data);
-        snapshot.Content =data.SnapshotHistory[0].Content;
-        
-      }
-      else {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error retrieving history set',
-        });
-        return;
-      }
-    });
+        return `${dd} ${months[mm]}, ${hh}:${min}:${ss}`;
+    }
+
+  formatAssetDate(dateString: Date): string {
+    if(!dateString) return '';
+    const date = new Date(dateString);
+
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = date.getMonth() ; // January is 0!
+    const yyyy = date.getFullYear();
+
+    return `${dd}-${mm}-${yyyy}`;
   }
+
+  enableReadOnly() {
+    this.editor.enableReadOnlyMode('');
+  }
+
+    disableReadOnly() {
+        this.editor.disableReadOnlyMode('');
+    }
+
+    insertContent(obj: any) {
+
+        console.log("Just clicked on: ", obj);
+        if (!obj.Content) return;
+        this.deselectAllHistory();
+        obj.isCurrent = true;
+        if (obj.Name === 'Latest') {
+            this.disableReadOnly();
+            this.editor.setData(obj.Content);
+            return;
+        }
+        this.enableReadOnly();
+        this.editor.setData(obj.Content);
+    }
+
+    deselectAllHistory() {
+        for (let i = 0; i < this.history.length; i++) {
+            this.history[i].isCurrent = false;
+        }
+    }
+
+    expandSnapshot(snapshot: any, event: any) {
+        if (snapshot.expanded) {
+            snapshot.expanded = false;
+        } else {
+            snapshot.expanded = true;
+        }
+
+        const arrowElement = event.target;
+
+        arrowElement.classList.toggle('expanded');
+
+        event.stopPropagation();
+
+        //retrieve all diff content and previous snapshot content
+        this.versioningApiService.loadHistorySet(this.editService.getMarkdownID() as string, snapshot.ChildDiffs, snapshot.snapshotID).then((data) => {
+            if (data !== null) {
+                console.log("Process diff data.", data);
+                snapshot.Content = data.SnapshotHistory[0].Content;
+
+            } else {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Error retrieving history set',
+                });
+                return;
+            }
+        });
+    }
 }
