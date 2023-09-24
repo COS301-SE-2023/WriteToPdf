@@ -54,9 +54,9 @@
   </div>
 
     <div class="editImage"  [ngClass]="{ 'notVisible': !captured }">
-      <p style="margin:0">Adjust Contrast</p>
+      <p style="margin:0;color:white;">Adjust Contrast</p>
       <input class="slider" type="range" min="-100" max="100" [(ngModel)]="contrastValue" (input)="applyFilters()" placeholder="0" title="Adjust Contrast"/>
-      <p style="margin:0">Adjust Brightness</p>
+      <p style="margin:0;color:white;">Adjust Brightness</p>
       <input class="slider" type="range" min="50" max="150" [(ngModel)]="brightnessValue" (input)="applyFilters()" placeholder="0" title="Adjust Brightness"/>
       <div style="width:143px;margin:auto;">
         <p-button icon="pi pi-refresh" label="Reset Filters" (click)="resetFilters()" [style]="{margin:'auto'}"></p-button>
