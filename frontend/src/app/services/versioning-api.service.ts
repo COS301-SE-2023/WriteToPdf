@@ -112,14 +112,16 @@ export class VersioningApiService {
     markdownID: string,
     diffHistory: string[],
     snapshotID: string,
-    snapshotIndex: number
+    snapshotIndex: number,
+    latestSnapshot: boolean
   ) {
     return new Promise<any>((resolve, reject) => {
       this.sendLoadHistorySet(
         markdownID,
         diffHistory,
         snapshotID,
-        snapshotIndex
+        snapshotIndex,
+        latestSnapshot
       ).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
@@ -137,7 +139,8 @@ export class VersioningApiService {
     markdownID: string,
     diffHistory: string[],
     snapshotID: string,
-    snapshotIndex: number
+    snapshotIndex: number,
+    latestSnapshot: boolean
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}version_control/get_history_set`;
@@ -148,6 +151,7 @@ export class VersioningApiService {
     body.DiffHistory = diffHistory;
     body.SnapshotID = snapshotID;
     body.IsHeadSnapshot = snapshotIndex === 0;
+    body.IsLatestSnapshot = latestSnapshot;
 
     console.log('versioning-api.sendLoadHistorySet: ', body);
     const headers = new HttpHeaders().set(

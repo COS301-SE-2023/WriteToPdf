@@ -815,8 +815,12 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     const snapshotIndex =
       this.history.length - this.getSnapshotIndex(snapshot) - 1;
+    let latestSnapshot: boolean = false;
 
-    console.log('Array Index', snapshotIndex);
+    if (snapshot.Name === 'Latest' && snapshotIndex !== 0) {
+      latestSnapshot = true;
+      snapshot.SnapshotID = this.history[1].SnapshotID;
+    }
 
     //retrieve all diff content and previous snapshot content
     this.versioningApiService
@@ -824,7 +828,8 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editService.getMarkdownID() as string,
         snapshot.ChildDiffs,
         snapshot.SnapshotID,
-        snapshotIndex
+        snapshotIndex,
+        latestSnapshot
       )
       .then((data) => {
         if (data !== null) {
@@ -852,6 +857,13 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   getSnapshotContent(snapshot: any) {
     console.log('Hello', snapshot);
+    if (snapshot.Name === 'Latest') {
+      console.log(
+        'versioningApiService.getSnapshotContent: ',
+        this.editService.getContent()
+      );
+      return;
+    }
     this.versioningApiService.getSnapshotContent(snapshot).then((data) => {
       if (data !== null) {
         console.log('versioningApiService.getSnapshotContent: ', data);
