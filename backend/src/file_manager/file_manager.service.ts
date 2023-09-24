@@ -738,7 +738,7 @@ export class FileManagerService {
     // If the markdown file does not exist, throw an error
     if (
       await !this.markdownFilesService.exists(
-        shareRequestDTO.markdownID,
+        shareRequestDTO.MarkdownID,
       )
     ) {
       throw new HttpException(
@@ -756,7 +756,7 @@ export class FileManagerService {
     // Get the markdown file as a dto
     const originalFileDTO =
       await this.markdownFilesService.getAsDTO(
-        shareRequestDTO.markdownID,
+        shareRequestDTO.MarkdownID,
       );
 
     // Make a copy of the file

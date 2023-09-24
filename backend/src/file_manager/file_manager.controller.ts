@@ -481,7 +481,7 @@ export class FileManagerController {
 
     if (
       !shareRequestDTO.UserID ||
-      !shareRequestDTO.markdownID ||
+      !shareRequestDTO.MarkdownID ||
       !shareRequestDTO.RecipientEmail
     )
       throw new HttpException(
