@@ -792,6 +792,9 @@ export class FileManagerService {
     }
 
     createdFileDTO.Size = s3Response;
+    this.markdownFilesService.updateSize(
+      createdFileDTO,
+    );
 
     // Return the created file
     return createdFileDTO;

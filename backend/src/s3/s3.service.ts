@@ -966,7 +966,6 @@ export class S3Service {
     const targetFilePath = `${targetUserID}/${targetMarkdownID}`;
 
     try {
-      console.log('before get');
       const response = await this.s3Client.send(
         new GetObjectCommand({
           Bucket: this.awsS3BucketName,
@@ -983,6 +982,7 @@ export class S3Service {
           Body: documentBody,
         }),
       );
+
       return documentBody.length;
     } catch (err) {
       console.log('Copy File Error: ' + err);

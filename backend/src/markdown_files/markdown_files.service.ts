@@ -269,6 +269,8 @@ export class MarkdownFilesService {
     };
   }
 
+  ///===----------------------------------------------------
+
   async exists(
     markdownID: string,
   ): Promise<boolean> {
@@ -283,6 +285,8 @@ export class MarkdownFilesService {
       );
     return !!markdownFile;
   }
+
+  ///===----------------------------------------------------
 
   async getAsDTO(markdownID: string) {
     const markdownFile =
@@ -311,5 +315,14 @@ export class MarkdownFilesService {
     result.TotalNumSnapshots =
       markdownFile.TotalNumSnapshots;
     return result;
+  }
+
+  ///===----------------------------------------------------
+
+  updateSize(markdownFileDTO: MarkdownFileDTO) {
+    this.markdownFileRepository.update(
+      { MarkdownID: markdownFileDTO.MarkdownID },
+      { Size: markdownFileDTO.Size },
+    );
   }
 }
