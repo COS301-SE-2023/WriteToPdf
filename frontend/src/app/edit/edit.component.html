@@ -100,7 +100,7 @@
           header="Share" [focusOnShow]="true" (keydown.escape)="sharePopup = false">
           <div class="fileOperations" style="display: grid; width:80%;">
             <input placeholder="User Email" class="fileOperations-entity" [(ngModel)]="recipientEmail" label="Name: "
-              pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" />
+              pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" (keydown.enter)="shareDocument(true)"/>
             <br />
             <div style="display:flex; justify-content: space-around;">
               <p-button (click)="shareDocument(false)" label="Share without saving"></p-button>
