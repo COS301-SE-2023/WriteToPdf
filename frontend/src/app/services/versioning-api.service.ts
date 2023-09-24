@@ -111,10 +111,16 @@ export class VersioningApiService {
   loadHistorySet(
     markdownID: string,
     diffHistory: string[],
-    snapshotID: string
+    snapshotID: string,
+    snapshotIndex: number
   ) {
     return new Promise<any>((resolve, reject) => {
-      this.sendLoadHistorySet(markdownID, diffHistory, snapshotID).subscribe({
+      this.sendLoadHistorySet(
+        markdownID,
+        diffHistory,
+        snapshotID,
+        snapshotIndex
+      ).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
           if (response.status === 200) {
@@ -130,7 +136,8 @@ export class VersioningApiService {
   sendLoadHistorySet(
     markdownID: string,
     diffHistory: string[],
-    snapshotID: string
+    snapshotID: string,
+    snapshotIndex: number
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}version_control/get_history_set`;
@@ -140,6 +147,38 @@ export class VersioningApiService {
     body.MarkdownID = markdownID;
     body.DiffHistory = diffHistory;
     body.SnapshotID = snapshotID;
+    body.IsHeadSnapshot = snapshotIndex === 0;
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  getSnapshotContent(snapshot: any) {
+    return new Promise<any>((resolve) => {
+      this.sendGetSnapshotContent(snapshot).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          if (response.status === 200) {
+            resolve(response.body);
+          } else {
+            resolve(null);
+          }
+        },
+      });
+    });
+  }
+
+  sendGetSnapshotContent(snapshot: any): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}version_control/get_snapshot`;
+    const body = new SnapshotDTO();
+
+    body.UserID = this.userService.getUserID() as number;
+    body.MarkdownID = snapshot.markdownID;
+    body.S3SnapshotIndex = snapshot.S3SnapshotIndex;
+
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
