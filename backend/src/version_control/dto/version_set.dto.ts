@@ -4,7 +4,7 @@ import { SnapshotDTO } from '../../snapshots/dto/snapshot.dto';
 export class VersionSetDTO {
   UserID: number;
   MarkdownID: string;
-  DiffHistory: string[];
+  DiffHistory: DiffDTO[];
   SnapshotID: string;
 
   constructor() {
