@@ -25,26 +25,17 @@ export class VersionControlService {
   ///===-----------------------------------------------------
 
   async saveDiff(diffDTO: DiffDTO) {
-    console.log(
-      '///===------------------version_control.saveDiff',
-    );
     // 1. Get necessary info for saving a diff
     const saveDiffInfoDTO =
       await this.markdownFileService.getSaveDiffInfo(
         diffDTO.MarkdownID,
       );
 
-    console.log(
-      'saveDiff.saveDiffInfoDTO:',
-      saveDiffInfoDTO,
-    );
-
     // 2. Get next diff
     let nextDiff = await this.diffService.getDiff(
       diffDTO,
       saveDiffInfoDTO.nextDiffIndex,
     );
-    console.log('saveDiff.nextDiff:', nextDiff);
 
     // 3. Get next snapshot
     let nextSnapshot =
@@ -52,19 +43,11 @@ export class VersionControlService {
         diffDTO.MarkdownID,
         saveDiffInfoDTO.nextSnapshotIndex,
       );
-    console.log(
-      'saveDiff.nextSnapshot:',
-      nextSnapshot,
-    );
 
     ///===----------------------------------------------------
     // 4. Create DB and S3 references if they do not yet exist
     // 5. Create diff references if nextDiff does not exist
     if (nextDiff === null) {
-      console.log(
-        'saveDiff.nextDiff is null:',
-        nextDiff,
-      );
       await this.createDiff(
         diffDTO,
         saveDiffInfoDTO.nextDiffIndex,
@@ -74,25 +57,13 @@ export class VersionControlService {
         diffDTO,
         saveDiffInfoDTO.nextDiffIndex,
       );
-      console.log(
-        'saveDiff.nextDiff references should have been created:',
-        nextDiff,
-      );
     }
 
     // 6. Create snapshot references if nextSnapshot does not exist
     if (nextSnapshot === null) {
-      console.log(
-        'saveDiff.nextSnapshot is null:',
-        nextSnapshot,
-      );
       nextSnapshot = await this.createSnapshot(
         diffDTO,
         saveDiffInfoDTO.nextSnapshotIndex,
-      );
-      console.log(
-        'saveDiff.nextSnapshot references should have been created:',
-        nextSnapshot,
       );
     }
     ///===----------------------------------------------------
