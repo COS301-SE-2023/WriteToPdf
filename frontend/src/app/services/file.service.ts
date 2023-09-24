@@ -759,6 +759,7 @@ export class FileService {
     return new Promise<boolean>((resolve, reject) => {
       this.sendShareData(markdownID, recipientEmail).subscribe({
         next: (response: HttpResponse<any>) => {
+          console.log("Non error: ",response);
           if (response.status === 200) {
             this.messageService.add({
               severity: 'success',
@@ -770,6 +771,7 @@ export class FileService {
           }
         },
         error: (error) => {
+          console.log("Failed: ",error);
           this.messageService.add({
             severity: 'error',
             summary: error.error.message || 'File sharing failed',
@@ -785,7 +787,7 @@ export class FileService {
     const body = new ShareRequestDTO();
 
     body.UserID = this.userService.getUserID();
-    body.MarkdownFileID = markdownID;
+    body.MarkdownID = markdownID;
     body.RecipientEmail = recipientEmail;
 
     const headers = new HttpHeaders().set(
