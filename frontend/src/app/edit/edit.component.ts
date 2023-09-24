@@ -24,6 +24,7 @@ import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 import { SnapshotDTO } from '../services/dto/snapshot.dto';
 import { DiffDTO } from '../services/dto/diff.dto';
 import { parse } from 'path';
+import { set } from 'cypress/types/lodash';
 
 @Component({
   selector: 'app-edit',
@@ -44,6 +45,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   noAssetsAvailable: boolean = false;
   isTouchScreen: boolean = false;
   sideBarTab: boolean = false;
+  saving: boolean = false;
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
@@ -61,7 +63,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private confirmationService: ConfirmationService,
     private versioningApiService: VersioningApiService,
     private OCRDialog: OCRDialogService
-  ) {}
+  ) { }
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
@@ -280,6 +282,14 @@ export class EditComponent implements AfterViewInit, OnInit {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
 
+    if (this.saving) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Please wait before saving again.',
+      });
+      return;
+    }
+    this.saving = true;
     let contents = this.editor.getData();
     let pass = this.editService.getDocumentPassword();
 
@@ -293,15 +303,15 @@ export class EditComponent implements AfterViewInit, OnInit {
     const markdownID = this.editService.getMarkdownID();
     localStorage.setItem('content', contents);
     if (pass != '' && pass != undefined) {
+
       await this.fileService.saveDocument(
         this.fileService.encryptSafeLockDocument(contents, pass),
         this.editService.getMarkdownID(),
         this.editService.getPath(),
         this.editService.getSafeLock()
       );
-
       if (readablePatch !== '')
-        this.versioningApiService.saveDiff(
+        await this.versioningApiService.saveDiff(
           markdownID ? (markdownID as string) : '',
           this.fileService.encryptSafeLockDocument(readablePatch, pass)
         );
@@ -314,13 +324,19 @@ export class EditComponent implements AfterViewInit, OnInit {
       );
 
       if (readablePatch !== '')
-        this.versioningApiService.saveDiff(
+        await this.versioningApiService.saveDiff(
           markdownID ? (markdownID as string) : '',
           readablePatch
         );
     }
 
     this.versionControlService.setLatestVersionContent(contents);
+    this.saving=false;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Document Saved',
+      detail: 'You can now save again.',
+    });
   }
 
   hideSideBar() {
@@ -484,7 +500,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         }),
       ])
       .then(
-        () => {},
+        () => { },
         (error) => {
           console.error(
             'Could not copy HTML data (image) to clipboard: ',
@@ -579,8 +595,8 @@ export class EditComponent implements AfterViewInit, OnInit {
           return a.LastModified < b.LastModified
             ? 1
             : a.LastModified > b.LastModified
-            ? -1
-            : 0;
+              ? -1
+              : 0;
         });
 
         snapshot.forEach((a, i) => {
@@ -603,8 +619,8 @@ export class EditComponent implements AfterViewInit, OnInit {
             return a.LastModified < b.LastModified
               ? 1
               : a.LastModified > b.LastModified
-              ? -1
-              : 0;
+                ? -1
+                : 0;
           }).forEach((a, i, arr) => {
             a.VersionNumber = arr.length - i + 1;
             a.Name = 'Version ' + a.VersionNumber;
