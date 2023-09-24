@@ -35,6 +35,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     sidebarVisible: boolean = true;
     currentZoom: number = 1;
     exportDialogVisible: boolean = false;
+    sharePopup: boolean = false;
     public speedDialItems!: MenuItem[];
     assets: any[] = [];
     history: any[] = [];
@@ -44,6 +45,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     isTouchScreen: boolean = false;
     sideBarTab: boolean = false;
     loading: boolean = false;
+    recipientEmail: string = '';
+
     public editor: DecoupledEditor = {} as DecoupledEditor;
     public globalAreaReference!: HTMLElement;
     constructor(
@@ -773,5 +776,27 @@ export class EditComponent implements AfterViewInit, OnInit {
                 return;
             }
         });
+    }
+
+    share() {
+        this.confirmationService.confirm({
+            message: 'Do you want to save before sharing?',
+            header: 'Share Document',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Save before sharing',
+            rejectLabel: 'Share without saving',
+            accept: async () => {
+                await this.saveDocumentContents();
+                this.sharePopup = true;
+            },
+            reject: (type: any) => {
+                if (type === 1)
+                    this.sharePopup = true;
+            },
+        });
+    }
+
+    shareDocument() {
+        
     }
 }
