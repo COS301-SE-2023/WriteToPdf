@@ -296,7 +296,7 @@ export class S3Service {
   ///===----------------------------------------------------
 
   async getDiffSet(
-    S3DiffIDs: number[],
+    S3DiffIndices: number[],
     userID: number,
     markdownID: string,
   ) {
@@ -304,19 +304,19 @@ export class S3Service {
 
     const diffDTOs: DiffDTO[] = [];
 
-    for (let i = 0; i < S3DiffIDs.length; i++) {
+    for (let i = 0; i < S3DiffIndices.length; i++) {
       try {
         const response = await this.s3Client.send(
           new GetObjectCommand({
             Bucket: this.awsS3BucketName,
-            Key: `${filePath}/diff/${S3DiffIDs[i]}`,
+            Key: `${filePath}/diff/${S3DiffIndices[i]}`,
           }),
         );
 
         const diffDTO = new DiffDTO();
         diffDTO.Content =
           await response.Body.transformToString();
-        diffDTO.S3DiffIndex = S3DiffIDs[i];
+        diffDTO.S3DiffIndex = S3DiffIndices[i];
         diffDTOs.push(diffDTO);
       } catch (err) {
         console.log(
