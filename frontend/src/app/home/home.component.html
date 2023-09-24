@@ -316,7 +316,7 @@
           (click)="$event.stopPropagation()">
           <div class="fileOperations" style="display: grid; width:80%;">
             <input placeholder="{{getSelectedName()}}" class="fileOperations-entity" [(ngModel)]="entityRename" label="Name: "
-              pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" />
+              pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" (keydown.enter)="renameEntity()"/>
             <br />
             <p-button (click)="renameEntity()" (click)="renameDialogVisible = false" label="Rename"></p-button>
           </div>
