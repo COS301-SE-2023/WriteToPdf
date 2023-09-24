@@ -48,7 +48,6 @@ export class MarkdownFileDTO {
     clone.UserID = this.UserID;
     clone.SafeLock = this.SafeLock;
     clone.NewDiff = this.NewDiff;
-    clone.PreviousDiffs = [...this.PreviousDiffs];
     clone.NextDiffIndex = this.NextDiffIndex;
     clone.NextSnapshotIndex =
       this.NextSnapshotIndex;
