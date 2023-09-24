@@ -68,7 +68,7 @@ export class FileManagerService {
       markdownFileDTO.NextSnapshotIndex ===
       undefined
     )
-      markdownFileDTO.NextSnapshotIndex = -1;
+      markdownFileDTO.NextSnapshotIndex = 0;
 
     // Set to one to reflect that this function creates one diff and one snapshot
     if (
@@ -105,7 +105,7 @@ export class FileManagerService {
       await this.setupVersioningResources(
         markdownFileDTO,
       );
-      markdownFileDTO.NextSnapshotIndex = 0;
+      markdownFileDTO.NextSnapshotIndex = 1;
       markdownFileDTO.TotalNumSnapshots = 1;
     }
     return await this.markdownFilesService.create(
