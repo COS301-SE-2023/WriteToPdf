@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Diff } from './entities/diffs.entity';
 import 'dotenv/config';
 import * as CryptoJS from 'crypto-js';
@@ -127,6 +127,20 @@ export class DiffsService {
       where: {
         MarkdownID: markdownID,
         HasBeenUsed: true,
+      },
+    });
+  }
+
+  ///===-----------------------------------------------------
+
+  async getDiffSet(
+    markdownID: string,
+    DiffIDs: string[],
+  ) {
+    return await this.diffRepository.find({
+      where: {
+        MarkdownID: markdownID,
+        DiffID: In(DiffIDs),
       },
     });
   }
