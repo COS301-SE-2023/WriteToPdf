@@ -4,6 +4,7 @@ export class VersionSetDTO {
   DiffHistory: string[];
   SnapshotID: string;
   IsHeadSnapshot: boolean;
+  IsLatestSnapshot: boolean;
 
   constructor() {
     this.UserID = 0;
@@ -11,5 +12,6 @@ export class VersionSetDTO {
     this.DiffHistory = [];
     this.SnapshotID = '';
     this.IsHeadSnapshot = false;
+    this.IsLatestSnapshot = false;
   }
 }
