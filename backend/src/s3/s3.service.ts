@@ -304,7 +304,11 @@ export class S3Service {
 
     const diffDTOs: DiffDTO[] = [];
 
-    for (let i = 0; i < S3DiffIndices.length; i++) {
+    for (
+      let i = 0;
+      i < S3DiffIndices.length;
+      i++
+    ) {
       try {
         const response = await this.s3Client.send(
           new GetObjectCommand({
