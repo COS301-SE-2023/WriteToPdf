@@ -36,6 +36,18 @@
 
   <div class="imageWrapper" [ngClass]="{ 'notVisible': !captured }">
     <img class="previewImg" [src]="sysImage" alt="" id="image"/>
+
+<!-- <image-cropper
+style="padding:0;background:#0000ff;"
+    class="previewImg"
+    [maintainAspectRatio]="false"
+    backgroundColor="#0000ff"
+    [imageBase64]="sysImage"
+    (imageCropped)="imageCropped($event)"
+    (cropperReady)="cropperReady()"
+    (loadImageFailed)="loadImageFailed()"
+></image-cropper> -->
+
   </div>
 
     <div class="editImage"  [ngClass]="{ 'notVisible': !captured }">

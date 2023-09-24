@@ -2,8 +2,8 @@ import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { AssetService } from '../services/asset.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { MessageService } from 'primeng/api';
-import { set } from 'cypress/types/lodash';
+import { ImageCroppedEvent, LoadedImage } from 'ngx-image-cropper';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-camera',
@@ -29,12 +29,14 @@ export class CameraComponent {
   brightnessValue: number = 100;
   loading: boolean = false;
 
+  croppedImage: any = '';
+
   constructor(
     private elementRef: ElementRef,
     private assetService: AssetService,
     private router: Router,
     private location: Location,
-    private messageService: MessageService
+    private sanitizer: DomSanitizer,
   ) { }
 
   ngOnInit() {
@@ -250,4 +252,19 @@ export class CameraComponent {
     this.sysImage = this.originalImage;
   }
 
+  fileChangeEvent(event: any): void {
+  }
+  imageCropped(event: ImageCroppedEvent) {
+    this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl as string);
+    // event.blob can be used to upload the cropped image
+  }
+  imageLoaded(image: LoadedImage) {
+    // show cropper
+  }
+  cropperReady() {
+    // cropper ready
+  }
+  loadImageFailed() {
+    // show message
+  }
 }
