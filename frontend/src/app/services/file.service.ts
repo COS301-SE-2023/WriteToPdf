@@ -772,6 +772,7 @@ export class FileService {
             severity: 'error',
             summary: error.error.error || error.error.message || 'File sharing failed',
           });
+          resolve(false);
         }
       });
     });

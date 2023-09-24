@@ -803,13 +803,7 @@ export class EditComponent implements AfterViewInit, OnInit {
                     this.sharePopup = false;
                     this.recipientEmail = '';
                 }
-                else {
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail: 'Error sharing document',
-                    });
-                }
+                this.loading = false;
             });
             this.loading = false;
         }
