@@ -274,7 +274,7 @@ export class MarkdownFilesService {
   ): Promise<boolean> {
     const options = {
       where: {
-        MarkdownFileID: markdownID,
+        MarkdownID: markdownID,
       },
     };
     const markdownFile =
@@ -284,11 +284,11 @@ export class MarkdownFilesService {
     return !!markdownFile;
   }
 
-  async getAsDTO(markdownFileID: string) {
+  async getAsDTO(markdownID: string) {
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
         {
-          MarkdownID: markdownFileID,
+          MarkdownID: markdownID,
         },
       );
     const result = new MarkdownFileDTO();
