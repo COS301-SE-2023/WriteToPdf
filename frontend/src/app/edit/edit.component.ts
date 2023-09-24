@@ -800,17 +800,18 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   expandSnapshot(snapshot: any, event: any) {
-    if (snapshot.expanded) {
-      snapshot.expanded = false;
-    } else {
-      snapshot.expanded = true;
-    }
-
     const arrowElement = event.target;
 
     arrowElement.classList.toggle('expanded');
 
     event.stopPropagation();
+
+    if (snapshot.expanded) {
+      snapshot.expanded = false;
+      return;
+    } else {
+      snapshot.expanded = true;
+    }
 
     const snapshotIndex =
       this.history.length - this.getSnapshotIndex(snapshot) - 1;
