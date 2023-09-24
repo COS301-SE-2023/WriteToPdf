@@ -116,7 +116,7 @@ export class NodeService {
         key: file.MarkdownID,
         icon: this.fileIcon,
         data: {
-          name: file.Name,
+          name: this.shortenName(file.Name),
           size: this.getSize(file.Size),
           type: 'file',
           key: file.MarkdownID,
@@ -135,7 +135,7 @@ export class NodeService {
         key: folder.FolderID,
         icon: this.folderIcon,
         data: {
-          name: folder.FolderName,
+          name: this.shortenName(folder.FolderName),
           size: '-',
           type: 'folder',
           key: folder.FolderID,
@@ -146,7 +146,7 @@ export class NodeService {
         key: folder.FolderID,
         icon: this.folderIcon,
         data: {
-          name: folder.FolderName,
+          name: this.shortenName(folder.FolderName),
           size: '-',
           type: 'folder',
           key: folder.FolderID,
@@ -168,7 +168,7 @@ export class NodeService {
           key: file.MarkdownID,
           icon: this.fileIcon,
           data: {
-            name: file.Name,
+            name: this.shortenName(file.Name),
             size: this.getSize(file.Size),
             type: 'file',
             key: file.MarkdownID,
@@ -216,6 +216,13 @@ export class NodeService {
     return children;
   }
 
+  private shortenName(name: string) {
+    let newName = name;
+    if (name.length > 10) {
+      newName = name.substring(0, 10) + '...';
+    }
+    return newName;
+  }
   private getRootFiles() {
     let rootFiles: any[] = [];
     for (let file of this.files) {
