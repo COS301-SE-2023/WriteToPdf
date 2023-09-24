@@ -99,24 +99,33 @@ export class FileManagerServiceMock {
     const markdownFilesDTOArr: MarkdownFileDTO[] =
       [];
     files.forEach((file) => {
-      const markdownFileDTO: MarkdownFileDTO = {
-        MarkdownID: file.MarkdownID,
-        UserID: file.UserID,
-        DateCreated: file.DateCreated,
-        LastModified: file.LastModified,
-        Name: file.Name,
-        Path: file.Path,
-        Size: file.Size,
-        ParentFolderID: file.ParentFolderID,
-        Content: '',
-        SafeLock: false,
-        NewDiff: '',
-        NextDiffIndex: file.NextDiffIndex,
-        PreviousDiffs: [],
-        NextSnapshotIndex: file.NextSnapshotIndex,
-        TotalNumDiffs: file.TotalNumDiffs,
-        TotalNumSnapshots: file.TotalNumSnapshots,
-      };
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID =
+        file.MarkdownID;
+      markdownFileDTO.UserID = file.UserID;
+      markdownFileDTO.DateCreated =
+        file.DateCreated;
+      markdownFileDTO.LastModified =
+        file.LastModified;
+      markdownFileDTO.Name = file.Name;
+      markdownFileDTO.Path = file.Path;
+      markdownFileDTO.Size = file.Size;
+      markdownFileDTO.ParentFolderID =
+        file.ParentFolderID;
+      markdownFileDTO.Content = '';
+      markdownFileDTO.SafeLock = false;
+      markdownFileDTO.NewDiff = '';
+      markdownFileDTO.NextDiffIndex =
+        file.NextDiffIndex;
+      markdownFileDTO.PreviousDiffs = [];
+      markdownFileDTO.NextSnapshotIndex =
+        file.NextSnapshotIndex;
+      markdownFileDTO.TotalNumDiffs =
+        file.TotalNumDiffs;
+      markdownFileDTO.TotalNumSnapshots =
+        file.TotalNumSnapshots;
+
       markdownFilesDTOArr.push(markdownFileDTO);
     });
     return markdownFilesDTOArr;
@@ -467,6 +476,9 @@ export class FileManagerServiceMock {
       PreviousDiffs: [],
       NewDiff: '',
       NextDiffIndex: 0,
+      clone: () => {
+        return new MarkdownFileDTO();
+      },
     };
 
     return returnedDTO;
