@@ -93,13 +93,23 @@
         </p-dialog>
 
         <div
+          *ngIf="!saving"
           class="tool"
           (click)="saveDocumentContents()"
           title="Save Document"
         >
           <!-- Save -->
-          <img *ngIf="!saving" src="assets/Icons/editIcons/save.png" alt="" />
-          <img *ngIf="saving" src="assets/Spinner/loading2.gif" alt="" />
+          <img  src="assets/Icons/editIcons/save.png" alt="" />
+        </div>
+
+        <div
+          *ngIf="saving"
+          class="toolSpinner"
+          (click)="saveDocumentContents()"
+          title="Save Document"
+        >
+          <!-- Save -->
+          <img src="assets/Spinner/loading2.gif" alt="" />
         </div>
         <!-- <div class="tool" (click)="delete()">
           <img src="assets/Icons/editIcons/delete.png" alt="" />
