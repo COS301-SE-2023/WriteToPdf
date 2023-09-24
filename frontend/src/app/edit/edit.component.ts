@@ -153,62 +153,6 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editService.decryptPassword(dp)
       );
     this.fileName = this.editService.getName();
-
-    this.history.push({
-      name: 'Latest',
-      date: 'now',
-      html: this.editService.getContent(),
-      id: 'LATEST',
-      isCurrent: true,
-    });
-    this.history.push({
-      name: 'Version 7',
-      date: '01-01-1977',
-      html: '',
-      id: '8',
-    });
-    this.history.push({
-      name: 'Version 6',
-      date: '01-01-1976',
-      html: '<s><p><span style="background-color:hsl(0, 75%, 60%);">Text added from V0 to V1.</span style="background-color:hsl(0, 75%, 60%);"></p> <p><span style="background-color:hsl(0, 75%, 60%);">More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(0, 75%, 60%);">Addition from V3 to V4</span></p></s>',
-      id: '7',
-    });
-    this.history.push({
-      name: 'Version 5',
-      date: '01-01-1975',
-      html: '<p><span style="background-color:hsl(0, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span >Addition from V3 to V4</span></p>',
-      id: '6',
-    });
-    this.history.push({
-      name: 'Version 4',
-      date: '01-01-1974',
-      html: '<p><span >Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(120, 75%, 60%);">Addition from V3 to V4</span></p>',
-      id: '5',
-    });
-    this.history.push({
-      name: 'Version 3',
-      date: '01-01-1973',
-      html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p>',
-      id: '4',
-    });
-    this.history.push({
-      name: 'Version 2',
-      date: '01-01-1972',
-      html: '<p><span>Text added from V0 to V1.</span></p> <p><span style="background-color:hsl(120, 75%, 60%);">More Text added from V1 to V2.</span></p>',
-      id: '3',
-    });
-    this.history.push({
-      name: 'Version 1',
-      date: '01-01-1971',
-      html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text added from V0 to V1.</span></p>',
-      id: '2',
-    });
-    this.history.push({
-      name: 'Version 0',
-      date: '01-01-1970',
-      html: '',
-      id: '1',
-    });
   }
 
   ngAfterViewInit() {
