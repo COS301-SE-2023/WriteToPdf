@@ -27,8 +27,10 @@ export class VersionControlController {
   ///===----------------------------------------------------
 
   @Post('save_diff')
-  saveDiff(@Body() diffDTO: DiffDTO) {
-    this.versionControlService.saveDiff(diffDTO);
+  async saveDiff(@Body() diffDTO: DiffDTO) {
+    await this.versionControlService.saveDiff(
+      diffDTO,
+    );
   }
 
   ///===----------------------------------------------------
