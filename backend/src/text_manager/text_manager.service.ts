@@ -339,10 +339,7 @@ export class TextManagerService {
     return mergedElements;
   }
 
-  createTable(
-    tableRoot: any,
-    allBlocks: any,
-  ): any {
+  createTable(tableRoot, allBlocks) {
     if (!tableRoot) return null;
     const table: string[][] = [];
     // Loop through the CHILD relationships of the table root element
@@ -355,53 +352,76 @@ export class TextManagerService {
         allBlocks,
       );
 
-      if (cellBlock) {
-        // If the CELL has CHILD relationships, find and concatenate the text blocks
-        if (
-          cellBlock.Relationships &&
-          cellBlock.Relationships.length > 0
-        ) {
-          const textBlocks: string[] = [];
+      // If the CELL has CHILD relationships, find and concatenate the text blocks
+      if (
+        cellBlock?.Relationships &&
+        cellBlock?.Relationships.length > 0
+      ) {
+        const textBlocks =
+          this.findTextBlocksInCell(
+            cellBlock,
+            allBlocks,
+          );
 
-          for (const childId of cellBlock.Relationships.find(
-            (rel) => rel.Type === 'CHILD',
-          )?.Ids || []) {
-            const textBlock = this.findBlockByID(
-              childId,
-              allBlocks,
-            );
-            if (textBlock && textBlock.Text) {
-              textBlocks.push(textBlock.Text);
-            }
-          }
+        // Concatenate the text blocks with spaces and remove leading/trailing spaces
+        const concatenatedText = textBlocks
+          .join(' ')
+          .trim();
 
-          // Concatenate the text blocks with spaces and remove leading/trailing spaces
-          const concatenatedText = textBlocks
-            .join(' ')
-            .trim();
-
-          // Add the concatenated text to the table at the specified row and column
-          const rowIndex = cellBlock.RowIndex - 1; // Adjust for 0-based indexing
-          const colIndex =
-            cellBlock.ColumnIndex - 1; // Adjust for 0-based indexing
-
-          // Ensure the row exists in the table
-          table[rowIndex] = table[rowIndex] || [];
-
-          // Fill any missing columns with empty cells
-          while (
-            table[rowIndex].length <= colIndex
-          ) {
-            table[rowIndex].push(' ');
-          }
-
-          // Set the concatenated text in the specified cell
-          table[rowIndex][colIndex] =
-            concatenatedText;
-        }
+        // Fill the table with the concatenated text
+        this.fillCell(
+          table,
+          cellBlock,
+          concatenatedText,
+        );
       }
     }
     return table;
+  }
+
+  findTextBlocksInCell(
+    cellBlock,
+    allBlocks,
+  ): string[] {
+    const textBlocks: string[] = [];
+
+    for (const childId of cellBlock.Relationships.find(
+      (rel) => rel.Type === 'CHILD',
+    )?.Ids || []) {
+      const textBlock = this.findBlockByID(
+        childId,
+        allBlocks,
+      );
+      if (textBlock?.Text) {
+        textBlocks.push(textBlock.Text);
+      }
+    }
+    return textBlocks;
+  }
+
+  fillMissingCols(table, rowIndex, colIndex) {
+    while (table[rowIndex].length <= colIndex) {
+      table[rowIndex].push(' ');
+    }
+  }
+
+  fillCell(table, cellBlock, concatenatedText) {
+    // Add the concatenated text to the table at the specified row and column
+    const rowIndex = cellBlock.RowIndex - 1; // Adjust for 0-based indexing
+    const colIndex = cellBlock.ColumnIndex - 1; // Adjust for 0-based indexing
+
+    // Ensure the row exists in the table
+    table[rowIndex] = table[rowIndex] || [];
+
+    // Fill any missing columns with empty cells
+    this.fillMissingCols(
+      table,
+      rowIndex,
+      colIndex,
+    );
+
+    // Set the concatenated text in the specified cell
+    table[rowIndex][colIndex] = concatenatedText;
   }
 
   isPartOfTable(table, line, allBlocks) {
