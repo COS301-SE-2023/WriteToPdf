@@ -11,7 +11,6 @@ import { Diff } from '../diffs/entities/diffs.entity';
 import { VersionHistoryDTO } from './dto/version_history.dto';
 import { VersionSetDTO } from './dto/version_set.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
-import { versions } from 'process';
 
 @Injectable()
 export class VersionControlService {
@@ -311,7 +310,6 @@ export class VersionControlService {
   async getHistorySet(
     versionSetDTO: VersionSetDTO,
   ) {
-
     const S3DiffIndices: number[] =
       versionSetDTO.DiffHistory.map(
         (diff) => diff.S3DiffIndex,
@@ -324,9 +322,10 @@ export class VersionControlService {
         versionSetDTO.MarkdownID,
       );
 
-    const prevSnapshot = await this.getPreviousSnapshot(
-      versionSetDTO,
-    );
+    const prevSnapshot =
+      await this.getPreviousSnapshot(
+        versionSetDTO,
+      );
 
     const prevSnapshotDTO =
       await this.s3Service.getSnapshot(
