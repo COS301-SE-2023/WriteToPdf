@@ -111,6 +111,7 @@ describe('VersionControlService', () => {
       const response = await service.saveSnapshot(
         diffDTO,
         nextSnaphshotID,
+        0,
       );
 
       expect(response).toEqual(undefined);
