@@ -11,6 +11,7 @@ import { Diff } from '../diffs/entities/diffs.entity';
 import { VersionHistoryDTO } from './dto/version_history.dto';
 import { VersionSetDTO } from './dto/version_set.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
+import { versions } from 'process';
 
 @Injectable()
 export class VersionControlService {
@@ -310,20 +311,10 @@ export class VersionControlService {
   async getHistorySet(
     versionSetDTO: VersionSetDTO,
   ) {
-    const DiffIDs: string[] =
-      versionSetDTO.DiffHistory.map(
-        (diff) => diff.DiffID,
-      );
 
     const S3DiffIndices: number[] =
       versionSetDTO.DiffHistory.map(
         (diff) => diff.S3DiffIndex,
-      );
-
-    const diffSet =
-      await this.diffService.getDiffSet(
-        versionSetDTO.MarkdownID,
-        DiffIDs,
       );
 
     const diffDTOs =
@@ -333,14 +324,13 @@ export class VersionControlService {
         versionSetDTO.MarkdownID,
       );
 
-    const snapshot =
-      await this.snapshotService.getSnapshotByID(
-        versionSetDTO.SnapshotID,
-      );
+    const prevSnapshot = await this.getPreviousSnapshot(
+      versionSetDTO,
+    );
 
-    const snapshotDTO =
+    const prevSnapshotDTO =
       await this.s3Service.getSnapshot(
-        snapshot.S3SnapshotIndex,
+        prevSnapshot.S3SnapshotIndex,
         versionSetDTO.UserID,
         versionSetDTO.MarkdownID,
       );
@@ -350,9 +340,43 @@ export class VersionControlService {
 
     versionHistoryDTO.DiffHistory = diffDTOs;
     versionHistoryDTO.SnapshotHistory = [
-      snapshotDTO,
+      prevSnapshotDTO,
     ];
     return versionHistoryDTO;
+  }
+
+  ///===----------------------------------------------------
+
+  async getPreviousSnapshot(
+    versionSetDTO: VersionSetDTO,
+  ) {
+    if (versionSetDTO.IsHeadSnapshot) {
+      return await this.s3Service.getSnapshot(
+        -1,
+        versionSetDTO.UserID,
+        versionSetDTO.MarkdownID,
+      );
+    }
+
+    const snapshot =
+      await this.snapshotService.getSnapshotByID(
+        versionSetDTO.SnapshotID,
+      );
+
+    let prevSnapshotIndex;
+    if (snapshot.S3SnapshotIndex === 0) {
+      prevSnapshotIndex =
+        parseInt(process.env.MAX_SNAPSHOTS) - 1;
+    } else {
+      prevSnapshotIndex =
+        snapshot.S3SnapshotIndex - 1;
+    }
+
+    return await this.s3Service.getSnapshot(
+      prevSnapshotIndex,
+      versionSetDTO.UserID,
+      versionSetDTO.MarkdownID,
+    );
   }
 
   ///===----------------------------------------------------
