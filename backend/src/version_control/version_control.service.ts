@@ -310,18 +310,25 @@ export class VersionControlService {
   async getHistorySet(
     versionSetDTO: VersionSetDTO,
   ) {
-    const diffs =
-      await this.diffService.getAllDiffs(
-        versionSetDTO.MarkdownID,
+    const DiffIDs: string[] =
+      versionSetDTO.DiffHistory.map(
+        (diff) => diff.DiffID,
       );
 
-    const S3DiffIDs: number[] = diffs.map(
-      (diff) => diff.S3DiffIndex,
-    );
+    const S3DiffIndices: number[] =
+      versionSetDTO.DiffHistory.map(
+        (diff) => diff.S3DiffIndex,
+      );
+
+    const diffSet =
+      await this.diffService.getDiffSet(
+        versionSetDTO.MarkdownID,
+        DiffIDs,
+      );
 
     const diffDTOs =
       await this.s3Service.getDiffSet(
-        S3DiffIDs,
+        S3DiffIndices,
         versionSetDTO.UserID,
         versionSetDTO.MarkdownID,
       );
