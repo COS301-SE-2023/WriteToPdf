@@ -583,10 +583,9 @@ export class FileManagerService {
     markdownFileDTO: MarkdownFileDTO,
   ) {
     // 1. Create snapshot reference in db
-    const firstSnapshotID =
-      await this.snapshotService.createSnapshot(
-        markdownFileDTO,
-      );
+    await this.snapshotService.createSnapshot(
+      markdownFileDTO,
+    );
 
     // 2. Create snapshot reference in s3
     await this.s3service.createSnapshot(
@@ -601,6 +600,18 @@ export class FileManagerService {
 
     // 4. Create diff reference in s3
     this.s3service.createDiff(markdownFileDTO);
+
+    markdownFileDTO.NextSnapshotIndex = -1;
+
+    // 5. Create redundant snapshot reference in db
+    await this.snapshotService.createSnapshot(
+      markdownFileDTO,
+    );
+
+    // 6. Create redundant snapshot reference in s3
+    await this.s3service.createSnapshot(
+      markdownFileDTO,
+    );
   }
 
   async exportFile(exportDTO: ExportDTO) {
