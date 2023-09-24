@@ -778,25 +778,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         });
     }
 
-    share() {
-        this.confirmationService.confirm({
-            message: 'Do you want to save before sharing?',
-            header: 'Share Document',
-            icon: 'pi pi-exclamation-triangle',
-            acceptLabel: 'Save before sharing',
-            rejectLabel: 'Share without saving',
-            accept: async () => {
-                await this.saveDocumentContents();
-                this.sharePopup = true;
-            },
-            reject: (type: any) => {
-                if (type === 1)
-                    this.sharePopup = true;
-            },
-        });
-    }
-
-    shareDocument() {
+    async shareDocument(save: boolean) {
         if(this.recipientEmail === '') {
             this.messageService.add({
                 severity: 'error',
@@ -806,7 +788,11 @@ export class EditComponent implements AfterViewInit, OnInit {
             return;
         }
         else {
-            this.fileService.shareDocument(this.editService.getMarkdownID() as string, this.recipientEmail).then((data) => {
+            if(save){
+                await this.saveDocumentContents();
+            }
+            this.loading = true;
+            await this.fileService.shareDocument(this.editService.getMarkdownID() as string, this.recipientEmail).then((data) => {
                 if(data) {
                     this.messageService.add({
                         severity: 'success',
@@ -824,6 +810,7 @@ export class EditComponent implements AfterViewInit, OnInit {
                     });
                 }
             });
+            this.loading = false;
         }
     }
 }

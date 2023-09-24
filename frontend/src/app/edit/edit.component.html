@@ -102,7 +102,10 @@
             <input placeholder="User Email" class="fileOperations-entity" [(ngModel)]="recipientEmail" label="Name: "
               pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" />
             <br />
-            <p-button (click)="shareDocument()" label="Share"></p-button>
+            <div style="display:flex; justify-content: space-around;">
+              <p-button (click)="shareDocument(false)" label="Share without saving"></p-button>
+              <p-button (click)="shareDocument(true)" label="Share and save"></p-button>
+            </div>
           </div>
         </p-dialog>
 
@@ -118,7 +121,7 @@
           <img src="assets/Icons/editIcons/delete.png" alt="" />
         </div> -->
 
-        <div class="tool" (click)="share()">
+        <div class="tool" (click)="sharePopup = true;">
           <img src="assets/Icons/editIcons/share.svg" alt="" />
         </div>
 
