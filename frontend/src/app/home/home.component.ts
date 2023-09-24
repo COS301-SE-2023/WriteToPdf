@@ -1126,18 +1126,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
         let toastPoppedUp = false;
         let itemDeleted = false;
         for (const entity of selected) {
-          if (entity.SafeLock) {
-            if (!toastPoppedUp)
-              this.messageService.add({
-                severity: 'warn',
-                summary: 'You can only delete an unlocked document',
-              });
-            toastPoppedUp = true;
-            continue;
-          } else {
+          // if (entity.SafeLock) {
+          //   if (!toastPoppedUp)
+          //     this.messageService.add({
+          //       severity: 'warn',
+          //       summary: 'You can only delete an unlocked document',
+          //     });
+          //   toastPoppedUp = true;
+          //   continue;
+          // } else {
             this.delete(entity);
             itemDeleted = true;
-          }
+          // }
         }
 
         if (!itemDeleted) return;
