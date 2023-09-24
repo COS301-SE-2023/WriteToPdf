@@ -185,8 +185,6 @@ export class VersioningApiService {
     body.MarkdownID = snapshot.MarkdownID;
     body.S3SnapshotIndex = snapshot.S3SnapshotIndex;
 
-    console.log('versioning-api.sendGetSnapshotContent: ', body);
-
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
