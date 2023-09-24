@@ -386,5 +386,21 @@
         </p-dialog>
       </div>
       <!--    TODO FileManagerPopup above-->
+
+      <!--    TODO FileManagerPopup below-->
+      <div class="fileOperations-container">
+        <p-dialog [(visible)]="sharePopup" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
+          header="Share" [focusOnShow]="true" (keydown.escape)="sharePopup = false" (click)="$event.stopPropagation()">
+          <div class="fileOperations" style="display: grid; width:80%;">
+            <input placeholder="User Email" class="fileOperations-entity" [(ngModel)]="recipientEmail" label="Name: " pInputText
+              type="text" [style]="{width: '100%', marginTop: '20px'}" (keydown.enter)="shareDocument()" />
+            <br />
+            <div style="display:flex; justify-content: space-around;">
+              <p-button (click)="shareDocument()" label="Share" [style]="{width:'200px'}"></p-button>
+            </div>
+          </div>
+        </p-dialog>
+      </div>
+      <!--    TODO FileManagerPopup above-->
   
 </div>

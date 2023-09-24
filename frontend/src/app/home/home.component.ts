@@ -82,6 +82,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public editToggle: boolean = false;
   public valueBeforeEdit: string = '';
   public colInspect: any;
+
   public moveDialogVisible: boolean = false;
   public entityToMove: any;
   public destinationDirectory: any;
@@ -90,12 +91,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
   renameDialogVisible: boolean = false;
   documentLockedPopup: boolean = false;
   openLockedDocumentPopup: boolean = false;
+  sharePopup: boolean = false;
   removeDocumentLock: boolean = false;
+
   public entityName: string = '';
   entityRename: string = '';
   uploadedFiles: any[] = [];
   contextMenuItems: any[];
   public userDocumentPassword: string = '';
+  recipientEmail: string = '';
   documentPromise: Promise<any> | null = null;
 
   currentFolders: any[] = []; //Holds an array of objects representing folders.
@@ -190,6 +194,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.documentPromise = this.fileService
               .retrieveDocument(file[0].MarkdownID, file[0].Path);
           }
+        },
+      },
+      {
+        label: 'Share',
+        icon: 'pi pi-share-alt',
+        command: () => {
+          this.sharePopup = true;
         },
       },
     ];
@@ -811,8 +822,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
             },
           },
           {
-            separator: true,
-          },
+            label: 'Share',
+            icon: 'pi pi-fw pi-share-alt',
+            command: () => {
+              if (this.getSelected().length === 1 && this.getSelected()[0].Type === 'file')
+                this.sharePopup = true;
+              else
+                this.messageService.add({
+                  severity: 'warn',
+                  summary: 'Please select a File to Share',
+                  detail: '',
+                });
+            },
+
+          }
           // {//TODO implement downloading a file from the database
           //   label: 'Export',
           //   icon: 'pi pi-fw pi-external-link',
@@ -1138,8 +1161,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
           //   toastPoppedUp = true;
           //   continue;
           // } else {
-            this.delete(entity);
-            itemDeleted = true;
+          this.delete(entity);
+          itemDeleted = true;
           // }
         }
 
@@ -1464,11 +1487,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.contextMenuItems[0].disabled = true;
         this.contextMenuItems[4].disabled = true;
         this.contextMenuItems[6].disabled = true;
+        this.contextMenuItems[7].disabled = true;
       }
       else {
         this.contextMenuItems[0].disabled = false;
         this.contextMenuItems[4].disabled = false;
         this.contextMenuItems[6].disabled = false;
+        this.contextMenuItems[7].disabled = false;
       }
 
       if (node.Selected) {
@@ -1477,8 +1502,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       if (this.getSelected().length === 1) {
         if (node.Type === 'folder') {
           this.contextMenuItems[6].disabled = true;
+          this.contextMenuItems[7].disabled = true;
         } else {
           this.contextMenuItems[6].disabled = false;
+          this.contextMenuItems[7].disabled = false;
           if (node.SafeLock) {
             this.contextMenuItems[6] = {
               label: 'Remove Lock',
@@ -1792,7 +1819,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   handleTouchEnd(event: any, obj: any, type: string) {
     if (this.touchObj == obj) {
-      if(this.contextMenuVisible) {
+      if (this.contextMenuVisible) {
         this.contextMenuVisible = false;
         this.contextMenu.hide();
         return;
@@ -1821,7 +1848,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   handleDirectoryRightClick(event: any) {
-    if(this.getSelected().length > 0) return;
+    if (this.getSelected().length > 0) return;
     this.contextMenu.hide();
     this.contextMenuItems[0].disabled = true;
     this.contextMenuItems[3].disabled = true;
@@ -1841,10 +1868,44 @@ export class HomeComponent implements OnInit, AfterViewInit {
       },
     };
     this.contextMenuItems[6].disabled = true;
+    this.contextMenuItems[7].disabled = true;
     this.contextMenu.cd.detectChanges();
     this.contextMenuVisible = true;
     this.contextMenu.position(event);
     this.contextMenu.show(event);
+  }
+
+  async shareDocument() {
+    const selected = this.getSelected()[0];
+    console.log(selected);
+    if (selected.length > 1 || selected.type === 'folder') {
+      return;
+    }
+
+    if (this.recipientEmail === '') {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Please enter a recipient email',
+      });
+      return;
+    }
+    else {
+      this.loading = true;
+      await this.fileService.shareDocument(selected.MarkdownID, this.recipientEmail).then((data) => {
+        if (data) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Document shared successfully',
+          });
+          this.sharePopup = false;
+          this.recipientEmail = '';
+        }
+        this.loading = false;
+      });
+      this.loading = false;
+    }
   }
 
   protected readonly focus = focus;
