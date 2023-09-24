@@ -199,7 +199,7 @@ describe('SnapshotService', () => {
         .mockResolvedValueOnce(foundSnapshot);
 
       const result =
-        await service.getSnapshotByS3SnapshotID(
+        await service.getSnapshot(
           markdownID,
           s3SnapshotIndex,
         );

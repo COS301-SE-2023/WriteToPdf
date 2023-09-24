@@ -10,7 +10,7 @@ import { Snapshot } from '../snapshots/entities/snapshots.entity';
 import { Diff } from '../diffs/entities/diffs.entity';
 import { VersionHistoryDTO } from './dto/version_history.dto';
 import { VersionSetDTO } from './dto/version_set.dto';
-import { MarkdownFileDTO } from 'src/markdown_files/dto/markdown_file.dto';
+import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 
 @Injectable()
 export class VersionControlService {

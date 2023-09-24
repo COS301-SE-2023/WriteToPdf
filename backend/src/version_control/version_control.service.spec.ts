@@ -108,11 +108,6 @@ describe('VersionControlService', () => {
         'updateSnapshot',
       );
 
-      jest.spyOn(
-        markdownFilesService,
-        'incrementNextSnapshotID',
-      );
-
       const response = await service.saveSnapshot(
         diffDTO,
         nextSnaphshotID,
@@ -131,13 +126,6 @@ describe('VersionControlService', () => {
         .mockResolvedValueOnce(
           new MarkdownFile(),
         );
-
-      jest
-        .spyOn(
-          markdownFilesService,
-          'getNextSnapshotID',
-        )
-        .mockResolvedValueOnce(0);
 
       jest
         .spyOn(service, 'getLogicalOrder')
