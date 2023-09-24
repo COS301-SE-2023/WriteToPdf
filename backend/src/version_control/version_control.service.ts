@@ -439,9 +439,7 @@ export class VersionControlService {
 
   ///===----------------------------------------------------
 
-  async getSnapshot(
-    snapshotDTO: SnapshotDTO,
-  ) {
+  async getSnapshot(snapshotDTO: SnapshotDTO) {
     return await this.s3Service.getSnapshot(
       snapshotDTO.S3SnapshotIndex,
       snapshotDTO.UserID,
