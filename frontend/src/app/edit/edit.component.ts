@@ -407,20 +407,13 @@ export class EditComponent implements AfterViewInit, OnInit {
                 }
             }
             this.copyHtmlToClipboard(copyText);
-        } else if (format === 'image') {
-            let asset = this.assets[currAssetIndex];
-            if (!asset.CopyContent) {
-                asset = await this.assetService.retrieveAsset(assetId, format, textId);
-                this.assets[currAssetIndex].CopyContent = asset.Content;
-                asset.CopyContent = asset.Content;
-            }
-            this.copyHtmlToClipboard(`<img src="${asset.CopyContent}" alt="Image">`);
-            this.messageService.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Image copied to clipboard',
-            });
-            this.assets[currAssetIndex].NotRetrieving = false;
+            this.messageService.add(
+                {
+                    severity: 'success',
+                    summary: 'Copied to Clipboard',
+                    detail: 'All OCR components copied to clipboard',
+                }
+            )
         }
     }
 
