@@ -8,6 +8,7 @@ import { S3Service } from '../s3/s3.service';
 import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import { TextractService } from '../textract/textract.service';
+import { find } from 'cheerio/lib/api/traversing';
 
 @Injectable()
 export class TextManagerService {
@@ -82,85 +83,38 @@ export class TextManagerService {
 
   formatTextractResponse(response: JSON) {
     if (!response) return null;
-    const rawLines = [];
-    const tableRoot = [];
-    for (const block in response['Blocks']) {
-      if (
-        response['Blocks'][block].BlockType ==
-        'LINE'
-      ) {
-        rawLines.push(response['Blocks'][block]);
-      }
-      if (
-        response['Blocks'][block].BlockType ==
-        'TABLE'
-      ) {
-        tableRoot.push(response['Blocks'][block]);
-      }
-    }
 
-    const freeLines = rawLines.slice();
-    for (const line of rawLines) {
-      for (const root of tableRoot) {
-        if (
-          this.isPartOfTable(
-            root,
-            line,
-            response['Blocks'],
-          )
-        ) {
-          freeLines.splice(
-            freeLines.indexOf(line),
-            1,
-          );
-        }
-      }
-    }
+    const allBlocks = response['Blocks'];
+
+    // Find all line blocks and table root blocks
+    const rawLines = [];
+    const tableRoots = [];
+    this.categoriseBlocks(
+      rawLines,
+      tableRoots,
+      allBlocks,
+    );
+
+    // Find all lines that are not part of a table
+    const freeLines = this.findFreeLines(
+      rawLines,
+      tableRoots,
+      allBlocks,
+    );
 
     // Group together lines that are close to each other vertically
-    const groupedLines = [];
-    for (const line of freeLines) {
-      if (groupedLines.length == 0) {
-        groupedLines.push([line]);
-      } else {
-        const lastGroup =
-          groupedLines[groupedLines.length - 1];
-        const lastLine =
-          lastGroup[lastGroup.length - 1];
-        if (
-          Math.abs(
-            lastLine.Geometry.BoundingBox.Top -
-              line.Geometry.BoundingBox.Top,
-          ) < 0.005
-        ) {
-          lastGroup.push(line);
-        } else {
-          groupedLines.push([line]);
-        }
-      }
-    }
-    const concatenatedTextLines = [];
-    for (const group of groupedLines) {
-      const concatenatedLine = group
-        .map((line) => line.Text)
-        .join('\t');
-      concatenatedTextLines.push({
-        Top: group[0].Geometry.BoundingBox.Top,
-        Lines: concatenatedLine,
-      });
-    }
+    const groupedLines =
+      this.groupLines(freeLines);
 
-    const tables = [];
-    for (const root of tableRoot) {
-      const table = this.createTable(
-        root,
-        response['Blocks'],
-      );
-      tables.push({
-        Top: root.Geometry.BoundingBox.Top,
-        Table: table,
-      });
-    }
+    // Concatenate the text lines that are in the same horizontal position with a tab
+    const concatenatedTextLines =
+      this.concatenateTextLines(groupedLines);
+
+    // Construct tables for each table root
+    const tables = this.constructTables(
+      tableRoots,
+      allBlocks,
+    );
 
     // Create an array to hold elements (text and table)
     const elements: {
@@ -207,6 +161,115 @@ export class TextManagerService {
     }
 
     // Sort the elements based on their top position
+    this.sortElements(elements);
+
+    // Merge adjacent text elements
+    const mergedElements =
+      this.mergeTextElements(elements);
+
+    // Find the indices of the table elements
+    const tableIndices = this.findTableIndices(
+      mergedElements,
+    );
+
+    // Create the JSON object
+    const jsonObject = {
+      'Num Elements': mergedElements.length,
+      'Table Indices': tableIndices,
+      elements: mergedElements,
+    };
+
+    // Return the JSON object
+    return jsonObject;
+  }
+
+  categoriseBlocks(lines, tableRoots, allBlocks) {
+    for (const block of allBlocks) {
+      if (block.BlockType == 'LINE') {
+        lines.push(block);
+      }
+      if (block.BlockType == 'TABLE') {
+        tableRoots.push(block);
+      }
+    }
+  }
+
+  findFreeLines(lines, tableRoots, allBlocks) {
+    const freeLines = lines.slice();
+    for (const line of lines) {
+      for (const root of tableRoots) {
+        if (
+          this.isPartOfTable(
+            root,
+            line,
+            allBlocks,
+          )
+        ) {
+          freeLines.splice(
+            freeLines.indexOf(line),
+            1,
+          );
+        }
+      }
+    }
+    return freeLines;
+  }
+
+  groupLines(freeLines) {
+    const groupedLines = [];
+    for (const line of freeLines) {
+      if (groupedLines.length == 0) {
+        groupedLines.push([line]);
+      } else {
+        const lastGroup =
+          groupedLines[groupedLines.length - 1];
+        const lastLine =
+          lastGroup[lastGroup.length - 1];
+        if (
+          Math.abs(
+            lastLine.Geometry.BoundingBox.Top -
+              line.Geometry.BoundingBox.Top,
+          ) < 0.005
+        ) {
+          lastGroup.push(line);
+        } else {
+          groupedLines.push([line]);
+        }
+      }
+    }
+    return groupedLines;
+  }
+
+  concatenateTextLines(groupedLines) {
+    const concatenatedTextLines = [];
+    for (const group of groupedLines) {
+      const concatenatedLine = group
+        .map((line) => line.Text)
+        .join('\t');
+      concatenatedTextLines.push({
+        Top: group[0].Geometry.BoundingBox.Top,
+        Lines: concatenatedLine,
+      });
+    }
+    return concatenatedTextLines;
+  }
+
+  constructTables(tableRoots, allBlocks) {
+    const tables = [];
+    for (const root of tableRoots) {
+      const table = this.createTable(
+        root,
+        allBlocks,
+      );
+      tables.push({
+        Top: root.Geometry.BoundingBox.Top,
+        Table: table,
+      });
+    }
+    return tables;
+  }
+
+  sortElements(elements) {
     elements.sort((a, b) => {
       let topA, topB;
 
@@ -227,29 +290,16 @@ export class TextManagerService {
       // Compare and sort in ascending order
       return topA - topB;
     });
+  }
 
-    const mergedElements =
-      this.mergeTextElements(elements);
-
-    // Find the indices of the table elements
+  findTableIndices(elements) {
     const tableIndices = [];
-    for (const el of mergedElements) {
+    for (const el of elements) {
       if (el['Table Element']) {
-        tableIndices.push(
-          mergedElements.indexOf(el),
-        );
+        tableIndices.push(elements.indexOf(el));
       }
     }
-
-    // Create the JSON object
-    const jsonObject = {
-      'Num Elements': mergedElements.length,
-      'Table Indices': tableIndices,
-      elements: mergedElements,
-    };
-
-    // Return the JSON object
-    return jsonObject;
+    return tableIndices;
   }
 
   mergeTextElements(elements) {
@@ -289,10 +339,7 @@ export class TextManagerService {
     return mergedElements;
   }
 
-  createTable(
-    tableRoot: any,
-    allBlocks: any,
-  ): any {
+  createTable(tableRoot, allBlocks) {
     if (!tableRoot) return null;
     const table: string[][] = [];
     // Loop through the CHILD relationships of the table root element
@@ -305,53 +352,76 @@ export class TextManagerService {
         allBlocks,
       );
 
-      if (cellBlock) {
-        // If the CELL has CHILD relationships, find and concatenate the text blocks
-        if (
-          cellBlock.Relationships &&
-          cellBlock.Relationships.length > 0
-        ) {
-          const textBlocks: string[] = [];
+      // If the CELL has CHILD relationships, find and concatenate the text blocks
+      if (
+        cellBlock?.Relationships &&
+        cellBlock?.Relationships.length > 0
+      ) {
+        const textBlocks =
+          this.findTextBlocksInCell(
+            cellBlock,
+            allBlocks,
+          );
 
-          for (const childId of cellBlock.Relationships.find(
-            (rel) => rel.Type === 'CHILD',
-          )?.Ids || []) {
-            const textBlock = this.findBlockByID(
-              childId,
-              allBlocks,
-            );
-            if (textBlock && textBlock.Text) {
-              textBlocks.push(textBlock.Text);
-            }
-          }
+        // Concatenate the text blocks with spaces and remove leading/trailing spaces
+        const concatenatedText = textBlocks
+          .join(' ')
+          .trim();
 
-          // Concatenate the text blocks with spaces and remove leading/trailing spaces
-          const concatenatedText = textBlocks
-            .join(' ')
-            .trim();
-
-          // Add the concatenated text to the table at the specified row and column
-          const rowIndex = cellBlock.RowIndex - 1; // Adjust for 0-based indexing
-          const colIndex =
-            cellBlock.ColumnIndex - 1; // Adjust for 0-based indexing
-
-          // Ensure the row exists in the table
-          table[rowIndex] = table[rowIndex] || [];
-
-          // Fill any missing columns with empty cells
-          while (
-            table[rowIndex].length <= colIndex
-          ) {
-            table[rowIndex].push(' ');
-          }
-
-          // Set the concatenated text in the specified cell
-          table[rowIndex][colIndex] =
-            concatenatedText;
-        }
+        // Fill the table with the concatenated text
+        this.fillCell(
+          table,
+          cellBlock,
+          concatenatedText,
+        );
       }
     }
     return table;
+  }
+
+  findTextBlocksInCell(
+    cellBlock,
+    allBlocks,
+  ): string[] {
+    const textBlocks: string[] = [];
+
+    for (const childId of cellBlock.Relationships.find(
+      (rel) => rel.Type === 'CHILD',
+    )?.Ids || []) {
+      const textBlock = this.findBlockByID(
+        childId,
+        allBlocks,
+      );
+      if (textBlock?.Text) {
+        textBlocks.push(textBlock.Text);
+      }
+    }
+    return textBlocks;
+  }
+
+  fillMissingCols(table, rowIndex, colIndex) {
+    while (table[rowIndex].length <= colIndex) {
+      table[rowIndex].push(' ');
+    }
+  }
+
+  fillCell(table, cellBlock, concatenatedText) {
+    // Add the concatenated text to the table at the specified row and column
+    const rowIndex = cellBlock.RowIndex - 1; // Adjust for 0-based indexing
+    const colIndex = cellBlock.ColumnIndex - 1; // Adjust for 0-based indexing
+
+    // Ensure the row exists in the table
+    table[rowIndex] = table[rowIndex] || [];
+
+    // Fill any missing columns with empty cells
+    this.fillMissingCols(
+      table,
+      rowIndex,
+      colIndex,
+    );
+
+    // Set the concatenated text in the specified cell
+    table[rowIndex][colIndex] = concatenatedText;
   }
 
   isPartOfTable(table, line, allBlocks) {
