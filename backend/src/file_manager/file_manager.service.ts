@@ -20,6 +20,7 @@ import { ConversionService } from '../conversion/conversion.service';
 import { ImportDTO } from './dto/import.dto';
 import { DiffsService } from '../diffs/diffs.service';
 import { SnapshotService } from '../snapshots/snapshots.service';
+import { ShareRequestDTO } from './dto/share_request.dto';
 
 @Injectable()
 export class FileManagerService {
@@ -680,6 +681,10 @@ export class FileManagerService {
     //   (await pdfBuffer).toString(),
     //   encryptionKey,
     // );
+  }
+
+  shareFile(shareRequestDTO: ShareRequestDTO) {
+    // Not empty
   }
 
   // async generatePdf(html: string) {
