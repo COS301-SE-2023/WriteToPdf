@@ -30,39 +30,39 @@ import {parse} from 'path';
     styleUrls: ['./edit.component.scss'],
 })
 export class EditComponent implements AfterViewInit, OnInit {
-    fileName: string | undefined = '';
-    text: any;
-    sidebarVisible: boolean = true;
-    currentZoom: number = 1;
-    exportDialogVisible: boolean = false;
-    public speedDialItems!: MenuItem[];
-    assets: any[] = [];
-    history: any[] = [];
-    textFromAsset: any[] = [];
-    textCopyDialog: boolean = false;
-    noAssetsAvailable: boolean = false;
-    isTouchScreen: boolean = false;
-    sideBarTab: boolean = false;
+  fileName: string | undefined = '';
+  text: any;
+  sidebarVisible: boolean = true;
+  currentZoom: number = 1;
+  exportDialogVisible: boolean = false;
+  public speedDialItems!: MenuItem[];
+  assets: any[] = [];
+  history: any[] = [];
+  textFromAsset: any[] = [];
+  textCopyDialog: boolean = false;
+  noAssetsAvailable: boolean = false;
+  isTouchScreen: boolean = false;
+  sideBarTab: boolean = false;
+  loading: boolean = false;
 
+  public editor: DecoupledEditor = {} as DecoupledEditor;
+  public globalAreaReference!: HTMLElement;
 
-    public editor: DecoupledEditor = {} as DecoupledEditor;
-    public globalAreaReference!: HTMLElement;
+  constructor(
+    private elementRef: ElementRef,
+    @Inject(Router) private router: Router,
+    private dialogService: DialogService,
+    private fileService: FileService,
+    private editService: EditService,
+    private assetService: AssetService,
+    private clipboard: Clipboard,
+    private messageService: MessageService,
+    private versionControlService: VersionControlService,
+    private confirmationService: ConfirmationService,
+    private versioningApiService: VersioningApiService,
+    private OCRDialog: OCRDialogService
+  ) {}
 
-    constructor(
-        private elementRef: ElementRef,
-        @Inject(Router) private router: Router,
-        private dialogService: DialogService,
-        private fileService: FileService,
-        private editService: EditService,
-        private assetService: AssetService,
-        private clipboard: Clipboard,
-        private messageService: MessageService,
-        private versionControlService: VersionControlService,
-        private confirmationService: ConfirmationService,
-        private versioningApiService: VersioningApiService,
-        private OCRDialog: OCRDialogService
-    ) {
-    }
 
     @HostListener('window:beforeunload', ['$event'])
     beforeUnloadHandler(event: BeforeUnloadEvent) {
@@ -97,7 +97,6 @@ export class EditComponent implements AfterViewInit, OnInit {
         // and pass that response to the OCRDialogService.
         this.OCRDialog.openDialog(ocrDataPassedOver);
     }
-
     showImageUploadPopup(): void {
         const ref = this.dialogService.open(ImageUploadPopupComponent, {
             header: 'Upload Images',
@@ -105,6 +104,123 @@ export class EditComponent implements AfterViewInit, OnInit {
             closable: true,
             closeOnEscape: true,
             dismissableMask: true,
+
+
+
+  async ngOnInit(): Promise<void> {
+
+    //get window width
+    this.isTouchScreen = window.matchMedia('(pointer: coarse)').matches;
+    const width = window.innerWidth;
+    if (width < 800) this.hideSideBar();
+    const c = localStorage.getItem('content');
+    const m = localStorage.getItem('markdownID');
+    const n = localStorage.getItem('name');
+    const p = localStorage.getItem('path');
+    const pf = localStorage.getItem('parentFolderID');
+    const sl = localStorage.getItem('safeLock');
+    const dp = localStorage.getItem('encryptedDocumentPassword');
+    this.versionControlService.setLatestVersionContent(c ? (c as string) : '');
+
+    if (
+      c != null &&
+      m != null &&
+      n != null &&
+      p != null &&
+      pf != null &&
+      sl != null &&
+      dp != null
+    )
+      this.editService.setAll(
+        c,
+        m,
+        n,
+        p,
+        pf,
+        sl === 'true',
+        this.editService.decryptPassword(dp)
+      );
+    this.fileName = this.editService.getName();
+  }
+      
+  ngAfterViewInit() {
+    //Waits a small amount of time to fetch content from editService.
+    let editableArea = this.elementRef.nativeElement.querySelector(
+      '.document-editor__editable'
+    );
+    this.globalAreaReference = editableArea; //set to avoid constant referencing
+    const toolbarContainer: HTMLElement =
+      this.elementRef.nativeElement.querySelector('.document-editor__toolbar');
+    if (editableArea && toolbarContainer) {
+      DecoupledEditor.create(editableArea, {
+        toolbar: {
+          items: [
+            'undo',
+            'redo',
+            '|',
+            'heading',
+            '|',
+            'fontfamily',
+            'fontsize',
+            'fontColor',
+            'fontBackgroundColor',
+            '|',
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+            '|',
+            'link',
+            'insertTable',
+            'blockQuote',
+            '|',
+            'alignment',
+            '|',
+            'bulletedList',
+            'numberedList',
+            'todoList',
+            'outdent',
+            'indent',
+          ],
+          shouldNotGroupWhenFull: false,
+        },
+        cloudServices: {
+          //TODO Great for Collaboration features.
+        },
+        // plugins: [PageBreak],
+        link: {
+          // Automatically add target="_blank" and rel="noopener noreferrer" to all external links.
+          addTargetToExternalLinks: true,
+        },
+      })
+        .then((editor) => {
+          // Apply assertion for toolbarContainer
+          // (toolbarContainer as Node).appendChild(editor.ui.view.toolbar.element as Node);
+          editor.ui.view.toolbar.element?.style.setProperty(
+            'background',
+            '#00000000'
+          );
+          editor.ui.view.toolbar.element?.style.setProperty('border', 'none');
+          editor.ui.view.toolbar.element?.style.setProperty(
+            'width',
+            'calc(100vw - 300px)'
+          );
+          editor.ui.view.toolbar.element?.style.setProperty(
+            'overflow-x',
+            'hidden !important'
+          );
+          this.elementRef.nativeElement.ownerDocument.body.style.height = '0';
+
+          document
+            .getElementsByClassName('toolsWrapper')[0]
+            .appendChild(editor.ui.view.toolbar.element as Node);
+          (window as any).editor = editor; // Adding 'editor' to the global window object for testing purposes.
+          // Set the saved content after the editor is ready
+          editor.setData(<string>this.editService.getContent());
+          this.editor = editor;
+        })
+        .catch((err) => {
+          console.error(err);
         });
         ref.onClose.subscribe(
             () => {
@@ -243,82 +359,61 @@ export class EditComponent implements AfterViewInit, OnInit {
     navigateToPage(pageName: string) {
         this.editService.setContent(this.editor.getData());
         this.saveDocumentContents();
-        this.router.navigate([`/${pageName}`]);
-    }
 
-    navigateToCameraPage() {
-        this.editService.setContent(this.editor.getData());
-        this.saveDocumentContents();
-        const data = {
-            ParentFolderId: this.editService.getParentFolderID(),
-            Path: this.editService.getPath(),
-        };
-        this.router.navigate(['/camera'], {state: data});
-    }
+        this.router.navigate(['/home']);
+      },
+      reject: (type: any) => {
+        if (type === 1) this.router.navigate(['/home']);
+      },
+    });
+  }
 
-    exitToHome() {
-        this.confirmationService.confirm({
-            message: 'Do you want to save before you leave?',
-            header: 'Save Confirmation',
-            icon: 'pi pi-exclamation-triangle',
-            acceptLabel: 'Exit and Save',
-            rejectLabel: 'Exit without Saving',
-            accept: () => {
-                this.editService.setContent(this.editor.getData());
-                this.saveDocumentContents();
-                this.router.navigate(['/home']);
-            },
-            reject: (type: any) => {
-                if (type === 1) this.router.navigate(['/home']);
-            },
-        });
-    }
+  async saveDocumentContents() {
+    // Save the document quill content to localStorage when changes occur
+    // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
 
-    async saveDocumentContents() {
-        // Save the document quill content to localStorage when changes occur
-        // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
+    let contents = this.editor.getData();
+    let pass = this.editService.getDocumentPassword();
 
-        let contents = this.editor.getData();
-        let pass = this.editService.getDocumentPassword();
+    const latestVersionContent =
+      this.versionControlService.getLatestVersionContent();
 
-        const latestVersionContent =
-            this.versionControlService.getLatestVersionContent();
+    const readablePatch = this.versionControlService.getReadablePatch(
+      latestVersionContent,
+      contents
+    );
+    const markdownID = this.editService.getMarkdownID();
+    localStorage.setItem('content', contents);
+    if (pass != '' && pass != undefined) {
+      this.loading = true;
+      await this.fileService.saveDocument(
+        this.fileService.encryptSafeLockDocument(contents, pass),
+        this.editService.getMarkdownID(),
+        this.editService.getPath(),
+        this.editService.getSafeLock()
+      );
 
-        const readablePatch = this.versionControlService.getReadablePatch(
-            latestVersionContent,
-            contents
+      if (readablePatch !== '')
+        this.versioningApiService.saveDiff(
+          markdownID ? (markdownID as string) : '',
+          this.fileService.encryptSafeLockDocument(readablePatch, pass)
         );
-        const markdownID = this.editService.getMarkdownID();
-        localStorage.setItem('content', contents);
-        if (pass != '' && pass != undefined) {
-            await this.fileService.saveDocument(
-                this.fileService.encryptSafeLockDocument(contents, pass),
-                this.editService.getMarkdownID(),
-                this.editService.getPath(),
-                this.editService.getSafeLock()
-            );
+      this.loading = false;
+    } else {
+      this.loading = true;
+      await this.fileService.saveDocument(
+        contents,
+        this.editService.getMarkdownID(),
+        this.editService.getPath(),
+        this.editService.getSafeLock()
+      );
 
-            if (readablePatch !== '')
-                this.versioningApiService.saveDiff(
-                    markdownID ? (markdownID as string) : '',
-                    this.fileService.encryptSafeLockDocument(readablePatch, pass)
-                );
-        } else {
-            await this.fileService.saveDocument(
-                contents,
-                this.editService.getMarkdownID(),
-                this.editService.getPath(),
-                this.editService.getSafeLock()
-            );
-
-            if (readablePatch !== '')
-                this.versioningApiService.saveDiff(
-                    markdownID ? (markdownID as string) : '',
-                    readablePatch
-                );
-        }
-
-        this.versionControlService.setLatestVersionContent(contents);
+      if (readablePatch !== '')
+        this.versioningApiService.saveDiff(
+          markdownID ? (markdownID as string) : '',
+          readablePatch
+        );
+        this.loading = false;
     }
 
     hideSideBar() {
@@ -614,35 +709,34 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editor.execute('pageBreak');
     }
 
-    zoomIn() {
-        if (this.currentZoom >= 2) return;
-        this.currentZoom += 0.1; // Increase zoom by 10% (adjust as needed)
-        this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
-        const element = document.getElementsByClassName(
-            'center-page'
-        )[0] as HTMLElement;
-        element.style.transform = `scale(${this.currentZoom})`;
-        element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
-        element.style.marginLeft = 'auto';
-        this.reCenterPage();
-    }
+      zoomIn() {
+    if (this.currentZoom >= 2) return;
+    this.currentZoom += 0.1; // Increase zoom by 10% (adjust as needed)
+    this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
+    const element = document.getElementsByClassName(
+      'center-page'
+    )[0] as HTMLElement;
+    element.style.transform = `scale(${this.currentZoom})`;
+    element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
+    element.style.marginLeft = 'auto';
+    this.reCenterPage();
+  }
 
-    zoomOut() {
-        if (this.currentZoom <= 0.5) return;
-        this.currentZoom -= 0.1; // Decrease zoom by 10% (adjust as needed)
-        this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
-        const element = document.getElementsByClassName(
-            'center-page'
-        )[0] as HTMLElement;
-        element.style.transform = `scale(${this.currentZoom})`;
-        element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
-        this.reCenterPage();
-    }
+  zoomOut() {
+    if (this.currentZoom <= 0.5) return;
+    this.currentZoom -= 0.1; // Decrease zoom by 10% (adjust as needed)
+    this.currentZoom = parseFloat(this.currentZoom.toFixed(1));
+    const element = document.getElementsByClassName(
+      'center-page'
+    )[0] as HTMLElement;
+    element.style.transform = `scale(${this.currentZoom})`;
+    element.style.transformOrigin = 'center top'; // Change the origin to the top left corner (adjust as needed)
+    this.reCenterPage();
+  }
 
-    getZoom() {
-        return `${Math.floor(this.currentZoom * 100)}%`;
-    }
-
+  getZoom() {
+    return `${Math.floor(this.currentZoom * 100)}%`;
+  }
     reCenterPage() {
         const element = document.getElementsByClassName(
             'center-page'
@@ -662,56 +756,47 @@ export class EditComponent implements AfterViewInit, OnInit {
             }
         }
     }
+    
+    
+  formatDate(dateString: Date): string {
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    if(!dateString) return '';
+    const date = new Date(dateString);
 
-    getLeftPosition(element: HTMLElement): number {
-        const rect = element.getBoundingClientRect();
-        return rect.left;
-    }
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = date.getMonth() ; // January is 0!
+    const yyyy = date.getFullYear();
 
+    const hh = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    const ss = String(date.getSeconds()).padStart(2, '0');
 
-    //Functions for exporting from HTML
-    convertToFileType(fileType: string) {
-        let contents = `<div style="word-break: normal; font-family: Arial, Helvetica, sans-serif; padding:35px 75px 75px; width:794px; margin:auto; background-color:white;">${this.editor.getData()}</div>`;
-        const markdownID = this.editService.getMarkdownID();
-        const name = this.editService.getName();
-        if (markdownID && name) {
-            this.fileService.exportDocumentToNewFileType(
-                markdownID,
-                name,
-                contents,
-                fileType
-            );
-        }
-    }
+    return `${dd} ${months[mm]}, ${hh}:${min}:${ss}`;
+  }
 
-    capitalizeFirstLetter(inputString: string): string {
+  formatAssetDate(dateString: Date): string {
+    if(!dateString) return '';
+    const date = new Date(dateString);
+
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = date.getMonth() ; // January is 0!
+    const yyyy = date.getFullYear();
+
+    return `${dd}-${mm}-${yyyy}`;
+  }
+    
+        capitalizeFirstLetter(inputString: string): string {
         if (!inputString || inputString.length === 0) {
             return inputString; // Return the input string as-is if it's empty or null.
         }
 
         return inputString.charAt(0).toUpperCase() + inputString.slice(1);
     }
-
-    formatDate(dateString: Date): string {
-        const months = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
-        ];
-        if (!dateString) return '';
-        const date = new Date(dateString);
-
-        const dd = String(date.getDate()).padStart(2, '0');
-        const mm = date.getMonth(); // January is 0!
-        const yyyy = date.getFullYear();
-
-        const hh = String(date.getHours()).padStart(2, '0');
-        const min = String(date.getMinutes()).padStart(2, '0');
-        const ss = String(date.getSeconds()).padStart(2, '0');
-
-        return `${dd} ${months[mm]}, ${hh}:${min}:${ss}`;
-    }
-
-    enableReadOnly() {
+    
+        enableReadOnly() {
         this.editor.enableReadOnlyMode('');
     }
 
@@ -733,40 +818,61 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.enableReadOnly();
         this.editor.setData(obj.Content);
     }
-
+    
     deselectAllHistory() {
         for (let i = 0; i < this.history.length; i++) {
             this.history[i].isCurrent = false;
         }
     }
-
-    expandSnapshot(snapshot: any, event: any) {
-        if (snapshot.expanded) {
-            snapshot.expanded = false;
-        } else {
-            snapshot.expanded = true;
-        }
-
-        const arrowElement = event.target;
-
-        arrowElement.classList.toggle('expanded');
-
-        event.stopPropagation();
-
-        //retrieve all diff content and previous snapshot content
-        this.versioningApiService.loadHistorySet(this.editService.getMarkdownID() as string, snapshot.ChildDiffs, snapshot.snapshotID).then((data) => {
-            if (data !== null) {
-                console.log("Process diff data.", data);
-                snapshot.Content = data.SnapshotHistory[0].Content;
-
-            } else {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'Error retrieving history set',
-                });
-                return;
-            }
-        });
+    
+        getLeftPosition(element: HTMLElement): number {
+        const rect = element.getBoundingClientRect();
+        return rect.left;
     }
+
+
+    //Functions for exporting from HTML
+    convertToFileType(fileType: string) {
+        let contents = `<div style="word-break: normal; font-family: Arial, Helvetica, sans-serif; padding:35px 75px 75px; width:794px; margin:auto; background-color:white;">${this.editor.getData()}</div>`;
+        const markdownID = this.editService.getMarkdownID();
+        const name = this.editService.getName();
+        if (markdownID && name) {
+            this.fileService.exportDocumentToNewFileType(
+                markdownID,
+                name,
+                contents,
+                fileType
+            );
+        }
+    }
+  expandSnapshot(snapshot: any, event: any) {
+    if (snapshot.expanded) {
+      snapshot.expanded = false;
+    } else {
+      snapshot.expanded = true;
+    }
+
+    const arrowElement = event.target;
+
+    arrowElement.classList.toggle('expanded');
+
+    event.stopPropagation();
+
+    //retrieve all diff content and previous snapshot content
+    this.versioningApiService.loadHistorySet(this.editService.getMarkdownID() as string, snapshot.ChildDiffs, snapshot.snapshotID).then((data) => {
+      if(data !== null){
+        console.log("Process diff data.", data);
+        snapshot.Content =data.SnapshotHistory[0].Content;
+        
+      }
+      else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error retrieving history set',
+        });
+        return;
+      }
+    });
+  }
 }

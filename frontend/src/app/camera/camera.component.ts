@@ -27,6 +27,7 @@ export class CameraComponent {
   settingCamera: boolean = false;
   contrastValue: number = 0;
   brightnessValue: number = 100;
+  loading: boolean = false;
   constructor(
     private elementRef: ElementRef,
     private assetService: AssetService,
@@ -135,7 +136,8 @@ export class CameraComponent {
     if (this.isAsset) {
       format = 'text';
     }
-    this.assetService
+    this.loading = true;
+    await this.assetService
       .uploadImage(
         this.sysImage,
         this.path,
@@ -146,10 +148,12 @@ export class CameraComponent {
       .then((res) => {
         if (res) {
           setTimeout(() => {
+            this.loading = false;
             this.goBack();
           }, 1000);
         }
       });
+      this.loading = false;
   }
 
   goBack() {
