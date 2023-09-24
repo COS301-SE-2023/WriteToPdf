@@ -39,10 +39,6 @@ export class FileService {
       this.sendSaveData(content, markdownID, path, safeLock).subscribe({
         next: (response: HttpResponse<any>) => {
           if (response.status === 200) {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'File saved successfully',
-            });
             resolve(true);
           } else {
             resolve(false);
