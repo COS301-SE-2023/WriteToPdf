@@ -362,7 +362,7 @@
         <div
           class="historyObject"
           [ngClass]="{ selectedHistory: obj.isCurrent }"
-          (click)="insertContent(obj)"
+          (click)="insertContent(obj, $event)"
         >
           <img
             class="dropdownArrow"
@@ -381,7 +381,7 @@
             class="historyIcon"
             src="assets/Icons/editIcons/ellipse.svg"
             alt=""
-            (click)="visualiseSnapshotContent(obj)"
+            (click)="visualiseSnapshotContent(obj, $event)"
           />
         </div>
         <div *ngIf="obj.expanded">
@@ -389,7 +389,7 @@
             *ngFor="let diffObj of obj.ChildDiffs"
             class="diffObject"
             [ngClass]="{ selectedHistory: diffObj.isCurrent }"
-            (click)="insertContent(diffObj)"
+            (click)="insertContent(diffObj, $event)"
           >
             <img
               class="snapshotIcon"
@@ -403,7 +403,7 @@
               class="historyIcon"
               src="assets/Icons/editIcons/ellipse.svg"
               alt=""
-              (click)="getDiffContent(diffObj)"
+              (click)="visualiseDiffContent(diffObj, $event)"
             />
           </div>
         </div>

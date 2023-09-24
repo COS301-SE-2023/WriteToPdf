@@ -778,9 +778,12 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.editor.disableReadOnlyMode('');
   }
 
-  insertContent(obj: any) {
-    this.getSnapshotContent(obj);
-    // console.log('Just clicked on: ', obj);
+  insertContent(obj: any, event: any) {
+    event.stopPropagation();
+    if (!obj.DiffID) {
+      this.getSnapshotContent(obj);
+    }
+    console.log('Just clicked on: ', obj);
     // if (!obj.Content) return;
     // this.deselectAllHistory();
     // obj.isCurrent = true;
@@ -834,7 +837,20 @@ export class EditComponent implements AfterViewInit, OnInit {
       .then((data) => {
         if (data !== null) {
           console.log('Process diff data.', data);
-          snapshot.Content = data.SnapshotHistory[0].Content;
+          const diffHistory = data.DiffHistory;
+          const snapshotHistory = data.SnapshotHistory[0];
+          snapshot.Content = snapshotHistory.Content;
+          for (let i = 0; i < snapshot.ChildDiffs.length; i++) {
+            for (let j = 0; j < diffHistory.length; j++) {
+              if (
+                snapshot.ChildDiffs[i].S3DiffIndex ===
+                diffHistory[j].S3DiffIndex
+              ) {
+                snapshot.ChildDiffs[i].Content = diffHistory[j].Content;
+                break;
+              }
+            }
+          }
         } else {
           this.messageService.add({
             severity: 'error',
@@ -856,17 +872,13 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   getSnapshotContent(snapshot: any) {
-    console.log('Hello', snapshot);
     if (snapshot.Name === 'Latest') {
-      console.log(
-        'versioningApiService.getSnapshotContent: ',
-        this.editService.getContent()
-      );
+      snapshot.Content = this.editService.getContent();
       return;
     }
     this.versioningApiService.getSnapshotContent(snapshot).then((data) => {
       if (data !== null) {
-        console.log('versioningApiService.getSnapshotContent: ', data);
+        snapshot.Content = data.Content;
       } else {
         this.messageService.add({
           severity: 'error',
@@ -878,11 +890,15 @@ export class EditComponent implements AfterViewInit, OnInit {
     });
   }
 
-  getDiffContent(diff: any) {
-    console.log('Hello', diff);
+  visualiseDiffContent(diff: any, event: any) {
+    event.stopPropagation();
+    // console.log('Hello from visualise diff', diff);
+    console.log('Hello from visualise diff', diff);
   }
 
-  visualiseSnapshotContent(snapshot: any) {
+  visualiseSnapshotContent(snapshot: any, event: any) {
+    event.stopPropagation();
+    // console.log('Hello from visualise snapshot: ', snapshot);
     console.log('Hello from visualise snapshot: ', snapshot);
   }
 }
