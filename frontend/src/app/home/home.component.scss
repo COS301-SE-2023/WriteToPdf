@@ -462,6 +462,13 @@ textarea {
   border-radius: 5px;
 }
 
+.refreshIcon{
+    width: 42px;
+    height: 42px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
 .iconSpacing .hover:hover {
   cursor: pointer;
   background-color: darken($light-grey, 10%);

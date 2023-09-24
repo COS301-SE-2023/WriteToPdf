@@ -332,6 +332,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
+    this.loading = true;
     // Get a reference to the menubar element with the specific class
     this.menubarElement = this.elementRef.nativeElement.querySelector(
       '.p-menubar.custom-menubar'
@@ -341,7 +342,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.updateMenubarWidth();
     // Below is the function that initially populates the fileTree
 
-    this.nodeService.getFilesAndFolders().then(() => {
+    await this.nodeService.getFilesAndFolders().then(() => {
       const hist = localStorage.getItem('folderIDHistory');
       const pos = localStorage.getItem('folderIDHistoryPosition');
 
@@ -419,6 +420,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.rootFolder.Selected = false;
     this.rootFolder.MoveSelected = false;
     this.rootFolder.Type = 'folder';
+
+    this.loading = false;
   }
 
   iterateNodeIDRemoval(node: any[]) {
@@ -1843,5 +1846,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.contextMenu.position(event);
     this.contextMenu.show(event);
   }
+
   protected readonly focus = focus;
 }

@@ -101,11 +101,16 @@
           [ngClass]="{'hover': this.folderIDHistory[this.folderIDHistoryPosition] !== ''}"
           title="To Enclosing Folder" />
       </div>
+      <div class="imgWrapper" (click)="$event.stopPropagation()">
+        <img class="refreshIcon hover" src="assets/Icons/editIcons/refresh.svg" alt="" (click)="ngOnInit()"
+          title="Refresh Directory" />
+      </div>
+
         <!-- <div class="searchBar" (click)="$event.stopPropagation()">
           <img alt="searchIcon" src="assets/Icons/homeIcons/mainWindow/searchIcon.png" />
           <input (input)="filterTable($event, 0)" class="search-input" placeholder="Search..." type="text" />
         </div> -->
-      </div>
+    </div>
     <div class="folderNameWrapper">
               
 
