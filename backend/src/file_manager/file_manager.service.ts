@@ -773,6 +773,26 @@ export class FileManagerService {
       fileCopyDTO,
     );
 
+    const s3Response =
+      await this.s3service.copyFileContents(
+        originalFileDTO.MarkdownID,
+        shareRequestDTO.UserID,
+        createdFileDTO.MarkdownID,
+        recipient.UserID,
+      );
+
+    if (s3Response === undefined) {
+      this.markdownFilesService.remove(
+        createdFileDTO,
+      );
+      throw new HttpException(
+        'Sharing failed',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    createdFileDTO.Size = s3Response;
+
     // Return the created file
     return createdFileDTO;
   }
