@@ -11,6 +11,7 @@ import { Diff } from '../diffs/entities/diffs.entity';
 import { VersionHistoryDTO } from './dto/version_history.dto';
 import { VersionSetDTO } from './dto/version_set.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
+import { version } from 'os';
 
 @Injectable()
 export class VersionControlService {
@@ -342,10 +343,6 @@ export class VersionControlService {
   async getPreviousSnapshot(
     versionSetDTO: VersionSetDTO,
   ) {
-    console.log(
-      'version_control.getPreviousSnapshot.versionSetDTO: ',
-      versionSetDTO,
-    );
     if (versionSetDTO.IsHeadSnapshot) {
       return await this.s3Service.getSnapshot(
         -1,
@@ -359,6 +356,14 @@ export class VersionControlService {
         versionSetDTO.SnapshotID,
       );
 
+    if (versionSetDTO.IsLatestSnapshot) {
+      return await this.s3Service.getSnapshot(
+        snapshot.S3SnapshotIndex,
+        versionSetDTO.UserID,
+        versionSetDTO.MarkdownID,
+      );
+    }
+
     let prevSnapshotIndex;
     if (snapshot.S3SnapshotIndex === 0) {
       prevSnapshotIndex =
@@ -368,7 +373,10 @@ export class VersionControlService {
         snapshot.S3SnapshotIndex - 1;
     }
 
-    console.log('prevSnapshotIndex: ', prevSnapshotIndex);
+    console.log(
+      'prevSnapshotIndex: ',
+      prevSnapshotIndex,
+    );
 
     return await this.s3Service.getSnapshot(
       prevSnapshotIndex,
