@@ -268,4 +268,48 @@ export class MarkdownFilesService {
         markdownFile.TotalNumSnapshots,
     };
   }
+
+  async exists(
+    markdownID: string,
+  ): Promise<boolean> {
+    const options = {
+      where: {
+        id: markdownID,
+      },
+    };
+    const markdownFile =
+      await this.markdownFileRepository.findOne(
+        options as any,
+      );
+    return !!markdownFile;
+  }
+
+  async getAsDTO(markdownFileID: string) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownFileID,
+        },
+      );
+    const result = new MarkdownFileDTO();
+    result.MarkdownID = markdownFile.MarkdownID;
+    result.Name = markdownFile.Name;
+    result.Path = markdownFile.Path;
+    result.ParentFolderID =
+      markdownFile.ParentFolderID;
+    result.UserID = markdownFile.UserID;
+    result.Size = markdownFile.Size;
+    result.SafeLock = markdownFile.SafeLock;
+    result.LastModified =
+      markdownFile.LastModified;
+    result.NextDiffIndex =
+      markdownFile.NextDiffIndex;
+    result.TotalNumDiffs =
+      markdownFile.TotalNumDiffs;
+    result.NextSnapshotIndex =
+      markdownFile.NextSnapshotIndex;
+    result.TotalNumSnapshots =
+      markdownFile.TotalNumSnapshots;
+    return result;
+  }
 }

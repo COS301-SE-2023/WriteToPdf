@@ -683,34 +683,48 @@ export class FileManagerService {
     // );
   }
 
-  shareFile(shareRequestDTO: ShareRequestDTO) {
-    // Not empty
+  async shareFile(
+    shareRequestDTO: ShareRequestDTO,
+  ) {
+    // If the markdown file does not exist, throw an error
+    if (
+      await !this.markdownFilesService.exists(
+        shareRequestDTO.MarkdownFileID,
+      )
+    ) {
+      throw new HttpException(
+        'Markdown file not found',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // If the recipient email does not exist, throw an error (handled by userService.findOneByEmail)
+    const recipient =
+      await this.userService.findOneByEmail(
+        shareRequestDTO.RecipientEmail,
+      );
+
+    // Get the markdown file as a dto
+    const originalFileDTO =
+      await this.markdownFilesService.getAsDTO(
+        shareRequestDTO.MarkdownFileID,
+      );
+
+    // Make a copy of the file
+    const fileCopyDTO = originalFileDTO.clone();
+
+    // Prepare the file to be added to the recipient's account
+    fileCopyDTO.UserID = recipient.UserID;
+    fileCopyDTO.MarkdownID = undefined;
+    fileCopyDTO.Name =
+      fileCopyDTO.Name + ' (shared)';
+
+    // Create the file in the recipient's account
+    const createdFileDTO = await this.createFile(
+      fileCopyDTO,
+    );
+
+    // Return the created file
+    return createdFileDTO;
   }
-
-  // async generatePdf(html: string) {
-  //   const browser = await puppeteer.launch();
-  //   const page = await browser.newPage();
-
-  //   // Emulate a screen to apply CSS styles correctly
-  //   await page.setViewport({
-  //     width: 1920,
-  //     height: 1080,
-  //   });
-
-  //   await page.setContent(html, {
-  //     waitUntil: 'networkidle0',
-  //   });
-
-  //   // Set a higher scale to improve quality (e.g., 2 for Retina displays)
-  //   const pdf = await page.pdf({
-  //     format: 'A4',
-  //     scale: 1,
-  //     printBackground: true,
-  //   });
-
-  //   await browser.close();
-
-  //   // Send the generated PDF as a response
-  //   return pdf;
-  // }
 }
