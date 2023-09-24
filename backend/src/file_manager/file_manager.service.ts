@@ -161,32 +161,7 @@ export class FileManagerService {
         NextSnapshotIndex: file.NextSnapshotIndex,
         TotalNumDiffs: file.TotalNumDiffs,
         TotalNumSnapshots: file.TotalNumSnapshots,
-        clone: function () {
-          const clone = new MarkdownFileDTO();
-          clone.MarkdownID = this.MarkdownID;
-          clone.UserID = this.UserID;
-          clone.DateCreated = this.DateCreated;
-          clone.LastModified = this.LastModified;
-          clone.Name = this.Name;
-          clone.Path = this.Path;
-          clone.Size = this.Size;
-          clone.ParentFolderID =
-            this.ParentFolderID;
-          clone.Content = this.Content;
-          clone.SafeLock = this.SafeLock;
-          clone.NewDiff = this.NewDiff;
-          clone.PreviousDiffs =
-            this.PreviousDiffs;
-          clone.NextDiffIndex =
-            this.NextDiffIndex;
-          clone.NextSnapshotIndex =
-            this.NextSnapshotIndex;
-          clone.TotalNumDiffs =
-            this.TotalNumDiffs;
-          clone.TotalNumSnapshots =
-            this.TotalNumSnapshots;
-          return clone;
-        },
+        clone: this.getClone(),
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
@@ -554,29 +529,7 @@ export class FileManagerService {
       NextDiffIndex: 0,
       PreviousDiffs: [],
       NewDiff: '',
-      clone: function () {
-        const clone = new MarkdownFileDTO();
-        clone.MarkdownID = this.MarkdownID;
-        clone.UserID = this.UserID;
-        clone.DateCreated = this.DateCreated;
-        clone.LastModified = this.LastModified;
-        clone.Name = this.Name;
-        clone.Path = this.Path;
-        clone.Size = this.Size;
-        clone.ParentFolderID =
-          this.ParentFolderID;
-        clone.Content = this.Content;
-        clone.SafeLock = this.SafeLock;
-        clone.NewDiff = this.NewDiff;
-        clone.PreviousDiffs = this.PreviousDiffs;
-        clone.NextDiffIndex = this.NextDiffIndex;
-        clone.NextSnapshotIndex =
-          this.NextSnapshotIndex;
-        clone.TotalNumDiffs = this.TotalNumDiffs;
-        clone.TotalNumSnapshots =
-          this.TotalNumSnapshots;
-        return clone;
-      },
+      clone: this.getClone(),
     };
 
     return returnedDTO;
@@ -798,5 +751,29 @@ export class FileManagerService {
 
     // Return the created file
     return createdFileDTO;
+  }
+  private getClone() {
+    return function () {
+      const clone = new MarkdownFileDTO();
+      clone.MarkdownID = this.MarkdownID;
+      clone.UserID = this.UserID;
+      clone.DateCreated = this.DateCreated;
+      clone.LastModified = this.LastModified;
+      clone.Name = this.Name;
+      clone.Path = this.Path;
+      clone.Size = this.Size;
+      clone.ParentFolderID = this.ParentFolderID;
+      clone.Content = this.Content;
+      clone.SafeLock = this.SafeLock;
+      clone.NewDiff = this.NewDiff;
+      clone.PreviousDiffs = this.PreviousDiffs;
+      clone.NextDiffIndex = this.NextDiffIndex;
+      clone.NextSnapshotIndex =
+        this.NextSnapshotIndex;
+      clone.TotalNumDiffs = this.TotalNumDiffs;
+      clone.TotalNumSnapshots =
+        this.TotalNumSnapshots;
+      return clone;
+    };
   }
 }
