@@ -327,19 +327,12 @@ export class VersionControlService {
         versionSetDTO,
       );
 
-    const prevSnapshotDTO =
-      await this.s3Service.getSnapshot(
-        prevSnapshot.S3SnapshotIndex,
-        versionSetDTO.UserID,
-        versionSetDTO.MarkdownID,
-      );
-
     const versionHistoryDTO =
       new VersionHistoryDTO();
 
     versionHistoryDTO.DiffHistory = diffDTOs;
     versionHistoryDTO.SnapshotHistory = [
-      prevSnapshotDTO,
+      prevSnapshot,
     ];
     return versionHistoryDTO;
   }
@@ -374,6 +367,8 @@ export class VersionControlService {
       prevSnapshotIndex =
         snapshot.S3SnapshotIndex - 1;
     }
+
+    console.log('prevSnapshotIndex: ', prevSnapshotIndex);
 
     return await this.s3Service.getSnapshot(
       prevSnapshotIndex,
