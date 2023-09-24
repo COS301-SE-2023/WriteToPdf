@@ -313,4 +313,36 @@ describe('TextManagerService', () => {
       });
     });
   });
+
+  describe('categoriseBlocks', () => {
+    it('should categorise blocks', () => {
+      const rawLines = [];
+      const tableRoots = [];
+      const allBlocks = [
+        {
+          BlockType: 'LINE',
+          Id: '1',
+          Text: 'mock text',
+        },
+        {
+          BlockType: 'TABLE',
+          Id: '2',
+          Text: 'mock text',
+        },
+      ];
+
+      service.categoriseBlocks(
+        rawLines,
+        tableRoots,
+        allBlocks,
+      );
+
+      expect(rawLines).toStrictEqual([
+        allBlocks[0],
+      ]);
+      expect(tableRoots).toStrictEqual([
+        allBlocks[1],
+      ]);
+    });
+  });
 });
