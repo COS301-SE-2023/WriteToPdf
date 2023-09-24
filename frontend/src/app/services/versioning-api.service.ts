@@ -148,6 +148,8 @@ export class VersioningApiService {
     body.DiffHistory = diffHistory;
     body.SnapshotID = snapshotID;
     body.IsHeadSnapshot = snapshotIndex === 0;
+
+    console.log('versioning-api.sendLoadHistorySet: ', body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
@@ -176,8 +178,10 @@ export class VersioningApiService {
     const body = new SnapshotDTO();
 
     body.UserID = this.userService.getUserID() as number;
-    body.MarkdownID = snapshot.markdownID;
+    body.MarkdownID = snapshot.MarkdownID;
     body.S3SnapshotIndex = snapshot.S3SnapshotIndex;
+
+    console.log('versioning-api.sendGetSnapshotContent: ', body);
 
     const headers = new HttpHeaders().set(
       'Authorization',
