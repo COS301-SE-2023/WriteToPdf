@@ -55,10 +55,6 @@ describe('TextManagerService', () => {
     );
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('upload', () => {
     it('should upload asset', async () => {
       jest
@@ -202,7 +198,7 @@ describe('TextManagerService', () => {
   describe('removeBase64Descriptor', () => {
     it('should remove base64 descriptor', async () => {
       const response =
-        await service.removeBase64Descriptor(
+        service.removeBase64Descriptor(
           'data:image/jpeg;base64,mock base64 string',
         );
       expect(response).toBe('mock base64 string');
@@ -212,7 +208,7 @@ describe('TextManagerService', () => {
   describe('prependBase64Descriptor', () => {
     it('should prepend base64 descriptor', async () => {
       const response =
-        await service.prependBase64Descriptor(
+        service.prependBase64Descriptor(
           'mock base64 string',
         );
       expect(response).toBe(
@@ -221,16 +217,100 @@ describe('TextManagerService', () => {
     });
   });
 
-  // describe('parseS3Content', () => {
-  //   it('should parse s3 content', async () => {
-  //     const assetDTO = new AssetDTO();
-  //     assetDTO.Content = '1\na<base64 string>';
-  //     const response =
-  //       await service.parseS3Content(assetDTO);
-  //     expect(response.Image).toBe(
-  //       '<base64 string>',
-  //     );
-  //     expect(response.Content).toBe('a');
-  //   });
-  // });
+  describe('findBlockByID', () => {
+    it('should find block by id', () => {
+      const block = {
+        Id: 'mock id',
+      };
+      const response = service.findBlockByID(
+        'mock id',
+        [block],
+      );
+      expect(response).toBe(block);
+    });
+  });
+
+  describe('formatTextractResponse', () => {
+    it('should return null if there is no response', () => {
+      const result =
+        service.formatTextractResponse(null);
+
+      expect(result).toBe(null);
+    });
+
+    it('should format the textract response', () => {
+      const jsResponse = {
+        Blocks: [
+          {
+            BlockType: 'LINE',
+            Id: 'mock id',
+            Text: 'mock text',
+          },
+        ],
+      };
+
+      const jsonString =
+        JSON.stringify(jsResponse);
+      const response = JSON.parse(jsonString);
+
+      jest
+        .spyOn(service, 'categoriseBlocks')
+        .mockImplementation(
+          (rawLines, tableRoots, allBlocks) => {
+            rawLines.push(response['Blocks'][0]);
+          },
+        );
+
+      jest
+        .spyOn(service, 'findFreeLines')
+        .mockReturnValue([response['Blocks'][0]]);
+
+      jest
+        .spyOn(service, 'groupLines')
+        .mockReturnValue([response['Blocks'][0]]);
+
+      jest
+        .spyOn(service, 'concatenateTextLines')
+        .mockReturnValue([
+          {
+            Lines: response['Blocks'][0].Text,
+            Top: 0,
+          },
+        ]);
+
+      jest
+        .spyOn(service, 'constructTables')
+        .mockReturnValue([]);
+
+      jest
+        .spyOn(service, 'sortElements')
+        .mockImplementation();
+
+      jest
+        .spyOn(service, 'mergeTextElements')
+        .mockImplementation((elements) => {
+          return elements;
+        });
+
+      jest
+        .spyOn(service, 'findTableIndices')
+        .mockReturnValue([]);
+
+      const result =
+        service.formatTextractResponse(response);
+
+      expect(result).toStrictEqual({
+        'Num Elements': 1,
+        'Table Indices': [],
+        elements: [
+          {
+            'Text Element': {
+              Top: 0,
+              Lines: 'mock text',
+            },
+          },
+        ],
+      });
+    });
+  });
 });
