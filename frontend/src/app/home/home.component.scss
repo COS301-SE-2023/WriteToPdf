@@ -126,10 +126,10 @@ to co-operate.
 }
 
 .directoryTree {
-
   overflow: auto;
   padding-top: 9px;
   z-index: 3;
+  padding-left:15px;
 }
 
 .cdk-drag {
@@ -352,12 +352,12 @@ textarea {
   height: $file-height;
   background-image: linear-gradient(to right, #f6f6f6, #f7f9fc, #f6f6f6);
   border-bottom: 1px #ccc solid;
-  
+
   -webkit-user-drag: none;
   -moz-user-drag: none;
   -ms-user-drag: none;
   user-drag: none;
-  
+
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
