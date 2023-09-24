@@ -812,14 +812,17 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     event.stopPropagation();
 
-    const snapshotIndex = this.getSnapshotIndex(snapshot);
+    const snapshotIndex =
+      this.history.length - this.getSnapshotIndex(snapshot) - 1;
+
+    console.log('Array Index', snapshotIndex);
 
     //retrieve all diff content and previous snapshot content
     this.versioningApiService
       .loadHistorySet(
         this.editService.getMarkdownID() as string,
         snapshot.ChildDiffs,
-        snapshot.snapshotID,
+        snapshot.SnapshotID,
         snapshotIndex
       )
       .then((data) => {
@@ -840,7 +843,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   getSnapshotIndex(snapshot: any): number {
     let index = 0;
     this.history.forEach((a, i) => {
-      if (a.snapshotID == snapshot.snapshotID) index = i;
+      if (a.SnapshotID == snapshot.SnapshotID) index = i;
     });
 
     return index;
@@ -849,11 +852,24 @@ export class EditComponent implements AfterViewInit, OnInit {
   getSnapshotContent(snapshot: any) {
     console.log('Hello', snapshot);
     this.versioningApiService.getSnapshotContent(snapshot).then((data) => {
-      console.log(data);
+      if (data !== null) {
+        console.log('versioningApiService.getSnapshotContent: ', data);
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error retrieving history set',
+        });
+        return;
+      }
     });
   }
 
   getDiffContent(diff: any) {
     console.log('Hello', diff);
+  }
+
+  visualiseSnapshotContent(snapshot: any) {
+    console.log('Hello from visualise snapshot: ', snapshot);
   }
 }
