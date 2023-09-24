@@ -274,7 +274,7 @@ export class MarkdownFilesService {
   ): Promise<boolean> {
     const options = {
       where: {
-        id: markdownID,
+        MarkdownFileID: markdownID,
       },
     };
     const markdownFile =
