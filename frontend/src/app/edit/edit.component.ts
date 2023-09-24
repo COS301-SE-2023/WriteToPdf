@@ -814,6 +814,7 @@ export class EditComponent implements AfterViewInit, OnInit {
                         detail: 'Document shared successfully',
                     });
                     this.sharePopup = false;
+                    this.recipientEmail = '';
                 }
                 else {
                     this.messageService.add({

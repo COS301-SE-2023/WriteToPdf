@@ -761,10 +761,6 @@ export class FileService {
         next: (response: HttpResponse<any>) => {
           console.log("Non error: ",response);
           if (response.status === 200) {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'File shared successfully',
-            });
             resolve(true);
           } else {
             resolve(false);
@@ -774,7 +770,7 @@ export class FileService {
           console.log("Failed: ",error);
           this.messageService.add({
             severity: 'error',
-            summary: error.error.message || 'File sharing failed',
+            summary: error.error.error || error.error.message || 'File sharing failed',
           });
         }
       });
