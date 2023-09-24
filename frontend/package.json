@@ -56,6 +56,7 @@
     "jsdom": "^22.1.0",
     "mammoth": "^1.6.0",
     "net": "^1.0.2",
+    "ngx-image-cropper": "^7.0.2",
     "ngx-spinner": "^16.0.2",
     "ngx-webcam": "^0.4.1",
     "os-browserify": "^0.3.0",

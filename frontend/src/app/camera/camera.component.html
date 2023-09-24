@@ -35,7 +35,22 @@
   </div>
 
   <div class="imageWrapper" [ngClass]="{ 'notVisible': !captured }">
-    <img class="previewImg" [src]="sysImage" alt="" id="image"/>
+    <!-- <img class="previewImg" [src]="sysImage" alt="" id="image"/> -->
+
+    <div class="previewImg">
+      <image-cropper
+      style="padding:0;background:#0000ff00;width:auto;max-height: calc(100svh - 265px);"
+          [maintainAspectRatio]="false"
+          backgroundColor="#0000ff00"
+          [imageURL]="sysImage"
+          (imageCropped)="imageCropped($event)"
+          (cropperReady)="cropperReady()"
+          (loadImageFailed)="loadImageFailed()"
+          alignImage="center"
+      ></image-cropper>
+    </div>
+
+
   </div>
 
     <div class="editImage"  [ngClass]="{ 'notVisible': !captured }">
