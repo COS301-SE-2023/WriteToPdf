@@ -6,11 +6,13 @@ export class VersionSetDTO {
   MarkdownID: string;
   DiffHistory: DiffDTO[];
   SnapshotID: string;
+  IsHeadSnapshot: boolean;
 
   constructor() {
     this.UserID = undefined;
     this.MarkdownID = undefined;
     this.DiffHistory = undefined;
     this.SnapshotID = undefined;
+    this.IsHeadSnapshot = undefined;
   }
 }
