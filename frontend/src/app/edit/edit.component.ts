@@ -779,17 +779,18 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   insertContent(obj: any) {
-    console.log('Just clicked on: ', obj);
-    if (!obj.Content) return;
-    this.deselectAllHistory();
-    obj.isCurrent = true;
-    if (obj.Name === 'Latest') {
-      this.disableReadOnly();
-      this.editor.setData(obj.Content);
-      return;
-    }
-    this.enableReadOnly();
-    this.editor.setData(obj.Content);
+    this.getSnapshotContent(obj);
+    // console.log('Just clicked on: ', obj);
+    // if (!obj.Content) return;
+    // this.deselectAllHistory();
+    // obj.isCurrent = true;
+    // if (obj.Name === 'Latest') {
+    //   this.disableReadOnly();
+    //   this.editor.setData(obj.Content);
+    //   return;
+    // }
+    // this.enableReadOnly();
+    // this.editor.setData(obj.Content);
   }
 
   deselectAllHistory() {
@@ -811,12 +812,15 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     event.stopPropagation();
 
+    const snapshotIndex = this.getSnapshotIndex(snapshot);
+
     //retrieve all diff content and previous snapshot content
     this.versioningApiService
       .loadHistorySet(
         this.editService.getMarkdownID() as string,
         snapshot.ChildDiffs,
-        snapshot.snapshotID
+        snapshot.snapshotID,
+        snapshotIndex
       )
       .then((data) => {
         if (data !== null) {
@@ -833,8 +837,20 @@ export class EditComponent implements AfterViewInit, OnInit {
       });
   }
 
+  getSnapshotIndex(snapshot: any): number {
+    let index = 0;
+    this.history.forEach((a, i) => {
+      if (a.snapshotID == snapshot.snapshotID) index = i;
+    });
+
+    return index;
+  }
+
   getSnapshotContent(snapshot: any) {
     console.log('Hello', snapshot);
+    this.versioningApiService.getSnapshotContent(snapshot).then((data) => {
+      console.log(data);
+    });
   }
 
   getDiffContent(diff: any) {
