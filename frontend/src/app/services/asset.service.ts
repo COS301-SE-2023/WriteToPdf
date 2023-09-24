@@ -90,7 +90,6 @@ export class AssetService {
 
   retrieveAsset(assetId: string, format: string, textId:string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-        if (format === 'text' || format === 'table')
         this.sendRetrieveTextOrTableData(assetId, format, textId).subscribe({
           next: (response: HttpResponse<any>) => {
             if (response.status === 200) {
