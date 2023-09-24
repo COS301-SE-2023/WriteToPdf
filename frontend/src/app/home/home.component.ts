@@ -1121,6 +1121,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       message: message,
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
       accept: async () => {
         let toastPoppedUp = false;
         let itemDeleted = false;

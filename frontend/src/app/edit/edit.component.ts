@@ -264,6 +264,7 @@ export class EditComponent implements AfterViewInit, OnInit {
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Exit and Save',
             rejectLabel: 'Exit without Saving',
+            rejectButtonStyleClass: 'p-button-danger',
             accept: () => {
                 this.editService.setContent(this.editor.getData());
                 this.saveDocumentContents();

@@ -103,8 +103,8 @@
               pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" (keydown.enter)="shareDocument(true)"/>
             <br />
             <div style="display:flex; justify-content: space-around;">
-              <p-button (click)="shareDocument(false)" label="Share without saving"></p-button>
-              <p-button (click)="shareDocument(true)" label="Share and save"></p-button>
+              <p-button (click)="shareDocument(true)" label="Share and save" [style]="{width:'200px'}"></p-button>
+              <p-button (click)="shareDocument(false)" label="Share without saving" styleClass="p-button-danger" [style]="{width:'200px'}"></p-button>
             </div>
           </div>
         </p-dialog>
