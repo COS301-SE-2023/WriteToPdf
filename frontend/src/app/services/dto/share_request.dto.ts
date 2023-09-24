@@ -1,11 +1,11 @@
-export class ShareReequestDTO {
-    UserID: number;
-    RecipientEmail: string;
-    MarkdownFileID: string;
+export class ShareRequestDTO {
+    UserID: number | undefined;
+    RecipientEmail: string | undefined;
+    MarkdownFileID: string | undefined;
 
     constructor() {
-        this.UserID = -1;
-        this.RecipientEmail = '';
-        this.MarkdownFileID = '';
+        this.UserID = undefined;
+        this.RecipientEmail = undefined;
+        this.MarkdownFileID = undefined;
     }
 }

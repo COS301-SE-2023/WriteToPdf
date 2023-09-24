@@ -797,6 +797,32 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
 
     shareDocument() {
-        
+        if(this.recipientEmail === '') {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Please enter a recipient email',
+            });
+            return;
+        }
+        else {
+            this.fileService.shareDocument(this.editService.getMarkdownID() as string, this.recipientEmail).then((data) => {
+                if(data) {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Document shared successfully',
+                    });
+                    this.sharePopup = false;
+                }
+                else {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: 'Error sharing document',
+                    });
+                }
+            });
+        }
     }
 }

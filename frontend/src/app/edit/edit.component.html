@@ -97,12 +97,12 @@
         </p-dialog>
 
         <p-dialog [(visible)]="sharePopup" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
-          header="Rename" [focusOnShow]="true" (keydown.escape)="sharePopup = false">
+          header="Share" [focusOnShow]="true" (keydown.escape)="sharePopup = false">
           <div class="fileOperations" style="display: grid; width:80%;">
             <input placeholder="User Email" class="fileOperations-entity" [(ngModel)]="recipientEmail" label="Name: "
               pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" />
             <br />
-            <p-button (click)="shareDocument()" (click)="sharePopup = false" label="Share"></p-button>
+            <p-button (click)="shareDocument()" label="Share"></p-button>
           </div>
         </p-dialog>
 
