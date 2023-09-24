@@ -63,7 +63,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private confirmationService: ConfirmationService,
     private versioningApiService: VersioningApiService,
     private OCRDialog: OCRDialogService
-  ) { }
+  ) {}
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
@@ -303,7 +303,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     const markdownID = this.editService.getMarkdownID();
     localStorage.setItem('content', contents);
     if (pass != '' && pass != undefined) {
-
       await this.fileService.saveDocument(
         this.fileService.encryptSafeLockDocument(contents, pass),
         this.editService.getMarkdownID(),
@@ -331,7 +330,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
 
     this.versionControlService.setLatestVersionContent(contents);
-    this.saving=false;
+    this.saving = false;
     this.messageService.add({
       severity: 'success',
       summary: 'Document Saved',
@@ -500,7 +499,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         }),
       ])
       .then(
-        () => { },
+        () => {},
         (error) => {
           console.error(
             'Could not copy HTML data (image) to clipboard: ',
@@ -595,8 +594,8 @@ export class EditComponent implements AfterViewInit, OnInit {
           return a.LastModified < b.LastModified
             ? 1
             : a.LastModified > b.LastModified
-              ? -1
-              : 0;
+            ? -1
+            : 0;
         });
 
         snapshot.forEach((a, i) => {
@@ -605,7 +604,10 @@ export class EditComponent implements AfterViewInit, OnInit {
           a.Name = 'Snapshot ' + a.OrderNumber;
           a.ChildDiffs = [];
           for (let j = 0; j < diff.length; j++) {
-            if (a.SnapshotID === diff[j].SnapshotID) {
+            if (
+              a.SnapshotID === diff[j].SnapshotID &&
+              a.LastModified > diff[j].LastModified
+            ) {
               a.ChildDiffs.push(diff[j]);
               diff[j].LastModifiedString = this.formatDate(
                 diff[j].LastModified
@@ -619,8 +621,8 @@ export class EditComponent implements AfterViewInit, OnInit {
             return a.LastModified < b.LastModified
               ? 1
               : a.LastModified > b.LastModified
-                ? -1
-                : 0;
+              ? -1
+              : 0;
           }).forEach((a, i, arr) => {
             a.VersionNumber = arr.length - i + 1;
             a.Name = 'Version ' + a.VersionNumber;
