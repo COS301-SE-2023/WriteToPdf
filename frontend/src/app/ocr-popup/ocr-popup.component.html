@@ -33,7 +33,8 @@
                             <p-dropdown (ngModelChange)="onTableSelectionChange()"
                                         [(ngModel)]="selectedTable"
                                         [options]="tableOptions"
-                                        placeholder="Select a table">
+                                        placeholder="Select a table"
+                                        class="tableDropDown">
                                 <ng-template let-option pTemplate="dropdownItem">
                                     <i class="pi pi-table"></i> {{ option }}
                                 </ng-template>
