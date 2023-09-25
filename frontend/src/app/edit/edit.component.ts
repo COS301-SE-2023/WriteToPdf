@@ -641,8 +641,10 @@ export class EditComponent implements AfterViewInit, OnInit {
           }
         }
         currentSnapshot.Name = 'Latest';
-        currentSnapshot.LastModifiedString = 'now';
+        currentSnapshot.LastModifiedString = 'Current';
         this.history.push(currentSnapshot);
+        this.history[0].isCurrent=true;
+        this.history[0].Content=undefined;
         snapshot.forEach((a) => this.history.push(a));
 
         console.log(this.history);
@@ -778,27 +780,39 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.editor.disableReadOnlyMode('');
   }
 
-  insertContent(obj: any, event: any) {
+  async insertContent(obj: any, event: any) {
     event.stopPropagation();
+
+    if(!this.history[0].Content)
+      this.history[0].Content = this.editor.getData();
+
     if (!obj.DiffID) {
-      this.getSnapshotContent(obj);
+      obj.loading = true;
+      await this.getSnapshotContent(obj);
+      obj.loading = false;
     }
     console.log('Just clicked on: ', obj);
-    // if (!obj.Content) return;
-    // this.deselectAllHistory();
-    // obj.isCurrent = true;
-    // if (obj.Name === 'Latest') {
-    //   this.disableReadOnly();
-    //   this.editor.setData(obj.Content);
-    //   return;
-    // }
-    // this.enableReadOnly();
-    // this.editor.setData(obj.Content);
+    console.log('Now: ', this.history[0]);
+    if (!obj.Content) return;
+    this.deselectAllHistory();
+    obj.isCurrent = true;
+    if (obj.Name === 'Latest') {
+      this.disableReadOnly();
+      console.log('Latest obj: ',obj);
+      this.editor.setData(obj.Content);
+      obj.Content = undefined;
+      return;
+    }
+    this.enableReadOnly();
+    this.editor.setData(obj.Content);
   }
 
   deselectAllHistory() {
     for (let i = 0; i < this.history.length; i++) {
       this.history[i].isCurrent = false;
+      for (let j = 0; j < this.history[i].ChildDiffs.length; j++) {
+        this.history[i].ChildDiffs[j].isCurrent = false;
+      }
     }
   }
 
@@ -871,12 +885,12 @@ export class EditComponent implements AfterViewInit, OnInit {
     return index;
   }
 
-  getSnapshotContent(snapshot: any) {
+  async getSnapshotContent(snapshot: any) {
     if (snapshot.Name === 'Latest') {
       snapshot.Content = this.editService.getContent();
       return;
     }
-    this.versioningApiService.getSnapshotContent(snapshot).then((data) => {
+    await this.versioningApiService.getSnapshotContent(snapshot).then((data) => {
       if (data !== null) {
         snapshot.Content = data.Content;
       } else {

@@ -371,8 +371,15 @@
             (click)="expandSnapshot(obj, $event)"
           />
           <img
+          *ngIf="!obj.loading"
             class="snapshotIcon"
             src="assets/Icons/editIcons/snapshot.png"
+            alt=""
+          />
+          <img
+          *ngIf="obj.loading"
+            class="snapshotIcon"
+            src="assets/Spinner/loading2.gif"
             alt=""
           />
           <!-- <p>{{ obj.LastModified }}</p> -->
