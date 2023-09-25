@@ -643,8 +643,8 @@ export class EditComponent implements AfterViewInit, OnInit {
         currentSnapshot.Name = 'Latest';
         currentSnapshot.LastModifiedString = 'Current';
         this.history.push(currentSnapshot);
-        this.history[0].isCurrent=true;
-        this.history[0].Content=undefined;
+        this.history[0].isCurrent = true;
+        this.history[0].Content = undefined;
         snapshot.forEach((a) => this.history.push(a));
 
         console.log(this.history);
@@ -783,7 +783,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   async insertContent(obj: any, event: any) {
     event.stopPropagation();
 
-    if(!this.history[0].Content)
+    if (!this.history[0].Content)
       this.history[0].Content = this.editor.getData();
 
     if (!obj.DiffID) {
@@ -798,7 +798,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     obj.isCurrent = true;
     if (obj.Name === 'Latest') {
       this.disableReadOnly();
-      console.log('Latest obj: ',obj);
+      console.log('Latest obj: ', obj);
       this.editor.setData(obj.Content);
       obj.Content = undefined;
       return;
@@ -865,6 +865,7 @@ export class EditComponent implements AfterViewInit, OnInit {
               }
             }
           }
+          this.createContext(snapshotHistory, diffHistory);
         } else {
           this.messageService.add({
             severity: 'error',
@@ -890,18 +891,36 @@ export class EditComponent implements AfterViewInit, OnInit {
       snapshot.Content = this.editService.getContent();
       return;
     }
-    await this.versioningApiService.getSnapshotContent(snapshot).then((data) => {
-      if (data !== null) {
-        snapshot.Content = data.Content;
+    await this.versioningApiService
+      .getSnapshotContent(snapshot)
+      .then((data) => {
+        if (data !== null) {
+          snapshot.Content = data.Content;
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error retrieving history set',
+          });
+          return;
+        }
+      });
+  }
+
+  createContext(snapshot: any, diffHistory: any) {
+    for (let i = 0; i < diffHistory.length; i++) {
+      if (i === 0) {
+        diffHistory[i].Content = this.versionControlService.applyReadablePatch(
+          snapshot.Content,
+          diffHistory[i].Content
+        );
       } else {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error retrieving history set',
-        });
-        return;
+        diffHistory[i].Content = this.versionControlService.applyReadablePatch(
+          diffHistory[i - 1].Content,
+          diffHistory[i].Content
+        );
       }
-    });
+    }
   }
 
   visualiseDiffContent(diff: any, event: any) {
