@@ -224,8 +224,33 @@ export class VersionControlService {
   }
 
   getPrettyHtml(text1: string, text2: string): string {
+    console.log('getPrettyHtml.text1', text1);
+    console.log('getPrettyHtml.text2', text2);
+    const pattern_amp = /&amp;/g;
+    const pattern_lt = /&lt;/g;
+    const pattern_gt = /&gt;/g;
+    const pattern_para = /&para;<br>/g;
+    const open_ins = /<ins/g;
+    const close_ins = /<\/ins/g;
+    const open_del = /<del/g;
+    const close_del = /<\/del/g;
+    const del_color = /#ffe6e6/g;
+    const ins_color = /#e6ffe6/g;
+
     const dpsDiff = this.DiffPatchService.diff_main(text1, text2);
-    return this.DiffPatchService.diff_prettyHtml(dpsDiff);
+
+    const prettyHtml = this.DiffPatchService.diff_prettyHtml(dpsDiff);
+    return prettyHtml
+      .replace(pattern_amp, '&')
+      .replace(pattern_lt, '<')
+      .replace(pattern_gt, '>')
+      .replace(pattern_para, '\n')
+      .replace(open_ins, '<span')
+      .replace(close_ins, '</span')
+      .replace(open_del, '<span')
+      .replace(close_del, '</span')
+      .replace(del_color, '#9C1735')
+      .replace(ins_color, '#6BED30');
   }
 
   snapshotRestore(snapshot: SnapshotDTO): void {

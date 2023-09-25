@@ -807,7 +807,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     if (!obj.DiffID) {
       this.editor.setData(obj.Content);
     } else {
-      this.editor.setData(this.getPrettyHtml(obj));
+      const prettyContent = await this.getPrettyHtml(obj);
+      this.editor.setData(prettyContent);
     }
   }
 
@@ -855,9 +856,10 @@ export class EditComponent implements AfterViewInit, OnInit {
       .then((data) => {
         if (data !== null) {
           console.log('Process diff data.', data);
-          const diffHistory = data.DiffHistory;
+          let diffHistory = data.DiffHistory;
           const snapshotHistory = data.SnapshotHistory[0];
           snapshot.Content = snapshotHistory.Content;
+          diffHistory = this.createContext(snapshotHistory, diffHistory);
           for (let i = 0; i < snapshot.ChildDiffs.length; i++) {
             for (let j = 0; j < diffHistory.length; j++) {
               if (
@@ -869,7 +871,6 @@ export class EditComponent implements AfterViewInit, OnInit {
               }
             }
           }
-          this.createContext(snapshotHistory, diffHistory);
         } else {
           this.messageService.add({
             severity: 'error',
@@ -904,25 +905,30 @@ export class EditComponent implements AfterViewInit, OnInit {
     return index;
   }
 
-  getPrettyHtml(diff: any): string {
+  async getPrettyHtml(diff: any): Promise<string> {
     const diffIndices = this.getDiffSnapshotIndex(diff);
     const snapshotIndex = diffIndices[0];
     const diffIndex = diffIndices[1];
-    if (diffIndex === 0) {
-      if (snapshotIndex === 0) {
+    console.log('getPrettyHtml.snapshotIndex:', snapshotIndex);
+    console.log('getPrettyHtml.diffIndex:', diffIndex);
+    console.log('getPrettyHtml.snapshotIndex.length:', this.history);
+    if (diffIndex === this.history[snapshotIndex].ChildDiffs.length - 1) {
+      if (snapshotIndex === this.history.length - 1) {
         return this.versionControlService.getPrettyHtml(
           '',
-          this.history[snapshotIndex].ChildDiffs[diffIndex]
+          this.history[snapshotIndex].ChildDiffs[diffIndex].Content
         );
       } else {
+        if (!this.history[snapshotIndex + 1].Content)
+          await this.getSnapshotContent(this.history[snapshotIndex + 1]);
         return this.versionControlService.getPrettyHtml(
-          this.history[snapshotIndex - 1].Content,
+          this.history[snapshotIndex + 1].Content,
           this.history[snapshotIndex].ChildDiffs[diffIndex].Content
         );
       }
     } else {
       return this.versionControlService.getPrettyHtml(
-        this.history[snapshotIndex].ChildDiffs[diffIndex - 1].Content,
+        this.history[snapshotIndex].ChildDiffs[diffIndex + 1].Content,
         this.history[snapshotIndex].ChildDiffs[diffIndex].Content
       );
     }
@@ -949,20 +955,22 @@ export class EditComponent implements AfterViewInit, OnInit {
       });
   }
 
-  createContext(snapshot: any, diffHistory: any) {
-    for (let i = 0; i < diffHistory.length; i++) {
-      if (i === 0) {
+  createContext(snapshot: any, diffHistory: any): any {
+    for (let i = diffHistory.length - 1; i >= 0; i--) {
+      if (i === diffHistory.length - 1) {
         diffHistory[i].Content = this.versionControlService.applyReadablePatch(
           snapshot.Content,
           diffHistory[i].Content
         );
       } else {
         diffHistory[i].Content = this.versionControlService.applyReadablePatch(
-          diffHistory[i - 1].Content,
+          diffHistory[i + 1].Content,
           diffHistory[i].Content
         );
       }
     }
+    console.log('edit.component.createContext.diffHistory:', diffHistory);
+    return diffHistory;
   }
 
   visualiseDiffContent(diff: any, event: any) {
