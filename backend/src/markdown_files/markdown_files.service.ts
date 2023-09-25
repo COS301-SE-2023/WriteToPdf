@@ -272,4 +272,26 @@ export class MarkdownFilesService {
         markdownFile.TotalNumSnapshots,
     };
   }
+
+  ///===----------------------------------------------------
+
+  async updateMetadataAfterRestore(
+    markdownID: string,
+    nextDiffIndex: number,
+    nextSnapshotIndex: number,
+  ) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID:
+            markdownID,
+        },
+      );
+    markdownFile.NextDiffIndex = nextDiffIndex;
+    markdownFile.NextSnapshotIndex =
+      nextSnapshotIndex;
+    return this.markdownFileRepository.save(
+      markdownFile,
+    );
+  }
 }

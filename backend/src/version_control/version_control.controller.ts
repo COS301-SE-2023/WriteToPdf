@@ -105,4 +105,16 @@ export class VersionControlController {
     versionHistoryDTO.DiffHistory = diffDTOs;
     return versionHistoryDTO;
   }
+
+  ///===----------------------------------------------------
+
+  @Post('rollback_version')
+  @HttpCode(HttpStatus.OK)
+  async rollbackVersion(
+    @Body() versionHistoryDTO: VersionHistoryDTO,
+  ) {
+    return this.versionControlService.rollbackVersion(
+      versionHistoryDTO,
+    );
+  }
 }

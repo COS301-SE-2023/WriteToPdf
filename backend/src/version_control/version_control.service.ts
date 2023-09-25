@@ -12,6 +12,7 @@ import { VersionHistoryDTO } from './dto/version_history.dto';
 import { VersionSetDTO } from './dto/version_set.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { version } from 'os';
+import { VersionRollbackDTO } from './dto/version_rollback.dto';
 
 @Injectable()
 export class VersionControlService {
@@ -451,6 +452,126 @@ export class VersionControlService {
       snapshotDTO.S3SnapshotIndex,
       snapshotDTO.UserID,
       snapshotDTO.MarkdownID,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async rollbackVersion(
+    versionRollbackDTO: VersionRollbackDTO,
+  ) {
+    const restoredVersionDTO =
+      this.buildRestoreVersionDTO(
+        versionRollbackDTO,
+      );
+
+    await this.s3Service.saveFile(
+      restoredVersionDTO,
+    );
+
+    const nextDiffIndex =
+      versionRollbackDTO.DiffIndex +
+      (1 % parseInt(process.env.MAX_DIFFS));
+
+    const diffIndicesToReset =
+      this.getDiffIndicesToReset(
+        parseInt(process.env.MAX_DIFFS),
+        nextDiffIndex,
+        versionRollbackDTO.DiffIndex,
+      );
+
+    const snapshotIndices =
+      await this.resetSubsequentSnapshots(
+        diffIndicesToReset,
+      );
+
+    await this.resetSubsequentDiffs(
+      diffIndicesToReset,
+    );
+
+    await this.markdownFileService.updateMetadataAfterRestore(
+      versionRollbackDTO.MarkdownID,
+      nextDiffIndex,
+      snapshotIndices[0],
+    );
+
+    return 0;
+  }
+
+  ///===----------------------------------------------------
+
+  async resetSubsequentDiffs(
+    diffIndicesToReset: number[],
+  ) {
+    await this.diffService.updateDiffsAfterRestore(
+      diffIndicesToReset,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async resetSubsequentSnapshots(
+    diffIndicesToReset: number[],
+  ) {
+    const snapshotIDsToReset =
+      await this.diffService.getSnapshotsToReset(
+        diffIndicesToReset,
+      );
+
+    const snapshotIndices =
+      await this.snapshotService.resetSnapshot(
+        snapshotIDsToReset,
+      );
+
+    return snapshotIndices;
+  }
+
+  ///===----------------------------------------------------
+
+  getDiffIndicesToReset(
+    MAX_DIFFS: number,
+    NextDiffIndex: number,
+    RestorationDiffIndex: number,
+  ) {
+    let arr = [];
+    RestorationDiffIndex++;
+    while (
+      RestorationDiffIndex % MAX_DIFFS !==
+      NextDiffIndex
+    ) {
+      arr.push(RestorationDiffIndex);
+      RestorationDiffIndex =
+        (RestorationDiffIndex + 1) % MAX_DIFFS;
+    }
+    return arr;
+  }
+
+  ///===----------------------------------------------------
+
+  buildRestoreVersionDTO(
+    versionRollbackDTO: VersionRollbackDTO,
+  ) {
+    const restoredVersionDTO =
+      new MarkdownFileDTO();
+    restoredVersionDTO.MarkdownID =
+      versionRollbackDTO.MarkdownID;
+    restoredVersionDTO.UserID =
+      versionRollbackDTO.UserID;
+    restoredVersionDTO.Content =
+      versionRollbackDTO.Content;
+    return restoredVersionDTO;
+  }
+
+  ///===----------------------------------------------------
+
+  getNextDiffIndex(
+    versionHistoryDTO: VersionHistoryDTO,
+  ) {
+    return (
+      (versionHistoryDTO.DiffHistory[0]
+        .S3DiffIndex +
+        1) %
+      parseInt(process.env.MAX_DIFFS)
     );
   }
 }

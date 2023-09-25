@@ -179,4 +179,36 @@ export class DiffsService {
     }
     return logicalOrder;
   }
+
+  ///===-----------------------------------------------------
+
+  async getSnapshotsToReset(
+    diffIndicesToReset: number[],
+  ) {
+    return await this.diffRepository
+      .createQueryBuilder('diff')
+      .select('diff.SnapshotID')
+      .where(
+        'diff.S3DiffIndex IN (:...diffIndicesToReset)',
+        {
+          diffIndicesToReset: diffIndicesToReset,
+        },
+      )
+      .getRawMany();
+  }
+
+  ///===-----------------------------------------------------
+
+  async updateDiffsAfterRestore(
+    diffDTOs: number[],
+  ) {
+    await this.diffRepository.update(
+      {
+        S3DiffIndex: In(diffDTOs),
+      },
+      {
+        HasBeenUsed: false,
+      },
+    );
+  }
 }

@@ -14,5 +14,3 @@ export class VersionHistoryDTO {
     this.RestorationContent = undefined;
   }
 }
-
-// For simplicity sake, we can treat restoring to a snapshot the same as restoring to the last diff in that set.
