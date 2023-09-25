@@ -247,8 +247,8 @@ export class VersionControlService {
       .replace(close_ins, '</span')
       .replace(open_del, '<span')
       .replace(close_del, '</span')
-      .replace(del_color, '#9C1735')
-      .replace(ins_color, '#6BED30');
+      .replace(del_color, '#f995ab')
+      .replace(ins_color, '#96ff9f');
   }
 
   snapshotRestore(snapshot: SnapshotDTO): void {

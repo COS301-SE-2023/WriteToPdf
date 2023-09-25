@@ -18,13 +18,10 @@ import { EditService } from '../services/edit.service';
 import { AssetService } from '../services/asset.service';
 import { VersionControlService } from '../services/version.control.service';
 import { VersioningApiService } from '../services/versioning-api.service';
-import html2pdf from 'html2pdf.js/dist/html2pdf';
 import { OCRDialogService } from '../services/ocr-popup.service';
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 import { SnapshotDTO } from '../services/dto/snapshot.dto';
 import { DiffDTO } from '../services/dto/diff.dto';
-import { parse } from 'path';
-import { set } from 'cypress/types/lodash';
 import { ContextMenu } from 'primeng/contextmenu';
 
 @Component({
@@ -47,11 +44,14 @@ export class EditComponent implements AfterViewInit, OnInit {
   isTouchScreen: boolean = false;
   sideBarTab: boolean = false;
   saving: boolean = false;
+  disableSave: boolean = false;
+
+  currentEditorContent: string | undefined = undefined;
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
 
-  contextMenuItems: any[]=[];
+  contextMenuItems: any[] = [];
   @ViewChild(ContextMenu) contextMenu!: ContextMenu;
 
   constructor(
@@ -67,7 +67,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private confirmationService: ConfirmationService,
     private versioningApiService: VersioningApiService,
     private OCRDialog: OCRDialogService
-  ) {}
+  ) { }
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
@@ -311,7 +311,10 @@ export class EditComponent implements AfterViewInit, OnInit {
       return;
     }
     this.saving = true;
+
     let contents = this.editor.getData();
+    if (this.currentEditorContent)
+      contents = this.currentEditorContent;
     let pass = this.editService.getDocumentPassword();
 
     const latestVersionContent =
@@ -520,7 +523,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         }),
       ])
       .then(
-        () => {},
+        () => { },
         (error) => {
           console.error(
             'Could not copy HTML data (image) to clipboard: ',
@@ -602,6 +605,10 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async refreshSidebarHistory() {
+    if (this.currentEditorContent) {
+      this.editor.setData(this.currentEditorContent);
+      this.currentEditorContent = undefined;
+    }
     this.history = [];
     this.versioningApiService
       .retrieveAllHistory(this.editService.getMarkdownID() as string)
@@ -615,8 +622,8 @@ export class EditComponent implements AfterViewInit, OnInit {
           return a.LastModified < b.LastModified
             ? 1
             : a.LastModified > b.LastModified
-            ? -1
-            : 0;
+              ? -1
+              : 0;
         });
 
         snapshot.forEach((a, i) => {
@@ -642,8 +649,8 @@ export class EditComponent implements AfterViewInit, OnInit {
             return a.LastModified < b.LastModified
               ? 1
               : a.LastModified > b.LastModified
-              ? -1
-              : 0;
+                ? -1
+                : 0;
           }).forEach((a, i, arr) => {
             a.VersionNumber = arr.length - i + 1;
             a.Name = 'Version ' + a.VersionNumber;
@@ -794,18 +801,22 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   enableReadOnly() {
+    this.disableSave = true;
     this.editor.enableReadOnlyMode('');
   }
 
   disableReadOnly() {
+    this.disableSave = false;
     this.editor.disableReadOnlyMode('');
   }
 
   async insertContent(obj: any, event: any) {
     event.stopPropagation();
 
-    if (!this.history[0].Content)
-      this.history[0].Content = this.editor.getData();
+    if (obj.isCurrent && obj.Name === 'Latest') return;
+
+    if (!this.currentEditorContent)
+      this.currentEditorContent = this.editor.getData();
 
     if (!obj.DiffID) {
       obj.loading = true;
@@ -813,17 +824,17 @@ export class EditComponent implements AfterViewInit, OnInit {
       obj.loading = false;
     }
     console.log('Just clicked on: ', obj);
-    console.log('Now: ', this.history[0]);
-    if (!obj.Content) return;
     this.deselectAllHistory();
-    obj.isCurrent = true;
     if (obj.Name === 'Latest') {
       this.disableReadOnly();
-      console.log('Latest obj: ', obj);
-      this.editor.setData(obj.Content);
-      obj.Content = undefined;
+      this.editor.setData(this.currentEditorContent);
+      this.currentEditorContent = undefined;
+      obj.isCurrent = true;
+
       return;
     }
+    if (!obj.Content) return;
+    obj.isCurrent = true;
     this.enableReadOnly();
     if (!obj.DiffID) {
       this.editor.setData(obj.Content);
@@ -842,12 +853,13 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
   }
 
-  expandSnapshot(snapshot: any, event: any) {
+  async expandSnapshot(snapshot: any, event: any) {
+    event.stopPropagation();
+
     const arrowElement = event.target;
 
     arrowElement.classList.toggle('expanded');
 
-    event.stopPropagation();
 
     if (snapshot.expanded) {
       snapshot.expanded = false;
@@ -866,7 +878,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
 
     //retrieve all diff content and previous snapshot content
-    this.versioningApiService
+    snapshot.loading = true;
+    await this.versioningApiService
       .loadHistorySet(
         this.editService.getMarkdownID() as string,
         snapshot.ChildDiffs,
@@ -900,6 +913,7 @@ export class EditComponent implements AfterViewInit, OnInit {
           });
           return;
         }
+        snapshot.loading = false;
       });
   }
 
