@@ -35,6 +35,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     sidebarVisible: boolean = true;
     currentZoom: number = 1;
     exportDialogVisible: boolean = false;
+    sharePopup: boolean = false;
     public speedDialItems!: MenuItem[];
     assets: any[] = [];
     history: any[] = [];
@@ -44,6 +45,8 @@ export class EditComponent implements AfterViewInit, OnInit {
     isTouchScreen: boolean = false;
     sideBarTab: boolean = false;
     loading: boolean = false;
+    recipientEmail: string = '';
+
     public editor: DecoupledEditor = {} as DecoupledEditor;
     public globalAreaReference!: HTMLElement;
     constructor(
@@ -261,6 +264,7 @@ export class EditComponent implements AfterViewInit, OnInit {
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Exit and Save',
             rejectLabel: 'Exit without Saving',
+            rejectButtonStyleClass: 'p-button-danger',
             accept: () => {
                 this.editService.setContent(this.editor.getData());
                 this.saveDocumentContents();
@@ -773,5 +777,35 @@ export class EditComponent implements AfterViewInit, OnInit {
                 return;
             }
         });
+    }
+
+    async shareDocument(save: boolean) {
+        if(this.recipientEmail === '') {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Please enter a recipient email',
+            });
+            return;
+        }
+        else {
+            if(save){
+                await this.saveDocumentContents();
+            }
+            this.loading = true;
+            await this.fileService.shareDocument(this.editService.getMarkdownID() as string, this.recipientEmail).then((data) => {
+                if(data) {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Document shared successfully',
+                    });
+                    this.sharePopup = false;
+                    this.recipientEmail = '';
+                }
+                this.loading = false;
+            });
+            this.loading = false;
+        }
     }
 }
