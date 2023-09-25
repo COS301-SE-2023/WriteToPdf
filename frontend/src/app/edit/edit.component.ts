@@ -355,6 +355,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
     this.versionControlService.setLatestVersionContent(contents);
     this.saving = false;
+    this.refreshSidebarHistory();
     this.messageService.add({
       severity: 'success',
       summary: 'Document Saved',
