@@ -137,30 +137,39 @@ export class EditComponent implements AfterViewInit, OnInit {
         label: 'Restore this version',
         icon: 'pi pi-refresh',
         command: async () => {
-          console.log("Current Object:\n",this.currentContextMenuObject);
-          let diffIndex = this.currentContextMenuObject.S3DiffIndex;
-          if(!diffIndex)
-            this.currentContextMenuObject.ChildDiffs[0].S3DiffIndex;
-          if(await this.versioningApiService.restoreVersion(this.editService.getMarkdownID() as string, diffIndex, this.currentContextMenuObject.Content))
-          {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Version restored',
-            });
-          }
-          else{
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Version not restored',
-            });
-            return;
-          }
+          this.confirmationService.confirm({
+            message: 'Are you sure you want to restore this version?',
+            header: 'Restore Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Restore Old Version',
+            rejectLabel: 'Cancel',
+            acceptButtonStyleClass: 'p-button-danger',
+            accept: async () => {
+              console.log("Current Object:\n", this.currentContextMenuObject);
+              let diffIndex = this.currentContextMenuObject.S3DiffIndex;
+              if (!diffIndex)
+                this.currentContextMenuObject.ChildDiffs[0].S3DiffIndex;
+              if (await this.versioningApiService.restoreVersion(this.editService.getMarkdownID() as string, diffIndex, this.currentContextMenuObject.Content)) {
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Success',
+                  detail: 'Version restored',
+                });
+              }
+              else {
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Error',
+                  detail: 'Version not restored',
+                });
+                return;
+              }
 
-          this.editService.setContent(this.editor.getData());
-          this.currentEditorContent = undefined;
-          this.refreshSidebarHistory();
+              this.editService.setContent(this.editor.getData());
+              this.currentEditorContent = undefined;
+              this.refreshSidebarHistory();
+            },
+          });
         },
       },
       {
@@ -1051,7 +1060,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   showContextMenu(event: any, obj: any) {
-    
+
     // event.stopPropagation();
     event.preventDefault();
     this.contextMenu.position(event);
