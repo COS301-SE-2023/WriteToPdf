@@ -136,12 +136,18 @@
     </div> -->
   </div>
 
+    <p-contextMenu
+    [model]="contextMenuItems"
+     (click)="$event.stopPropagation()"
+  ></p-contextMenu>
+
   <p-button
     class="showAssetSidebar"
     icon="pi pi-arrow-right"
     (click)="hideSideBar()"
     title="Show Asset Bar"
   ></p-button>
+
   <div class="assetSidebar">
     <div class="sidebarHeaderWrapper">
       <div class="sidebarTabs">
@@ -388,7 +394,7 @@
             class="historyIcon"
             src="assets/Icons/editIcons/ellipse.svg"
             alt=""
-            (click)="visualiseSnapshotContent(obj, $event)"
+            (click)="showContextMenu($event, obj)"
           />
         </div>
         <div *ngIf="obj.expanded">
@@ -410,7 +416,7 @@
               class="historyIcon"
               src="assets/Icons/editIcons/ellipse.svg"
               alt=""
-              (click)="visualiseDiffContent(diffObj, $event)"
+              (click)="showContextMenu($event, obj)"
             />
           </div>
         </div>

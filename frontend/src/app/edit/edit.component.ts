@@ -25,6 +25,7 @@ import { SnapshotDTO } from '../services/dto/snapshot.dto';
 import { DiffDTO } from '../services/dto/diff.dto';
 import { parse } from 'path';
 import { set } from 'cypress/types/lodash';
+import { ContextMenu } from 'primeng/contextmenu';
 
 @Component({
   selector: 'app-edit',
@@ -49,6 +50,9 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
+
+  contextMenuItems: any[]=[];
+  @ViewChild(ContextMenu) contextMenu!: ContextMenu;
 
   constructor(
     private elementRef: ElementRef,
@@ -126,6 +130,23 @@ export class EditComponent implements AfterViewInit, OnInit {
     //get window width
     this.isTouchScreen = window.matchMedia('(pointer: coarse)').matches;
     const width = window.innerWidth;
+
+    this.contextMenuItems = [
+      {
+        label: 'Restore this version',
+        icon: 'pi pi-refresh',
+        command: () => {
+          console.log('Restore this version');
+        },
+      },
+      {
+        label: 'Create a copy of this version',
+        icon: 'pi pi-copy',
+        command: () => {
+          console.log('Create a copy of this version');
+        },
+      }
+    ]
     if (width < 800) this.hideSideBar();
     const c = localStorage.getItem('content');
     const m = localStorage.getItem('markdownID');
@@ -981,5 +1002,12 @@ export class EditComponent implements AfterViewInit, OnInit {
     event.stopPropagation();
     // console.log('Hello from visualise snapshot: ', snapshot);
     console.log('Hello from visualise snapshot: ', snapshot);
+  }
+
+  showContextMenu(event: any, obj: any) {
+    // event.stopPropagation();
+    event.preventDefault();
+    this.contextMenu.position(event);
+    this.contextMenu.show();
   }
 }
