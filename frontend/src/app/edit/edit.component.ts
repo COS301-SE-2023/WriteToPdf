@@ -137,9 +137,10 @@ export class EditComponent implements AfterViewInit, OnInit {
         label: 'Restore this version',
         icon: 'pi pi-refresh',
         command: async () => {
-          let diffIndex = this.currentContextMenuObject.DiffIndex;
+          console.log("Current Object:\n",this.currentContextMenuObject);
+          let diffIndex = this.currentContextMenuObject.S3DiffIndex;
           if(!diffIndex)
-            this.currentContextMenuObject.ChildDiffs[0].diffIndex;
+            this.currentContextMenuObject.ChildDiffs[0].S3DiffIndex;
           if(await this.versioningApiService.restoreVersion(this.editService.getMarkdownID() as string, diffIndex, this.editor.getData()))
           {
             this.messageService.add({
@@ -1050,6 +1051,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   showContextMenu(event: any, obj: any) {
+    
     // event.stopPropagation();
     event.preventDefault();
     this.contextMenu.position(event);

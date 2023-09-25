@@ -223,6 +223,7 @@ export class VersioningApiService {
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
     );
+    console.log(body);
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 }
