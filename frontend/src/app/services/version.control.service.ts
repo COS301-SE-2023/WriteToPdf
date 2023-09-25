@@ -218,6 +218,11 @@ export class VersionControlService {
     return this.DiffPatchService.patch_toText(patches);
   }
 
+  applyReadablePatch(text1: string, text2: string): string {
+    const patches = this.DiffPatchService.patch_fromText(text2);
+    return this.DiffPatchService.patch_apply(patches, text1)[0];
+  }
+
   snapshotRestore(snapshot: SnapshotDTO): void {
     //TODO: Rework
     this.snapshotArr = this.snapshotArr.filter((ele) => {
