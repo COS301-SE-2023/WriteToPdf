@@ -141,7 +141,7 @@ export class EditComponent implements AfterViewInit, OnInit {
           let diffIndex = this.currentContextMenuObject.S3DiffIndex;
           if(!diffIndex)
             this.currentContextMenuObject.ChildDiffs[0].S3DiffIndex;
-          if(await this.versioningApiService.restoreVersion(this.editService.getMarkdownID() as string, diffIndex, this.editor.getData()))
+          if(await this.versioningApiService.restoreVersion(this.editService.getMarkdownID() as string, diffIndex, this.currentContextMenuObject.Content))
           {
             this.messageService.add({
               severity: 'success',
