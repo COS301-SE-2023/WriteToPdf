@@ -7,12 +7,13 @@ import { UserService } from './user.service';
 import { DiffDTO } from './dto/diff.dto';
 import { SnapshotDTO } from './dto/snapshot.dto';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
+import { VersionRollbackDTO } from './dto/version_rollback.dto';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VersioningApiService {
-  constructor(private http: HttpClient, private userService: UserService) {}
+  constructor(private http: HttpClient, private userService: UserService) { }
 
   saveDiff(fileID: string, content: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
@@ -184,6 +185,39 @@ export class VersioningApiService {
     body.UserID = this.userService.getUserID() as number;
     body.MarkdownID = snapshot.MarkdownID;
     body.S3SnapshotIndex = snapshot.S3SnapshotIndex;
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  restoreVersion(markdownID: string, diffIndex: number, content: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendRestoreVersion(markdownID, diffIndex, content).subscribe({
+        next: (response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+      });
+    });
+
+  }
+
+  sendRestoreVersion(markdownID: string, diffIndex: number, content: string): Observable<HttpResponse<any>> {
+
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}version_control/rollback_version`;
+    const body = new VersionRollbackDTO();
+
+    body.UserID = this.userService.getUserID() as number;
+    body.MarkdownID = markdownID;
+    body.DiffIndex = diffIndex;
+    body.Content = content;
 
     const headers = new HttpHeaders().set(
       'Authorization',

@@ -47,6 +47,7 @@ export class EditComponent implements AfterViewInit, OnInit {
   disableSave: boolean = false;
 
   currentEditorContent: string | undefined = undefined;
+  currentContextMenuObject: any = undefined;
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
@@ -135,8 +136,14 @@ export class EditComponent implements AfterViewInit, OnInit {
       {
         label: 'Restore this version',
         icon: 'pi pi-refresh',
-        command: () => {
-          console.log('Restore this version');
+        command: async () => {
+          let diffIndex = this.currentContextMenuObject.DiffIndex;
+          if(!diffIndex)
+            this.currentContextMenuObject.ChildDiffs[0].diffIndex;
+          await this.versioningApiService.restoreVersion(this.editService.getMarkdownID() as string, diffIndex, this.editor.getData());
+
+          this.editService.setContent(this.editor.getData());
+          this.refreshSidebarHistory();
         },
       },
       {
@@ -1031,6 +1038,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     event.preventDefault();
     this.contextMenu.position(event);
     this.contextMenu.show();
+    this.currentContextMenuObject = obj;
   }
   protected readonly undefined = undefined;
 }
