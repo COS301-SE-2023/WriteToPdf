@@ -223,6 +223,11 @@ export class VersionControlService {
     return this.DiffPatchService.patch_apply(patches, text1)[0];
   }
 
+  getPrettyHtml(text1: string, text2: string): string {
+    const dpsDiff = this.DiffPatchService.diff_main(text1, text2);
+    return this.DiffPatchService.diff_prettyHtml(dpsDiff);
+  }
+
   snapshotRestore(snapshot: SnapshotDTO): void {
     //TODO: Rework
     this.snapshotArr = this.snapshotArr.filter((ele) => {
