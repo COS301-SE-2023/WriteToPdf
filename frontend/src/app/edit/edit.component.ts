@@ -669,6 +669,13 @@ export class EditComponent implements AfterViewInit, OnInit {
             currentSnapshot.ChildDiffs.push(diff[i]);
           }
         }
+        currentSnapshot.ChildDiffs.sort((a, b) => {
+          return a.LastModified < b.LastModified
+            ? 1
+            : a.LastModified > b.LastModified
+              ? -1
+              : 0;
+        });
         currentSnapshot.Name = 'Latest';
         currentSnapshot.LastModifiedString = 'Current';
         this.history.push(currentSnapshot);
