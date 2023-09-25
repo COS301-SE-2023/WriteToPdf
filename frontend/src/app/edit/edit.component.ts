@@ -1032,4 +1032,5 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.contextMenu.position(event);
     this.contextMenu.show();
   }
+  protected readonly undefined = undefined;
 }
