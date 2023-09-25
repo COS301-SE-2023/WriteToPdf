@@ -14,6 +14,7 @@ import { SnapshotService } from '../snapshots/snapshots.service';
 import { DiffsService } from '../diffs/diffs.service';
 import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
 import { VersionSetDTO } from './dto/version_set.dto';
+import { VersionRollbackDTO } from './dto/version_rollback.dto';
 
 @Controller('version_control')
 export class VersionControlController {
@@ -111,10 +112,10 @@ export class VersionControlController {
   @Post('rollback_version')
   @HttpCode(HttpStatus.OK)
   async rollbackVersion(
-    @Body() versionHistoryDTO: VersionHistoryDTO,
+    @Body() versionRollbackDTO: VersionRollbackDTO,
   ) {
     return this.versionControlService.rollbackVersion(
-      versionHistoryDTO,
+      versionRollbackDTO,
     );
   }
 }
