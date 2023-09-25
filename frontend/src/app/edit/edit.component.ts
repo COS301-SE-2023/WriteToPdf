@@ -344,7 +344,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       return;
     }
     this.saving = true;
-
+    this.history = [];
     let contents = this.editor.getData();
     if (this.currentEditorContent)
       contents = this.currentEditorContent;

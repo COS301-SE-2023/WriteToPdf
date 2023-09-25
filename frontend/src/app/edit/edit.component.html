@@ -243,7 +243,7 @@
           />
         </div>
         <div
-          *ngIf="sideBarTab"
+          *ngIf="sideBarTab&&history.length!==0"
           class="sidebarHeaderIconWrapper"
           (click)="refreshSidebarHistory()"
           title="Refresh History"
@@ -253,6 +253,8 @@
             src="assets/Icons/editIcons/refresh.svg"
             alt=""
           />
+        </div>
+        <div *ngIf="sideBarTab&&history.length===0">
         </div>
       </div>
       <hr />
@@ -363,66 +365,78 @@
       </div>
     </div>
     <div *ngIf="sideBarTab" class="allHistory">
-      <div *ngIf="currentEditorContent !== undefined" class="editDisclaimer"><p>Note: You can only edit the current version</p></div>
-      <div *ngFor="let obj of history">
-        <div
-          class="historyObject"
-          [ngClass]="{ selectedHistory: obj.isCurrent }"
-          (click)="insertContent(obj, $event)"
-        >
-          <img
-          *ngIf="obj.ChildDiffs.length > 0"
-            class="dropdownArrow"
-            src="assets/Icons/homeIcons/navbar/indicatorArrowNavBar.png"
-            alt=""
-            (click)="expandSnapshot(obj, $event)"
-          />
-          <div *ngIf="!(obj.ChildDiffs.length > 0)"></div>
-          <img
-          *ngIf="!obj.loading"
-            class="snapshotIcon"
-            src="assets/Icons/editIcons/snapshot.png"
-            alt=""
-          />
-          <img
-          *ngIf="obj.loading"
-            class="snapshotIcon"
-            src="assets/Spinner/loading2.gif"
-            alt=""
-          />
-          <!-- <p>{{ obj.LastModified }}</p> -->
-          <p>{{obj.LastModifiedString}}</p>
-          <img
-            class="historyIcon"
-            src="assets/Icons/editIcons/ellipse.svg"
-            alt=""
-            (click)="showContextMenu($event, obj)"
-          />
-        </div>
-        <div *ngIf="obj.expanded">
+      <div *ngIf="history.length!==0">
+        <div *ngIf="currentEditorContent !== undefined" class="editDisclaimer"><p>Note: You can only edit the current version</p></div>
+        <div *ngFor="let obj of history">
           <div
-            *ngFor="let diffObj of obj.ChildDiffs"
-            class="diffObject"
-            [ngClass]="{ selectedHistory: diffObj.isCurrent }"
-            (click)="insertContent(diffObj, $event)"
+            class="historyObject"
+            [ngClass]="{ selectedHistory: obj.isCurrent }"
+            (click)="insertContent(obj, $event)"
           >
             <img
+            *ngIf="obj.ChildDiffs.length > 0"
+              class="dropdownArrow"
+              src="assets/Icons/homeIcons/navbar/indicatorArrowNavBar.png"
+              alt=""
+              (click)="expandSnapshot(obj, $event)"
+            />
+            <div *ngIf="!(obj.ChildDiffs.length > 0)"></div>
+            <img
+            *ngIf="!obj.loading"
               class="snapshotIcon"
-              src="assets/Icons/editIcons/diffArrow.png"
+              src="assets/Icons/editIcons/snapshot.png"
               alt=""
             />
-            <!-- <p>{{ diffObj.Name }}</p> -->
-            <p>{{ diffObj.LastModifiedString }}</p>
-            <!-- <p>{{ diffObj.LastModified }}</p> -->
             <img
+            *ngIf="obj.loading"
+              class="snapshotIcon"
+              src="assets/Spinner/loading2.gif"
+              alt=""
+            />
+            <!-- <p>{{ obj.LastModified }}</p> -->
+            <p>{{obj.LastModifiedString}}</p>
+            <img
+            *ngIf="obj.name ==='Current'"
               class="historyIcon"
               src="assets/Icons/editIcons/ellipse.svg"
               alt=""
-              (click)="showContextMenu($event, diffObj)"
+              (click)="showContextMenu($event, obj)"
             />
+            <div *ngIf="obj.name !=='Current'"></div>
+          </div>
+          <div *ngIf="obj.expanded">
+            <div
+              *ngFor="let diffObj of obj.ChildDiffs"
+              class="diffObject"
+              [ngClass]="{ selectedHistory: diffObj.isCurrent }"
+              (click)="insertContent(diffObj, $event)"
+            >
+              <img
+                class="snapshotIcon"
+                src="assets/Icons/editIcons/diffArrow.png"
+                alt=""
+              />
+              <!-- <p>{{ diffObj.Name }}</p> -->
+              <p>{{ diffObj.LastModifiedString }}</p>
+              <!-- <p>{{ diffObj.LastModified }}</p> -->
+              <img
+                class="historyIcon"
+                src="assets/Icons/editIcons/ellipse.svg"
+                alt=""
+                (click)="showContextMenu($event, diffObj)"
+              />
+            </div>
           </div>
         </div>
       </div>
+        <div *ngIf="history.length===0" class="deleteSpinnerWrapper">
+          <img
+            class="spinner"
+            src="assets/Spinner/loading2.gif"
+            title="Loading..."
+            alt="Loading..."
+          />
+        </div>
     </div>
   </div>
   <div class="editor">
