@@ -140,9 +140,25 @@ export class EditComponent implements AfterViewInit, OnInit {
           let diffIndex = this.currentContextMenuObject.DiffIndex;
           if(!diffIndex)
             this.currentContextMenuObject.ChildDiffs[0].diffIndex;
-          await this.versioningApiService.restoreVersion(this.editService.getMarkdownID() as string, diffIndex, this.editor.getData());
+          if(await this.versioningApiService.restoreVersion(this.editService.getMarkdownID() as string, diffIndex, this.editor.getData()))
+          {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Version restored',
+            });
+          }
+          else{
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Version not restored',
+            });
+            return;
+          }
 
           this.editService.setContent(this.editor.getData());
+          this.currentEditorContent = undefined;
           this.refreshSidebarHistory();
         },
       },
