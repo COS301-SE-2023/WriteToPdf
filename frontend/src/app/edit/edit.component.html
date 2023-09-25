@@ -371,11 +371,13 @@
           (click)="insertContent(obj, $event)"
         >
           <img
+          *ngIf="obj.ChildDiffs.length > 0"
             class="dropdownArrow"
             src="assets/Icons/homeIcons/navbar/indicatorArrowNavBar.png"
             alt=""
             (click)="expandSnapshot(obj, $event)"
           />
+          <div *ngIf="!(obj.ChildDiffs.length > 0)"></div>
           <img
           *ngIf="!obj.loading"
             class="snapshotIcon"
