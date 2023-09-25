@@ -909,9 +909,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     const diffIndices = this.getDiffSnapshotIndex(diff);
     const snapshotIndex = diffIndices[0];
     const diffIndex = diffIndices[1];
-    console.log('getPrettyHtml.snapshotIndex:', snapshotIndex);
-    console.log('getPrettyHtml.diffIndex:', diffIndex);
-    console.log('getPrettyHtml.snapshotIndex.length:', this.history);
+
     if (diffIndex === this.history[snapshotIndex].ChildDiffs.length - 1) {
       if (snapshotIndex === this.history.length - 1) {
         return this.versionControlService.getPrettyHtml(
@@ -969,7 +967,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         );
       }
     }
-    console.log('edit.component.createContext.diffHistory:', diffHistory);
+
     return diffHistory;
   }
 

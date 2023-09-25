@@ -224,8 +224,6 @@ export class VersionControlService {
   }
 
   getPrettyHtml(text1: string, text2: string): string {
-    console.log('getPrettyHtml.text1', text1);
-    console.log('getPrettyHtml.text2', text2);
     const pattern_amp = /&amp;/g;
     const pattern_lt = /&lt;/g;
     const pattern_gt = /&gt;/g;
