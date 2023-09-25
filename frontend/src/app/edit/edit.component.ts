@@ -804,7 +804,11 @@ export class EditComponent implements AfterViewInit, OnInit {
       return;
     }
     this.enableReadOnly();
-    this.editor.setData(obj.Content);
+    if (!obj.DiffID) {
+      this.editor.setData(obj.Content);
+    } else {
+      this.editor.setData(this.getPrettyHtml(obj));
+    }
   }
 
   deselectAllHistory() {
@@ -884,6 +888,44 @@ export class EditComponent implements AfterViewInit, OnInit {
     });
 
     return index;
+  }
+
+  getDiffSnapshotIndex(diff: any): number[] {
+    let index: number[] = [];
+    this.history.forEach((a, i) => {
+      a.ChildDiffs.forEach((b: any, j: any) => {
+        if (b.S3DiffIndex == diff.S3DiffIndex) {
+          index[0] = i;
+          index[1] = j;
+        }
+      });
+    });
+
+    return index;
+  }
+
+  getPrettyHtml(diff: any): string {
+    const diffIndices = this.getDiffSnapshotIndex(diff);
+    const snapshotIndex = diffIndices[0];
+    const diffIndex = diffIndices[1];
+    if (diffIndex === 0) {
+      if (snapshotIndex === 0) {
+        return this.versionControlService.getPrettyHtml(
+          '',
+          this.history[snapshotIndex].ChildDiffs[diffIndex]
+        );
+      } else {
+        return this.versionControlService.getPrettyHtml(
+          this.history[snapshotIndex - 1].Content,
+          this.history[snapshotIndex].ChildDiffs[diffIndex].Content
+        );
+      }
+    } else {
+      return this.versionControlService.getPrettyHtml(
+        this.history[snapshotIndex].ChildDiffs[diffIndex - 1].Content,
+        this.history[snapshotIndex].ChildDiffs[diffIndex].Content
+      );
+    }
   }
 
   async getSnapshotContent(snapshot: any) {
