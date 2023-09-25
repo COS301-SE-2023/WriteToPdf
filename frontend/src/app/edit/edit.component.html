@@ -396,35 +396,37 @@
             <!-- <p>{{ obj.LastModified }}</p> -->
             <p>{{obj.LastModifiedString}}</p>
             <img
-            *ngIf="obj.name ==='Current'"
+            *ngIf="obj.Name !=='Latest'"
               class="historyIcon"
               src="assets/Icons/editIcons/ellipse.svg"
               alt=""
               (click)="showContextMenu($event, obj)"
             />
-            <div *ngIf="obj.name !=='Current'"></div>
+            <div *ngIf="obj.Name ==='Latest'"></div>
           </div>
           <div *ngIf="obj.expanded">
-            <div
-              *ngFor="let diffObj of obj.ChildDiffs"
-              class="diffObject"
-              [ngClass]="{ selectedHistory: diffObj.isCurrent }"
-              (click)="insertContent(diffObj, $event)"
-            >
-              <img
-                class="snapshotIcon"
-                src="assets/Icons/editIcons/diffArrow.png"
-                alt=""
-              />
-              <!-- <p>{{ diffObj.Name }}</p> -->
-              <p>{{ diffObj.LastModifiedString }}</p>
-              <!-- <p>{{ diffObj.LastModified }}</p> -->
-              <img
-                class="historyIcon"
-                src="assets/Icons/editIcons/ellipse.svg"
-                alt=""
-                (click)="showContextMenu($event, diffObj)"
-              />
+            <div *ngIf="!obj.loading">
+              <div
+                *ngFor="let diffObj of obj.ChildDiffs"
+                class="diffObject"
+                [ngClass]="{ selectedHistory: diffObj.isCurrent }"
+                (click)="insertContent(diffObj, $event)"
+              >
+                <img
+                  class="snapshotIcon"
+                  src="assets/Icons/editIcons/diffArrow.png"
+                  alt=""
+                />
+                <!-- <p>{{ diffObj.Name }}</p> -->
+                <p>{{ diffObj.LastModifiedString }}</p>
+                <!-- <p>{{ diffObj.LastModified }}</p> -->
+                <img
+                  class="historyIcon"
+                  src="assets/Icons/editIcons/ellipse.svg"
+                  alt=""
+                  (click)="showContextMenu($event, diffObj)"
+                />
+              </div>
             </div>
           </div>
         </div>
