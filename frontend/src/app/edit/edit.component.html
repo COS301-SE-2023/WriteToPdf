@@ -362,8 +362,8 @@
         </div>
       </div>
     </div>
-
     <div *ngIf="sideBarTab" class="allHistory">
+      <div *ngIf="currentEditorContent !== undefined" class="editDisclaimer"><p>Note: You can only edit the current version</p></div>
       <div *ngFor="let obj of history">
         <div
           class="historyObject"
