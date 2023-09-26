@@ -457,7 +457,7 @@ export class UserService {
   }
 
   private startExpirationCheck() {
-    const checkInterval = 30000;
+    const checkInterval = 10000;
 
     this.timer = setInterval(() => {
       this.checkExpiration();

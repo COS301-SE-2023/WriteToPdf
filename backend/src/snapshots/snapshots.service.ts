@@ -15,6 +15,26 @@ export class SnapshotService {
 
   ///===-----------------------------------------------------
 
+  async createSnapshot(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    const snapshotID = CryptoJS.SHA256(
+      markdownFileDTO.UserID.toString() +
+        new Date().getTime().toString(),
+    ).toString();
+
+    await this.snapshotRepository.insert({
+      SnapshotID: snapshotID,
+      MarkdownID: markdownFileDTO.MarkdownID,
+      UserID: markdownFileDTO.UserID,
+      S3SnapshotIndex:
+        markdownFileDTO.NextSnapshotIndex,
+      HasBeenUsed: false,
+    });
+
+    return snapshotID;
+  }
+
   async createSnapshots(
     markdownFileDTO: MarkdownFileDTO,
   ) {
@@ -35,7 +55,8 @@ export class SnapshotService {
         SnapshotID: snapshotID,
         MarkdownID: markdownFileDTO.MarkdownID,
         UserID: markdownFileDTO.UserID,
-        S3SnapshotID: i,
+        S3SnapshotIndex:
+          markdownFileDTO.NextSnapshotIndex,
         HasBeenUsed: false,
       });
 
@@ -52,13 +73,13 @@ export class SnapshotService {
 
   async updateSnapshot(
     markdownID: string,
-    nextSnapshotID: number,
+    nextSnapshotIndex: number,
   ) {
     const snapshot =
       await this.snapshotRepository.findOne({
         where: {
           MarkdownID: markdownID,
-          S3SnapshotID: nextSnapshotID,
+          S3SnapshotIndex: nextSnapshotIndex,
         },
       });
 
@@ -84,31 +105,42 @@ export class SnapshotService {
 
   async resetSnapshot(
     markdownID: string,
-    nextSnapshotID: number,
+    snapshotIDsToReset: string[],
   ) {
-    const snapshot =
-      await this.snapshotRepository.findOne({
-        where: {
-          MarkdownID: markdownID,
-          S3SnapshotID: nextSnapshotID,
-        },
-      });
-
-    snapshot.HasBeenUsed = false;
-    await this.snapshotRepository.save(snapshot);
-    return snapshot;
+    const snapshotIndices = [];
+    for (
+      let idx = 0;
+      idx < snapshotIDsToReset.length;
+      idx++
+    ) {
+      const snapshot =
+        await this.snapshotRepository.findOne({
+          where: {
+            MarkdownID: markdownID,
+            SnapshotID: snapshotIDsToReset[idx],
+          },
+        });
+      snapshot.HasBeenUsed = false;
+      await this.snapshotRepository.save(
+        snapshot,
+      );
+      snapshotIndices.push(
+        snapshot.S3SnapshotIndex,
+      );
+    }
+    return snapshotIndices;
   }
 
   ///===-----------------------------------------------------
 
-  async getSnapshotByS3SnapshotID(
+  async getSnapshot(
     markdownID: string,
-    s3SnapshotID: number,
+    s3SnapshotIndex: number,
   ) {
     return await this.snapshotRepository.findOne({
       where: {
         MarkdownID: markdownID,
-        S3SnapshotID: s3SnapshotID,
+        S3SnapshotIndex: s3SnapshotIndex,
       },
     });
   }
@@ -155,10 +187,6 @@ export class SnapshotService {
     snapshotDTOs: SnapshotDTO[],
     nextDiffID: number,
   ) {
-    console.log(
-      'snapshots.service snapshotDTOS: ',
-      snapshotDTOs,
-    );
     const arrLength = parseInt(
       process.env.MAX_DIFFS,
     );
@@ -167,7 +195,7 @@ export class SnapshotService {
     ).fill(0);
     for (let idx = 0; idx < arrLength; idx++) {
       const logicalIndex = this.getLogicalIndex(
-        snapshotDTOs[idx].S3SnapshotID,
+        snapshotDTOs[idx].S3SnapshotIndex,
         nextDiffID,
         arrLength,
       );

@@ -24,7 +24,6 @@ import { NodeService } from '../services/home.service';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FileService } from '../services/file.service';
 import { UserService } from '../services/user.service';
-import { FileManagerPopupComponent } from '../file-manager-popup/file-manager-popup.component';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
 import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
@@ -83,6 +82,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public editToggle: boolean = false;
   public valueBeforeEdit: string = '';
   public colInspect: any;
+
   public moveDialogVisible: boolean = false;
   public entityToMove: any;
   public destinationDirectory: any;
@@ -91,12 +91,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
   renameDialogVisible: boolean = false;
   documentLockedPopup: boolean = false;
   openLockedDocumentPopup: boolean = false;
+  sharePopup: boolean = false;
   removeDocumentLock: boolean = false;
+
   public entityName: string = '';
   entityRename: string = '';
   uploadedFiles: any[] = [];
   contextMenuItems: any[];
   public userDocumentPassword: string = '';
+  recipientEmail: string = '';
   documentPromise: Promise<any> | null = null;
 
   currentFolders: any[] = []; //Holds an array of objects representing folders.
@@ -191,6 +194,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.documentPromise = this.fileService
               .retrieveDocument(file[0].MarkdownID, file[0].Path);
           }
+        },
+      },
+      {
+        label: 'Share',
+        icon: 'pi pi-share-alt',
+        command: () => {
+          this.sharePopup = true;
         },
       },
     ];
@@ -333,6 +343,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
+    this.loading = true;
     // Get a reference to the menubar element with the specific class
     this.menubarElement = this.elementRef.nativeElement.querySelector(
       '.p-menubar.custom-menubar'
@@ -342,7 +353,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.updateMenubarWidth();
     // Below is the function that initially populates the fileTree
 
-    this.nodeService.getFilesAndFolders().then(() => {
+    await this.nodeService.getFilesAndFolders().then(() => {
       const hist = localStorage.getItem('folderIDHistory');
       const pos = localStorage.getItem('folderIDHistoryPosition');
 
@@ -420,6 +431,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.rootFolder.Selected = false;
     this.rootFolder.MoveSelected = false;
     this.rootFolder.Type = 'folder';
+
+    this.loading = false;
   }
 
   iterateNodeIDRemoval(node: any[]) {
@@ -539,54 +552,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  /**
-   *
-   * @param options, must be "folder" || "move" || "document"
-   */
-  showFileManagerPopup(options: string): void {
-    if (options === 'folder') {
-      //TODO communicate intentions to file manager pop-up
-      const ref = this.dialogService.open(FileManagerPopupComponent, {
-        header: 'Folder Creation: Select location',
-        showHeader: true,
-        closable: true,
-        closeOnEscape: true,
-        dismissableMask: true,
-      });
-      ref.onClose.subscribe(() => {
-        //If the user creates a new folder we want it to be reflected in our home page,
-        //So we need to call ngOnInit once more to update the homepage after closing.
-        this.ngOnInit();
-        // Handle any actions after the dialog is closed
-      });
-    }
-    if (options === 'move') {
-      //TODO communicate intentions to file manager pop-up
-      const ref = this.dialogService.open(FileManagerPopupComponent, {
-        header: 'Select new location',
-        showHeader: true,
-        closable: true,
-        closeOnEscape: true,
-        dismissableMask: true,
-      });
-      ref.onClose.subscribe(() => {
-        // Handle any actions after the dialog is closed
-      });
-    }
-    if (options === 'document') {
-      //TODO communicate intentions to file manager pop-up
-      const ref = this.dialogService.open(FileManagerPopupComponent, {
-        header: 'Select document location',
-        showHeader: true,
-        closable: true,
-        closeOnEscape: true,
-        dismissableMask: true,
-      });
-      ref.onClose.subscribe(() => {
-        // Handle any actions after the dialog is closed
-      });
-    }
-  }
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
@@ -857,8 +822,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
             },
           },
           {
-            separator: true,
-          },
+            label: 'Share',
+            icon: 'pi pi-fw pi-share-alt',
+            command: () => {
+              if (this.getSelected().length === 1 && this.getSelected()[0].Type === 'file')
+                this.sharePopup = true;
+              else
+                this.messageService.add({
+                  severity: 'warn',
+                  summary: 'Please select a File to Share',
+                  detail: '',
+                });
+            },
+
+          }
           // {//TODO implement downloading a file from the database
           //   label: 'Export',
           //   icon: 'pi pi-fw pi-external-link',
@@ -1170,22 +1147,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
       message: message,
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
       accept: async () => {
         let toastPoppedUp = false;
         let itemDeleted = false;
         for (const entity of selected) {
-          if (entity.SafeLock) {
-            if (!toastPoppedUp)
-              this.messageService.add({
-                severity: 'warn',
-                summary: 'You can only delete an unlocked document',
-              });
-            toastPoppedUp = true;
-            continue;
-          } else {
-            this.delete(entity);
-            itemDeleted = true;
-          }
+          // if (entity.SafeLock) {
+          //   if (!toastPoppedUp)
+          //     this.messageService.add({
+          //       severity: 'warn',
+          //       summary: 'You can only delete an unlocked document',
+          //     });
+          //   toastPoppedUp = true;
+          //   continue;
+          // } else {
+          this.delete(entity);
+          itemDeleted = true;
+          // }
         }
 
         if (!itemDeleted) return;
@@ -1509,11 +1487,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.contextMenuItems[0].disabled = true;
         this.contextMenuItems[4].disabled = true;
         this.contextMenuItems[6].disabled = true;
+        this.contextMenuItems[7].disabled = true;
       }
       else {
         this.contextMenuItems[0].disabled = false;
         this.contextMenuItems[4].disabled = false;
         this.contextMenuItems[6].disabled = false;
+        this.contextMenuItems[7].disabled = false;
       }
 
       if (node.Selected) {
@@ -1522,8 +1502,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       if (this.getSelected().length === 1) {
         if (node.Type === 'folder') {
           this.contextMenuItems[6].disabled = true;
+          this.contextMenuItems[7].disabled = true;
         } else {
           this.contextMenuItems[6].disabled = false;
+          this.contextMenuItems[7].disabled = false;
           if (node.SafeLock) {
             this.contextMenuItems[6] = {
               label: 'Remove Lock',
@@ -1837,7 +1819,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   handleTouchEnd(event: any, obj: any, type: string) {
     if (this.touchObj == obj) {
-      if(this.contextMenuVisible) {
+      if (this.contextMenuVisible) {
         this.contextMenuVisible = false;
         this.contextMenu.hide();
         return;
@@ -1854,19 +1836,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
   handleTouchStartCM(event: any, obj: any, type: string) {
     event.stopPropagation();
   }
-  
+
   handleTouchMoveCM(event: any, obj: any, type: string) {
     event.stopPropagation();
-    
+
   }
-  
+
   handleTouchEndCM(event: any, obj: any, type: string) {
     event.stopPropagation();
 
   }
 
   handleDirectoryRightClick(event: any) {
-    if(this.getSelected().length > 0) return;
+    if (this.getSelected().length > 0) return;
     this.contextMenu.hide();
     this.contextMenuItems[0].disabled = true;
     this.contextMenuItems[3].disabled = true;
@@ -1886,10 +1868,45 @@ export class HomeComponent implements OnInit, AfterViewInit {
       },
     };
     this.contextMenuItems[6].disabled = true;
+    this.contextMenuItems[7].disabled = true;
     this.contextMenu.cd.detectChanges();
     this.contextMenuVisible = true;
     this.contextMenu.position(event);
     this.contextMenu.show(event);
   }
+
+  async shareDocument() {
+    const selected = this.getSelected()[0];
+    console.log(selected);
+    if (selected.length > 1 || selected.type === 'folder') {
+      return;
+    }
+
+    if (this.recipientEmail === '') {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Please enter a recipient email',
+      });
+      return;
+    }
+    else {
+      this.loading = true;
+      await this.fileService.shareDocument(selected.MarkdownID, this.recipientEmail).then((data) => {
+        if (data) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Document shared successfully',
+          });
+          this.sharePopup = false;
+          this.recipientEmail = '';
+        }
+        this.loading = false;
+      });
+      this.loading = false;
+    }
+  }
+
   protected readonly focus = focus;
 }

@@ -16,6 +16,8 @@ export class MarkdownFilesService {
     private markdownFileRepository: Repository<MarkdownFile>,
   ) {}
 
+  ///===----------------------------------------------------
+
   create(
     createMarkdownFileDTO: MarkdownFileDTO,
   ): Promise<MarkdownFileDTO> {
@@ -25,6 +27,8 @@ export class MarkdownFilesService {
       );
     return newMarkdownFile;
   }
+
+  ///===----------------------------------------------------
 
   async updateName(
     updateMarkdownFileDTO: MarkdownFileDTO,
@@ -43,6 +47,8 @@ export class MarkdownFilesService {
       markdownFile,
     );
   }
+
+  ///===----------------------------------------------------
 
   async updatePath(
     updateMarkdownFileDTO: MarkdownFileDTO,
@@ -65,6 +71,8 @@ export class MarkdownFilesService {
     );
   }
 
+  ///===----------------------------------------------------
+
   remove(
     removeMarkdownFileDTO: MarkdownFileDTO,
   ): Promise<any> {
@@ -74,11 +82,15 @@ export class MarkdownFilesService {
     });
   }
 
+  ///===----------------------------------------------------
+
   findAllByUserID(userID: number) {
     return this.markdownFileRepository.find({
       where: { UserID: userID },
     });
   }
+
+  ///===----------------------------------------------------
 
   async updateAfterModification(
     markdownDTO: MarkdownFileDTO,
@@ -95,6 +107,8 @@ export class MarkdownFilesService {
       markdownToUpdate,
     );
   }
+
+  ///===----------------------------------------------------
 
   async updateSafeLockStatus(
     markdownFileDTO: MarkdownFileDTO,
@@ -122,48 +136,31 @@ export class MarkdownFilesService {
 
   ///===----------------------------------------------------
 
-  async getNextDiffID(markdownID: string) {
+  async getNextDiffIndex(markdownID: string) {
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
         {
           MarkdownID: markdownID,
         },
       );
-    return markdownFile.NextDiffID;
+    return markdownFile.NextDiffIndex;
   }
 
   ///===----------------------------------------------------
 
-  async getNextSnapshotID(markdownID: string) {
+  async getNextSnapshotIndex(markdownID: string) {
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
         {
           MarkdownID: markdownID,
         },
       );
-    return markdownFile.NextSnapshotID;
+    return markdownFile.NextSnapshotIndex;
   }
 
   ///===----------------------------------------------------
 
-  async incrementNextDiffID(markdownID: string) {
-    const markdownFile =
-      await this.markdownFileRepository.findOneBy(
-        {
-          MarkdownID: markdownID,
-        },
-      );
-    markdownFile.NextDiffID =
-      (markdownFile.NextDiffID + 1) %
-      parseInt(process.env.MAX_DIFFS);
-    return await this.markdownFileRepository.save(
-      markdownFile,
-    );
-  }
-
-  ///===----------------------------------------------------
-
-  async incrementNextSnapshotID(
+  async incrementNextDiffIndex(
     markdownID: string,
   ) {
     const markdownFile =
@@ -172,11 +169,189 @@ export class MarkdownFilesService {
           MarkdownID: markdownID,
         },
       );
-    markdownFile.NextSnapshotID =
-      (markdownFile.NextSnapshotID + 1) %
+    markdownFile.NextDiffIndex =
+      (markdownFile.NextDiffIndex + 1) %
+      parseInt(process.env.MAX_DIFFS);
+    return await this.markdownFileRepository.save(
+      markdownFile,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async incrementNextSnapshotIndex(
+    markdownID: string,
+  ) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    markdownFile.NextSnapshotIndex =
+      (markdownFile.NextSnapshotIndex + 1) %
       parseInt(process.env.MAX_SNAPSHOTS);
     return this.markdownFileRepository.save(
       markdownFile,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async getTotalNumDiffs(markdownID: string) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    return markdownFile.TotalNumDiffs;
+  }
+
+  ///===----------------------------------------------------
+
+  async getTotalNumSnapshots(markdownID: string) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    return markdownFile.TotalNumSnapshots;
+  }
+
+  ///===----------------------------------------------------
+
+  async incrementTotalNumDiffs(
+    markdownID: string,
+  ) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    markdownFile.TotalNumDiffs++;
+    return this.markdownFileRepository.save(
+      markdownFile,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async incrementTotalNumSnapshots(
+    markdownID: string,
+  ) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    markdownFile.TotalNumSnapshots++;
+    return this.markdownFileRepository.save(
+      markdownFile,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async getSaveDiffInfo(markdownID: string) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    return {
+      nextDiffIndex: markdownFile.NextDiffIndex,
+      nextSnapshotIndex:
+        markdownFile.NextSnapshotIndex,
+      totalNumDiffs: markdownFile.TotalNumDiffs,
+      totalNumSnapshots:
+        markdownFile.TotalNumSnapshots,
+    };
+  }
+
+  ///===----------------------------------------------------
+
+  async updateMetadataAfterRestore(
+    markdownID: string,
+    nextDiffIndex: number,
+    nextSnapshotIndex: number,
+  ) {
+    console.log('markdownID: ', markdownID);
+    console.log('nextDiffIndex: ', nextDiffIndex);
+    console.log(
+      'nextSnapshotIndex: ',
+      nextSnapshotIndex,
+    );
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    markdownFile.NextDiffIndex = nextDiffIndex;
+    markdownFile.NextSnapshotIndex =
+      nextSnapshotIndex;
+    return this.markdownFileRepository.save(
+      markdownFile,
+    );
+  }
+
+  async exists(
+    markdownID: string,
+  ): Promise<boolean> {
+    const options = {
+      where: {
+        MarkdownID: markdownID,
+      },
+    };
+    const markdownFile =
+      await this.markdownFileRepository.findOne(
+        options as any,
+      );
+    return !!markdownFile;
+  }
+
+  ///===----------------------------------------------------
+
+  async getAsDTO(markdownID: string) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    const result = new MarkdownFileDTO();
+    result.MarkdownID = markdownFile.MarkdownID;
+    result.Name = markdownFile.Name;
+    result.Path = markdownFile.Path;
+    result.ParentFolderID =
+      markdownFile.ParentFolderID;
+    result.UserID = markdownFile.UserID;
+    result.Size = markdownFile.Size;
+    result.SafeLock = markdownFile.SafeLock;
+    result.LastModified =
+      markdownFile.LastModified;
+    result.NextDiffIndex =
+      markdownFile.NextDiffIndex;
+    result.TotalNumDiffs =
+      markdownFile.TotalNumDiffs;
+    result.NextSnapshotIndex =
+      markdownFile.NextSnapshotIndex;
+    result.TotalNumSnapshots =
+      markdownFile.TotalNumSnapshots;
+    return result;
+  }
+
+  ///===----------------------------------------------------
+
+  updateSize(markdownFileDTO: MarkdownFileDTO) {
+    this.markdownFileRepository.update(
+      { MarkdownID: markdownFileDTO.MarkdownID },
+      { Size: markdownFileDTO.Size },
     );
   }
 }

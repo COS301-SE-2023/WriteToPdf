@@ -12,6 +12,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { DialogService } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
+import { ContextMenuModule } from 'primeng/contextmenu';
 
 @NgModule({
     declarations: [EditComponent],
@@ -27,6 +28,7 @@ import { InputTextModule } from 'primeng/inputtext';
         CommonModule,
         FormsModule,
         InputTextModule,
+        ContextMenuModule,
     ],
     providers: [DialogService],
 })

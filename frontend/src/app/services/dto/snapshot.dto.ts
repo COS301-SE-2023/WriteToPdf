@@ -12,6 +12,7 @@ export class SnapshotDTO {
   Name: string;
   ChildDiffs: DiffDTO[];
   OrderNumber: number;
+  S3SnapshotIndex: number;
 
   constructor() {
     this.SnapshotID = '';
@@ -25,5 +26,6 @@ export class SnapshotDTO {
     this.Name = '';
     this.ChildDiffs = [];
     this.OrderNumber = 0;
+    this.S3SnapshotIndex = 0;
   }
 }
