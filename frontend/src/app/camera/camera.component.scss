@@ -39,13 +39,13 @@ $top-bottom-color: #202221;
 }
 
 .footer {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
     background-color: $top-bottom-color;
     margin-top: 10px;
     min-height: 60px;
     width: 100%;
-    justify-content: space-around;
 }
 
 .capture {
@@ -120,14 +120,17 @@ $top-bottom-color: #202221;
 }
 
 .assetName {
-    margin: auto 0;
+    margin: auto;
     color: black;
+    width: 20svw;
+    min-width: 150px;
     max-width: 39svw;
 }
 
 .uploadImage {
-    margin: auto 0;
+    margin: auto;
     color: white;
+    width:150px;
     max-width: 30svw;
 }
 

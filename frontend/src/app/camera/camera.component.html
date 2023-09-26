@@ -65,8 +65,13 @@
     </div>
 
   <div class="footer" [ngClass]="{ 'notVisible': !captured }">
-    <p-checkbox class="checkbox" [(ngModel)]="isAsset" [binary]="true" label="Extract Text"
-      styleClass="p-button-rounded"></p-checkbox>
+    <div style="display:flex; margin:auto">
+      <p-checkbox class="checkbox" [(ngModel)]="isAsset" [binary]="true" label="Extract Text"
+      styleClass="p-button-rounded" [disabled]="isTable"></p-checkbox>
+      <div style="width:20px"></div>
+      <p-checkbox class="checkbox" [(ngModel)]="isTable" [binary]="true" label="Extract Table"
+      styleClass="p-button-rounded" (click)="isAsset=isTable"></p-checkbox>
+    </div>
     <input class="assetName" pInputText type="text" label="hi" title="Enter Asset Name" [(ngModel)]="assetName"
       placeholder="Enter Asset Name" />
     <p-button class="uploadImage" title="Upload Image" (click)="uploadImage()" styleClass="p-button-rounded">Upload
