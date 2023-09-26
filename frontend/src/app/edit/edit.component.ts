@@ -174,6 +174,7 @@ export class EditComponent implements AfterViewInit, OnInit {
               this.editService.setContent(this.currentContextMenuObject.Content);
               this.currentEditorContent = undefined;
               this.refreshSidebarHistory();
+              this.disableReadOnly();
               this.loading = false;
             },
           });
