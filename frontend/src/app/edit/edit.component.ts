@@ -4,6 +4,7 @@ import {
   ElementRef,
   HostListener,
   OnInit,
+  ViewChild,
   Inject,
 } from '@angular/core';
 import { Router } from '@angular/router';
@@ -17,12 +18,11 @@ import { EditService } from '../services/edit.service';
 import { AssetService } from '../services/asset.service';
 import { VersionControlService } from '../services/version.control.service';
 import { VersioningApiService } from '../services/versioning-api.service';
-
-import html2pdf from 'html2pdf.js/dist/html2pdf';
-
+import { OCRDialogService } from '../services/ocr-popup.service';
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 import { SnapshotDTO } from '../services/dto/snapshot.dto';
 import { DiffDTO } from '../services/dto/diff.dto';
+import { ContextMenu } from 'primeng/contextmenu';
 
 @Component({
   selector: 'app-edit',
@@ -30,11 +30,13 @@ import { DiffDTO } from '../services/dto/diff.dto';
   styleUrls: ['./edit.component.scss'],
 })
 export class EditComponent implements AfterViewInit, OnInit {
+
   fileName: string | undefined = '';
   text: any;
   sidebarVisible: boolean = true;
   currentZoom: number = 1;
   exportDialogVisible: boolean = false;
+  sharePopup: boolean = false;
   public speedDialItems!: MenuItem[];
   assets: any[] = [];
   history: any[] = [];
@@ -43,9 +45,20 @@ export class EditComponent implements AfterViewInit, OnInit {
   noAssetsAvailable: boolean = false;
   isTouchScreen: boolean = false;
   sideBarTab: boolean = false;
+  loading: boolean = false;
+  recipientEmail: string = '';
+  saving: boolean = false;
+  disableSave: boolean = false;
+
+  currentEditorContent: string | undefined = undefined;
+  currentContextMenuObject: any = undefined;
 
   public editor: DecoupledEditor = {} as DecoupledEditor;
   public globalAreaReference!: HTMLElement;
+
+  contextMenuItems: any[] = [];
+  @ViewChild(ContextMenu) contextMenu!: ContextMenu;
+
   constructor(
     private elementRef: ElementRef,
     @Inject(Router) private router: Router,
@@ -57,8 +70,9 @@ export class EditComponent implements AfterViewInit, OnInit {
     private messageService: MessageService,
     private versionControlService: VersionControlService,
     private confirmationService: ConfirmationService,
-    private versioningApiService: VersioningApiService
-  ) {}
+    private versioningApiService: VersioningApiService,
+    private OCRDialog: OCRDialogService,
+  ) { }
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event: BeforeUnloadEvent) {
@@ -85,6 +99,15 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
   }
 
+  showOCRPopup(textractResponse: any): void {
+    let ocrDataPassedOver = [];
+    ocrDataPassedOver.push(textractResponse);
+    ocrDataPassedOver.push(this.editor);
+    // TODO find the relevant button on the asset that retrieves the textract response,
+    // and pass that response to the OCRDialogService.
+    this.OCRDialog.openDialog(ocrDataPassedOver);
+  }
+
   showImageUploadPopup(): void {
     const ref = this.dialogService.open(ImageUploadPopupComponent, {
       header: 'Upload Images',
@@ -92,6 +115,9 @@ export class EditComponent implements AfterViewInit, OnInit {
       closable: true,
       closeOnEscape: true,
       dismissableMask: true,
+    });
+    ref.onClose.subscribe(() => {
+      this.refreshSidebar();
     });
   }
 
@@ -106,39 +132,61 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.speedDialItems = [
-      {
-        icon: 'pi pi-pencil',
-        command: () => {
-          this.navigateToPage('edit');
-        },
-      },
-      {
-        icon: 'pi pi-refresh',
-        command: () => {
-          // this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
-        },
-      },
-      {
-        icon: 'pi pi-trash',
-        command: () => {
-          // this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
-        },
-      },
-      {
-        icon: 'pi pi-upload',
-        command: () => {
-          this.showFileUploadPopup();
-        },
-      },
-      {
-        icon: 'pi pi-external-link',
-      },
-    ];
-
     //get window width
     this.isTouchScreen = window.matchMedia('(pointer: coarse)').matches;
     const width = window.innerWidth;
+
+    this.contextMenuItems = [
+      {
+        label: 'Restore this version',
+        icon: 'pi pi-refresh',
+        command: async () => {
+          this.confirmationService.confirm({
+            message: 'Are you sure you want to restore this version?',
+            header: 'Restore Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Restore Old Version',
+            rejectLabel: 'Cancel',
+            acceptButtonStyleClass: 'p-button-danger',
+            accept: async () => {
+              this.loading = true;
+              console.log("Current Object:\n", this.currentContextMenuObject);
+              let diffIndex = this.currentContextMenuObject.S3DiffIndex;
+              if (!diffIndex)
+                diffIndex = this.currentContextMenuObject.ChildDiffs[0].S3DiffIndex;
+              if (await this.versioningApiService.restoreVersion(this.editService.getMarkdownID() as string, diffIndex, this.currentContextMenuObject.Content)) {
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Success',
+                  detail: 'Version restored',
+                });
+              }
+              else {
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Error',
+                  detail: 'Version not restored',
+                });
+                return;
+              }
+
+              this.editor.setData(this.currentContextMenuObject.Content);
+              this.editService.setContent(this.currentContextMenuObject.Content);
+              this.currentEditorContent = undefined;
+              this.refreshSidebarHistory();
+              this.loading = false;
+            },
+          });
+        },
+      },
+      {
+        label: 'Create a copy of this version',
+        icon: 'pi pi-copy',
+        command: () => {
+          console.log('Create a copy of this version');
+        },
+      }
+    ]
     if (width < 800) this.hideSideBar();
     const c = localStorage.getItem('content');
     const m = localStorage.getItem('markdownID');
@@ -168,62 +216,6 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editService.decryptPassword(dp)
       );
     this.fileName = this.editService.getName();
-
-    this.history.push({
-      name: 'Latest',
-      date: 'now',
-      html: this.editService.getContent(),
-      id: 'LATEST',
-      isCurrent: true,
-    });
-    this.history.push({
-      name: 'Version 7',
-      date: '01-01-1977',
-      html: '',
-      id: '8',
-    });
-    this.history.push({
-      name: 'Version 6',
-      date: '01-01-1976',
-      html: '<s><p><span style="background-color:hsl(0, 75%, 60%);">Text added from V0 to V1.</span style="background-color:hsl(0, 75%, 60%);"></p> <p><span style="background-color:hsl(0, 75%, 60%);">More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(0, 75%, 60%);">Addition from V3 to V4</span></p></s>',
-      id: '7',
-    });
-    this.history.push({
-      name: 'Version 5',
-      date: '01-01-1975',
-      html: '<p><span style="background-color:hsl(0, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span >Addition from V3 to V4</span></p>',
-      id: '6',
-    });
-    this.history.push({
-      name: 'Version 4',
-      date: '01-01-1974',
-      html: '<p><span >Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p><p><span style="background-color:hsl(120, 75%, 60%);">Addition from V3 to V4</span></p>',
-      id: '5',
-    });
-    this.history.push({
-      name: 'Version 3',
-      date: '01-01-1973',
-      html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text to be removed soon.</span></p> <p><span>Text added from V0 to V1.</span></p> <p><span>More Text added from V1 to V2.</span></p>',
-      id: '4',
-    });
-    this.history.push({
-      name: 'Version 2',
-      date: '01-01-1972',
-      html: '<p><span>Text added from V0 to V1.</span></p> <p><span style="background-color:hsl(120, 75%, 60%);">More Text added from V1 to V2.</span></p>',
-      id: '3',
-    });
-    this.history.push({
-      name: 'Version 1',
-      date: '01-01-1971',
-      html: '<p><span style="background-color:hsl(120, 75%, 60%);">Text added from V0 to V1.</span></p>',
-      id: '2',
-    });
-    this.history.push({
-      name: 'Version 0',
-      date: '01-01-1970',
-      html: '',
-      id: '1',
-    });
   }
 
   ngAfterViewInit() {
@@ -329,29 +321,22 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.router.navigate(['/camera'], { state: data });
   }
 
-  exitToHome() {
-    this.confirmationService.confirm({
-      message: 'Do you want to save before you leave?',
-      header: 'Save Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Exit and Save',
-      rejectLabel: 'Exit without Saving',
-      accept: () => {
-        this.editService.setContent(this.editor.getData());
-        this.saveDocumentContents();
-        this.router.navigate(['/home']);
-      },
-      reject: (type: any) => {
-        if (type === 1) this.router.navigate(['/home']);
-      },
-    });
-  }
-
   async saveDocumentContents() {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
 
+    if (this.saving) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Please wait before saving again.',
+      });
+      return;
+    }
+    this.saving = true;
+    this.history = [];
     let contents = this.editor.getData();
+    if (this.currentEditorContent)
+      contents = this.currentEditorContent;
     let pass = this.editService.getDocumentPassword();
 
     const latestVersionContent =
@@ -370,9 +355,8 @@ export class EditComponent implements AfterViewInit, OnInit {
         this.editService.getPath(),
         this.editService.getSafeLock()
       );
-
       if (readablePatch !== '')
-        this.versioningApiService.saveDiff(
+        await this.versioningApiService.saveDiff(
           markdownID ? (markdownID as string) : '',
           this.fileService.encryptSafeLockDocument(readablePatch, pass)
         );
@@ -385,13 +369,20 @@ export class EditComponent implements AfterViewInit, OnInit {
       );
 
       if (readablePatch !== '')
-        this.versioningApiService.saveDiff(
+        await this.versioningApiService.saveDiff(
           markdownID ? (markdownID as string) : '',
           readablePatch
         );
     }
 
     this.versionControlService.setLatestVersionContent(contents);
+    this.saving = false;
+    this.refreshSidebarHistory();
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Document Saved',
+      detail: 'You can now save again.',
+    });
   }
 
   hideSideBar() {
@@ -412,6 +403,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
         editor.setAttribute('style', 'padding-right: 0px;left:260px');
         sidebar.setAttribute('style', 'display:block');
+        sidebar.setAttribute('style', 'z-index: -1000');
         showAssetSidebar.setAttribute('style', 'left:-10px');
         this.sidebarVisible = true;
       }
@@ -439,89 +431,38 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.exportDialogVisible = true;
   }
 
-  async retrieveAsset(assetId: string, format: string, textId: string) {
-    let currAssetIndex: number = 0;
-    for (let i = 0; i < this.assets.length; i++) {
-      if (this.assets[i].AssetID === assetId) {
-        currAssetIndex = i;
-        break;
-      }
-    }
-
-    this.assets[currAssetIndex].NotRetrieving = true;
-    // const asset = true;
-    if (format === 'text') {
-      let asset = this.assets[currAssetIndex];
-      if (!asset.Blocks) {
-        asset = await this.assetService.retrieveAsset(assetId, format, textId);
-        this.assets[currAssetIndex].Blocks = asset.Blocks;
-      }
-      this.parseAssetText(asset);
-      this.textCopyDialog = true;
-      this.assets[currAssetIndex].NotRetrieving = false;
-    } else if (format === 'image') {
-      let asset = this.assets[currAssetIndex];
-      if (!asset.CopyContent) {
-        asset = await this.assetService.retrieveAsset(assetId, format, textId);
-        this.assets[currAssetIndex].CopyContent = asset.Content;
-        asset.CopyContent = asset.Content;
-      }
-      this.copyHtmlToClipboard(`<img src="${asset.CopyContent}" alt="Image">`);
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Image copied to clipboard',
+  exitToHome() {
+      this.confirmationService.confirm({
+          message: 'Do you want to save before you leave?',
+          header: 'Save Confirmation',
+          icon: 'pi pi-exclamation-triangle',
+          acceptLabel: 'Exit and Save',
+          rejectLabel: 'Exit without Saving',
+          rejectButtonStyleClass: 'p-button-danger',
+          accept: () => {
+              this.editService.setContent(this.editor.getData());
+              this.saveDocumentContents();
+              this.router.navigate(['/home']);
+          },
+          reject: (type: any) => {
+              if (type === 1) this.router.navigate(['/home']);
+          },
       });
-      this.assets[currAssetIndex].NotRetrieving = false;
-    }
   }
 
-  async copyAllText(assetId: string, format: string, textId: string) {
-    let currAssetIndex: number = 0;
-    for (let i = 0; i < this.assets.length; i++) {
-      if (this.assets[i].AssetID === assetId) {
-        currAssetIndex = i;
-        break;
+  constructHTMLTable(table: any): string {
+    let returnString = '';
+    for (let eachRow of table['Table']) {
+      returnString += '<tr>';
+      for (let eachCol of eachRow) {
+        returnString += '<td>' + eachCol + '</td>';
       }
+      returnString += '</tr>';
     }
-    this.assets[currAssetIndex].NotRetrieving = true;
-    if (this.assets[currAssetIndex].Blocks) {
-      this.parseAssetText(this.assets[currAssetIndex]);
-
-      let text = '';
-      for (let i = 0; i < this.textFromAsset.length; i++) {
-        text += this.textFromAsset[i] + '\n';
-      }
-      this.copyTextToClipboard(text);
-    } else {
-      const asset = await this.assetService.retrieveAsset(
-        assetId,
-        format,
-        textId
-      );
-
-      this.assets[currAssetIndex].Blocks = asset.Blocks;
-      this.parseAssetText(asset);
-
-      let text = '';
-      for (let i = 0; i < this.textFromAsset.length; i++) {
-        text += this.textFromAsset[i] + '\n';
-      }
-      this.copyTextToClipboard(text);
-    }
-    this.assets[currAssetIndex].NotRetrieving = false;
-    return;
+    return '<table>' + returnString + '</table>';
   }
 
-  parseAssetText(asset: any) {
-    this.textFromAsset = [];
-    for (let i = 0; i < asset.Blocks.length; i++) {
-      if (asset.Blocks[i].BlockType === 'LINE')
-        this.textFromAsset.push(asset.Blocks[i].Text);
-    }
-  }
-
-  copyHtmlToClipboard(html: string) {
+ copyHtmlToClipboard(html: string) {
     // Use the Clipboard API to copy the data to the clipboard
     navigator.clipboard
       .write([
@@ -530,7 +471,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         }),
       ])
       .then(
-        () => {},
+        () => { },
         (error) => {
           console.error(
             'Could not copy HTML data (image) to clipboard: ',
@@ -581,10 +522,78 @@ export class EditComponent implements AfterViewInit, OnInit {
         detail: 'Asset deleted',
       });
       this.assets.splice(currAssetIndex, 1);
-      if(this.assets.length === 0) this.noAssetsAvailable = true;
+      if (this.assets.length === 0) this.noAssetsAvailable = true;
     } else {
       this.assets[currAssetIndex].Deleted = false;
     }
+  }
+
+    async retrieveAssetObject(assetId: string, format:string, textId: string){
+      let currAssetIndex: number = 0;
+      for (let i = 0; i < this.assets.length; i++) {
+        if (this.assets[i].AssetID === assetId) {
+          currAssetIndex = i;
+          break;
+        }
+      }
+      this.assets[currAssetIndex].NotRetrieving = true;
+      // const asset = true;
+      if (format === 'text' || format === 'table') {
+        let asset = this.assets[currAssetIndex];
+        if (!asset.Blocks) {
+          var assetResponse = await this.assetService.retrieveAsset(assetId, format, textId);
+          this.assets[currAssetIndex].Blocks = asset.Blocks;
+        }
+        this.assets[currAssetIndex].NotRetrieving = false;
+        return assetResponse;
+      } else if (format === 'image') {
+        let asset = this.assets[currAssetIndex];
+        if (!asset.CopyContent) {
+          asset = await this.assetService.retrieveAsset(assetId, format, textId);
+          this.assets[currAssetIndex].CopyContent = asset.Content;
+          asset.CopyContent = asset.Content;
+        }
+        this.assets[currAssetIndex].NotRetrieving = false;
+        return asset.CopyContent;
+      }
+    }
+
+
+
+  async retrieveAssetTextToCopy(assetId: string, format: string, textId: string) {
+          let assetResponse = await this.retrieveAssetObject(assetId, format, textId);
+          let assetObjectJSON = JSON.parse(assetResponse.Content);
+          let allElements = assetObjectJSON.elements;
+          let copyText = '';
+          for (let i = 0; i < assetObjectJSON.elements.length; i++) {
+              if (allElements[i].hasOwnProperty("Text Element")) {
+                  copyText += allElements[i]["Text Element"]["Lines"] + "\n";
+              } else{
+                  copyText += this.constructHTMLTable(allElements[i]["Table Element"]) + "\n";
+              }
+          }
+          this.copyHtmlToClipboard(copyText);
+          this.messageService.add(
+              {
+                  severity: 'success',
+                  summary: 'Copied to Clipboard',
+                  detail: 'All OCR components copied to clipboard',
+              }
+          )
+  }
+
+  async retrieveAsset(assetId: string, format: string, textId: string) {
+    let assetResponse = await this.retrieveAssetObject(assetId, format, textId);
+    if (format === 'text' || format === 'table') {
+          this.showOCRPopup(assetResponse);
+      } else if (format === 'image') {
+          this.copyHtmlToClipboard(`<img src="${assetResponse}" alt="Image">`);
+          this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Image copied to clipboard',
+          });
+      }
   }
 
   async renameAsset(assetId: string, event: Event) {
@@ -612,6 +621,10 @@ export class EditComponent implements AfterViewInit, OnInit {
   }
 
   async refreshSidebarHistory() {
+    if (this.currentEditorContent) {
+      this.editor.setData(this.currentEditorContent);
+      this.currentEditorContent = undefined;
+    }
     this.history = [];
     this.versioningApiService
       .retrieveAllHistory(this.editService.getMarkdownID() as string)
@@ -625,8 +638,8 @@ export class EditComponent implements AfterViewInit, OnInit {
           return a.LastModified < b.LastModified
             ? 1
             : a.LastModified > b.LastModified
-            ? -1
-            : 0;
+              ? -1
+              : 0;
         });
 
         snapshot.forEach((a, i) => {
@@ -635,7 +648,10 @@ export class EditComponent implements AfterViewInit, OnInit {
           a.Name = 'Snapshot ' + a.OrderNumber;
           a.ChildDiffs = [];
           for (let j = 0; j < diff.length; j++) {
-            if (a.SnapshotID === diff[j].SnapshotID) {
+            if (
+              a.SnapshotID === diff[j].SnapshotID &&
+              a.LastModified > diff[j].LastModified
+            ) {
               a.ChildDiffs.push(diff[j]);
               diff[j].LastModifiedString = this.formatDate(
                 diff[j].LastModified
@@ -649,8 +665,8 @@ export class EditComponent implements AfterViewInit, OnInit {
             return a.LastModified < b.LastModified
               ? 1
               : a.LastModified > b.LastModified
-              ? -1
-              : 0;
+                ? -1
+                : 0;
           }).forEach((a, i, arr) => {
             a.VersionNumber = arr.length - i + 1;
             a.Name = 'Version ' + a.VersionNumber;
@@ -668,9 +684,18 @@ export class EditComponent implements AfterViewInit, OnInit {
             currentSnapshot.ChildDiffs.push(diff[i]);
           }
         }
+        currentSnapshot.ChildDiffs.sort((a, b) => {
+          return a.LastModified < b.LastModified
+            ? 1
+            : a.LastModified > b.LastModified
+              ? -1
+              : 0;
+        });
         currentSnapshot.Name = 'Latest';
-        currentSnapshot.LastModifiedString = 'now';
+        currentSnapshot.LastModifiedString = 'Current';
         this.history.push(currentSnapshot);
+        this.history[0].isCurrent = true;
+        this.history[0].Content = undefined;
         snapshot.forEach((a) => this.history.push(a));
 
         console.log(this.history);
@@ -760,14 +785,24 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   formatDate(dateString: Date): string {
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
-    if(!dateString) return '';
+    if (!dateString) return '';
     const date = new Date(dateString);
 
     const dd = String(date.getDate()).padStart(2, '0');
-    const mm = date.getMonth() ; // January is 0!
+    const mm = date.getMonth(); // January is 0!
     const yyyy = date.getFullYear();
 
     const hh = String(date.getHours()).padStart(2, '0');
@@ -777,63 +812,272 @@ export class EditComponent implements AfterViewInit, OnInit {
     return `${dd} ${months[mm]}, ${hh}:${min}:${ss}`;
   }
 
+  formatAssetDate(dateString: Date): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = date.getMonth(); // January is 0!
+    const yyyy = date.getFullYear();
+
+    return `${dd}-${mm}-${yyyy}`;
+  }
+
   enableReadOnly() {
+    this.disableSave = true;
     this.editor.enableReadOnlyMode('');
   }
 
   disableReadOnly() {
+    this.disableSave = false;
     this.editor.disableReadOnlyMode('');
   }
 
-  insertContent(obj: any) {
+  async insertContent(obj: any, event: any) {
+    event.stopPropagation();
 
-    console.log("Just clicked on: " , obj);
-    if(!obj.Content) return;
+    if (obj.isCurrent && obj.Name === 'Latest') return;
+
+    if (!this.currentEditorContent)
+      this.currentEditorContent = this.editor.getData();
+
+    if (!obj.DiffID) {
+      obj.loading = true;
+      await this.getSnapshotContent(obj);
+      obj.loading = false;
+    }
+    console.log('Just clicked on: ', obj);
     this.deselectAllHistory();
-    obj.isCurrent = true;
     if (obj.Name === 'Latest') {
       this.disableReadOnly();
-      this.editor.setData(obj.Content);
+      this.editor.setData(this.currentEditorContent);
+      this.currentEditorContent = undefined;
+      obj.isCurrent = true;
+
       return;
     }
+    if (!obj.Content) return;
+    obj.isCurrent = true;
     this.enableReadOnly();
-    this.editor.setData(obj.Content);
+    if (!obj.DiffID) {
+      this.editor.setData(obj.Content);
+    } else {
+      const prettyContent = await this.getPrettyHtml(obj);
+      this.editor.setData(prettyContent);
+    }
   }
 
   deselectAllHistory() {
     for (let i = 0; i < this.history.length; i++) {
       this.history[i].isCurrent = false;
+      for (let j = 0; j < this.history[i].ChildDiffs.length; j++) {
+        this.history[i].ChildDiffs[j].isCurrent = false;
+      }
     }
   }
 
-  expandSnapshot(snapshot: any, event: any) {
-    if (snapshot.expanded) {
-      snapshot.expanded = false;
-    } else {
-      snapshot.expanded = true;
-    }
+  async expandSnapshot(snapshot: any, event: any) {
+    event.stopPropagation();
 
     const arrowElement = event.target;
 
     arrowElement.classList.toggle('expanded');
 
-    event.stopPropagation();
+
+    if (snapshot.expanded) {
+      snapshot.expanded = false;
+      return;
+    } else {
+      snapshot.expanded = true;
+    }
+
+    const snapshotIndex =
+    this.history.length - this.getSnapshotIndex(snapshot) - 1;
+    let latestSnapshot: boolean = false;
+
+    if (snapshot.Name === 'Latest' && snapshotIndex !== 0) {
+      latestSnapshot = true;
+      snapshot.SnapshotID = this.history[1].SnapshotID;
+    }
 
     //retrieve all diff content and previous snapshot content
-    this.versioningApiService.loadHistorySet(this.editService.getMarkdownID() as string, snapshot.ChildDiffs, snapshot.snapshotID).then((data) => {
-      if(data !== null){
-        console.log("Process diff data.", data);
-        snapshot.Content =data.SnapshotHistory[0].Content;
-        
-      }
-      else {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error retrieving history set',
-        });
-        return;
-      }
+    snapshot.loading = true;
+    await this.versioningApiService
+      .loadHistorySet(
+        this.editService.getMarkdownID() as string,
+        snapshot.ChildDiffs,
+        snapshot.SnapshotID,
+        snapshotIndex,
+        latestSnapshot
+      )
+      .then((data) => {
+        if (data !== null) {
+          console.log('Process diff data.', data);
+          let diffHistory = data.DiffHistory;
+          const snapshotHistory = data.SnapshotHistory[0];
+          snapshot.Content = snapshotHistory.Content;
+          diffHistory = this.createContext(snapshotHistory, diffHistory);
+          for (let i = 0; i < snapshot.ChildDiffs.length; i++) {
+            for (let j = 0; j < diffHistory.length; j++) {
+              if (
+                snapshot.ChildDiffs[i].S3DiffIndex ===
+                diffHistory[j].S3DiffIndex
+              ) {
+                snapshot.ChildDiffs[i].Content = diffHistory[j].Content;
+                break;
+              }
+            }
+          }
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error retrieving history set',
+          });
+          return;
+        }
+        snapshot.loading = false;
+      });
+  }
+
+  getSnapshotIndex(snapshot: any): number {
+    let index = 0;
+    this.history.forEach((a, i) => {
+      if (a.SnapshotID == snapshot.SnapshotID) index = i;
     });
+
+    return index;
+  }
+
+  getDiffSnapshotIndex(diff: any): number[] {
+    let index: number[] = [];
+    this.history.forEach((a, i) => {
+      a.ChildDiffs.forEach((b: any, j: any) => {
+        if (b.S3DiffIndex == diff.S3DiffIndex) {
+          index[0] = i;
+          index[1] = j;
+        }
+      });
+    });
+
+    return index;
+  }
+
+  async getPrettyHtml(diff: any): Promise<string> {
+    const diffIndices = this.getDiffSnapshotIndex(diff);
+    const snapshotIndex = diffIndices[0];
+    const diffIndex = diffIndices[1];
+
+    if (diffIndex === this.history[snapshotIndex].ChildDiffs.length - 1) {
+      if (snapshotIndex === this.history.length - 1) {
+        return this.versionControlService.getPrettyHtml(
+          '',
+          this.history[snapshotIndex].ChildDiffs[diffIndex].Content
+        );
+      } else {
+        if (!this.history[snapshotIndex + 1].Content)
+          await this.getSnapshotContent(this.history[snapshotIndex + 1]);
+        return this.versionControlService.getPrettyHtml(
+          this.history[snapshotIndex + 1].Content,
+          this.history[snapshotIndex].ChildDiffs[diffIndex].Content
+        );
+      }
+    } else {
+      return this.versionControlService.getPrettyHtml(
+        this.history[snapshotIndex].ChildDiffs[diffIndex + 1].Content,
+        this.history[snapshotIndex].ChildDiffs[diffIndex].Content
+      );
+    }
+  }
+
+  async getSnapshotContent(snapshot: any) {
+    if (snapshot.Name === 'Latest') {
+      snapshot.Content = this.editService.getContent();
+      return;
+    }
+    await this.versioningApiService
+      .getSnapshotContent(snapshot)
+      .then((data) => {
+        if (data !== null) {
+          snapshot.Content = data.Content;
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error retrieving history set',
+          });
+          return;
+        }
+      });
+  }
+
+  createContext(snapshot: any, diffHistory: any): any {
+    for (let i = diffHistory.length - 1; i >= 0; i--) {
+      if (i === diffHistory.length - 1) {
+        diffHistory[i].Content = this.versionControlService.applyReadablePatch(
+          snapshot.Content,
+          diffHistory[i].Content
+        );
+      } else {
+        diffHistory[i].Content = this.versionControlService.applyReadablePatch(
+          diffHistory[i + 1].Content,
+          diffHistory[i].Content
+        );
+      }
+    }
+
+    return diffHistory;
+  }
+
+  visualiseDiffContent(diff: any, event: any) {
+    event.stopPropagation();
+    // console.log('Hello from visualise diff', diff);
+    console.log('Hello from visualise diff', diff);
+  }
+      
+  visualiseSnapshotContent(snapshot: any, event: any) {
+    event.stopPropagation();
+    // console.log('Hello from visualise snapshot: ', snapshot);
+    console.log('Hello from visualise snapshot: ', snapshot);
+  }
+      
+  showContextMenu(event: any, obj: any) {
+
+    // event.stopPropagation();
+    event.preventDefault();
+    this.contextMenu.position(event);
+    this.contextMenu.show();
+    this.currentContextMenuObject = obj;
+  }
+  protected readonly undefined = undefined;
+      
+  async shareDocument(save: boolean) {
+    if (this.recipientEmail === '') {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Please enter a recipient email',
+      });
+      return;
+    }
+    else {
+      if (save) {
+        await this.saveDocumentContents();
+      }
+      this.loading = true;
+      await this.fileService.shareDocument(this.editService.getMarkdownID() as string, this.recipientEmail).then((data) => {
+        if (data) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Document shared successfully',
+          });
+          this.sharePopup = false;
+          this.recipientEmail = '';
+        }
+        this.loading = false;
+      });
+      this.loading = false;
+    }
   }
 }

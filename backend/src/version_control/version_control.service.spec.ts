@@ -13,11 +13,14 @@ import { Repository } from 'typeorm';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { SnapshotService } from '../snapshots/snapshots.service';
 import { Snapshot } from '../snapshots/entities/snapshots.entity';
+import { DiffDTO } from '../diffs/dto/diffs.dto';
+import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 
 describe('VersionControlService', () => {
   let service: VersionControlService;
   let diffsService: DiffsService;
   let markdownFilesService: MarkdownFilesService;
+  let snapshotService: SnapshotService;
   let s3Service: S3Service;
   let s3ServiceMock: S3ServiceMock;
 
@@ -64,9 +67,79 @@ describe('VersionControlService', () => {
     s3ServiceMock = module.get<S3ServiceMock>(
       S3ServiceMock,
     );
+
+    snapshotService = module.get<SnapshotService>(
+      SnapshotService,
+    );
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('saveSnapshot', () => {
+    const diffDTO = new DiffDTO();
+    const nextSnaphshotID = 0;
+    it('should call the s3Service and save snapshot correctly', async () => {
+      jest.spyOn(s3Service, 'saveSnapshot');
+
+      jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValueOnce(new Snapshot());
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockResolvedValueOnce(new Snapshot());
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValueOnce(
+          new MarkdownFile(),
+        );
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockResolvedValueOnce(
+          new MarkdownFile(),
+        );
+
+      jest.spyOn(
+        snapshotService,
+        'updateSnapshot',
+      );
+
+      const response = await service.saveSnapshot(
+        diffDTO,
+        nextSnaphshotID,
+        0,
+      );
+
+      expect(response).toEqual(undefined);
+      expect(
+        s3Service.saveSnapshot,
+      ).toHaveBeenCalled();
+    });
+
+    it('should get all snapshots', async () => {
+      const snapshotDTO = new SnapshotDTO();
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValueOnce(
+          new MarkdownFile(),
+        );
+
+      jest
+        .spyOn(service, 'getLogicalOrder')
+        .mockResolvedValueOnce(
+          new Array<number>() as never,
+        );
+
+      const response =
+        await service.getAllSnapshots(
+          snapshotDTO,
+        );
+
+      expect(response).toEqual([]);
+    });
   });
 });

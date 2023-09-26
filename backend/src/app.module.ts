@@ -62,7 +62,7 @@ import { VersionControlController } from './version_control/version_control.cont
     AuthController,
     S3Controller,
     FileManagerController,
-    VersionControlController
+    VersionControlController,
   ],
   providers: [
     FileManagerService,

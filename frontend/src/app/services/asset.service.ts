@@ -37,7 +37,6 @@ export class AssetService {
         format
       ).subscribe({
         next: (response: HttpResponse<any>) => {
-
           if (response.status === 201) {
             this.messageService.add({
               severity: 'success',
@@ -77,7 +76,6 @@ export class AssetService {
       body.ParentFolderID = '';
     }
     body.Format = format;
-
     // const body = new MarkdownFileDTO();
     // body.UserID = this.userService.getUserID();
     // body.MarkdownID = 'IMG_3600.jpeg';
@@ -92,8 +90,7 @@ export class AssetService {
 
   retrieveAsset(assetId: string, format: string, textId:string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      if (format === 'image')
-        this.sendRetrieveAssetData(assetId, format).subscribe({
+        this.sendRetrieveTextOrTableData(assetId, format, textId).subscribe({
           next: (response: HttpResponse<any>) => {
             if (response.status === 200) {
               resolve(response.body);
@@ -102,18 +99,10 @@ export class AssetService {
             }
           },
         });
-      else if (format === 'text')
-        this.sendRetrieveTextData(assetId, format, textId).subscribe({
-          next: (response: HttpResponse<any>) => {
-            if (response.status === 200) {
-              resolve(JSON.parse(response.body.Content));
-            } else {
-              resolve(null);
-            }
-          },
-        });
     });
   }
+
+
 
   sendRetrieveAssetData(
     assetId: string,
@@ -134,21 +123,18 @@ export class AssetService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  sendRetrieveTextData(
+  sendRetrieveTextOrTableData(
     assetId: string,
     format: string,
     textID: string
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}asset_manager/retrieve_one`;
-
     const body = new AssetDTO();
     body.UserID = this.userService.getUserID();
     body.AssetID = assetId;
     body.Format = format;
     body.TextID = textID;
-
-
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()

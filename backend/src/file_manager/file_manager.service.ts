@@ -20,6 +20,7 @@ import { ConversionService } from '../conversion/conversion.service';
 import { ImportDTO } from './dto/import.dto';
 import { DiffsService } from '../diffs/diffs.service';
 import { SnapshotService } from '../snapshots/snapshots.service';
+import { ShareRequestDTO } from './dto/share_request.dto';
 
 @Injectable()
 export class FileManagerService {
@@ -59,13 +60,28 @@ export class FileManagerService {
     if (markdownFileDTO.Size === undefined)
       markdownFileDTO.Size = 0;
 
-    if (markdownFileDTO.NextDiffID === undefined)
-      markdownFileDTO.NextDiffID = 0;
+    if (
+      markdownFileDTO.NextDiffIndex === undefined
+    )
+      markdownFileDTO.NextDiffIndex = 0;
 
     if (
-      markdownFileDTO.NextSnapshotID === undefined
+      markdownFileDTO.NextSnapshotIndex ===
+      undefined
     )
-      markdownFileDTO.NextSnapshotID = 0;
+      markdownFileDTO.NextSnapshotIndex = 0;
+
+    // Set to one to reflect that this function creates one diff and one snapshot
+    if (
+      markdownFileDTO.TotalNumDiffs === undefined
+    )
+      markdownFileDTO.TotalNumDiffs = 0;
+
+    if (
+      markdownFileDTO.TotalNumSnapshots ===
+      undefined
+    )
+      markdownFileDTO.TotalNumSnapshots = 0;
 
     if (isTest) {
       await this.s3ServiceMock.createFile(
@@ -87,23 +103,11 @@ export class FileManagerService {
         markdownFileDTO,
       );
 
-      await this.s3service.createDiffObjectsForFile(
+      await this.setupVersioningResources(
         markdownFileDTO,
       );
-
-      await this.s3service.createSnapshotObjectsForFile(
-        markdownFileDTO,
-      );
-
-      const snapshotIDs: string[] =
-        await this.snapshotService.createSnapshots(
-          markdownFileDTO,
-        );
-
-      await this.diffsService.createDiffs(
-        markdownFileDTO,
-        snapshotIDs,
-      );
+      markdownFileDTO.NextSnapshotIndex = 1;
+      markdownFileDTO.TotalNumSnapshots = 1;
     }
     return await this.markdownFilesService.create(
       markdownFileDTO,
@@ -155,8 +159,11 @@ export class FileManagerService {
         SafeLock: file.SafeLock,
         NewDiff: '',
         PreviousDiffs: [],
-        NextDiffID: file.NextDiffID,
-        NextSnapshotID: file.NextSnapshotID,
+        NextDiffIndex: file.NextDiffIndex,
+        NextSnapshotIndex: file.NextSnapshotIndex,
+        TotalNumDiffs: file.TotalNumDiffs,
+        TotalNumSnapshots: file.TotalNumSnapshots,
+        clone: this.getClone(),
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
@@ -521,9 +528,10 @@ export class FileManagerService {
     const returnedDTO: MarkdownFileDTO = {
       ...savedFile,
       Content: encryptedContent,
-      NextDiffID: 0,
+      NextDiffIndex: 0,
       PreviousDiffs: [],
       NewDiff: '',
+      clone: this.getClone(),
     };
 
     return returnedDTO;
@@ -572,6 +580,41 @@ export class FileManagerService {
     ).toString();
 
     return encryptionKey;
+  }
+
+  async setupVersioningResources(
+    markdownFileDTO: MarkdownFileDTO,
+  ) {
+    // 1. Create snapshot reference in db
+    await this.snapshotService.createSnapshot(
+      markdownFileDTO,
+    );
+
+    // 2. Create snapshot reference in s3
+    await this.s3service.createSnapshot(
+      markdownFileDTO,
+    );
+
+    // 3. Create diff reference in db
+    await this.diffsService.createDiff(
+      markdownFileDTO,
+      '', // No snapshot for this diff to build towards exists yet
+    );
+
+    // 4. Create diff reference in s3
+    this.s3service.createDiff(markdownFileDTO);
+
+    markdownFileDTO.NextSnapshotIndex = -1;
+
+    // 5. Create redundant snapshot reference in db
+    await this.snapshotService.createSnapshot(
+      markdownFileDTO,
+    );
+
+    // 6. Create redundant snapshot reference in s3
+    await this.s3service.createSnapshot(
+      markdownFileDTO,
+    );
   }
 
   async exportFile(exportDTO: ExportDTO) {
@@ -655,30 +698,95 @@ export class FileManagerService {
     // );
   }
 
-  // async generatePdf(html: string) {
-  //   const browser = await puppeteer.launch();
-  //   const page = await browser.newPage();
+  async shareFile(
+    shareRequestDTO: ShareRequestDTO,
+  ) {
+    // If the markdown file does not exist, throw an error
+    if (
+      await !this.markdownFilesService.exists(
+        shareRequestDTO.MarkdownID,
+      )
+    ) {
+      throw new HttpException(
+        'Markdown file not found',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-  //   // Emulate a screen to apply CSS styles correctly
-  //   await page.setViewport({
-  //     width: 1920,
-  //     height: 1080,
-  //   });
+    // If the recipient email does not exist, throw an error (handled by userService.findOneByEmail)
+    const recipient =
+      await this.userService.findOneByEmail(
+        shareRequestDTO.RecipientEmail,
+      );
 
-  //   await page.setContent(html, {
-  //     waitUntil: 'networkidle0',
-  //   });
+    // Get the markdown file as a dto
+    const originalFileDTO =
+      await this.markdownFilesService.getAsDTO(
+        shareRequestDTO.MarkdownID,
+      );
 
-  //   // Set a higher scale to improve quality (e.g., 2 for Retina displays)
-  //   const pdf = await page.pdf({
-  //     format: 'A4',
-  //     scale: 1,
-  //     printBackground: true,
-  //   });
+    // Make a copy of the file
+    const fileCopyDTO = originalFileDTO.clone();
 
-  //   await browser.close();
+    // Prepare the file to be added to the recipient's account
+    fileCopyDTO.UserID = recipient.UserID;
+    fileCopyDTO.MarkdownID = undefined;
+    fileCopyDTO.Name =
+      fileCopyDTO.Name + ' (shared)';
 
-  //   // Send the generated PDF as a response
-  //   return pdf;
-  // }
+    // Create the file in the recipient's account
+    const createdFileDTO = await this.createFile(
+      fileCopyDTO,
+    );
+
+    const s3Response =
+      await this.s3service.copyFileContents(
+        originalFileDTO.MarkdownID,
+        shareRequestDTO.UserID,
+        createdFileDTO.MarkdownID,
+        recipient.UserID,
+      );
+
+    if (s3Response === undefined) {
+      this.markdownFilesService.remove(
+        createdFileDTO,
+      );
+      throw new HttpException(
+        'Sharing failed',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    createdFileDTO.Size = s3Response;
+    this.markdownFilesService.updateSize(
+      createdFileDTO,
+    );
+
+    // Return the created file
+    return createdFileDTO;
+  }
+  private getClone() {
+    return function () {
+      const clone = new MarkdownFileDTO();
+      clone.MarkdownID = this.MarkdownID;
+      clone.UserID = this.UserID;
+      clone.DateCreated = this.DateCreated;
+      clone.LastModified = this.LastModified;
+      clone.Name = this.Name;
+      clone.Path = this.Path;
+      clone.Size = this.Size;
+      clone.ParentFolderID = this.ParentFolderID;
+      clone.Content = this.Content;
+      clone.SafeLock = this.SafeLock;
+      clone.NewDiff = this.NewDiff;
+      clone.PreviousDiffs = this.PreviousDiffs;
+      clone.NextDiffIndex = this.NextDiffIndex;
+      clone.NextSnapshotIndex =
+        this.NextSnapshotIndex;
+      clone.TotalNumDiffs = this.TotalNumDiffs;
+      clone.TotalNumSnapshots =
+        this.TotalNumSnapshots;
+      return clone;
+    };
+  }
 }

@@ -7,21 +7,15 @@ import { UserService } from './user.service';
 import { DiffDTO } from './dto/diff.dto';
 import { SnapshotDTO } from './dto/snapshot.dto';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
+import { VersionRollbackDTO } from './dto/version_rollback.dto';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VersioningApiService {
+  constructor(private http: HttpClient, private userService: UserService) { }
 
-  constructor(
-    private http: HttpClient,
-    private userService: UserService
-  ) { }
-
-  saveDiff(
-    fileID: string,
-    content: string
-  ): Promise<boolean> {
+  saveDiff(fileID: string, content: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.sendSaveDiff(fileID, content).subscribe({
         next: (response: HttpResponse<any>) => {
@@ -114,13 +108,22 @@ export class VersioningApiService {
     );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
+
   loadHistorySet(
     markdownID: string,
     diffHistory: string[],
-    snapshotID: string
+    snapshotID: string,
+    snapshotIndex: number,
+    latestSnapshot: boolean
   ) {
     return new Promise<any>((resolve, reject) => {
-      this.sendLoadHistorySet(markdownID, diffHistory, snapshotID).subscribe({
+      this.sendLoadHistorySet(
+        markdownID,
+        diffHistory,
+        snapshotID,
+        snapshotIndex,
+        latestSnapshot
+      ).subscribe({
         next: (response: HttpResponse<any>) => {
           console.log(response);
           if (response.status === 200) {
@@ -136,7 +139,9 @@ export class VersioningApiService {
   sendLoadHistorySet(
     markdownID: string,
     diffHistory: string[],
-    snapshotID: string
+    snapshotID: string,
+    snapshotIndex: number,
+    latestSnapshot: boolean
   ): Observable<HttpResponse<any>> {
     const environmentURL = environment.apiURL;
     const url = `${environmentURL}version_control/get_history_set`;
@@ -146,11 +151,79 @@ export class VersioningApiService {
     body.MarkdownID = markdownID;
     body.DiffHistory = diffHistory;
     body.SnapshotID = snapshotID;
+    body.IsHeadSnapshot = snapshotIndex === 0;
+    body.IsLatestSnapshot = latestSnapshot;
+
+    console.log('versioning-api.sendLoadHistorySet: ', body);
     const headers = new HttpHeaders().set(
       'Authorization',
       'Bearer ' + this.userService.getAuthToken()
     );
     return this.http.post(url, body, { headers, observe: 'response' });
   }
-  
+
+  getSnapshotContent(snapshot: any) {
+    return new Promise<any>((resolve) => {
+      this.sendGetSnapshotContent(snapshot).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log(response);
+          if (response.status === 200) {
+            resolve(response.body);
+          } else {
+            resolve(null);
+          }
+        },
+      });
+    });
+  }
+
+  sendGetSnapshotContent(snapshot: any): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}version_control/get_snapshot`;
+    const body = new SnapshotDTO();
+
+    body.UserID = this.userService.getUserID() as number;
+    body.MarkdownID = snapshot.MarkdownID;
+    body.S3SnapshotIndex = snapshot.S3SnapshotIndex;
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  restoreVersion(markdownID: string, diffIndex: number, content: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendRestoreVersion(markdownID, diffIndex, content).subscribe({
+        next: (response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+      });
+    });
+
+  }
+
+  sendRestoreVersion(markdownID: string, diffIndex: number, content: string): Observable<HttpResponse<any>> {
+
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}version_control/rollback_version`;
+    const body = new VersionRollbackDTO();
+
+    body.UserID = this.userService.getUserID() as number;
+    body.MarkdownID = markdownID;
+    body.DiffIndex = diffIndex;
+    body.Content = content;
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    console.log(body);
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
 }

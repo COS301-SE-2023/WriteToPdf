@@ -16,6 +16,7 @@ import { DirectoryFoldersDTO } from './dto/directory_folders.dto';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ExportDTO } from './dto/export.dto';
 import { ImportDTO } from './dto/import.dto';
+import { ShareRequestDTO } from './dto/share_request.dto';
 
 @Controller('file_manager')
 export class FileManagerController {
@@ -461,6 +462,35 @@ export class FileManagerController {
 
     return this.fileManagerService.exportFile(
       exportDTO,
+    );
+  }
+
+  @Post('share')
+  @HttpCode(HttpStatus.OK)
+  share(
+    @Body()
+    shareRequestDTO: ShareRequestDTO,
+    @Req() request: Request,
+  ) {
+    if (request.method !== 'POST') {
+      throw new HttpException(
+        'Method Not Allowed',
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
+
+    if (
+      !shareRequestDTO.UserID ||
+      !shareRequestDTO.MarkdownID ||
+      !shareRequestDTO.RecipientEmail
+    )
+      throw new HttpException(
+        'Invalid request data',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return this.fileManagerService.shareFile(
+      shareRequestDTO,
     );
   }
 }

@@ -33,7 +33,10 @@ export class AssetManagerService {
     uploadAssetDTO: AssetDTO,
     isTest = false,
   ) {
-    if (uploadAssetDTO.Format === 'text') {
+    if (
+      uploadAssetDTO.Format === 'text' ||
+      uploadAssetDTO.Format === 'table'
+    ) {
       return this.textManagerService.upload(
         uploadAssetDTO,
         isTest,
@@ -81,7 +84,10 @@ export class AssetManagerService {
     }
 
     for (let j = 0; j < assets.length; j++) {
-      if (assets[j].Format === 'text') {
+      if (
+        assets[j].Format === 'text' ||
+        assets[j].Format === 'table'
+      ) {
         const assetDTO = new AssetDTO();
         assetDTO.AssetID = assets[j].AssetID; // for the text image data file
         assetDTO.TextID = assets[j].TextID; // for the OCR text data file
@@ -100,7 +106,6 @@ export class AssetManagerService {
           );
       }
     }
-
     return assets;
   }
 
@@ -109,7 +114,10 @@ export class AssetManagerService {
     retrieveAssetDTO: AssetDTO,
     isTest = false,
   ) {
-    if (retrieveAssetDTO.Format === 'text') {
+    if (
+      retrieveAssetDTO.Format === 'text' ||
+      retrieveAssetDTO.Format === 'table'
+    ) {
       return this.textManagerService.retrieveOne(
         retrieveAssetDTO,
         isTest,

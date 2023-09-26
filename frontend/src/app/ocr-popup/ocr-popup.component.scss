@@ -1,0 +1,186 @@
+.cdk-overlay-container {
+  z-index: 1000000000000; /* Adjust the value as needed */
+}
+
+.mat-dialog-container {
+  z-index: 1000; /* Adjust the value as needed */
+}
+
+#tableDropDown {
+  float: right;
+}
+
+.copyFormData{
+  float:right;
+}
+
+.editableForm{
+  width: 100%;
+  height: 250px !important;
+  font-family: 'Roboto', sans-serif;
+  //min-height: 100px !important; /* Set a minimum height */
+  max-height: 500px !important; /* Set a maximum height */
+  padding: 10px;
+  font-size: 16px;
+  resize: vertical !important; /* Allow vertical resizing of the textarea */
+  overflow-y: auto !important; /* Add a scrollbar when content exceeds max-height */
+}
+
+textarea {
+}
+
+.container {
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  //justify-content: flex-start; /* Align content to the top */
+  align-items: center;
+  flex-direction: column;
+  border-radius: 8px;
+  box-shadow: 5px 5px 10px lightblue;
+  height: 100%;
+  padding-bottom: 50px;
+  z-index: 100000000;
+}
+
+.popup-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Adjust as needed */
+  padding: 10px 20px;
+  //border-bottom: 1px solid #ccc; /* Add a separator line */
+}
+
+.popup-heading h2 {
+  margin-left: 12%;
+  font-size: 1.5rem;
+  flex-grow: 1; /* Allow the heading to take available space and center it */
+  text-align: center; /* Center the heading text */
+}
+
+.popup-heading .backButton {
+  background-color: transparent;
+  cursor: pointer;
+  outline: none;
+  margin-left: auto; /* Push the button to the right */
+}
+
+.card {
+  padding: 10px;
+}
+
+.copyButton {
+  padding-left: 40px;
+}
+
+.tableDropDown{
+  padding-right:20px;
+}
+
+.pasteDescriptor{
+  display: flex;
+  justify-content:center;
+  flex-direction:column;
+  padding-left:30px;
+}
+.pasteButtons{
+  display: flex;
+  justify-content:center;
+}
+.dialog-container {
+  display: flex;
+  height: 550px;
+  width: 90%; /* Adjust as needed */
+  background-color: #ffffff;
+  border-radius: 8px;
+  //overflow-y: auto;
+  margin-left: 5%;
+  border: 1px solid black;
+  //z-index: 10000;
+}
+
+.left-section {
+  flex: 1;
+  height: auto;
+  padding: 20px;
+  margin-bottom: 10px;
+  overflow-y:auto;
+  //width:200px
+  //min-width: 300px;
+}
+
+
+.left-section img {
+  max-width: 100%;
+  //height:100%;
+  min-width: 20%;
+  padding: 20px;
+  margin-bottom: 20px;
+  margin-top: -10px;
+}
+
+.right-section {
+  height: auto;
+  flex: 1;
+  //margin-top: -; /* Adjust the margin-top as needed */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-left: 1px solid black;
+  overflow-y: auto;
+  overflow-x: auto;
+  width: 100%;
+  justify-content: flex-start; /* Align content to the top */
+}
+
+.centered-tabs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.editableForm {
+  padding-top: 14px;
+  padding-left: 14px;
+  padding-right: 14px;
+  width: 100%;
+  height: auto;
+}
+
+.mat-tab-header {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ccc;
+  top: 10px;
+}
+
+.mat-tab-header :hover {
+  background-color: #b4e4ff;
+}
+
+.mat-tab-header .mat-tab-label {
+  border-right: 1px solid #ccc;
+  width: 100%;
+  padding: 10px 15px;
+}
+
+.mat-tab-header .mat-tab-label:last-child {
+  border-right: none;
+}
+
+/* Active tab styles */
+
+.activeTab {
+  font-weight: bold !important;
+  font-size: 1.1rem !important;
+}
+
+
+/* Adjust margin between tab content and labels */
+.mat-tab-group .mat-tab-body-wrapper {
+  margin-top: 10px; /* Adjust the value as needed */
+  padding: 10px;
+}
+
