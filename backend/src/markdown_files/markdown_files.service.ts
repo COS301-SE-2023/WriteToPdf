@@ -136,7 +136,7 @@ export class MarkdownFilesService {
 
   ///===----------------------------------------------------
 
-  async getNextDiffID(markdownID: string) {
+  async getNextDiffIndex(markdownID: string) {
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
         {
@@ -148,7 +148,7 @@ export class MarkdownFilesService {
 
   ///===----------------------------------------------------
 
-  async getNextSnapshotID(markdownID: string) {
+  async getNextSnapshotIndex(markdownID: string) {
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
         {
@@ -280,14 +280,16 @@ export class MarkdownFilesService {
     nextDiffIndex: number,
     nextSnapshotIndex: number,
   ) {
-    console.log("markdownID: ", markdownID);
-    console.log("nextDiffIndex: ", nextDiffIndex);
-    console.log("nextSnapshotIndex: ", nextSnapshotIndex);
+    console.log('markdownID: ', markdownID);
+    console.log('nextDiffIndex: ', nextDiffIndex);
+    console.log(
+      'nextSnapshotIndex: ',
+      nextSnapshotIndex,
+    );
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
         {
-          MarkdownID:
-            markdownID,
+          MarkdownID: markdownID,
         },
       );
     markdownFile.NextDiffIndex = nextDiffIndex;
