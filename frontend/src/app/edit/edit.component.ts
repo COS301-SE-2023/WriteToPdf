@@ -183,8 +183,29 @@ export class EditComponent implements AfterViewInit, OnInit {
       {
         label: 'Create a copy of this version',
         icon: 'pi pi-copy',
-        command: () => {
-          console.log('Create a copy of this version');
+        command: async () => {
+          this.loading = true;
+          if(await this.fileService.createDocument(this.editService.getName()+'(copy)', this.editService.getPath(), this.editService.getParentFolderID()))
+          { 
+            await this.fileService.saveDocument(this.currentContextMenuObject.Content, this.editService.getMarkdownID(), this.editService.getPath(), this.editService.getSafeLock());
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Version copied',
+            });
+            this.refreshSidebarHistory();
+            this.editService.setContent(this.currentContextMenuObject.Content);
+            this.editor.setData(this.currentContextMenuObject.Content);
+            this.fileName = this.editService.getName();
+          }
+          else  
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Version not copied',
+            });
+            this.loading = false;
+
         },
       }
     ]
