@@ -318,6 +318,12 @@ export class MarkdownFilesService {
   ///===----------------------------------------------------
 
   async getAsDTO(markdownID: string) {
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
     const result = new MarkdownFileDTO();
     result.MarkdownID = markdownFile.MarkdownID;
     result.Name = markdownFile.Name;

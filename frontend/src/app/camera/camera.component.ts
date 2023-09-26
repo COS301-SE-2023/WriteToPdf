@@ -327,19 +327,19 @@ async cropImage(base64Image: string, left: number, top: number, right: number, b
   });
 }
 
-  fileChangeEvent(event: any): void {
-  }
-  imageCropped(event: ImageCroppedEvent) {
-    this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl as string);
-    // event.blob can be used to upload the cropped image
-  }
-  imageLoaded(image: LoadedImage) {
-    // show cropper
-  }
-  cropperReady() {
-    // cropper ready
-  }
-  loadImageFailed() {
-    // show message
-  }
+  // fileChangeEvent(event: any): void {
+  // }
+  // imageCropped(event: ImageCroppedEvent) {
+  //   this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl as string);
+  //   // event.blob can be used to upload the cropped image
+  // }
+  // imageLoaded(image: LoadedImage) {
+  //   // show cropper
+  // }
+  // cropperReady() {
+  //   // cropper ready
+  // }
+  // loadImageFailed() {
+  //   // show message
+  // }
 }
