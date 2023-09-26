@@ -7,7 +7,6 @@ import { MarkdownFile } from './entities/markdown_file.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
-import { create } from 'domain';
 
 describe('MarkdownFilesService', () => {
   let service: MarkdownFilesService;
@@ -342,6 +341,42 @@ describe('MarkdownFilesService', () => {
       ).toBeCalledWith({
         MarkdownID: '1',
       });
+    });
+  });
+
+  describe('incrementNextDiffID', () => {
+    it('should find the markdown file and increment the next diff id', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+      foundMarkdownFile.NextDiffIndex = 0;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(foundMarkdownFile);
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockImplementation((markdownFile) => {
+          return markdownFile;
+        });
+
+      const result =
+        await service.incrementNextDiffID(
+          markdownID,
+        );
+
+      expect(result.NextDiffIndex).toEqual(1);
+      expect(
+        Repository.prototype.findOneBy,
+      ).toBeCalledWith({
+        MarkdownID: markdownID,
+      });
+      expect(
+        Repository.prototype.save,
+      ).toBeCalled();
     });
   });
 });
