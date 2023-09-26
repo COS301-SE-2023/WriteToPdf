@@ -280,6 +280,9 @@ export class MarkdownFilesService {
     nextDiffIndex: number,
     nextSnapshotIndex: number,
   ) {
+    console.log("markdownID: ", markdownID);
+    console.log("nextDiffIndex: ", nextDiffIndex);
+    console.log("nextSnapshotIndex: ", nextSnapshotIndex);
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
         {
