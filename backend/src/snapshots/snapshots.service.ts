@@ -104,19 +104,29 @@ export class SnapshotService {
   ///===-----------------------------------------------------
 
   async resetSnapshot(
+    markdownID: string,
     snapshotIDsToReset: string[],
   ) {
     const snapshotIndices = [];
-    for (let idx = 0; idx < snapshotIDsToReset.length; idx++) {
+    for (
+      let idx = 0;
+      idx < snapshotIDsToReset.length;
+      idx++
+    ) {
       const snapshot =
         await this.snapshotRepository.findOne({
           where: {
+            MarkdownID: markdownID,
             SnapshotID: snapshotIDsToReset[idx],
           },
         });
       snapshot.HasBeenUsed = false;
-      await this.snapshotRepository.save(snapshot);
-      snapshotIndices.push(snapshot.S3SnapshotIndex);
+      await this.snapshotRepository.save(
+        snapshot,
+      );
+      snapshotIndices.push(
+        snapshot.S3SnapshotIndex,
+      );
     }
     return snapshotIndices;
   }

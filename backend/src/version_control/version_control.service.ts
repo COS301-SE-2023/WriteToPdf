@@ -175,7 +175,7 @@ export class VersionControlService {
     );
 
     const nextSnapshotID =
-      await this.markdownFileService.getNextSnapshotID(
+      await this.markdownFileService.getNextSnapshotIndex(
         snapshotDTO.MarkdownID,
       );
 
@@ -461,7 +461,7 @@ export class VersionControlService {
     versionRollbackDTO: VersionRollbackDTO,
   ) {
     const restoredVersionDTO =
-      this.buildRestoreVersionDTO(
+      await this.buildRestoreVersionDTO(
         versionRollbackDTO,
       );
 
@@ -469,28 +469,45 @@ export class VersionControlService {
       restoredVersionDTO,
     );
 
-    const nextDiffIndex =
-      versionRollbackDTO.DiffIndex +
-      (1 % parseInt(process.env.MAX_DIFFS));
-
     const diffIndicesToReset =
       this.getDiffIndicesToReset(
-        nextDiffIndex,
+        restoredVersionDTO.NextDiffIndex,
         versionRollbackDTO.DiffIndex,
       );
 
+    console.log(
+      'diffIndicesToReset: ',
+      diffIndicesToReset,
+    );
+
     const snapshotIndices =
       await this.resetSubsequentSnapshots(
+        versionRollbackDTO.MarkdownID,
         diffIndicesToReset,
       );
 
+    console.log(
+      'snapshotIndices: ',
+      snapshotIndices,
+    );
+
     await this.resetSubsequentDiffs(
+      versionRollbackDTO.MarkdownID,
       diffIndicesToReset,
+    );
+
+    const newNextDiffIndex =
+      versionRollbackDTO.DiffIndex +
+      (1 % parseInt(process.env.MAX_DIFFS));
+
+    console.log(
+      'newNextDiffIndex: ',
+      newNextDiffIndex,
     );
 
     await this.markdownFileService.updateMetadataAfterRestore(
       versionRollbackDTO.MarkdownID,
-      nextDiffIndex,
+      newNextDiffIndex,
       snapshotIndices[0],
     );
 
@@ -500,9 +517,11 @@ export class VersionControlService {
   ///===----------------------------------------------------
 
   async resetSubsequentDiffs(
+    markdownID: string,
     diffIndicesToReset: number[],
   ) {
     await this.diffService.updateDiffsAfterRestore(
+      markdownID,
       diffIndicesToReset,
     );
   }
@@ -510,15 +529,23 @@ export class VersionControlService {
   ///===----------------------------------------------------
 
   async resetSubsequentSnapshots(
+    markdownID: string,
     diffIndicesToReset: number[],
   ) {
     const snapshotIDsToReset =
       await this.diffService.getSnapshotsToReset(
+        markdownID,
         diffIndicesToReset,
       );
 
+    console.log(
+      'Resetting the following snapshotIndices: ',
+      snapshotIDsToReset,
+    );
+
     const snapshotIndices =
       await this.snapshotService.resetSnapshot(
+        markdownID,
         snapshotIDsToReset,
       );
 
@@ -531,7 +558,7 @@ export class VersionControlService {
     NextDiffIndex: number,
     RestorationDiffIndex: number,
   ) {
-    let arr = [];
+    const arr = [];
     RestorationDiffIndex++;
     const MAX_DIFFS = parseInt(
       process.env.MAX_DIFFS,
@@ -551,9 +578,18 @@ export class VersionControlService {
 
   ///===----------------------------------------------------
 
-  buildRestoreVersionDTO(
+  async buildRestoreVersionDTO(
     versionRollbackDTO: VersionRollbackDTO,
   ) {
+    const nextDiffIndex =
+      await this.markdownFileService.getNextDiffIndex(
+        versionRollbackDTO.MarkdownID,
+      );
+
+    const nextSnapshotIndex =
+      await this.markdownFileService.getNextSnapshotIndex(
+        versionRollbackDTO.MarkdownID,
+      );
     const restoredVersionDTO =
       new MarkdownFileDTO();
     restoredVersionDTO.MarkdownID =
@@ -562,19 +598,12 @@ export class VersionControlService {
       versionRollbackDTO.UserID;
     restoredVersionDTO.Content =
       versionRollbackDTO.Content;
+    restoredVersionDTO.NextDiffIndex =
+      nextDiffIndex;
+    restoredVersionDTO.NextSnapshotIndex =
+      nextSnapshotIndex;
     return restoredVersionDTO;
   }
 
   ///===----------------------------------------------------
-
-  getNextDiffIndex(
-    versionHistoryDTO: VersionHistoryDTO,
-  ) {
-    return (
-      (versionHistoryDTO.DiffHistory[0]
-        .S3DiffIndex +
-        1) %
-      parseInt(process.env.MAX_DIFFS)
-    );
-  }
 }
