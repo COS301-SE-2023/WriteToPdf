@@ -318,24 +318,6 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.router.navigate(['/camera'], { state: data });
   }
 
-  exitToHome() {
-    this.confirmationService.confirm({
-      message: 'Do you want to save before you leave?',
-      header: 'Save Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Exit and Save',
-      rejectLabel: 'Exit without Saving',
-      accept: () => {
-        this.editService.setContent(this.editor.getData());
-        this.saveDocumentContents();
-        this.router.navigate(['/home']);
-      },
-      reject: (type: any) => {
-        if (type === 1) this.router.navigate(['/home']);
-      },
-    });
-  }
-
   async saveDocumentContents() {
     // Save the document quill content to localStorage when changes occur
     // const editableArea: HTMLElement = this.elementRef.nativeElement.querySelector('.document-editor__editable');
