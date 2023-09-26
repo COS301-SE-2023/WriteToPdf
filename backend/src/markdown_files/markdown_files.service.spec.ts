@@ -521,4 +521,52 @@ describe('MarkdownFilesService', () => {
       });
     });
   });
+
+  describe('exists', () => {
+    it('should find the markdown file and return true if it is found', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+
+      jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValue(foundMarkdownFile);
+
+      const result = await service.exists(
+        markdownID,
+      );
+
+      expect(result).toBe(true);
+      expect(
+        Repository.prototype.findOne,
+      ).toBeCalledWith({
+        where: {
+          MarkdownID: markdownID,
+        },
+      });
+    });
+
+    it('should find the markdown file and return false if it is not found', async () => {
+      const markdownID = '1';
+
+      jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValue(null);
+
+      const result = await service.exists(
+        markdownID,
+      );
+
+      expect(result).toBe(false);
+      expect(
+        Repository.prototype.findOne,
+      ).toBeCalledWith({
+        where: {
+          MarkdownID: markdownID,
+        },
+      });
+    });
+  });
 });
