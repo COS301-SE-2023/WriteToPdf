@@ -274,10 +274,6 @@ export class S3Service {
   ) {
     const filePath = `${diffDTO.UserID}/${diffDTO.MarkdownID}`;
 
-    console.log(
-      'diffDTO.Content: ',
-      diffDTO.Content,
-    );
     try {
       await this.s3Client.send(
         new PutObjectCommand({
