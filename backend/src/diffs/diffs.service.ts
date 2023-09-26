@@ -185,16 +185,16 @@ export class DiffsService {
   async getSnapshotsToReset(
     diffIndicesToReset: number[],
   ) {
-    return await this.diffRepository
-      .createQueryBuilder('diff')
-      .select('diff.SnapshotID')
-      .where(
-        'diff.S3DiffIndex IN (:...diffIndicesToReset)',
-        {
-          diffIndicesToReset: diffIndicesToReset,
+    let snapshotIDs = [];
+    for (let idx = 0; idx < diffIndicesToReset.length; idx++) {
+      const diff = await this.diffRepository.findOne({
+        where: {
+          S3DiffIndex: diffIndicesToReset[idx],
         },
-      )
-      .getRawMany();
+      });
+      snapshotIDs.push(diff.SnapshotID);
+    }
+    return snapshotIDs;
   }
 
   ///===-----------------------------------------------------
