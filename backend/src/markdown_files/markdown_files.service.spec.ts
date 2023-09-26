@@ -569,4 +569,62 @@ describe('MarkdownFilesService', () => {
       });
     });
   });
+
+  describe('getAsDTO', () => {
+    it('should find the markdown file and return it as a DTO', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+      foundMarkdownFile.Name = 'test';
+      foundMarkdownFile.Path = 'test';
+      foundMarkdownFile.ParentFolderID = 'test';
+      foundMarkdownFile.UserID = 1;
+      foundMarkdownFile.Size = 1;
+      foundMarkdownFile.SafeLock = true;
+      foundMarkdownFile.LastModified = new Date();
+      foundMarkdownFile.NextDiffIndex = 1;
+      foundMarkdownFile.TotalNumDiffs = 1;
+      foundMarkdownFile.NextSnapshotIndex = 1;
+      foundMarkdownFile.TotalNumSnapshots = 1;
+
+      const expectedDTO = new MarkdownFileDTO();
+      expectedDTO.MarkdownID = markdownID;
+      expectedDTO.Name = foundMarkdownFile.Name;
+      expectedDTO.Path = foundMarkdownFile.Path;
+      expectedDTO.ParentFolderID =
+        foundMarkdownFile.ParentFolderID;
+      expectedDTO.UserID =
+        foundMarkdownFile.UserID;
+      expectedDTO.Size = foundMarkdownFile.Size;
+      expectedDTO.SafeLock =
+        foundMarkdownFile.SafeLock;
+      expectedDTO.LastModified =
+        foundMarkdownFile.LastModified;
+      expectedDTO.NextDiffIndex =
+        foundMarkdownFile.NextDiffIndex;
+      expectedDTO.TotalNumDiffs =
+        foundMarkdownFile.TotalNumDiffs;
+      expectedDTO.NextSnapshotIndex =
+        foundMarkdownFile.NextSnapshotIndex;
+      expectedDTO.TotalNumSnapshots =
+        foundMarkdownFile.TotalNumSnapshots;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(foundMarkdownFile);
+
+      const result = await service.getAsDTO(
+        markdownID,
+      );
+
+      expect(result).toStrictEqual(expectedDTO);
+      expect(
+        Repository.prototype.findOneBy,
+      ).toBeCalledWith({
+        MarkdownID: markdownID,
+      });
+    });
+  });
 });
