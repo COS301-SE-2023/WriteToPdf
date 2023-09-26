@@ -36,6 +36,7 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 - [SRS v1](https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing)
 - [SRS v2](https://docs.google.com/document/d/196IHwe8rBytZlJOIvh8gGMJUIhs1joQ91NA5TIrqbV4/edit?usp=sharing)
 - [SRS v3](https://docs.google.com/document/d/1TKv0xJzYFy35HWXMa736Qu16aRPZn0SIqjJhXzTakWA/edit?usp=sharing)
+- [SRS v4](https://docs.google.com/document/d/1ffNz8lR5174rZGvfkqQwVSL6W1XFLB4NAVX3sdUM6pk/edit?usp=sharing)
 
 ### Architecture
 - [Architecture v1](https://docs.google.com/document/d/1skoEPk1VvtO8P9fyWIVFyUuf0ssU1aI8G-wrYYNbeyg/edit?usp=sharing)
