@@ -30,11 +30,13 @@ import { ContextMenu } from 'primeng/contextmenu';
   styleUrls: ['./edit.component.scss'],
 })
 export class EditComponent implements AfterViewInit, OnInit {
+
   fileName: string | undefined = '';
   text: any;
   sidebarVisible: boolean = true;
   currentZoom: number = 1;
   exportDialogVisible: boolean = false;
+  sharePopup: boolean = false;
   public speedDialItems!: MenuItem[];
   assets: any[] = [];
   history: any[] = [];
@@ -43,6 +45,8 @@ export class EditComponent implements AfterViewInit, OnInit {
   noAssetsAvailable: boolean = false;
   isTouchScreen: boolean = false;
   sideBarTab: boolean = false;
+  loading: boolean = false;
+  recipientEmail: string = '';
   saving: boolean = false;
   disableSave: boolean = false;
 
@@ -67,7 +71,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     private versionControlService: VersionControlService,
     private confirmationService: ConfirmationService,
     private versioningApiService: VersioningApiService,
-    private OCRDialog: OCRDialogService
+    private OCRDialog: OCRDialogService,
   ) { }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -442,6 +446,25 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.exportDialogVisible = true;
   }
 
+  exitToHome() {
+      this.confirmationService.confirm({
+          message: 'Do you want to save before you leave?',
+          header: 'Save Confirmation',
+          icon: 'pi pi-exclamation-triangle',
+          acceptLabel: 'Exit and Save',
+          rejectLabel: 'Exit without Saving',
+          rejectButtonStyleClass: 'p-button-danger',
+          accept: () => {
+              this.editService.setContent(this.editor.getData());
+              this.saveDocumentContents();
+              this.router.navigate(['/home']);
+          },
+          reject: (type: any) => {
+              if (type === 1) this.router.navigate(['/home']);
+          },
+      });
+  }
+
   constructHTMLTable(table: any): string {
     let returnString = '';
     for (let eachRow of table['Table']) {
@@ -454,101 +477,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     return '<table>' + returnString + '</table>';
   }
 
-  async retrieveAssetTextToCopy(
-    assetId: string,
-    format: string,
-    textId: string
-  ) {
-    let currAssetIndex: number = 0;
-    for (let i = 0; i < this.assets.length; i++) {
-      if (this.assets[i].AssetID === assetId) {
-        currAssetIndex = i;
-        break;
-      }
-    }
-    this.assets[currAssetIndex].NotRetrieving = true;
-    // const asset = true;
-    if (format === 'text' || format === 'table') {
-      let asset = this.assets[currAssetIndex];
-      if (!asset.Blocks) {
-        var assetResponse = await this.assetService.retrieveAsset(
-          assetId,
-          format,
-          textId
-        );
-        this.assets[currAssetIndex].Blocks = asset.Blocks;
-      }
-      this.assets[currAssetIndex].NotRetrieving = false;
-      let assetObjectJSON = JSON.parse(assetResponse.Content);
-      let allElements = assetObjectJSON.elements;
-      let copyText = '';
-      for (let i = 0; i < assetObjectJSON.elements.length; i++) {
-        if (allElements[i].hasOwnProperty('Text Element')) {
-          copyText += allElements[i]['Text Element']['Lines'] + '\n';
-        } else {
-          copyText +=
-            this.constructHTMLTable(allElements[i]['Table Element']) + '\n';
-        }
-      }
-      this.copyHtmlToClipboard(copyText);
-    } else if (format === 'image') {
-      let asset = this.assets[currAssetIndex];
-      if (!asset.CopyContent) {
-        asset = await this.assetService.retrieveAsset(assetId, format, textId);
-        this.assets[currAssetIndex].CopyContent = asset.Content;
-        asset.CopyContent = asset.Content;
-      }
-      this.copyHtmlToClipboard(`<img src="${asset.CopyContent}" alt="Image">`);
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Image copied to clipboard',
-      });
-      this.assets[currAssetIndex].NotRetrieving = false;
-    }
-  }
-
-  async retrieveAsset(assetId: string, format: string, textId: string) {
-    let currAssetIndex: number = 0;
-    for (let i = 0; i < this.assets.length; i++) {
-      if (this.assets[i].AssetID === assetId) {
-        currAssetIndex = i;
-        break;
-      }
-    }
-
-    this.assets[currAssetIndex].NotRetrieving = true;
-    // const asset = true;
-    if (format === 'text' || format === 'table') {
-      let asset = this.assets[currAssetIndex];
-      if (!asset.Blocks) {
-        var assetResponse = await this.assetService.retrieveAsset(
-          assetId,
-          format,
-          textId
-        );
-        this.assets[currAssetIndex].Blocks = asset.Blocks;
-      }
-      this.assets[currAssetIndex].NotRetrieving = false;
-      this.showOCRPopup(assetResponse);
-    } else if (format === 'image') {
-      let asset = this.assets[currAssetIndex];
-      if (!asset.CopyContent) {
-        asset = await this.assetService.retrieveAsset(assetId, format, textId);
-        this.assets[currAssetIndex].CopyContent = asset.Content;
-        asset.CopyContent = asset.Content;
-      }
-      this.copyHtmlToClipboard(`<img src="${asset.CopyContent}" alt="Image">`);
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Image copied to clipboard',
-      });
-      this.assets[currAssetIndex].NotRetrieving = false;
-    }
-  }
-
-  copyHtmlToClipboard(html: string) {
+ copyHtmlToClipboard(html: string) {
     // Use the Clipboard API to copy the data to the clipboard
     navigator.clipboard
       .write([
@@ -612,6 +541,74 @@ export class EditComponent implements AfterViewInit, OnInit {
     } else {
       this.assets[currAssetIndex].Deleted = false;
     }
+  }
+
+    async retrieveAssetObject(assetId: string, format:string, textId: string){
+      let currAssetIndex: number = 0;
+      for (let i = 0; i < this.assets.length; i++) {
+        if (this.assets[i].AssetID === assetId) {
+          currAssetIndex = i;
+          break;
+        }
+      }
+      this.assets[currAssetIndex].NotRetrieving = true;
+      // const asset = true;
+      if (format === 'text' || format === 'table') {
+        let asset = this.assets[currAssetIndex];
+        if (!asset.Blocks) {
+          var assetResponse = await this.assetService.retrieveAsset(assetId, format, textId);
+          this.assets[currAssetIndex].Blocks = asset.Blocks;
+        }
+        this.assets[currAssetIndex].NotRetrieving = false;
+        return assetResponse;
+      } else if (format === 'image') {
+        let asset = this.assets[currAssetIndex];
+        if (!asset.CopyContent) {
+          asset = await this.assetService.retrieveAsset(assetId, format, textId);
+          this.assets[currAssetIndex].CopyContent = asset.Content;
+          asset.CopyContent = asset.Content;
+        }
+        this.assets[currAssetIndex].NotRetrieving = false;
+        return asset.CopyContent;
+      }
+    }
+
+
+
+  async retrieveAssetTextToCopy(assetId: string, format: string, textId: string) {
+          let assetResponse = await this.retrieveAssetObject(assetId, format, textId);
+          let assetObjectJSON = JSON.parse(assetResponse.Content);
+          let allElements = assetObjectJSON.elements;
+          let copyText = '';
+          for (let i = 0; i < assetObjectJSON.elements.length; i++) {
+              if (allElements[i].hasOwnProperty("Text Element")) {
+                  copyText += allElements[i]["Text Element"]["Lines"] + "\n";
+              } else{
+                  copyText += this.constructHTMLTable(allElements[i]["Table Element"]) + "\n";
+              }
+          }
+          this.copyHtmlToClipboard(copyText);
+          this.messageService.add(
+              {
+                  severity: 'success',
+                  summary: 'Copied to Clipboard',
+                  detail: 'All OCR components copied to clipboard',
+              }
+          )
+  }
+
+  async retrieveAsset(assetId: string, format: string, textId: string) {
+    let assetResponse = await this.retrieveAssetObject(assetId, format, textId);
+    if (format === 'text' || format === 'table') {
+          this.showOCRPopup(assetResponse);
+      } else if (format === 'image') {
+          this.copyHtmlToClipboard(`<img src="${assetResponse}" alt="Image">`);
+          this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Image copied to clipboard',
+          });
+      }
   }
 
   async renameAsset(assetId: string, event: Event) {
@@ -910,7 +907,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     }
 
     const snapshotIndex =
-      this.history.length - this.getSnapshotIndex(snapshot) - 1;
+    this.history.length - this.getSnapshotIndex(snapshot) - 1;
     let latestSnapshot: boolean = false;
 
     if (snapshot.Name === 'Latest' && snapshotIndex !== 0) {
@@ -1052,13 +1049,13 @@ export class EditComponent implements AfterViewInit, OnInit {
     // console.log('Hello from visualise diff', diff);
     console.log('Hello from visualise diff', diff);
   }
-
+      
   visualiseSnapshotContent(snapshot: any, event: any) {
     event.stopPropagation();
     // console.log('Hello from visualise snapshot: ', snapshot);
     console.log('Hello from visualise snapshot: ', snapshot);
   }
-
+      
   showContextMenu(event: any, obj: any) {
 
     // event.stopPropagation();
@@ -1068,4 +1065,34 @@ export class EditComponent implements AfterViewInit, OnInit {
     this.currentContextMenuObject = obj;
   }
   protected readonly undefined = undefined;
+      
+  async shareDocument(save: boolean) {
+    if (this.recipientEmail === '') {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Please enter a recipient email',
+      });
+      return;
+    }
+    else {
+      if (save) {
+        await this.saveDocumentContents();
+      }
+      this.loading = true;
+      await this.fileService.shareDocument(this.editService.getMarkdownID() as string, this.recipientEmail).then((data) => {
+        if (data) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Document shared successfully',
+          });
+          this.sharePopup = false;
+          this.recipientEmail = '';
+        }
+        this.loading = false;
+      });
+      this.loading = false;
+    }
+  }
 }

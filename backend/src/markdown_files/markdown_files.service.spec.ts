@@ -7,7 +7,6 @@ import { MarkdownFile } from './entities/markdown_file.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MarkdownFileDTO } from './dto/markdown_file.dto';
-import { create } from 'domain';
 
 describe('MarkdownFilesService', () => {
   let service: MarkdownFilesService;
@@ -342,6 +341,322 @@ describe('MarkdownFilesService', () => {
       ).toBeCalledWith({
         MarkdownID: '1',
       });
+    });
+  });
+
+  describe('incrementNextDiffID', () => {
+    it('should find the markdown file and increment the next diff id', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+      foundMarkdownFile.NextDiffIndex = 1;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(foundMarkdownFile);
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockImplementation((markdownFile) => {
+          return markdownFile;
+        });
+
+      const originalMaxDiffs =
+        process.env.MAX_DIFFS;
+      process.env.MAX_DIFFS = '3';
+
+      try {
+        const result =
+          await service.incrementNextDiffID(
+            markdownID,
+          );
+
+        expect(result.NextDiffIndex).toEqual(2);
+        expect(
+          Repository.prototype.findOneBy,
+        ).toBeCalledWith({
+          MarkdownID: markdownID,
+        });
+        expect(
+          Repository.prototype.save,
+        ).toBeCalled();
+      } finally {
+        process.env.MAX_DIFFS = originalMaxDiffs;
+      }
+    });
+  });
+
+  describe('getTotalNumDiffs', () => {
+    it('should find the markdown file and return the total number of diffs', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+      foundMarkdownFile.TotalNumDiffs = 1;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(foundMarkdownFile);
+
+      const result =
+        await service.getTotalNumDiffs(
+          markdownID,
+        );
+
+      expect(result).toEqual(1);
+    });
+  });
+
+  describe('getTotalNumSnapshots', () => {
+    it('should find the markdown file and return the total number of snapshots', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+      foundMarkdownFile.TotalNumSnapshots = 1;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(foundMarkdownFile);
+
+      const result =
+        await service.getTotalNumSnapshots(
+          markdownID,
+        );
+
+      expect(result).toEqual(1);
+    });
+  });
+
+  describe('incrementTotalNumDiffs', () => {
+    it('should find the markdown file and increment the total number of diffs', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+      foundMarkdownFile.TotalNumDiffs = 1;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(foundMarkdownFile);
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockImplementation((markdownFile) => {
+          return markdownFile;
+        });
+
+      const result =
+        await service.incrementTotalNumDiffs(
+          markdownID,
+        );
+
+      expect(result.TotalNumDiffs).toEqual(2);
+      expect(
+        Repository.prototype.findOneBy,
+      ).toBeCalledWith({
+        MarkdownID: markdownID,
+      });
+      expect(
+        Repository.prototype.save,
+      ).toBeCalled();
+    });
+  });
+
+  describe('incrementTotalNumSnapshots', () => {
+    it('should find the markdown file and increment the total number of snapshots', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+      foundMarkdownFile.TotalNumSnapshots = 1;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(foundMarkdownFile);
+
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockImplementation((markdownFile) => {
+          return markdownFile;
+        });
+
+      const result =
+        await service.incrementTotalNumSnapshots(
+          markdownID,
+        );
+
+      expect(result.TotalNumSnapshots).toEqual(2);
+      expect(
+        Repository.prototype.findOneBy,
+      ).toBeCalledWith({
+        MarkdownID: markdownID,
+      });
+      expect(
+        Repository.prototype.save,
+      ).toBeCalled();
+    });
+  });
+
+  describe('getSaveDiffInfo', () => {
+    it('should find the markdown file and return the save diff info', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+      foundMarkdownFile.NextDiffIndex = 0;
+      foundMarkdownFile.TotalNumDiffs = 1;
+      foundMarkdownFile.TotalNumSnapshots = 2;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(foundMarkdownFile);
+
+      const result =
+        await service.getSaveDiffInfo(markdownID);
+
+      expect(result).toStrictEqual({
+        nextDiffID: 0,
+        totalNumDiffs: 1,
+        totalNumSnapshots: 2,
+      });
+    });
+  });
+
+  describe('exists', () => {
+    it('should find the markdown file and return true if it is found', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+
+      jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValue(foundMarkdownFile);
+
+      const result = await service.exists(
+        markdownID,
+      );
+
+      expect(result).toBe(true);
+      expect(
+        Repository.prototype.findOne,
+      ).toBeCalledWith({
+        where: {
+          MarkdownID: markdownID,
+        },
+      });
+    });
+
+    it('should find the markdown file and return false if it is not found', async () => {
+      const markdownID = '1';
+
+      jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValue(null);
+
+      const result = await service.exists(
+        markdownID,
+      );
+
+      expect(result).toBe(false);
+      expect(
+        Repository.prototype.findOne,
+      ).toBeCalledWith({
+        where: {
+          MarkdownID: markdownID,
+        },
+      });
+    });
+  });
+
+  describe('getAsDTO', () => {
+    it('should find the markdown file and return it as a DTO', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+      foundMarkdownFile.Name = 'test';
+      foundMarkdownFile.Path = 'test';
+      foundMarkdownFile.ParentFolderID = 'test';
+      foundMarkdownFile.UserID = 1;
+      foundMarkdownFile.Size = 1;
+      foundMarkdownFile.SafeLock = true;
+      foundMarkdownFile.LastModified = new Date();
+      foundMarkdownFile.NextDiffIndex = 1;
+      foundMarkdownFile.TotalNumDiffs = 1;
+      foundMarkdownFile.NextSnapshotIndex = 1;
+      foundMarkdownFile.TotalNumSnapshots = 1;
+
+      const expectedDTO = new MarkdownFileDTO();
+      expectedDTO.MarkdownID = markdownID;
+      expectedDTO.Name = foundMarkdownFile.Name;
+      expectedDTO.Path = foundMarkdownFile.Path;
+      expectedDTO.ParentFolderID =
+        foundMarkdownFile.ParentFolderID;
+      expectedDTO.UserID =
+        foundMarkdownFile.UserID;
+      expectedDTO.Size = foundMarkdownFile.Size;
+      expectedDTO.SafeLock =
+        foundMarkdownFile.SafeLock;
+      expectedDTO.LastModified =
+        foundMarkdownFile.LastModified;
+      expectedDTO.NextDiffIndex =
+        foundMarkdownFile.NextDiffIndex;
+      expectedDTO.TotalNumDiffs =
+        foundMarkdownFile.TotalNumDiffs;
+      expectedDTO.NextSnapshotIndex =
+        foundMarkdownFile.NextSnapshotIndex;
+      expectedDTO.TotalNumSnapshots =
+        foundMarkdownFile.TotalNumSnapshots;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(foundMarkdownFile);
+
+      const result = await service.getAsDTO(
+        markdownID,
+      );
+
+      expect(result).toStrictEqual(expectedDTO);
+      expect(
+        Repository.prototype.findOneBy,
+      ).toBeCalledWith({
+        MarkdownID: markdownID,
+      });
+    });
+  });
+
+  describe('updateSize', () => {
+    it('should update the size', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Size = 1;
+
+      jest
+        .spyOn(Repository.prototype, 'update')
+        .mockResolvedValue(undefined);
+
+      await service.updateSize(markdownFileDTO);
+
+      expect(
+        Repository.prototype.update,
+      ).toBeCalledWith(
+        {
+          MarkdownID: markdownFileDTO.MarkdownID,
+        },
+        { Size: markdownFileDTO.Size },
+      );
     });
   });
 });

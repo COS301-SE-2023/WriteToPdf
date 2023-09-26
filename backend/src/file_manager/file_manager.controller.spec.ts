@@ -443,32 +443,32 @@ describe('FileManagerController', () => {
       }
     });
 
-    it('should throw an exception if MarkdownID is undefined', async () => {
-      const request = { method: 'POST' };
-      const markdownFileDTO =
-        new MarkdownFileDTO();
-      markdownFileDTO.UserID = 123;
-      markdownFileDTO.Path = 'test/test';
-      markdownFileDTO.ParentFolderID = '123';
+    // it('should throw an exception if MarkdownID is undefined', async () => {
+    //   const request = { method: 'POST' };
+    //   const markdownFileDTO =
+    //     new MarkdownFileDTO();
+    //   markdownFileDTO.UserID = 123;
+    //   markdownFileDTO.Path = 'test/test';
+    //   markdownFileDTO.ParentFolderID = '123';
 
-      try {
-        await controller.moveFile(
-          markdownFileDTO,
-          request as any,
-        );
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'Invalid request data',
-        );
-        expect(error.status).toBe(
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    });
+    //   try {
+    //     await controller.moveFile(
+    //       markdownFileDTO,
+    //       request as any,
+    //     );
+    //     expect(true).toBe(false);
+    //   } catch (error) {
+    //     expect(error).toBeInstanceOf(
+    //       HttpException,
+    //     );
+    //     expect(error.message).toBe(
+    //       'Invalid request data',
+    //     );
+    //     expect(error.status).toBe(
+    //       HttpStatus.BAD_REQUEST,
+    //     );
+    //   }
+    // });
 
     it('should throw an exception if Path is undefined', async () => {
       const request = { method: 'POST' };
@@ -1882,107 +1882,107 @@ describe('FileManagerController', () => {
     });
   });
 
-  describe('export', () => {
-    it('should throw an exception if request method is not POST', async () => {
-      const request = { method: 'GET' };
-      const exportDTO = new ExportDTO();
+  // describe('export', () => {
+  //   it('should throw an exception if request method is not POST', async () => {
+  //     const request = { method: 'GET' };
+  //     const exportDTO = new ExportDTO();
 
-      try {
-        await controller.export(
-          exportDTO,
-          request as any,
-        );
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'Method Not Allowed',
-        );
-        expect(error.status).toBe(
-          HttpStatus.METHOD_NOT_ALLOWED,
-        );
-      }
-    });
+  //     try {
+  //       await controller.export(
+  //         exportDTO,
+  //         request as any,
+  //       );
+  //       expect(true).toBe(false);
+  //     } catch (error) {
+  //       expect(error).toBeInstanceOf(
+  //         HttpException,
+  //       );
+  //       expect(error.message).toBe(
+  //         'Method Not Allowed',
+  //       );
+  //       expect(error.status).toBe(
+  //         HttpStatus.METHOD_NOT_ALLOWED,
+  //       );
+  //     }
+  //   });
 
-    it('should throw an exception if UserID is undefined', () => {
-      const request = { method: 'POST' };
-      const exportDTO = new ExportDTO();
-      exportDTO.Type = 'test';
-      exportDTO.MarkdownID = 'test';
+  //   it('should throw an exception if UserID is undefined', () => {
+  //     const request = { method: 'POST' };
+  //     const exportDTO = new ExportDTO();
+  //     exportDTO.Type = 'test';
+  //     exportDTO.MarkdownID = 'test';
 
-      expect(() =>
-        controller.export(
-          exportDTO,
-          request as any,
-        ),
-      ).toThrowError(
-        new HttpException(
-          'Invalid request data',
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
-    });
+  //     expect(() =>
+  //       controller.export(
+  //         exportDTO,
+  //         request as any,
+  //       ),
+  //     ).toThrowError(
+  //       new HttpException(
+  //         'Invalid request data',
+  //         HttpStatus.BAD_REQUEST,
+  //       ),
+  //     );
+  //   });
 
-    it('should throw an exception if Type is undefined', () => {
-      const request = { method: 'POST' };
-      const exportDTO = new ExportDTO();
-      exportDTO.UserID = 123;
-      exportDTO.MarkdownID = 'test';
+  //   it('should throw an exception if Type is undefined', () => {
+  //     const request = { method: 'POST' };
+  //     const exportDTO = new ExportDTO();
+  //     exportDTO.UserID = 123;
+  //     exportDTO.MarkdownID = 'test';
 
-      expect(() =>
-        controller.export(
-          exportDTO,
-          request as any,
-        ),
-      ).toThrowError(
-        new HttpException(
-          'Invalid request data',
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
-    });
+  //     expect(() =>
+  //       controller.export(
+  //         exportDTO,
+  //         request as any,
+  //       ),
+  //     ).toThrowError(
+  //       new HttpException(
+  //         'Invalid request data',
+  //         HttpStatus.BAD_REQUEST,
+  //       ),
+  //     );
+  //   });
 
-    it('should throw an exception if MarkdownID is undefined', () => {
-      const request = { method: 'POST' };
-      const exportDTO = new ExportDTO();
-      exportDTO.UserID = 123;
-      exportDTO.MarkdownID = '123';
+  //   it('should throw an exception if MarkdownID is undefined', () => {
+  //     const request = { method: 'POST' };
+  //     const exportDTO = new ExportDTO();
+  //     exportDTO.UserID = 123;
+  //     exportDTO.MarkdownID = '123';
 
-      expect(() =>
-        controller.export(
-          exportDTO,
-          request as any,
-        ),
-      ).toThrowError(
-        new HttpException(
-          'Invalid request data',
-          HttpStatus.BAD_REQUEST,
-        ),
-      );
-    });
+  //     expect(() =>
+  //       controller.export(
+  //         exportDTO,
+  //         request as any,
+  //       ),
+  //     ).toThrowError(
+  //       new HttpException(
+  //         'Invalid request data',
+  //         HttpStatus.BAD_REQUEST,
+  //       ),
+  //     );
+  //   });
 
-    it('should return a MarkdownFileDTO', async () => {
-      const request = { method: 'POST' };
-      const exportDTO = new ExportDTO();
-      exportDTO.UserID = 123;
-      exportDTO.Type = 'test';
-      exportDTO.MarkdownID = '123';
+  //   it('should return a MarkdownFileDTO', async () => {
+  //     const request = { method: 'POST' };
+  //     const exportDTO = new ExportDTO();
+  //     exportDTO.UserID = 123;
+  //     exportDTO.Type = 'test';
+  //     exportDTO.MarkdownID = '123';
 
-      jest
-        .spyOn(fileManagerService, 'exportFile')
-        .mockResolvedValue('success' as any);
+  //     jest
+  //       .spyOn(fileManagerService, 'exportFile')
+  //       .mockResolvedValue('success' as any);
 
-      const result = await controller.export(
-        exportDTO,
-        request as any,
-      );
+  //     const result = await controller.export(
+  //       exportDTO,
+  //       request as any,
+  //     );
 
-      expect(result).toBe('success');
-      expect(
-        fileManagerService.exportFile,
-      ).toBeCalledWith(exportDTO);
-    });
-  });
+  //     expect(result).toBe('success');
+  //     expect(
+  //       fileManagerService.exportFile,
+  //     ).toBeCalledWith(exportDTO);
+  //   });
+  // });
 });

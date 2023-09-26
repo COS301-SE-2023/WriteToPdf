@@ -992,4 +992,40 @@ export class S3Service {
     }
     return assetDTO;
   }
+
+  ///===----------------------------------------------------
+
+  async copyFileContents(
+    sourceMarkdownID: string,
+    sourceUserID: number,
+    targetMarkdownID: string,
+    targetUserID: number,
+  ) {
+    const sourceFilePath = `${sourceUserID}/${sourceMarkdownID}`;
+    const targetFilePath = `${targetUserID}/${targetMarkdownID}`;
+
+    try {
+      const response = await this.s3Client.send(
+        new GetObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: sourceFilePath,
+        }),
+      );
+
+      const documentBody =
+        await response.Body.transformToString();
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: targetFilePath,
+          Body: documentBody,
+        }),
+      );
+
+      return documentBody.length;
+    } catch (err) {
+      console.log('Copy File Error: ' + err);
+      return undefined;
+    }
+  }
 }

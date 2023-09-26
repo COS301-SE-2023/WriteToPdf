@@ -10,6 +10,25 @@
   float: right;
 }
 
+.copyFormData{
+  float:right;
+}
+
+.editableForm{
+  width: 100%;
+  height: 250px !important;
+  font-family: 'Roboto', sans-serif;
+  //min-height: 100px !important; /* Set a minimum height */
+  max-height: 500px !important; /* Set a maximum height */
+  padding: 10px;
+  font-size: 16px;
+  resize: vertical !important; /* Allow vertical resizing of the textarea */
+  overflow-y: auto !important; /* Add a scrollbar when content exceeds max-height */
+}
+
+textarea {
+}
+
 .container {
   margin: auto;
   display: flex;
@@ -55,10 +74,15 @@
   padding-left: 40px;
 }
 
+.tableDropDown{
+  padding-right:20px;
+}
+
 .pasteDescriptor{
   display: flex;
   justify-content:center;
   flex-direction:column;
+  padding-left:30px;
 }
 .pasteButtons{
   display: flex;
