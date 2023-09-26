@@ -627,4 +627,28 @@ describe('MarkdownFilesService', () => {
       });
     });
   });
+
+  describe('updateSize', () => {
+    it('should update the size', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+      markdownFileDTO.MarkdownID = '1';
+      markdownFileDTO.Size = 1;
+
+      jest
+        .spyOn(Repository.prototype, 'update')
+        .mockResolvedValue(undefined);
+
+      await service.updateSize(markdownFileDTO);
+
+      expect(
+        Repository.prototype.update,
+      ).toBeCalledWith(
+        {
+          MarkdownID: markdownFileDTO.MarkdownID,
+        },
+        { Size: markdownFileDTO.Size },
+      );
+    });
+  });
 });
