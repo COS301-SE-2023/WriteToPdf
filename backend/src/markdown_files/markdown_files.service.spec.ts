@@ -401,4 +401,26 @@ describe('MarkdownFilesService', () => {
       expect(result).toEqual(1);
     });
   });
+
+  describe('getTotalNumSnapshots', () => {
+    it('should find the markdown file and return the total number of snapshots', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+      foundMarkdownFile.TotalNumSnapshots = 1;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(foundMarkdownFile);
+
+      const result =
+        await service.getTotalNumSnapshots(
+          markdownID,
+        );
+
+      expect(result).toEqual(1);
+    });
+  });
 });
