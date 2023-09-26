@@ -351,7 +351,7 @@ describe('MarkdownFilesService', () => {
       const foundMarkdownFile =
         new MarkdownFile();
       foundMarkdownFile.MarkdownID = markdownID;
-      foundMarkdownFile.NextDiffIndex = 0;
+      foundMarkdownFile.NextDiffIndex = 1;
 
       jest
         .spyOn(Repository.prototype, 'findOneBy')
@@ -363,20 +363,28 @@ describe('MarkdownFilesService', () => {
           return markdownFile;
         });
 
-      const result =
-        await service.incrementNextDiffID(
-          markdownID,
-        );
+      const originalMaxDiffs =
+        process.env.MAX_DIFFS;
+      process.env.MAX_DIFFS = '3';
 
-      expect(result.NextDiffIndex).toEqual(1);
-      expect(
-        Repository.prototype.findOneBy,
-      ).toBeCalledWith({
-        MarkdownID: markdownID,
-      });
-      expect(
-        Repository.prototype.save,
-      ).toBeCalled();
+      try {
+        const result =
+          await service.incrementNextDiffID(
+            markdownID,
+          );
+
+        expect(result.NextDiffIndex).toEqual(2);
+        expect(
+          Repository.prototype.findOneBy,
+        ).toBeCalledWith({
+          MarkdownID: markdownID,
+        });
+        expect(
+          Repository.prototype.save,
+        ).toBeCalled();
+      } finally {
+        process.env.MAX_DIFFS = originalMaxDiffs;
+      }
     });
   });
 
