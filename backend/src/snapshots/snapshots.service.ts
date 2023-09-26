@@ -118,6 +118,7 @@ export class SnapshotService {
       await this.snapshotRepository.save(snapshot);
       snapshotIndices.push(snapshot.S3SnapshotIndex);
     }
+    return snapshotIndices;
   }
 
   ///===-----------------------------------------------------
