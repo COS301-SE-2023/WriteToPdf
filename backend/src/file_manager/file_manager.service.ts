@@ -20,6 +20,7 @@ import { ConversionService } from '../conversion/conversion.service';
 import { ImportDTO } from './dto/import.dto';
 import { DiffsService } from '../diffs/diffs.service';
 import { SnapshotService } from '../snapshots/snapshots.service';
+import { ShareRequestDTO } from './dto/share_request.dto';
 
 @Injectable()
 export class FileManagerService {
@@ -162,6 +163,7 @@ export class FileManagerService {
         NextSnapshotIndex: file.NextSnapshotIndex,
         TotalNumDiffs: file.TotalNumDiffs,
         TotalNumSnapshots: file.TotalNumSnapshots,
+        clone: this.getClone(),
       };
       markdownFilesDTOArr.push(markdownFileDTO);
     });
@@ -529,6 +531,7 @@ export class FileManagerService {
       NextDiffIndex: 0,
       PreviousDiffs: [],
       NewDiff: '',
+      clone: this.getClone(),
     };
 
     return returnedDTO;
@@ -695,30 +698,95 @@ export class FileManagerService {
     // );
   }
 
-  // async generatePdf(html: string) {
-  //   const browser = await puppeteer.launch();
-  //   const page = await browser.newPage();
+  async shareFile(
+    shareRequestDTO: ShareRequestDTO,
+  ) {
+    // If the markdown file does not exist, throw an error
+    if (
+      await !this.markdownFilesService.exists(
+        shareRequestDTO.MarkdownID,
+      )
+    ) {
+      throw new HttpException(
+        'Markdown file not found',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-  //   // Emulate a screen to apply CSS styles correctly
-  //   await page.setViewport({
-  //     width: 1920,
-  //     height: 1080,
-  //   });
+    // If the recipient email does not exist, throw an error (handled by userService.findOneByEmail)
+    const recipient =
+      await this.userService.findOneByEmail(
+        shareRequestDTO.RecipientEmail,
+      );
 
-  //   await page.setContent(html, {
-  //     waitUntil: 'networkidle0',
-  //   });
+    // Get the markdown file as a dto
+    const originalFileDTO =
+      await this.markdownFilesService.getAsDTO(
+        shareRequestDTO.MarkdownID,
+      );
 
-  //   // Set a higher scale to improve quality (e.g., 2 for Retina displays)
-  //   const pdf = await page.pdf({
-  //     format: 'A4',
-  //     scale: 1,
-  //     printBackground: true,
-  //   });
+    // Make a copy of the file
+    const fileCopyDTO = originalFileDTO.clone();
 
-  //   await browser.close();
+    // Prepare the file to be added to the recipient's account
+    fileCopyDTO.UserID = recipient.UserID;
+    fileCopyDTO.MarkdownID = undefined;
+    fileCopyDTO.Name =
+      fileCopyDTO.Name + ' (shared)';
 
-  //   // Send the generated PDF as a response
-  //   return pdf;
-  // }
+    // Create the file in the recipient's account
+    const createdFileDTO = await this.createFile(
+      fileCopyDTO,
+    );
+
+    const s3Response =
+      await this.s3service.copyFileContents(
+        originalFileDTO.MarkdownID,
+        shareRequestDTO.UserID,
+        createdFileDTO.MarkdownID,
+        recipient.UserID,
+      );
+
+    if (s3Response === undefined) {
+      this.markdownFilesService.remove(
+        createdFileDTO,
+      );
+      throw new HttpException(
+        'Sharing failed',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    createdFileDTO.Size = s3Response;
+    this.markdownFilesService.updateSize(
+      createdFileDTO,
+    );
+
+    // Return the created file
+    return createdFileDTO;
+  }
+  private getClone() {
+    return function () {
+      const clone = new MarkdownFileDTO();
+      clone.MarkdownID = this.MarkdownID;
+      clone.UserID = this.UserID;
+      clone.DateCreated = this.DateCreated;
+      clone.LastModified = this.LastModified;
+      clone.Name = this.Name;
+      clone.Path = this.Path;
+      clone.Size = this.Size;
+      clone.ParentFolderID = this.ParentFolderID;
+      clone.Content = this.Content;
+      clone.SafeLock = this.SafeLock;
+      clone.NewDiff = this.NewDiff;
+      clone.PreviousDiffs = this.PreviousDiffs;
+      clone.NextDiffIndex = this.NextDiffIndex;
+      clone.NextSnapshotIndex =
+        this.NextSnapshotIndex;
+      clone.TotalNumDiffs = this.TotalNumDiffs;
+      clone.TotalNumSnapshots =
+        this.TotalNumSnapshots;
+      return clone;
+    };
+  }
 }

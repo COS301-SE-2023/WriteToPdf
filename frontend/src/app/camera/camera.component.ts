@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { ImageCroppedEvent, LoadedImage } from 'ngx-image-cropper';
 import { DomSanitizer } from '@angular/platform-browser';
+import { doc } from 'prettier';
 
 @Component({
   selector: 'app-camera',
@@ -28,7 +29,7 @@ export class CameraComponent {
   contrastValue: number = 0;
   brightnessValue: number = 100;
   loading: boolean = false;
-
+  imageChangedEvent: any = '';
   croppedImage: any = '';
 
   constructor(
@@ -115,6 +116,22 @@ export class CameraComponent {
   }
 
   public getSnapshot(): void {
+    const previewImg = document.getElementsByClassName('previewImg')[0];
+
+    // Check if the .previewImg element exists
+    if (previewImg) {
+      // Find the img element within .previewImg
+      const imgElement = previewImg.querySelector('img');
+
+      // Check if the img element exists
+      if (imgElement) {
+        // Set the width of the img element to 100%
+        imgElement.style.width = 'auto';
+        imgElement.style.maxHeight = 'max-height: calc(100svh - 265px)';
+        imgElement.style.height = '80svh';
+      }
+    }
+
     const video: HTMLVideoElement = this.videoRef;
 
     // Create a canvas element with reduced dimensions
@@ -130,6 +147,7 @@ export class CameraComponent {
     const dataUrl = canvas.toDataURL('image/jpeg', 1); // Adjust the quality (0.0 to 1.0)
 
     this.sysImage = dataUrl;
+    this.imageChangedEvent = dataUrl;
     this.originalImage = dataUrl;
     this.captured = true;
   }
@@ -142,7 +160,7 @@ export class CameraComponent {
     this.loading = true;
     await this.assetService
       .uploadImage(
-        this.sysImage,
+        this.croppedImage,
         this.path,
         this.assetName,
         this.parentFolderId,
@@ -156,7 +174,8 @@ export class CameraComponent {
           }, 1000);
         }
       });
-    this.loading = false;
+
+      this.loading = false;
   }
 
   goBack() {
@@ -240,6 +259,7 @@ export class CameraComponent {
     const contrastImage = await this.adjustBrightness(this.originalImage);
     const brightnessImage = await this.adjustContrast(contrastImage);
     this.sysImage = brightnessImage;
+    this.imageChangedEvent = brightnessImage;
   }
 
   clamp(value: number, min = 0, max = 255): number {
@@ -250,7 +270,62 @@ export class CameraComponent {
     this.contrastValue = 0;
     this.brightnessValue = 100;
     this.sysImage = this.originalImage;
+    this.imageChangedEvent = this.originalImage;
   }
+
+  fileChangeEvent(event: any): void {
+    this.imageChangedEvent = event;
+  }
+  async imageCropped(event: ImageCroppedEvent) {
+    console.log(event);
+    this.croppedImage = await this.cropImage(this.sysImage, event.imagePosition.x1, event.imagePosition.y1, event.imagePosition.x2, event.imagePosition.y2);
+    console.log(this.sysImage);
+    console.log(this.croppedImage);
+  }
+  imageLoaded(image: LoadedImage) {
+    // show cropper
+  }
+  cropperReady() {
+    // cropper ready
+  }
+  loadImageFailed() {
+    // show message
+  }
+  
+async cropImage(base64Image: string, left: number, top: number, right: number, bottom: number): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        reject('Canvas context not available.');
+        return;
+      }
+
+      // Set canvas dimensions
+      const width = right - left;
+      const height = bottom - top;
+      canvas.width = width;
+      canvas.height = height;
+
+      // Draw the cropped portion of the image on the canvas
+      ctx.drawImage(image, left, top, width, height, 0, 0, width, height);
+
+      // Convert the cropped canvas to a base64 image
+      const croppedBase64Image = canvas.toDataURL('image/jpeg'); // Change format if needed
+
+      resolve(croppedBase64Image);
+    };
+
+    image.onerror = (error) => {
+      reject(`Error loading image: ${error}`);
+    };
+
+    image.src = base64Image;
+  });
+}
 
   fileChangeEvent(event: any): void {
   }

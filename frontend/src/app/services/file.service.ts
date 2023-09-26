@@ -7,6 +7,7 @@ import { UserService } from './user.service';
 import { EditService } from './edit.service';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ImportDTO } from './dto/import.dto';
+import { ShareRequestDTO } from './dto/share_request.dto';
 // import { resolve } from 'path';
 // import { ExportDTO } from './dto/export.dto';
 import { MessageService } from 'primeng/api';
@@ -748,5 +749,44 @@ export class FileService {
     } else {
       return null;
     }
+  }
+
+  shareDocument(markdownID:string, recipientEmail:string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.sendShareData(markdownID, recipientEmail).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log("Non error: ",response);
+          if (response.status === 200) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+        error: (error) => {
+          console.log("Failed: ",error);
+          this.messageService.add({
+            severity: 'error',
+            summary: error.error.error || error.error.message || 'File sharing failed',
+          });
+          resolve(false);
+        }
+      });
+    });
+  }
+
+  sendShareData(markdownID:string, recipientEmail:string): Observable<HttpResponse<any>> {
+    const environmentURL = environment.apiURL;
+    const url = `${environmentURL}file_manager/share`;
+    const body = new ShareRequestDTO();
+
+    body.UserID = this.userService.getUserID();
+    body.MarkdownID = markdownID;
+    body.RecipientEmail = recipientEmail;
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
   }
 }

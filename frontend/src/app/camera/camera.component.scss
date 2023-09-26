@@ -94,6 +94,9 @@ $top-bottom-color: #202221;
     width: 80svw;
     height: 80svh;
     object-fit: contain;
+    --cropper-overlay-color: rgba(255, 255, 255, 0);
+    --cropper-outline-color: rgba(255, 255, 255, 0);
+    // background-color: #0000ff;
 }
 
 .imageWrapper {
@@ -158,10 +161,11 @@ $top-bottom-color: #202221;
     margin: auto;
 }
 
-.slider{
-    width:100%;
+.slider {
+    width: 100%;
 }
-.editImage{
+
+.editImage {
     margin: auto;
     width: 50%;
 }

@@ -12,7 +12,7 @@ export class MarkdownFileDTO {
   NewDiff: string;
   PreviousDiffs: string[];
   NextDiffIndex: number;
-  NextSnapshotIndex: number
+  NextSnapshotIndex: number;
   TotalNumDiffs: number;
   TotalNumSnapshots: number;
 
@@ -33,5 +33,27 @@ export class MarkdownFileDTO {
     this.NextSnapshotIndex = undefined;
     this.TotalNumDiffs = undefined;
     this.TotalNumSnapshots = undefined;
+  }
+
+  clone(): MarkdownFileDTO {
+    const clone = new MarkdownFileDTO();
+    clone.MarkdownID = this.MarkdownID;
+    clone.Name = this.Name;
+    clone.Content = this.Content;
+    clone.Path = this.Path;
+    clone.DateCreated = this.DateCreated;
+    clone.LastModified = this.LastModified;
+    clone.Size = this.Size;
+    clone.ParentFolderID = this.ParentFolderID;
+    clone.UserID = this.UserID;
+    clone.SafeLock = this.SafeLock;
+    clone.NewDiff = this.NewDiff;
+    clone.NextDiffIndex = this.NextDiffIndex;
+    clone.NextSnapshotIndex =
+      this.NextSnapshotIndex;
+    clone.TotalNumDiffs = this.TotalNumDiffs;
+    clone.TotalNumSnapshots =
+      this.TotalNumSnapshots;
+    return clone;
   }
 }
