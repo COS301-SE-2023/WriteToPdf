@@ -149,6 +149,7 @@ export class EditComponent implements AfterViewInit, OnInit {
             rejectLabel: 'Cancel',
             acceptButtonStyleClass: 'p-button-danger',
             accept: async () => {
+              this.loading = true;
               console.log("Current Object:\n", this.currentContextMenuObject);
               let diffIndex = this.currentContextMenuObject.S3DiffIndex;
               if (!diffIndex)
@@ -169,9 +170,11 @@ export class EditComponent implements AfterViewInit, OnInit {
                 return;
               }
 
-              this.editService.setContent(this.editor.getData());
+              this.editor.setData(this.currentContextMenuObject.Content);
+              this.editService.setContent(this.currentContextMenuObject.Content);
               this.currentEditorContent = undefined;
               this.refreshSidebarHistory();
+              this.loading = false;
             },
           });
         },
