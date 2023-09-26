@@ -495,4 +495,30 @@ describe('MarkdownFilesService', () => {
       ).toBeCalled();
     });
   });
+
+  describe('getSaveDiffInfo', () => {
+    it('should find the markdown file and return the save diff info', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+      foundMarkdownFile.NextDiffIndex = 0;
+      foundMarkdownFile.TotalNumDiffs = 1;
+      foundMarkdownFile.TotalNumSnapshots = 2;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(foundMarkdownFile);
+
+      const result =
+        await service.getSaveDiffInfo(markdownID);
+
+      expect(result).toStrictEqual({
+        nextDiffID: 0,
+        totalNumDiffs: 1,
+        totalNumSnapshots: 2,
+      });
+    });
+  });
 });
