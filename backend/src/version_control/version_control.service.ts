@@ -460,52 +460,39 @@ export class VersionControlService {
   async rollbackVersion(
     versionRollbackDTO: VersionRollbackDTO,
   ) {
-    console.log(
-      'rollbackVersion',
-      versionRollbackDTO,
-    );
-    console.log('rollbackVersion.line463');
     const restoredVersionDTO =
       this.buildRestoreVersionDTO(
         versionRollbackDTO,
       );
 
-    console.log('rollbackVersion.line469');
     await this.s3Service.saveFile(
       restoredVersionDTO,
     );
 
-    console.log('rollbackVersion.line474');
     const nextDiffIndex =
       versionRollbackDTO.DiffIndex +
       (1 % parseInt(process.env.MAX_DIFFS));
 
-    console.log('rollbackVersion.line479');
     const diffIndicesToReset =
       this.getDiffIndicesToReset(
         nextDiffIndex,
         versionRollbackDTO.DiffIndex,
       );
 
-    console.log('rollbackVersion.line486');
     const snapshotIndices =
       await this.resetSubsequentSnapshots(
         diffIndicesToReset,
       );
 
-    console.log('rollbackVersion.line492');
     await this.resetSubsequentDiffs(
       diffIndicesToReset,
     );
 
-    console.log('rollbackVersion.line498');
     await this.markdownFileService.updateMetadataAfterRestore(
       versionRollbackDTO.MarkdownID,
       nextDiffIndex,
       snapshotIndices[0],
     );
-
-    console.log('rollbackVersion.line505');
 
     return 0;
   }
@@ -539,23 +526,6 @@ export class VersionControlService {
   }
 
   ///===----------------------------------------------------
-
-  // getDiffIndicesToReset(
-  //   MAX_DIFFS: number,
-  //   NextDiffIndex: number,
-  //   RestorationDiffIndex: number,
-  // ) {
-  //   let arr = [];
-  //   RestorationDiffIndex++;
-  //   for (let i = 0; i < parseInt(process.env.MAX_DIFFS); i++) {
-  //     if (RestorationDiffIndex % MAX_DIFFS === NextDiffIndex) {
-  //       break;
-  //     }
-  //     arr.push(RestorationDiffIndex);
-  //     RestorationDiffIndex++;
-  //   }
-  //   return arr;
-  // }
 
   getDiffIndicesToReset(
     NextDiffIndex: number,
