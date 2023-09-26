@@ -6,7 +6,6 @@ import 'dotenv/config';
 import * as CryptoJS from 'crypto-js';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { DiffDTO } from './dto/diffs.dto';
-import { DiffieHellmanGroup } from 'crypto';
 
 @Injectable()
 export class DiffsService {
@@ -183,27 +182,40 @@ export class DiffsService {
   ///===-----------------------------------------------------
 
   async getSnapshotsToReset(
+    markdownID: string,
     diffIndicesToReset: number[],
   ) {
-    let snapshotIDs = [];
-    for (let idx = 0; idx < diffIndicesToReset.length; idx++) {
-      const diff = await this.diffRepository.findOne({
-        where: {
-          S3DiffIndex: diffIndicesToReset[idx],
-        },
-      });
+    const snapshotIDs = [];
+    for (
+      let idx = 0;
+      idx < diffIndicesToReset.length;
+      idx++
+    ) {
+      const diff =
+        await this.diffRepository.findOne({
+          where: {
+            MarkdownID: markdownID,
+            S3DiffIndex: diffIndicesToReset[idx],
+          },
+        });
       snapshotIDs.push(diff.SnapshotID);
     }
+    console.log(
+      'snapshotIDs to reset: ',
+      snapshotIDs,
+    );
     return snapshotIDs;
   }
 
   ///===-----------------------------------------------------
 
   async updateDiffsAfterRestore(
+    markdownID: string,
     diffDTOs: number[],
   ) {
     await this.diffRepository.update(
       {
+        MarkdownID: markdownID,
         S3DiffIndex: In(diffDTOs),
       },
       {
