@@ -379,4 +379,26 @@ describe('MarkdownFilesService', () => {
       ).toBeCalled();
     });
   });
+
+  describe('getTotalNumDiffs', () => {
+    it('should find the markdown file and return the total number of diffs', async () => {
+      const markdownID = '1';
+
+      const foundMarkdownFile =
+        new MarkdownFile();
+      foundMarkdownFile.MarkdownID = markdownID;
+      foundMarkdownFile.TotalNumDiffs = 1;
+
+      jest
+        .spyOn(Repository.prototype, 'findOneBy')
+        .mockResolvedValue(foundMarkdownFile);
+
+      const result =
+        await service.getTotalNumDiffs(
+          markdownID,
+        );
+
+      expect(result).toEqual(1);
+    });
+  });
 });
