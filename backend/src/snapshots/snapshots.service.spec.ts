@@ -162,18 +162,20 @@ describe('SnapshotService', () => {
 
       jest
         .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValueOnce(foundSnapshot)
         .mockResolvedValueOnce(foundSnapshot);
 
       jest
         .spyOn(Repository.prototype, 'save')
+        .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce(undefined);
 
       const result = await service.resetSnapshot(
         markdownID,
-        nextSnapshotIndex,
+        ['0', '1'],
       );
 
-      expect(result).toEqual(foundSnapshot);
+      expect(result).toEqual([0, 0]);
       expect(
         Repository.prototype.findOne,
       ).toBeCalledWith({
@@ -199,11 +201,10 @@ describe('SnapshotService', () => {
         .spyOn(Repository.prototype, 'findOne')
         .mockResolvedValueOnce(foundSnapshot);
 
-      const result =
-        await service.getSnapshotByS3SnapshotID(
-          markdownID,
-          s3SnapshotIndex,
-        );
+      const result = await service.getSnapshot(
+        markdownID,
+        s3SnapshotIndex,
+      );
 
       expect(result).toEqual(foundSnapshot);
       expect(

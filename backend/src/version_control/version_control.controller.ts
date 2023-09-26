@@ -14,6 +14,7 @@ import { SnapshotService } from '../snapshots/snapshots.service';
 import { DiffsService } from '../diffs/diffs.service';
 import { MarkdownFilesService } from '../markdown_files/markdown_files.service';
 import { VersionSetDTO } from './dto/version_set.dto';
+import { VersionRollbackDTO } from './dto/version_rollback.dto';
 
 @Controller('version_control')
 export class VersionControlController {
@@ -27,8 +28,10 @@ export class VersionControlController {
   ///===----------------------------------------------------
 
   @Post('save_diff')
-  saveDiff(@Body() diffDTO: DiffDTO) {
-    //this.versionControlService.saveDiff(diffDTO);
+  async saveDiff(@Body() diffDTO: DiffDTO) {
+    await this.versionControlService.saveDiff(
+      diffDTO,
+    );
   }
 
   ///===----------------------------------------------------
@@ -57,6 +60,18 @@ export class VersionControlController {
 
   ///===----------------------------------------------------
 
+  @Post('get_snapshot')
+  @HttpCode(HttpStatus.OK)
+  async getSnapshot(
+    @Body() snapshotDTO: SnapshotDTO,
+  ) {
+    return this.versionControlService.getSnapshot(
+      snapshotDTO,
+    );
+  }
+
+  ///===----------------------------------------------------
+
   @Post('load_history')
   @HttpCode(HttpStatus.OK)
   async loadHistory(
@@ -64,13 +79,6 @@ export class VersionControlController {
   ) {
     const versionHistoryDTO =
       new VersionHistoryDTO();
-
-    // Populate snapshot history
-
-    // const nextSnapshotID =
-    //   await this.markdownFileService.getNextSnapshotID(
-    //     markdownFileDTO.MarkdownID,
-    //   );
 
     const snapshots =
       await this.snapshotService.getAllSnapshots(
@@ -85,13 +93,6 @@ export class VersionControlController {
     versionHistoryDTO.SnapshotHistory =
       snapshotDTOs;
 
-    // Populate diff history
-
-    // const nextDiffID =
-    //   await this.markdownFileService.getNextDiffID(
-    //     markdownFileDTO.MarkdownID,
-    //   );
-
     const diffs =
       await this.diffService.getAllDiffs(
         markdownFileDTO.MarkdownID,
@@ -104,5 +105,17 @@ export class VersionControlController {
 
     versionHistoryDTO.DiffHistory = diffDTOs;
     return versionHistoryDTO;
+  }
+
+  ///===----------------------------------------------------
+
+  @Post('rollback_version')
+  @HttpCode(HttpStatus.OK)
+  async rollbackVersion(
+    @Body() versionRollbackDTO: VersionRollbackDTO,
+  ) {
+    return this.versionControlService.rollbackVersion(
+      versionRollbackDTO,
+    );
   }
 }

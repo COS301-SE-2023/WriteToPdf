@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Diff } from './entities/diffs.entity';
 import 'dotenv/config';
 import * as CryptoJS from 'crypto-js';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { DiffDTO } from './dto/diffs.dto';
-import { DiffieHellmanGroup } from 'crypto';
 
 @Injectable()
 export class DiffsService {
@@ -36,24 +35,20 @@ export class DiffsService {
 
   async updateDiff(
     diffDTO: DiffDTO,
-    nextDiffID: number,
+    nextDiffIndex: number,
+    nextSnapshotID: string,
   ) {
-    // const diff =
-    //   await this.diffRepository.findOne({
-    //     where: {
-    //       MarkdownID: diffDTO.MarkdownID,
-    //       S3DiffID: nextDiffID,
-    //     },
-    //   });
-
+    diffDTO.SnapshotID = nextSnapshotID;
+    diffDTO.S3DiffIndex = nextDiffIndex;
     const diff = await this.getDiff(
       diffDTO,
-      nextDiffID,
+      nextDiffIndex,
     );
 
     diff.LastModified = new Date();
     diff.HasBeenUsed = true;
-    await this.diffRepository.save(diff);
+    diff.SnapshotID = nextSnapshotID;
+    return await this.diffRepository.save(diff);
   }
 
   ///===-----------------------------------------------------
@@ -79,44 +74,22 @@ export class DiffsService {
 
   ///===-----------------------------------------------------
 
-  async createDiffs(
+  async createDiffWithoutSnapshotID(
     markdownFileDTO: MarkdownFileDTO,
-    snapshotIDs: string[],
   ) {
-    const diffRecords = [];
-    let snapshotIndex = 0;
-    for (
-      let i = 0;
-      i < parseInt(process.env.MAX_DIFFS);
-      i++
-    ) {
-      const diffID = CryptoJS.SHA256(
-        markdownFileDTO.UserID.toString() +
-          new Date().getTime().toString() +
-          i.toString(),
-      ).toString();
+    const diffID = CryptoJS.SHA256(
+      markdownFileDTO.UserID.toString() +
+        new Date().getTime().toString(),
+    ).toString();
 
-      if (
-        i %
-          parseInt(
-            process.env.DIFFS_PER_SNAPSHOT,
-          ) ===
-          0 &&
-        i !== 0
-      ) {
-        snapshotIndex++;
-      }
-
-      diffRecords.push({
-        DiffID: diffID,
-        MarkdownID: markdownFileDTO.MarkdownID,
-        UserID: markdownFileDTO.UserID,
-        S3DiffID: i,
-        HasBeenUsed: false,
-        SnapshotID: snapshotIDs[snapshotIndex],
-      });
-    }
-    await this.diffRepository.insert(diffRecords);
+    return await this.diffRepository.insert({
+      DiffID: diffID,
+      MarkdownID: markdownFileDTO.MarkdownID,
+      UserID: markdownFileDTO.UserID,
+      S3DiffIndex: markdownFileDTO.NextDiffIndex,
+      HasBeenUsed: false,
+      SnapshotID: 'temp',
+    });
   }
 
   ///===-----------------------------------------------------
@@ -159,6 +132,20 @@ export class DiffsService {
 
   ///===-----------------------------------------------------
 
+  async getDiffSet(
+    markdownID: string,
+    DiffIDs: string[],
+  ) {
+    return await this.diffRepository.find({
+      where: {
+        MarkdownID: markdownID,
+        DiffID: In(DiffIDs),
+      },
+    });
+  }
+
+  ///===-----------------------------------------------------
+
   getLogicalIndex(
     s3Index: number,
     nextDiffID: number,
@@ -190,5 +177,50 @@ export class DiffsService {
       logicalOrder[logicalIndex] = diffDTOs[idx];
     }
     return logicalOrder;
+  }
+
+  ///===-----------------------------------------------------
+
+  async getSnapshotsToReset(
+    markdownID: string,
+    diffIndicesToReset: number[],
+  ) {
+    const snapshotIDs = [];
+    for (
+      let idx = 0;
+      idx < diffIndicesToReset.length;
+      idx++
+    ) {
+      const diff =
+        await this.diffRepository.findOne({
+          where: {
+            MarkdownID: markdownID,
+            S3DiffIndex: diffIndicesToReset[idx],
+          },
+        });
+      snapshotIDs.push(diff.SnapshotID);
+    }
+    console.log(
+      'snapshotIDs to reset: ',
+      snapshotIDs,
+    );
+    return snapshotIDs;
+  }
+
+  ///===-----------------------------------------------------
+
+  async updateDiffsAfterRestore(
+    markdownID: string,
+    diffDTOs: number[],
+  ) {
+    await this.diffRepository.update(
+      {
+        MarkdownID: markdownID,
+        S3DiffIndex: In(diffDTOs),
+      },
+      {
+        HasBeenUsed: false,
+      },
+    );
   }
 }

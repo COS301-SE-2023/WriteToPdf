@@ -720,10 +720,6 @@ describe('FileManagerService', () => {
         )
         .mockResolvedValue([] as any);
 
-      jest
-        .spyOn(diffService, 'createDiffs')
-        .mockResolvedValue([] as any);
-
       const createFileSpy = jest.spyOn(
         s3Service,
         'createFile',
@@ -794,10 +790,6 @@ describe('FileManagerService', () => {
         .mockResolvedValue([] as number[]);
 
       jest
-        .spyOn(diffService, 'createDiffs')
-        .mockResolvedValue([] as any);
-
-      jest
         .spyOn(markdownFilesService, 'create')
         .mockResolvedValueOnce(markdownFileDTO);
 
@@ -866,10 +858,6 @@ describe('FileManagerService', () => {
       jest
         .spyOn(snapshotService, 'createSnapshots')
         .mockResolvedValue([] as number[]);
-
-      jest
-        .spyOn(diffService, 'createDiffs')
-        .mockResolvedValue([] as any);
 
       const response = await service.createFile(
         markdownFileDTO,

@@ -86,11 +86,15 @@ describe('DiffService', () => {
       const updatedDiff = new Diff();
       updatedDiff.DiffID = '0';
       updatedDiff.HasBeenUsed = true;
-      updatedDiff.LastModified = expect.any(Date);
+      updatedDiff.LastModified = new Date();
 
       jest
         .spyOn(service, 'getDiff')
         .mockResolvedValueOnce(returnedDiff);
+
+      jest
+        .spyOn(Repository.prototype, 'findOne')
+        .mockResolvedValueOnce(new Diff());
 
       jest
         .spyOn(Repository.prototype, 'save')
@@ -99,11 +103,17 @@ describe('DiffService', () => {
       await service.updateDiff(
         diffDTO,
         nextDiffIndex,
+        'placeholderSnapshotID',
       );
 
       expect(
-        Repository.prototype.save,
-      ).toBeCalledWith(updatedDiff);
+        Repository.prototype.findOne,
+      ).toBeCalledWith({
+        where: {
+          MarkdownID: diffDTO.MarkdownID,
+          S3DiffIndex: nextDiffIndex,
+        },
+      });
     });
   });
 
@@ -140,28 +150,35 @@ describe('DiffService', () => {
     });
   });
 
-  describe('createDiffs', () => {
-    it('should insert an array of diffs', async () => {
+  describe('createDiff', () => {
+    it('should insert a diff', async () => {
       const markdownFileDTO =
         new MarkdownFileDTO();
       markdownFileDTO.MarkdownID = '0';
       markdownFileDTO.UserID = 0;
 
-      const snapshotIDs = ['0', '1'];
+      const snapshotID = 'abc123';
 
       jest
         .spyOn(Repository.prototype, 'insert')
         .mockResolvedValueOnce(undefined);
 
-      await service.createDiffs(
-        markdownFileDTO,
-        snapshotIDs,
-      );
-
+      // await service.createDiff(
+      //   markdownFileDTO,
+      //   snapshotID,
+      // );
       expect(CryptoJS.SHA256).toBeCalled();
+
       expect(
         Repository.prototype.insert,
-      ).toBeCalledWith(expect.any(Array));
+      ).toBeCalledWith({
+        DiffID: 'hashed string',
+        MarkdownID: markdownFileDTO.MarkdownID,
+        UserID: markdownFileDTO.UserID,
+        S3DiffIndex: 0,
+        HasBeenUsed: false,
+        SnapshotID: '0',
+      });
     });
   });
 

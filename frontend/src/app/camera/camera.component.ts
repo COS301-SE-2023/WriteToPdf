@@ -6,7 +6,6 @@ import { ImageCroppedEvent, LoadedImage } from 'ngx-image-cropper';
 import { DomSanitizer } from '@angular/platform-browser';
 import { doc } from 'prettier';
 
-
 @Component({
   selector: 'app-camera',
   templateUrl: './camera.component.html',
@@ -32,6 +31,7 @@ export class CameraComponent {
   loading: boolean = false;
 
   imageChangedEvent: any = '';
+
   croppedImage: any = '';
 
   constructor(
@@ -160,8 +160,6 @@ export class CameraComponent {
       format = 'text';
     }
     this.loading = true;
-    console.log("SysImage\n",this.sysImage);
-    console.log("CroppedImage\n",this.croppedImage);
     await this.assetService
       .uploadImage(
         this.croppedImage,
@@ -178,7 +176,7 @@ export class CameraComponent {
           }, 1000);
         }
       });
-      this.loading = false;
+    this.loading = false;
   }
 
   goBack() {
@@ -295,39 +293,38 @@ export class CameraComponent {
     // show message
   }
   
-async cropImage(base64Image: string, left: number, top: number, right: number, bottom: number): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
+  async cropImage(base64Image: string, left: number, top: number, right: number, bottom: number): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
 
-      if (!ctx) {
-        reject('Canvas context not available.');
-        return;
-      }
+        if (!ctx) {
+          reject('Canvas context not available.');
+          return;
+        }
 
-      // Set canvas dimensions
-      const width = right - left;
-      const height = bottom - top;
-      canvas.width = width;
-      canvas.height = height;
+        // Set canvas dimensions
+        const width = right - left;
+        const height = bottom - top;
+        canvas.width = width;
+        canvas.height = height;
 
-      // Draw the cropped portion of the image on the canvas
-      ctx.drawImage(image, left, top, width, height, 0, 0, width, height);
+        // Draw the cropped portion of the image on the canvas
+        ctx.drawImage(image, left, top, width, height, 0, 0, width, height);
 
-      // Convert the cropped canvas to a base64 image
-      const croppedBase64Image = canvas.toDataURL('image/jpeg'); // Change format if needed
+        // Convert the cropped canvas to a base64 image
+        const croppedBase64Image = canvas.toDataURL('image/jpeg'); // Change format if needed
 
-      resolve(croppedBase64Image);
-    };
+        resolve(croppedBase64Image);
+      };
 
-    image.onerror = (error) => {
-      reject(`Error loading image: ${error}`);
-    };
+      image.onerror = (error) => {
+        reject(`Error loading image: ${error}`);
+      };
 
-    image.src = base64Image;
-  });
-}
-
+      image.src = base64Image;
+    });
+  }
 }

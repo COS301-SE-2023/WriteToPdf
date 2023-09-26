@@ -75,13 +75,13 @@ export class FileManagerService {
     if (
       markdownFileDTO.TotalNumDiffs === undefined
     )
-      markdownFileDTO.TotalNumDiffs = 1;
+      markdownFileDTO.TotalNumDiffs = 0;
 
     if (
       markdownFileDTO.TotalNumSnapshots ===
       undefined
     )
-      markdownFileDTO.TotalNumSnapshots = 1;
+      markdownFileDTO.TotalNumSnapshots = 0;
 
     if (isTest) {
       await this.s3ServiceMock.createFile(
@@ -106,6 +106,8 @@ export class FileManagerService {
       await this.setupVersioningResources(
         markdownFileDTO,
       );
+      markdownFileDTO.NextSnapshotIndex = 1;
+      markdownFileDTO.TotalNumSnapshots = 1;
     }
     return await this.markdownFilesService.create(
       markdownFileDTO,
@@ -584,10 +586,9 @@ export class FileManagerService {
     markdownFileDTO: MarkdownFileDTO,
   ) {
     // 1. Create snapshot reference in db
-    const firstSnapshotID =
-      await this.snapshotService.createSnapshot(
-        markdownFileDTO,
-      );
+    await this.snapshotService.createSnapshot(
+      markdownFileDTO,
+    );
 
     // 2. Create snapshot reference in s3
     await this.s3service.createSnapshot(
@@ -597,11 +598,23 @@ export class FileManagerService {
     // 3. Create diff reference in db
     await this.diffsService.createDiff(
       markdownFileDTO,
-      firstSnapshotID,
+      '', // No snapshot for this diff to build towards exists yet
     );
 
     // 4. Create diff reference in s3
     this.s3service.createDiff(markdownFileDTO);
+
+    markdownFileDTO.NextSnapshotIndex = -1;
+
+    // 5. Create redundant snapshot reference in db
+    await this.snapshotService.createSnapshot(
+      markdownFileDTO,
+    );
+
+    // 6. Create redundant snapshot reference in s3
+    await this.s3service.createSnapshot(
+      markdownFileDTO,
+    );
   }
 
   async exportFile(exportDTO: ExportDTO) {

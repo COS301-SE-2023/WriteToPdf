@@ -10,7 +10,9 @@ import { Snapshot } from '../snapshots/entities/snapshots.entity';
 import { Diff } from '../diffs/entities/diffs.entity';
 import { VersionHistoryDTO } from './dto/version_history.dto';
 import { VersionSetDTO } from './dto/version_set.dto';
-import { MarkdownFileDTO } from 'src/markdown_files/dto/markdown_file.dto';
+import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
+import { version } from 'os';
+import { VersionRollbackDTO } from './dto/version_rollback.dto';
 
 @Injectable()
 export class VersionControlService {
@@ -24,119 +26,125 @@ export class VersionControlService {
 
   ///===-----------------------------------------------------
 
-  // async saveDiff(diffDTO: DiffDTO) {
-  //   // 1. Get information necessary for saving a diff
-  //   const versioningInfoDTO =
-  //     await this.markdownFileService.getSaveDiffInfo(
-  //       diffDTO.MarkdownID,
-  //     );
+  async saveDiff(diffDTO: DiffDTO) {
+    // 1. Get necessary info for saving a diff
+    const saveDiffInfoDTO =
+      await this.markdownFileService.getSaveDiffInfo(
+        diffDTO.MarkdownID,
+      );
 
-  //   // 2. If this is the first pass through the array, create diff
-  //   //    else retrieve diff from S3
-  //   let nextDiff;
-  //   if (
-  //     versioningInfoDTO.totalNumDiffs <
-  //     parseInt(process.env.MAX_DIFFS)
-  //   ) {
-  //     nextDiff =
-  //       await this.diffService.createNewDiff(
-  //         diffDTO,
+    // 2. Get next diff
+    let nextDiff = await this.diffService.getDiff(
+      diffDTO,
+      saveDiffInfoDTO.nextDiffIndex,
+    );
 
-  //       );
-  //   } else {
-  //     nextDiff = await this.diffService.getDiff(
-  //       diffDTO,
-  //       versioningInfoDTO.nextDiffID,
-  //     );
-  //   }
+    // 3. Get next snapshot
+    let nextSnapshot =
+      await this.snapshotService.getSnapshot(
+        diffDTO.MarkdownID,
+        saveDiffInfoDTO.nextSnapshotIndex,
+      );
 
-  //   await this.s3Service.saveDiff(
-  //     diffDTO,
-  //     versioningInfoDTO.nextDiffID,
-  //   );
+    ///===----------------------------------------------------
+    // 4. Create DB and S3 references if they do not yet exist
+    // 5. Create diff references if nextDiff does not exist
+    if (nextDiff === null) {
+      await this.createDiff(
+        diffDTO,
+        saveDiffInfoDTO.nextDiffIndex,
+      );
 
-  //   if (
-  //     nextDiffID !== 0 ||
-  //     nextDiff.HasBeenUsed
-  //   ) {
-  //     if (
-  //       (nextDiffID + 1) %
-  //         parseInt(
-  //           process.env.DIFFS_PER_SNAPSHOT,
-  //         ) ===
-  //       0
-  //     ) {
-  //       const nextSnapshotID =
-  //         await this.markdownFileService.getNextSnapshotID(
-  //           diffDTO.MarkdownID,
-  //         );
+      nextDiff = await this.diffService.getDiff(
+        diffDTO,
+        saveDiffInfoDTO.nextDiffIndex,
+      );
+    }
 
-  //       // Create snapshot if not created already
-  //       if (
-  //         !nextDiff.HasBeenUsed &&
-  //         nextSnapshotID !== 0
-  //       ) {
-  //         const markdownFileDTO: MarkdownFileDTO =
-  //           new MarkdownFileDTO();
+    // 6. Create snapshot references if nextSnapshot does not exist
+    if (nextSnapshot === null) {
+      nextSnapshot = await this.createSnapshot(
+        diffDTO,
+        saveDiffInfoDTO.nextSnapshotIndex,
+      );
+    }
+    ///===----------------------------------------------------
+    // Save diff content to S3 and increment nextIndex and TotalNumDiffs
+    await this.saveDiffContent(
+      diffDTO,
+      saveDiffInfoDTO.nextDiffIndex,
+      nextSnapshot.SnapshotID,
+    );
 
-  //         markdownFileDTO.MarkdownID =
-  //           diffDTO.MarkdownID;
-  //         markdownFileDTO.UserID = diffDTO.UserID;
-  //         markdownFileDTO.NextSnapshotIndex =
-  //           nextSnapshotIndex;
-
-  //         this.snapshotService.createSnapshot(
-  //           markdownFileDTO,
-  //         );
-  //       }
-
-  //       await this.saveSnapshot(
-  //         diffDTO,
-  //         nextSnapshotID,
-  //       );
-
-  //       // Reset next snapshot and associated diffs
-
-  //       const nextSnapshot =
-  //         await this.snapshotService.resetSnapshot(
-  //           diffDTO.MarkdownID,
-  //           nextSnapshotID,
-  //         );
-
-  //       await this.diffService.resetDiffs(
-  //         diffDTO.MarkdownID,
-  //         nextSnapshot.SnapshotID,
-  //       );
-  //     }
-  //   }
-
-  //   // await this.diffService.updateDiff(
-  //   //   diffDTO,
-  //   //   nextDiffID,
-  //   // );
-
-  //   await this.markdownFileService.incrementNextDiffID(
-  //     diffDTO.MarkdownID,
-  //   );
-  // }
+    // Check if new snapshot must be populated
+    if (
+      (saveDiffInfoDTO.nextDiffIndex + 1) %
+        parseInt(
+          process.env.DIFFS_PER_SNAPSHOT,
+        ) ===
+      0
+    ) {
+      // Populate snapshot in DB and S3
+      await this.saveSnapshot(
+        diffDTO,
+        saveDiffInfoDTO.nextSnapshotIndex,
+        saveDiffInfoDTO.totalNumDiffs,
+      );
+    }
+  }
 
   ///===-----------------------------------------------------
 
   async saveSnapshot(
     diffDTO: DiffDTO,
-    nextSnapshotID: number,
+    nextSnapshotIndex: number,
+    totalNumDiffs: number,
   ) {
+    // Backup if not in first pass
+    if (
+      totalNumDiffs >=
+      parseInt(process.env.MAX_DIFFS)
+    )
+      await this.s3Service.backupSnapshot(
+        diffDTO,
+        nextSnapshotIndex,
+      );
     await this.s3Service.saveSnapshot(
       diffDTO,
-      nextSnapshotID,
+      nextSnapshotIndex,
     );
 
     await this.snapshotService.updateSnapshot(
       diffDTO.MarkdownID,
-      nextSnapshotID,
+      nextSnapshotIndex,
     );
 
-    await this.markdownFileService.incrementNextSnapshotID(
+    await this.markdownFileService.incrementNextSnapshotIndex(
+      diffDTO.MarkdownID,
+    );
+  }
+
+  async saveDiffContent(
+    diffDTO: DiffDTO,
+    nextDiffIndex: number,
+    SnapshotID: string,
+  ) {
+    await this.diffService.updateDiff(
+      diffDTO,
+      nextDiffIndex,
+      SnapshotID,
+    );
+
+    await this.s3Service.saveDiff(
+      diffDTO,
+      nextDiffIndex,
+    );
+
+    await this.markdownFileService.incrementNextDiffIndex(
+      diffDTO.MarkdownID,
+    );
+
+    await this.markdownFileService.incrementTotalNumDiffs(
       diffDTO.MarkdownID,
     );
   }
@@ -167,7 +175,7 @@ export class VersionControlService {
     );
 
     const nextSnapshotID =
-      await this.markdownFileService.getNextSnapshotID(
+      await this.markdownFileService.getNextSnapshotIndex(
         snapshotDTO.MarkdownID,
       );
 
@@ -304,32 +312,21 @@ export class VersionControlService {
   async getHistorySet(
     versionSetDTO: VersionSetDTO,
   ) {
-    const diffs =
-      await this.diffService.getAllDiffs(
-        versionSetDTO.MarkdownID,
+    const S3DiffIndices: number[] =
+      versionSetDTO.DiffHistory.map(
+        (diff) => diff.S3DiffIndex,
       );
-
-    const S3DiffIDs: number[] = diffs.map(
-      (diff) => diff.S3DiffIndex,
-    );
 
     const diffDTOs =
       await this.s3Service.getDiffSet(
-        S3DiffIDs,
+        S3DiffIndices,
         versionSetDTO.UserID,
         versionSetDTO.MarkdownID,
       );
 
-    const snapshot =
-      await this.snapshotService.getSnapshotByID(
-        versionSetDTO.SnapshotID,
-      );
-
-    const snapshotDTO =
-      await this.s3Service.getSnapshot(
-        snapshot.S3SnapshotIndex,
-        versionSetDTO.UserID,
-        versionSetDTO.MarkdownID,
+    const prevSnapshot =
+      await this.getPreviousSnapshot(
+        versionSetDTO,
       );
 
     const versionHistoryDTO =
@@ -337,9 +334,275 @@ export class VersionControlService {
 
     versionHistoryDTO.DiffHistory = diffDTOs;
     versionHistoryDTO.SnapshotHistory = [
-      snapshotDTO,
+      prevSnapshot,
     ];
     return versionHistoryDTO;
+  }
+
+  ///===----------------------------------------------------
+
+  async getPreviousSnapshot(
+    versionSetDTO: VersionSetDTO,
+  ) {
+    if (versionSetDTO.IsHeadSnapshot) {
+      return await this.s3Service.getSnapshot(
+        -1,
+        versionSetDTO.UserID,
+        versionSetDTO.MarkdownID,
+      );
+    }
+
+    const snapshot =
+      await this.snapshotService.getSnapshotByID(
+        versionSetDTO.SnapshotID,
+      );
+
+    if (versionSetDTO.IsLatestSnapshot) {
+      return await this.s3Service.getSnapshot(
+        snapshot.S3SnapshotIndex,
+        versionSetDTO.UserID,
+        versionSetDTO.MarkdownID,
+      );
+    }
+
+    let prevSnapshotIndex;
+    if (snapshot.S3SnapshotIndex === 0) {
+      prevSnapshotIndex =
+        parseInt(process.env.MAX_SNAPSHOTS) - 1;
+    } else {
+      prevSnapshotIndex =
+        snapshot.S3SnapshotIndex - 1;
+    }
+
+    console.log(
+      'prevSnapshotIndex: ',
+      prevSnapshotIndex,
+    );
+
+    return await this.s3Service.getSnapshot(
+      prevSnapshotIndex,
+      versionSetDTO.UserID,
+      versionSetDTO.MarkdownID,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async createDiff(
+    diffDTO: DiffDTO,
+    nextDiffIndex: number,
+  ) {
+    const markdownFileDTO = new MarkdownFileDTO();
+    markdownFileDTO.MarkdownID =
+      diffDTO.MarkdownID;
+    markdownFileDTO.UserID = diffDTO.UserID;
+    markdownFileDTO.NextDiffIndex = nextDiffIndex;
+
+    // Create diff in s3 and save content
+    await this.s3Service.saveDiff(
+      diffDTO,
+      nextDiffIndex,
+    );
+
+    // Create diff in db
+    return await this.diffService.createDiffWithoutSnapshotID(
+      markdownFileDTO,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async createSnapshot(
+    diffDTO: DiffDTO,
+    nextSnapshotIndex: number,
+  ) {
+    const markdownFileDTO = new MarkdownFileDTO();
+    markdownFileDTO.MarkdownID =
+      diffDTO.MarkdownID;
+    markdownFileDTO.UserID = diffDTO.UserID;
+    markdownFileDTO.NextSnapshotIndex =
+      nextSnapshotIndex;
+
+    // Create snapshot in s3 and save content
+    await this.s3Service.saveSnapshot(
+      diffDTO,
+      nextSnapshotIndex,
+    );
+
+    // // Increment num snapshots
+    // await this.markdownFileService.incrementTotalNumSnapshots(
+    //   markdownFileDTO.MarkdownID,
+    // );
+
+    // Create snapshot in db
+    const snapshotID =
+      await this.snapshotService.createSnapshot(
+        markdownFileDTO,
+      );
+
+    return await this.snapshotService.getSnapshotByID(
+      snapshotID,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async getSnapshot(snapshotDTO: SnapshotDTO) {
+    return await this.s3Service.getSnapshot(
+      snapshotDTO.S3SnapshotIndex,
+      snapshotDTO.UserID,
+      snapshotDTO.MarkdownID,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async rollbackVersion(
+    versionRollbackDTO: VersionRollbackDTO,
+  ) {
+    const restoredVersionDTO =
+      await this.buildRestoreVersionDTO(
+        versionRollbackDTO,
+      );
+
+    await this.s3Service.saveFile(
+      restoredVersionDTO,
+    );
+
+    const diffIndicesToReset =
+      this.getDiffIndicesToReset(
+        restoredVersionDTO.NextDiffIndex,
+        versionRollbackDTO.DiffIndex,
+      );
+
+    console.log(
+      'diffIndicesToReset: ',
+      diffIndicesToReset,
+    );
+
+    const snapshotIndices =
+      await this.resetSubsequentSnapshots(
+        versionRollbackDTO.MarkdownID,
+        diffIndicesToReset,
+      );
+
+    console.log(
+      'snapshotIndices: ',
+      snapshotIndices,
+    );
+
+    await this.resetSubsequentDiffs(
+      versionRollbackDTO.MarkdownID,
+      diffIndicesToReset,
+    );
+
+    const newNextDiffIndex =
+      versionRollbackDTO.DiffIndex +
+      (1 % parseInt(process.env.MAX_DIFFS));
+
+    console.log(
+      'newNextDiffIndex: ',
+      newNextDiffIndex,
+    );
+
+    await this.markdownFileService.updateMetadataAfterRestore(
+      versionRollbackDTO.MarkdownID,
+      newNextDiffIndex,
+      snapshotIndices[0],
+    );
+
+    return 0;
+  }
+
+  ///===----------------------------------------------------
+
+  async resetSubsequentDiffs(
+    markdownID: string,
+    diffIndicesToReset: number[],
+  ) {
+    await this.diffService.updateDiffsAfterRestore(
+      markdownID,
+      diffIndicesToReset,
+    );
+  }
+
+  ///===----------------------------------------------------
+
+  async resetSubsequentSnapshots(
+    markdownID: string,
+    diffIndicesToReset: number[],
+  ) {
+    const snapshotIDsToReset =
+      await this.diffService.getSnapshotsToReset(
+        markdownID,
+        diffIndicesToReset,
+      );
+
+    console.log(
+      'Resetting the following snapshotIndices: ',
+      snapshotIDsToReset,
+    );
+
+    const snapshotIndices =
+      await this.snapshotService.resetSnapshot(
+        markdownID,
+        snapshotIDsToReset,
+      );
+
+    return snapshotIndices;
+  }
+
+  ///===----------------------------------------------------
+
+  getDiffIndicesToReset(
+    NextDiffIndex: number,
+    RestorationDiffIndex: number,
+  ) {
+    const arr = [];
+    RestorationDiffIndex++;
+    const MAX_DIFFS = parseInt(
+      process.env.MAX_DIFFS,
+    );
+    for (let i = 0; i < MAX_DIFFS; i++) {
+      if (
+        RestorationDiffIndex % MAX_DIFFS ===
+        NextDiffIndex
+      ) {
+        break;
+      }
+      arr.push(RestorationDiffIndex);
+      RestorationDiffIndex++;
+    }
+    return arr;
+  }
+
+  ///===----------------------------------------------------
+
+  async buildRestoreVersionDTO(
+    versionRollbackDTO: VersionRollbackDTO,
+  ) {
+    const nextDiffIndex =
+      await this.markdownFileService.getNextDiffIndex(
+        versionRollbackDTO.MarkdownID,
+      );
+
+    const nextSnapshotIndex =
+      await this.markdownFileService.getNextSnapshotIndex(
+        versionRollbackDTO.MarkdownID,
+      );
+    const restoredVersionDTO =
+      new MarkdownFileDTO();
+    restoredVersionDTO.MarkdownID =
+      versionRollbackDTO.MarkdownID;
+    restoredVersionDTO.UserID =
+      versionRollbackDTO.UserID;
+    restoredVersionDTO.Content =
+      versionRollbackDTO.Content;
+    restoredVersionDTO.NextDiffIndex =
+      nextDiffIndex;
+    restoredVersionDTO.NextSnapshotIndex =
+      nextSnapshotIndex;
+    return restoredVersionDTO;
   }
 
   ///===----------------------------------------------------

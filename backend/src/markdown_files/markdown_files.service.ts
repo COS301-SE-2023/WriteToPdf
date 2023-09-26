@@ -136,7 +136,7 @@ export class MarkdownFilesService {
 
   ///===----------------------------------------------------
 
-  async getNextDiffID(markdownID: string) {
+  async getNextDiffIndex(markdownID: string) {
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
         {
@@ -148,7 +148,7 @@ export class MarkdownFilesService {
 
   ///===----------------------------------------------------
 
-  async getNextSnapshotID(markdownID: string) {
+  async getNextSnapshotIndex(markdownID: string) {
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
         {
@@ -160,7 +160,9 @@ export class MarkdownFilesService {
 
   ///===----------------------------------------------------
 
-  async incrementNextDiffID(markdownID: string) {
+  async incrementNextDiffIndex(
+    markdownID: string,
+  ) {
     const markdownFile =
       await this.markdownFileRepository.findOneBy(
         {
@@ -177,7 +179,7 @@ export class MarkdownFilesService {
 
   ///===----------------------------------------------------
 
-  async incrementNextSnapshotID(
+  async incrementNextSnapshotIndex(
     markdownID: string,
   ) {
     const markdownFile =
@@ -262,7 +264,9 @@ export class MarkdownFilesService {
         },
       );
     return {
-      nextDiffID: markdownFile.NextDiffIndex,
+      nextDiffIndex: markdownFile.NextDiffIndex,
+      nextSnapshotIndex:
+        markdownFile.NextSnapshotIndex,
       totalNumDiffs: markdownFile.TotalNumDiffs,
       totalNumSnapshots:
         markdownFile.TotalNumSnapshots,
@@ -270,6 +274,31 @@ export class MarkdownFilesService {
   }
 
   ///===----------------------------------------------------
+
+  async updateMetadataAfterRestore(
+    markdownID: string,
+    nextDiffIndex: number,
+    nextSnapshotIndex: number,
+  ) {
+    console.log('markdownID: ', markdownID);
+    console.log('nextDiffIndex: ', nextDiffIndex);
+    console.log(
+      'nextSnapshotIndex: ',
+      nextSnapshotIndex,
+    );
+    const markdownFile =
+      await this.markdownFileRepository.findOneBy(
+        {
+          MarkdownID: markdownID,
+        },
+      );
+    markdownFile.NextDiffIndex = nextDiffIndex;
+    markdownFile.NextSnapshotIndex =
+      nextSnapshotIndex;
+    return this.markdownFileRepository.save(
+      markdownFile,
+    );
+  }
 
   async exists(
     markdownID: string,

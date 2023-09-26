@@ -309,9 +309,8 @@ describe('MarkdownFilesService', () => {
         .spyOn(Repository.prototype, 'findOneBy')
         .mockResolvedValue(markdownFile);
 
-      const result = await service.getNextDiffID(
-        '1',
-      );
+      const result =
+        await service.getNextDiffIndex('1');
 
       expect(result).toBe(0);
       expect(
@@ -322,7 +321,7 @@ describe('MarkdownFilesService', () => {
     });
   });
 
-  describe('getNextSnapshotID', () => {
+  describe('getNextSnapshotIndex', () => {
     it('should find the markdown file and return the next snapshot id', async () => {
       const markdownFile = new MarkdownFileDTO();
       markdownFile.MarkdownID = '1';
@@ -333,7 +332,7 @@ describe('MarkdownFilesService', () => {
         .mockResolvedValue(markdownFile);
 
       const result =
-        await service.getNextSnapshotID('1');
+        await service.getNextSnapshotIndex('1');
 
       expect(result).toBe(0);
       expect(
@@ -344,8 +343,8 @@ describe('MarkdownFilesService', () => {
     });
   });
 
-  describe('incrementNextDiffID', () => {
-    it('should find the markdown file and increment the next diff id', async () => {
+  describe('incrementNextDiffIndex', () => {
+    it('should find the markdown file and increment the next diff index', async () => {
       const markdownID = '1';
 
       const foundMarkdownFile =
@@ -369,7 +368,7 @@ describe('MarkdownFilesService', () => {
 
       try {
         const result =
-          await service.incrementNextDiffID(
+          await service.incrementNextDiffIndex(
             markdownID,
           );
 
@@ -510,8 +509,8 @@ describe('MarkdownFilesService', () => {
 
       const foundMarkdownFile =
         new MarkdownFile();
-      foundMarkdownFile.MarkdownID = markdownID;
       foundMarkdownFile.NextDiffIndex = 0;
+      foundMarkdownFile.NextSnapshotIndex = 0;
       foundMarkdownFile.TotalNumDiffs = 1;
       foundMarkdownFile.TotalNumSnapshots = 2;
 
@@ -523,7 +522,8 @@ describe('MarkdownFilesService', () => {
         await service.getSaveDiffInfo(markdownID);
 
       expect(result).toStrictEqual({
-        nextDiffID: 0,
+        nextDiffIndex: 0,
+        nextSnapshotIndex: 0,
         totalNumDiffs: 1,
         totalNumSnapshots: 2,
       });

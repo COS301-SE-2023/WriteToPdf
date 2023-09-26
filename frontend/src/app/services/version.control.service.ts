@@ -218,6 +218,39 @@ export class VersionControlService {
     return this.DiffPatchService.patch_toText(patches);
   }
 
+  applyReadablePatch(text1: string, text2: string): string {
+    const patches = this.DiffPatchService.patch_fromText(text2);
+    return this.DiffPatchService.patch_apply(patches, text1)[0];
+  }
+
+  getPrettyHtml(text1: string, text2: string): string {
+    const pattern_amp = /&amp;/g;
+    const pattern_lt = /&lt;/g;
+    const pattern_gt = /&gt;/g;
+    const pattern_para = /&para;<br>/g;
+    const open_ins = /<ins/g;
+    const close_ins = /<\/ins/g;
+    const open_del = /<del/g;
+    const close_del = /<\/del/g;
+    const del_color = /#ffe6e6/g;
+    const ins_color = /#e6ffe6/g;
+
+    const dpsDiff = this.DiffPatchService.diff_main(text1, text2);
+
+    const prettyHtml = this.DiffPatchService.diff_prettyHtml(dpsDiff);
+    return prettyHtml
+      .replace(pattern_amp, '&')
+      .replace(pattern_lt, '<')
+      .replace(pattern_gt, '>')
+      .replace(pattern_para, '\n')
+      .replace(open_ins, '<span')
+      .replace(close_ins, '</span')
+      .replace(open_del, '<span')
+      .replace(close_del, '</span')
+      .replace(del_color, '#f995ab')
+      .replace(ins_color, '#96ff9f');
+  }
+
   snapshotRestore(snapshot: SnapshotDTO): void {
     //TODO: Rework
     this.snapshotArr = this.snapshotArr.filter((ele) => {

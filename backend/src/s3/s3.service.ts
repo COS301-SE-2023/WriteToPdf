@@ -296,7 +296,7 @@ export class S3Service {
   ///===----------------------------------------------------
 
   async getDiffSet(
-    S3DiffIDs: number[],
+    S3DiffIndices: number[],
     userID: number,
     markdownID: string,
   ) {
@@ -304,18 +304,23 @@ export class S3Service {
 
     const diffDTOs: DiffDTO[] = [];
 
-    for (let i = 0; i < S3DiffIDs.length; i++) {
+    for (
+      let i = 0;
+      i < S3DiffIndices.length;
+      i++
+    ) {
       try {
         const response = await this.s3Client.send(
           new GetObjectCommand({
             Bucket: this.awsS3BucketName,
-            Key: `${filePath}/diff/${S3DiffIDs[i]}`,
+            Key: `${filePath}/diff/${S3DiffIndices[i]}`,
           }),
         );
 
         const diffDTO = new DiffDTO();
         diffDTO.Content =
           await response.Body.transformToString();
+        diffDTO.S3DiffIndex = S3DiffIndices[i];
         diffDTOs.push(diffDTO);
       } catch (err) {
         console.log(
@@ -589,6 +594,40 @@ export class S3Service {
         new PutObjectCommand({
           Bucket: this.awsS3BucketName,
           Key: `${filePath}/snapshot/${nextSnapshotID}`,
+          Body: fileDTO.Content,
+        }),
+      );
+    } catch (err) {
+      console.log('Write File Error: ' + err);
+      return undefined;
+    }
+
+    return diffDTO;
+  }
+
+  ///===----------------------------------------------------
+  async backupSnapshot(
+    diffDTO: DiffDTO,
+    nextSnapshotID: number,
+  ) {
+    const markdownFileDTO: MarkdownFileDTO =
+      new MarkdownFileDTO();
+    markdownFileDTO.UserID = diffDTO.UserID;
+    markdownFileDTO.MarkdownID =
+      diffDTO.MarkdownID;
+    const fileDTO = await this.getSnapshot(
+      nextSnapshotID,
+      markdownFileDTO.UserID,
+      markdownFileDTO.MarkdownID,
+    );
+
+    const filePath = `${diffDTO.UserID}/${diffDTO.MarkdownID}`;
+
+    try {
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.awsS3BucketName,
+          Key: `${filePath}/snapshot/-1`,
           Body: fileDTO.Content,
         }),
       );
