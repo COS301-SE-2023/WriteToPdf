@@ -228,6 +228,7 @@ export class VersionControlService {
     const pattern_lt = /&lt;/g;
     const pattern_gt = /&gt;/g;
     const pattern_para = /&para;<br>/g;
+    const pattern_nbsp = /&nbsp;/g;
     const open_ins = /<ins/g;
     const close_ins = /<\/ins/g;
     const open_del = /<del/g;
@@ -235,9 +236,29 @@ export class VersionControlService {
     const del_color = /#ffe6e6/g;
     const ins_color = /#e6ffe6/g;
 
-    const dpsDiff = this.DiffPatchService.diff_main(text1, text2);
+    const repl_text1 = text1
+      .replace(pattern_amp, '&')
+      .replace(pattern_lt, '<')
+      .replace(pattern_gt, '>')
+      .replace(pattern_para, '\n')
+      .replace(pattern_nbsp, '');
+
+    const repl_text2 = text2
+      .replace(pattern_amp, '&')
+      .replace(pattern_lt, '<')
+      .replace(pattern_gt, '>')
+      .replace(pattern_para, '\n')
+      .replace(pattern_nbsp, '');
+
+    const dpsDiff = this.DiffPatchService.diff_main(repl_text1, repl_text2);
+    this.DiffPatchService.diff_cleanupSemantic(dpsDiff);
 
     const prettyHtml = this.DiffPatchService.diff_prettyHtml(dpsDiff);
+    console.log('version.control.getPrettyHtml.repl_text1:', repl_text1);
+    console.log('version.control.getPrettyHtml.repl_text2:', repl_text2);
+    console.log('version.control.getPrettyHtml.dpsDiff:', dpsDiff);
+    console.log('version.control.getPrettyHtml.prettyHtml:', prettyHtml);
+
     return prettyHtml
       .replace(pattern_amp, '&')
       .replace(pattern_lt, '<')
