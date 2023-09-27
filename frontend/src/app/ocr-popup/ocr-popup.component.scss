@@ -8,9 +8,13 @@
 
 #tableDropDown {
   float: right;
+  padding-right:20px;
+  padding-top:10px;
 }
 
 .copyFormData{
+  padding-top:15px;
+  padding-right:15px;
   float:right;
 }
 
@@ -26,8 +30,6 @@
   overflow-y: auto !important; /* Add a scrollbar when content exceeds max-height */
 }
 
-textarea {
-}
 
 .container {
   margin: auto;
@@ -74,9 +76,6 @@ textarea {
   padding-left: 40px;
 }
 
-.tableDropDown{
-  padding-right:20px;
-}
 
 .pasteDescriptor{
   display: flex;
