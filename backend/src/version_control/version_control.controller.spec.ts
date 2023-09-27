@@ -20,6 +20,7 @@ import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 import { VersionSetDTO } from './dto/version_set.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { VersionHistoryDTO } from './dto/version_history.dto';
+import { VersionRollbackDTO } from './dto/version_rollback.dto';
 
 describe('VersionControlController', () => {
   let controller: VersionControlController;
@@ -234,6 +235,30 @@ describe('VersionControlController', () => {
       expect(
         versionControlService.convertDiffsToDiffDTOs,
       ).toHaveBeenCalledWith(returnedDiffs);
+    });
+  });
+
+  describe('rollbackVersion', () => {
+    it('should call versionControlService.rollbackVersion', async () => {
+      const versionRollbackDTO =
+        new VersionRollbackDTO();
+
+      jest
+        .spyOn(
+          versionControlService,
+          'rollbackVersion',
+        )
+        .mockResolvedValue(null);
+
+      const result =
+        await controller.rollbackVersion(
+          versionRollbackDTO,
+        );
+
+      expect(result).toBeNull();
+      expect(
+        versionControlService.rollbackVersion,
+      ).toHaveBeenCalledWith(versionRollbackDTO);
     });
   });
 });
