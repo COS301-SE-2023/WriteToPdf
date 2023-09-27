@@ -170,6 +170,7 @@ export class EditComponent implements AfterViewInit, OnInit {
                 return;
               }
 
+              this.versionControlService.setLatestVersionContent(this.currentContextMenuObject.Content);
               this.editor.setData(this.currentContextMenuObject.Content);
               this.editService.setContent(this.currentContextMenuObject.Content);
               this.currentEditorContent = undefined;
