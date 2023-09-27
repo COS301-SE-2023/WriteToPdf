@@ -222,6 +222,64 @@ describe('VersionControlService', () => {
     });
   });
 
+  describe('saveDiffContent', () => {
+    it('should save the diff content', async () => {
+      const diffDTO = new DiffDTO();
+      diffDTO.MarkdownID = 'test';
+
+      const nextDiffIndex = 1;
+      const snapshotID = 'test';
+
+      jest
+        .spyOn(diffsService, 'updateDiff')
+        .mockResolvedValue(null);
+
+      jest
+        .spyOn(s3Service, 'saveDiff')
+        .mockResolvedValue(null);
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'incrementNextDiffIndex',
+        )
+        .mockResolvedValue(null);
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'incrementTotalNumDiffs',
+        )
+        .mockResolvedValue(null);
+
+      await service.saveDiffContent(
+        diffDTO,
+        nextDiffIndex,
+        snapshotID,
+      );
+
+      expect(
+        diffsService.updateDiff,
+      ).toHaveBeenCalledWith(
+        diffDTO,
+        nextDiffIndex,
+        snapshotID,
+      );
+      expect(
+        s3Service.saveDiff,
+      ).toHaveBeenCalledWith(
+        diffDTO,
+        nextDiffIndex,
+      );
+      expect(
+        markdownFilesService.incrementNextDiffIndex,
+      ).toHaveBeenCalledWith(diffDTO.MarkdownID);
+      expect(
+        markdownFilesService.incrementTotalNumDiffs,
+      ).toHaveBeenCalledWith(diffDTO.MarkdownID);
+    });
+  });
+
   describe('createDiff', () => {
     it('should create a diff and save it on s3', async () => {
       const diffDTO = new DiffDTO();
