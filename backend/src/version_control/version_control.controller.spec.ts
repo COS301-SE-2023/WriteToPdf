@@ -17,6 +17,7 @@ import { Repository } from 'typeorm';
 import { Diff } from '../diffs/entities/diffs.entity';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
+import { VersionSetDTO } from './dto/version_set.dto';
 
 describe('VersionControlController', () => {
   let controller: VersionControlController;
@@ -98,6 +99,29 @@ describe('VersionControlController', () => {
       expect(
         versionControlService.getAllSnapshots,
       ).toHaveBeenCalledWith(snapshotDTO);
+    });
+  });
+
+  describe('getHistorySet', () => {
+    it('should call versionControlService.getHistorySet', async () => {
+      const versionSetDTO = new VersionSetDTO();
+
+      jest
+        .spyOn(
+          versionControlService,
+          'getHistorySet',
+        )
+        .mockResolvedValue(null);
+
+      const result =
+        await controller.getHistorySet(
+          versionSetDTO,
+        );
+
+      expect(result).toBeNull();
+      expect(
+        versionControlService.getHistorySet,
+      ).toHaveBeenCalledWith(versionSetDTO);
     });
   });
 });
