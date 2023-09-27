@@ -239,4 +239,30 @@ describe('VersionControlService', () => {
       ).toHaveBeenCalledWith('test');
     });
   });
+
+  describe('getSnapshot', () => {
+    it('should get a snapshot from s3', async () => {
+      const snapshotDTO = new SnapshotDTO();
+      snapshotDTO.MarkdownID = 'test';
+      snapshotDTO.UserID = 1;
+      snapshotDTO.S3SnapshotIndex = 1;
+
+      jest
+        .spyOn(s3Service, 'getSnapshot')
+        .mockResolvedValueOnce(snapshotDTO);
+
+      const result = await service.getSnapshot(
+        snapshotDTO,
+      );
+
+      expect(result).toEqual(snapshotDTO);
+      expect(
+        s3Service.getSnapshot,
+      ).toHaveBeenCalledWith(
+        snapshotDTO.S3SnapshotIndex,
+        snapshotDTO.UserID,
+        snapshotDTO.MarkdownID,
+      );
+    });
+  });
 });
