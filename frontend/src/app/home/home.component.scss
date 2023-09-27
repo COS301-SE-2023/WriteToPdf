@@ -60,8 +60,15 @@ $file-height: 50px;
 }
 
 .logo {
+  transform-origin: center;
+  transition: 0.2s;
   width: 75px;
   height: 77px;
+}
+
+.logo:hover {
+  cursor: pointer;
+  transform: scale(1.1);
 }
 
 .headerNavigation {
@@ -129,7 +136,7 @@ to co-operate.
   overflow: auto;
   padding-top: 9px;
   z-index: 3;
-  padding-left:15px;
+  padding-left: 15px;
 }
 
 .cdk-drag {
@@ -152,7 +159,7 @@ to co-operate.
   cursor: pointer;
 }
 
-.leftSideBarTools hr{
+.leftSideBarTools hr {
   margin: 0;
   padding: 0;
   border: 0;
@@ -161,6 +168,7 @@ to co-operate.
   margin-left: 10%;
   margin-right: 10%;
 }
+
 .leftSideBarTools .icon:hover {
   background-color: darken($light-grey, 10%);
   transition: 0.5s;
@@ -370,7 +378,7 @@ textarea {
   transition: 0.2s;
   display: flex;
   box-sizing: content-box;
-  width: calc( 95svw - 245px);
+  width: calc(95svw - 245px);
   // min-width: 500px;
   height: $file-height;
   background-color: lighten($light-grey, 10%);
@@ -462,11 +470,11 @@ textarea {
   border-radius: 5px;
 }
 
-.refreshIcon{
-    width: 42px;
-    height: 42px;
-    padding: 10px;
-    border-radius: 5px;
+.refreshIcon {
+  width: 42px;
+  height: 42px;
+  padding: 10px;
+  border-radius: 5px;
 }
 
 .iconSpacing .hover:hover {
@@ -518,14 +526,15 @@ textarea {
   transition: 0.5s;
 }
 
-.directoryOperations{
+.directoryOperations {
   display: flex;
   // justify-content: center;
   // align-items: center;
   width: 80%;
-  margin-left:10px;
+  margin-left: 10px;
 
 }
+
 $icon-size: 1.5rem;
 
 :host ::ng-deep {
@@ -553,8 +562,8 @@ $icon-size: 1.5rem;
   }
 
   .mainWindowHome {
-    margin-left: calc( 2.5svw - 5px);
-    margin-right: calc( 2.5svw - 5px);
+    margin-left: calc(2.5svw - 5px);
+    margin-right: calc(2.5svw - 5px);
     width: 95svw;
   }
 
@@ -575,7 +584,7 @@ $icon-size: 1.5rem;
   /* Required for the filler div positioning */
 }
 
-.noContent{
+.noContent {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -596,5 +605,60 @@ $icon-size: 1.5rem;
 }
 
 .loadingIcon {
-  width:10%;
+  width: 10%;
+  min-width: 100px;
+}
+
+.rotation0 {
+  animation: rotateAndScale 0.75s cubic-bezier(0.68, -0.55, 0.27, 1.55) 1;
+}
+
+.rotation1 {
+  animation: rotateAndScale 0.75s cubic-bezier(0.42, 0, 0.58, 1) 1;
+}
+
+.rotation2 {
+  animation: rotateAndScale 0.75s cubic-bezier(0.55, 0.055, 0.675, 0.19) 1;
+}
+
+.rotation3 {
+  animation: rotateAndScale 0.75s cubic-bezier(0.215, 0.61, 0.355, 1) 1;
+}
+
+.rotation4 {
+  animation: rotateAndScale 0.75s cubic-bezier(0.3, 0.3, 0.7, 0.7) 1;
+}
+
+.rotation5 {
+  animation: rotateAndScale 0.75s cubic-bezier(0.36, 1.65, 0.6, 1) 1;
+}
+
+.rotation6 {
+  animation: rotateAndScale 0.75s cubic-bezier(0.4, 2, 0.7, 0.3) 1;
+}
+
+.rotation7 {
+  animation: rotateAndScale 0.75s cubic-bezier(0.2, 2.7, 0.3, -0.3) 1;
+}
+
+.rotation8 {
+  animation: rotateAndScale 0.75s cubic-bezier(0.1, 0.9, 0.2, 1) 1;
+}
+
+.rotation9 {
+  animation: rotateAndScale 0.75s cubic-bezier(0.01, 0.99, 0.2, 1) 1;
+}
+
+@keyframes rotateAndScale {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.5);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
 }

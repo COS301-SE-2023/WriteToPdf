@@ -223,4 +223,27 @@ export class DiffsService {
       },
     );
   }
+
+  ///===-----------------------------------------------------
+
+  async resetTrailingDiffs(
+    nextDiffIndex: number,
+    markdownID: string,
+  ) {
+    for (
+      let j = nextDiffIndex + 1;
+      j <
+      nextDiffIndex +
+        parseInt(process.env.DIFFS_PER_SNAPSHOT);
+      j++
+    ) {
+      await this.diffRepository.update(
+        {
+          MarkdownID: markdownID,
+          S3DiffIndex: j,
+        },
+        { HasBeenUsed: false },
+      );
+    }
+  }
 }

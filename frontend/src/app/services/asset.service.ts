@@ -23,7 +23,7 @@ export class AssetService {
 
   uploadImage(
     image: string | undefined,
-    path: string|undefined,
+    path: string | undefined,
     fileName: string,
     parentFolderId: string | undefined,
     format: string
@@ -53,7 +53,7 @@ export class AssetService {
 
   sendUploadImageData(
     image: string | undefined,
-    path: string|undefined,
+    path: string | undefined,
     fileName: string,
     parentFolderId: string | undefined,
     format: string
@@ -88,17 +88,17 @@ export class AssetService {
     return this.http.post(url, body, { headers, observe: 'response' });
   }
 
-  retrieveAsset(assetId: string, format: string, textId:string): Promise<any> {
+  retrieveAsset(assetId: string, format: string, textId: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-        this.sendRetrieveTextOrTableData(assetId, format, textId).subscribe({
-          next: (response: HttpResponse<any>) => {
-            if (response.status === 200) {
-              resolve(response.body);
-            } else {
-              resolve(null);
-            }
-          },
-        });
+      this.sendRetrieveTextOrTableData(assetId, format, textId).subscribe({
+        next: (response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            resolve(response.body);
+          } else {
+            resolve(null);
+          }
+        },
+      });
     });
   }
 

@@ -31,6 +31,7 @@ import { CoordinateService } from '../services/coordinate-service.service';
 import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ContextMenu } from 'primeng/contextmenu';
+import { set } from 'cypress/types/lodash';
 
 interface Column {
   field: string;
@@ -1906,6 +1907,26 @@ export class HomeComponent implements OnInit, AfterViewInit {
       });
       this.loading = false;
     }
+  }
+
+  x = 0;
+  addCssClass() {
+    for (let i = 0; i < 10; i++) {
+      const element = document.getElementById("logo");
+      if(element){
+        element.classList.remove(`rotation${i}`);
+      }
+    }
+    const element = document.getElementById("logo");
+    if(element){
+      
+      element.classList.add(`rotation${this.x++%10}`);
+    }
+    setTimeout(() => {
+      if(element){
+        element.classList.remove(`rotation${(this.x-1)%10}`);
+      }
+    }, 1000);
   }
 
   protected readonly focus = focus;
