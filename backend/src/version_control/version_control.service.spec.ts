@@ -186,4 +186,57 @@ describe('VersionControlService', () => {
       );
     });
   });
+
+  describe('createSnapshot', () => {
+    it('should create a snapshot and save it on s3', async () => {
+      const diffDTO = new DiffDTO();
+      diffDTO.MarkdownID = 'test';
+      diffDTO.UserID = 1;
+      const nextSnapshotIndex = 1;
+
+      const createdMarkdownFileDTO =
+        new MarkdownFileDTO();
+      createdMarkdownFileDTO.MarkdownID =
+        diffDTO.MarkdownID;
+      createdMarkdownFileDTO.UserID =
+        diffDTO.UserID;
+      createdMarkdownFileDTO.NextSnapshotIndex =
+        nextSnapshotIndex;
+
+      const newSnapshot = new Snapshot();
+
+      jest
+        .spyOn(s3Service, 'saveSnapshot')
+        .mockResolvedValueOnce(null);
+
+      jest
+        .spyOn(snapshotService, 'createSnapshot')
+        .mockResolvedValueOnce('test');
+
+      jest
+        .spyOn(snapshotService, 'getSnapshotByID')
+        .mockResolvedValueOnce(newSnapshot);
+
+      const result = await service.createSnapshot(
+        diffDTO,
+        nextSnapshotIndex,
+      );
+
+      expect(result).toEqual(newSnapshot);
+      expect(
+        snapshotService.createSnapshot,
+      ).toHaveBeenCalledWith(
+        createdMarkdownFileDTO,
+      );
+      expect(
+        s3Service.saveSnapshot,
+      ).toHaveBeenCalledWith(
+        diffDTO,
+        nextSnapshotIndex,
+      );
+      expect(
+        snapshotService.getSnapshotByID,
+      ).toHaveBeenCalledWith('test');
+    });
+  });
 });
