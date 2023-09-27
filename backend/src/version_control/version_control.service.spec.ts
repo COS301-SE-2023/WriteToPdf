@@ -337,4 +337,28 @@ describe('VersionControlService', () => {
       );
     });
   });
+
+  describe('getDiffIndicesToReset', () => {
+    it('should get diff indices to reset', async () => {
+      const nextDiffIndex = 1;
+      const restorationDIffIndex = 2;
+
+      const expectedArray = [3];
+
+      const originalMaxDiffs =
+        process.env.MAX_DIFFS;
+      process.env.MAX_DIFFS = '3';
+      try {
+        const result =
+          await service.getDiffIndicesToReset(
+            nextDiffIndex,
+            restorationDIffIndex,
+          );
+
+        expect(result).toEqual(expectedArray);
+      } finally {
+        process.env.MAX_DIFFS = originalMaxDiffs;
+      }
+    });
+  });
 });
