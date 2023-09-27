@@ -16,6 +16,7 @@ import { Snapshot } from '../snapshots/entities/snapshots.entity';
 import { Repository } from 'typeorm';
 import { Diff } from '../diffs/entities/diffs.entity';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
+import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 
 describe('VersionControlController', () => {
   let controller: VersionControlController;
@@ -74,6 +75,29 @@ describe('VersionControlController', () => {
       expect(
         versionControlService.saveDiff,
       ).toHaveBeenCalledWith(diffDTO);
+    });
+  });
+
+  describe('getAllSnapshots', () => {
+    it('should call versionControlService.getAllSnapshots', async () => {
+      const snapshotDTO = new SnapshotDTO();
+
+      jest
+        .spyOn(
+          versionControlService,
+          'getAllSnapshots',
+        )
+        .mockResolvedValue(null);
+
+      const result =
+        await controller.getAllSnapshots(
+          snapshotDTO,
+        );
+
+      expect(result).toBeNull();
+      expect(
+        versionControlService.getAllSnapshots,
+      ).toHaveBeenCalledWith(snapshotDTO);
     });
   });
 });
