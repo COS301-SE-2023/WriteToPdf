@@ -538,10 +538,10 @@ export class VersionControlService {
         diffIndicesToReset,
       );
 
-    console.log(
-      'Resetting the following snapshotIndices: ',
-      snapshotIDsToReset,
-    );
+    // console.log(
+    //   'Resetting the following snapshotIndices: ',
+    //   snapshotIDsToReset,
+    // );
 
     const snapshotIndices =
       await this.snapshotService.resetSnapshot(
