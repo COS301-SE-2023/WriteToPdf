@@ -17,6 +17,8 @@ import { DiffDTO } from '../diffs/dto/diffs.dto';
 import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 import { VersionRollbackDTO } from './dto/version_rollback.dto';
+import { VersionSetDTO } from './dto/version_set.dto';
+import { VersionHistoryDTO } from './dto/version_history.dto';
 
 describe('VersionControlService', () => {
   let service: VersionControlService;
@@ -701,6 +703,114 @@ describe('VersionControlService', () => {
       expect(result).toEqual(
         (s3Index - head + arr_len) % arr_len,
       );
+    });
+  });
+
+  describe('getIndexInS3', () => {
+    it('should get the index in s3', () => {
+      const logicalIndex = 1;
+      const arr_len = 3;
+      const head = 1;
+
+      const result = service.getIndexInS3(
+        logicalIndex,
+        arr_len,
+        head,
+      );
+
+      expect(result).toEqual(
+        (logicalIndex + head - arr_len) % arr_len,
+      );
+    });
+  });
+
+  describe('getLogicalOrder', () => {
+    it('should get the logical order', () => {
+      const arr = [1, 2, 3];
+      const head = 0;
+
+      const expectedArray = [1, 2, 3];
+
+      jest
+        .spyOn(service, 'getLogicalIndex')
+        .mockReturnValueOnce(0)
+        .mockReturnValueOnce(1)
+        .mockReturnValueOnce(2);
+
+      const result = service.getLogicalOrder(
+        arr,
+        head,
+      );
+
+      expect(result).toEqual(expectedArray);
+      expect(
+        service.getLogicalIndex,
+      ).toHaveBeenCalledWith(0, head, arr.length);
+    });
+  });
+
+  describe('pruneEmptySnapshots', () => {
+    it('should prune empty snapshots', () => {
+      const snapshots = [new SnapshotDTO()];
+
+      const result =
+        service.pruneEmptySnapshots(snapshots);
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('getHistorySet', () => {
+    it('should get the history set', async () => {
+      const diffDTO = new DiffDTO();
+      diffDTO.S3DiffIndex = 1;
+
+      const versionSetDTO = new VersionSetDTO();
+      versionSetDTO.DiffHistory = [diffDTO];
+      versionSetDTO.UserID = 0;
+      versionSetDTO.MarkdownID = 'test';
+
+      const previousSnapshotDTO =
+        new SnapshotDTO();
+
+      const s3DiffIndices = [1];
+
+      const expectedVersionHistoryDTO =
+        new VersionHistoryDTO();
+
+      expectedVersionHistoryDTO.DiffHistory = [
+        diffDTO,
+      ];
+      expectedVersionHistoryDTO.SnapshotHistory =
+        [previousSnapshotDTO];
+
+      jest
+        .spyOn(s3Service, 'getDiffSet')
+        .mockResolvedValueOnce([diffDTO]);
+
+      jest
+        .spyOn(service, 'getPreviousSnapshot')
+        .mockResolvedValueOnce(
+          previousSnapshotDTO,
+        );
+
+      const result = await service.getHistorySet(
+        versionSetDTO,
+      );
+
+      expect(result).toEqual(
+        expectedVersionHistoryDTO,
+      );
+      expect(
+        s3Service.getDiffSet,
+      ).toHaveBeenCalledWith(
+        s3DiffIndices,
+        versionSetDTO.UserID,
+        versionSetDTO.MarkdownID,
+      );
+      expect(
+        service.getPreviousSnapshot,
+      ).toHaveBeenCalledWith(versionSetDTO);
     });
   });
 });
