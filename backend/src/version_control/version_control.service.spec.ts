@@ -406,6 +406,71 @@ describe('VersionControlService', () => {
     });
   });
 
+  describe('getAllSnapshots', () => {
+    it('should get all snapshots', async () => {
+      const snapshotDTO = new SnapshotDTO();
+      snapshotDTO.MarkdownID = 'test';
+
+      const snapshotRange = [1];
+      const nextSnapshotID = 1;
+      const logicalOrder = [1];
+      const snapshots = [new SnapshotDTO()];
+
+      jest
+        .spyOn(Array, 'from')
+        .mockReturnValueOnce(snapshotRange);
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'getNextSnapshotIndex',
+        )
+        .mockResolvedValueOnce(nextSnapshotID);
+
+      jest
+        .spyOn(service, 'getLogicalOrder')
+        .mockReturnValue(logicalOrder);
+
+      jest
+        .spyOn(s3Service, 'retrieveAllSnapshots')
+        .mockResolvedValueOnce(snapshots);
+
+      jest
+        .spyOn(service, 'pruneEmptySnapshots')
+        .mockImplementationOnce(
+          (snapshots) => snapshots,
+        );
+
+      const result =
+        await service.getAllSnapshots(
+          snapshotDTO,
+        );
+
+      expect(result).toEqual(snapshots);
+      expect(
+        markdownFilesService.getNextSnapshotIndex,
+      ).toHaveBeenCalledWith(
+        snapshotDTO.MarkdownID,
+      );
+      expect(Array.from).toHaveBeenCalled();
+      expect(
+        service.getLogicalOrder,
+      ).toHaveBeenCalledWith(
+        snapshotRange,
+        nextSnapshotID,
+      );
+      expect(
+        s3Service.retrieveAllSnapshots,
+      ).toHaveBeenCalledWith(
+        logicalOrder,
+        snapshotDTO,
+      );
+      expect(
+        service.pruneEmptySnapshots,
+      ).toHaveBeenCalledWith(snapshots);
+    });
+  });
+
   describe('resetSubsequentDiffs', () => {
     it('should reset subsequent diffs', async () => {
       const markdownID = 'test';
