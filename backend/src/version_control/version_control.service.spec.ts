@@ -291,4 +291,50 @@ describe('VersionControlService', () => {
       );
     });
   });
+
+  describe('resetSubsequentSnapshots', () => {
+    it('should reset subsequent snapshots', async () => {
+      const markdownID = 'test';
+      const diffIndicesToReset = [1, 2, 3];
+      const snapshotIDsToReset = ['1', '2', '3'];
+      const snapshotIndicesToReset = [1, 2, 3];
+
+      jest
+        .spyOn(
+          diffsService,
+          'getSnapshotsToReset',
+        )
+        .mockResolvedValueOnce(
+          snapshotIDsToReset,
+        );
+
+      jest
+        .spyOn(snapshotService, 'resetSnapshot')
+        .mockResolvedValueOnce(
+          snapshotIndicesToReset,
+        );
+
+      const result =
+        await service.resetSubsequentSnapshots(
+          markdownID,
+          diffIndicesToReset,
+        );
+
+      expect(result).toEqual(
+        snapshotIndicesToReset,
+      );
+      expect(
+        diffsService.getSnapshotsToReset,
+      ).toHaveBeenCalledWith(
+        markdownID,
+        diffIndicesToReset,
+      );
+      expect(
+        snapshotService.resetSnapshot,
+      ).toHaveBeenCalledWith(
+        markdownID,
+        snapshotIDsToReset,
+      );
+    });
+  });
 });
