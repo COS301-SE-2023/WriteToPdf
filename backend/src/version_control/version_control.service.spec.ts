@@ -15,6 +15,7 @@ import { SnapshotService } from '../snapshots/snapshots.service';
 import { Snapshot } from '../snapshots/entities/snapshots.entity';
 import { DiffDTO } from '../diffs/dto/diffs.dto';
 import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
+import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
 
 describe('VersionControlService', () => {
   let service: VersionControlService;
@@ -71,10 +72,6 @@ describe('VersionControlService', () => {
     snapshotService = module.get<SnapshotService>(
       SnapshotService,
     );
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
   });
 
   describe('saveSnapshot', () => {
@@ -140,6 +137,53 @@ describe('VersionControlService', () => {
         );
 
       expect(response).toEqual([]);
+    });
+  });
+
+  describe('createDiff', () => {
+    it('should create a diff and save it on s3', async () => {
+      const diffDTO = new DiffDTO();
+      diffDTO.MarkdownID = 'test';
+      diffDTO.UserID = 1;
+      const nextDiffIndex = 1;
+
+      const createdMarkdownFileDTO =
+        new MarkdownFileDTO();
+      createdMarkdownFileDTO.MarkdownID =
+        diffDTO.MarkdownID;
+      createdMarkdownFileDTO.UserID =
+        diffDTO.UserID;
+      createdMarkdownFileDTO.NextDiffIndex =
+        nextDiffIndex;
+
+      jest
+        .spyOn(s3Service, 'saveDiff')
+        .mockResolvedValueOnce(null);
+
+      jest
+        .spyOn(
+          diffsService,
+          'createDiffWithoutSnapshotID',
+        )
+        .mockResolvedValueOnce(diffDTO as any);
+
+      const result = await service.createDiff(
+        diffDTO,
+        nextDiffIndex,
+      );
+
+      expect(result).toEqual(diffDTO);
+      expect(
+        diffsService.createDiffWithoutSnapshotID,
+      ).toHaveBeenCalledWith(
+        createdMarkdownFileDTO,
+      );
+      expect(
+        s3Service.saveDiff,
+      ).toHaveBeenCalledWith(
+        diffDTO,
+        nextDiffIndex,
+      );
     });
   });
 });
