@@ -141,6 +141,87 @@ describe('VersionControlService', () => {
     });
   });
 
+  describe('saveDiff', () => {
+    it('should save the diff if there is a next diff and next snapshot', async () => {
+      const diffDTO = new DiffDTO();
+      diffDTO.MarkdownID = 'test';
+
+      const saveDiffInfoDTO = {
+        nextDiffIndex: 1,
+        nextSnapshotIndex: 1,
+        totalNumDiffs: 2,
+        totalNumSnapshots: 2,
+      };
+
+      const nextDiff = new Diff();
+
+      const nextSnapshot = new Snapshot();
+      nextSnapshot.SnapshotID = 'test';
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'getSaveDiffInfo',
+        )
+        .mockResolvedValue(saveDiffInfoDTO);
+
+      jest
+        .spyOn(diffsService, 'getDiff')
+        .mockResolvedValue(nextDiff);
+
+      jest
+        .spyOn(snapshotService, 'getSnapshot')
+        .mockResolvedValue(nextSnapshot);
+
+      jest
+        .spyOn(service, 'createDiff')
+        .mockResolvedValue(null);
+
+      jest
+        .spyOn(snapshotService, 'createSnapshot')
+        .mockResolvedValue(nextSnapshot);
+
+      jest
+        .spyOn(service, 'saveDiffContent')
+        .mockResolvedValue(null);
+
+      jest
+        .spyOn(service, 'saveSnapshot')
+        .mockResolvedValue(null);
+
+      await service.saveDiff(diffDTO);
+
+      expect(
+        markdownFilesService.getSaveDiffInfo,
+      ).toHaveBeenCalledWith(diffDTO.MarkdownID);
+      expect(
+        diffsService.getDiff,
+      ).toHaveBeenCalledWith(
+        diffDTO,
+        saveDiffInfoDTO.nextDiffIndex,
+      );
+      expect(
+        snapshotService.getSnapshot,
+      ).toHaveBeenCalledWith(
+        diffDTO.MarkdownID,
+        saveDiffInfoDTO.nextSnapshotIndex,
+      );
+      expect(
+        diffsService.getDiff,
+      ).toHaveBeenCalledWith(
+        diffDTO,
+        saveDiffInfoDTO.nextDiffIndex,
+      );
+      expect(
+        service.saveDiffContent,
+      ).toHaveBeenCalledWith(
+        diffDTO,
+        saveDiffInfoDTO.nextDiffIndex,
+        nextSnapshot.SnapshotID,
+      );
+    });
+  });
+
   describe('createDiff', () => {
     it('should create a diff and save it on s3', async () => {
       const diffDTO = new DiffDTO();
