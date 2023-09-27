@@ -112,7 +112,8 @@ export class VersionControlController {
   @Post('rollback_version')
   @HttpCode(HttpStatus.OK)
   async rollbackVersion(
-    @Body() versionRollbackDTO: VersionRollbackDTO,
+    @Body()
+    versionRollbackDTO: VersionRollbackDTO,
   ) {
     return this.versionControlService.rollbackVersion(
       versionRollbackDTO,
