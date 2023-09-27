@@ -567,7 +567,7 @@ describe('VersionControlService', () => {
     });
   });
 
-  describe('buildREstoreVersionDTO', () => {
+  describe('buildRestoreVersionDTO', () => {
     it('should build the restore version dto', async () => {
       const versionRollbackDTO =
         new VersionRollbackDTO();
@@ -622,6 +622,84 @@ describe('VersionControlService', () => {
         markdownFilesService.getNextSnapshotIndex,
       ).toHaveBeenCalledWith(
         versionRollbackDTO.MarkdownID,
+      );
+    });
+  });
+
+  describe('convertSnapshotsToSnapshotDTOs', () => {
+    it('should convert snapshots to snapshot dtos', async () => {
+      const snapshot = new Snapshot();
+      snapshot.SnapshotID = 'test';
+      snapshot.UserID = 0;
+      snapshot.MarkdownID = 'test';
+      snapshot.S3SnapshotIndex = 1;
+      snapshot.LastModified = new Date();
+
+      const snapshotDTO = new SnapshotDTO();
+      snapshotDTO.SnapshotID =
+        snapshot.SnapshotID;
+      snapshotDTO.UserID = snapshot.UserID;
+      snapshotDTO.MarkdownID =
+        snapshot.MarkdownID;
+      snapshotDTO.S3SnapshotIndex =
+        snapshot.S3SnapshotIndex;
+      snapshotDTO.LastModified =
+        snapshot.LastModified;
+
+      const snapshots = [snapshot];
+
+      const result =
+        await service.convertSnapshotsToSnapshotDTOs(
+          snapshots,
+        );
+
+      expect(result).toEqual([snapshotDTO]);
+    });
+  });
+
+  describe('convertDiffsToDiffDTOs', () => {
+    it('should convert diffs to diff dtos', async () => {
+      const diff = new Diff();
+      diff.DiffID = 'test';
+      diff.UserID = 0;
+      diff.MarkdownID = 'test';
+      diff.S3DiffIndex = 1;
+      diff.SnapshotID = 'test';
+      diff.LastModified = new Date();
+
+      const diffDTO = new DiffDTO();
+      diffDTO.DiffID = diff.DiffID;
+      diffDTO.UserID = diff.UserID;
+      diffDTO.MarkdownID = diff.MarkdownID;
+      diffDTO.S3DiffIndex = diff.S3DiffIndex;
+      diffDTO.SnapshotID = diff.SnapshotID;
+      diffDTO.LastModified = diff.LastModified;
+
+      const diffs = [diff];
+
+      const result =
+        await service.convertDiffsToDiffDTOs(
+          diffs,
+        );
+
+      expect(result).toEqual([diffDTO]);
+    });
+  });
+
+  describe('getLogicalIndex', () => {
+    it('should get the logical index', async () => {
+      const s3Index = 1;
+      const head = 1;
+      const arr_len = 3;
+
+      const result = service.getLogicalIndex(
+        s3Index,
+        head,
+        arr_len,
+      );
+
+      expect(result).toEqual(
+        (s3Index - head + arr_len) % arr_len,
       );
     });
   });
