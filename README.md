@@ -11,7 +11,7 @@
 [![Build](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/build.yml)
 [![Test Backend](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-backend.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-backend.yml)
 [![Test Integration](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-integration.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-integration.yml)
-[![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml)  
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2023_WriteToPdf&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2023_WriteToPdf)  
 ![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf)
 [![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2023/WriteToPdf?color=blue)](https://github.com/COS301-SE-2023/WriteToPdf/issues?q=is%3Aissue+is%3Aclosed)
 <!-- [![Commits](https://img.shields.io/github/commit-activity/w/COS301-SE-2023/WriteToPdf)](https://github.com/COS301-SE-2023/WriteToPdf/issues) -->
@@ -30,6 +30,7 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 - [Demo 1](https://drive.google.com/drive/folders/1D8awdHGBDuI7PGQYF_jtX9iGq_9PWY3x?usp=sharing)
 - [Demo 2](https://drive.google.com/drive/folders/1QVIrOEi5PJAhG8DMwNrwjIcF7Gocu8LK?usp=sharing)
 - [Demo 3](https://drive.google.com/drive/folders/1cW53_1X3Y5Wp2fSbiyTv9ax8rGFM-JwM?usp=sharing)
+- [Demo 4](https://drive.google.com/drive/folders/1-VIEUnEXivpa1MBX3zZxIqFsuRqCtaOw?usp=sharing)
 
 ## Documentation
 ### Software requirements specification

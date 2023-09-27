@@ -46,6 +46,27 @@ export class VersionControlService {
         saveDiffInfoDTO.nextSnapshotIndex,
       );
 
+    console.log(
+      'nextDiffIndex: ',
+      saveDiffInfoDTO.nextDiffIndex,
+    );
+
+    if (
+      saveDiffInfoDTO.totalNumDiffs >=
+        parseInt(process.env.MAX_DIFFS) &&
+      saveDiffInfoDTO.nextDiffIndex %
+        parseInt(
+          process.env.DIFFS_PER_SNAPSHOT,
+        ) ===
+        0
+    ) {
+      console.log('resetting trailing diffs');
+      await this.diffService.resetTrailingDiffs(
+        saveDiffInfoDTO.nextDiffIndex,
+        diffDTO.MarkdownID,
+      );
+    }
+
     ///===----------------------------------------------------
     // 4. Create DB and S3 references if they do not yet exist
     // 5. Create diff references if nextDiff does not exist
@@ -538,10 +559,10 @@ export class VersionControlService {
         diffIndicesToReset,
       );
 
-    console.log(
-      'Resetting the following snapshotIndices: ',
-      snapshotIDsToReset,
-    );
+    // console.log(
+    //   'Resetting the following snapshotIndices: ',
+    //   snapshotIDsToReset,
+    // );
 
     const snapshotIndices =
       await this.snapshotService.resetSnapshot(

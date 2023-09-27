@@ -134,7 +134,11 @@ export class OcrPopupComponent implements OnInit {
 
   copyFormData(): void {
     this.clipboard.copy(this.paragraphText);
-    // console.log(retrievedAsset.ocrJSONResponse);
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Text Copied',
+      detail: 'OCR Text has been copied to the clipboard.'
+    });
   }
 
 

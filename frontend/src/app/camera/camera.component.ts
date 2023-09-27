@@ -22,6 +22,7 @@ export class CameraComponent {
   parentFolderId: string = '';
   path: string = '';
   isAsset: boolean = false;
+  isTable: boolean = false;
   captured: boolean = false;
   flipCamera: boolean = false;
   cameraAvailable: boolean = false;
@@ -159,6 +160,9 @@ export class CameraComponent {
     if (this.isAsset) {
       format = 'text';
     }
+    if (this.isTable) {
+      format = 'table';
+    }
     this.loading = true;
     await this.assetService
       .uploadImage(
@@ -292,7 +296,7 @@ export class CameraComponent {
   loadImageFailed() {
     // show message
   }
-  
+
   async cropImage(base64Image: string, left: number, top: number, right: number, bottom: number): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const image = new Image();
