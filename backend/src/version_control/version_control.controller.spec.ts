@@ -18,10 +18,14 @@ import { Diff } from '../diffs/entities/diffs.entity';
 import { MarkdownFile } from '../markdown_files/entities/markdown_file.entity';
 import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 import { VersionSetDTO } from './dto/version_set.dto';
+import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
+import { VersionHistoryDTO } from './dto/version_history.dto';
 
 describe('VersionControlController', () => {
   let controller: VersionControlController;
   let versionControlService: VersionControlService;
+  let snapshotService: SnapshotService;
+  let diffsService: DiffsService;
 
   beforeEach(async () => {
     const module: TestingModule =
@@ -59,6 +63,13 @@ describe('VersionControlController', () => {
       module.get<VersionControlService>(
         VersionControlService,
       );
+
+    snapshotService = module.get<SnapshotService>(
+      SnapshotService,
+    );
+
+    diffsService =
+      module.get<DiffsService>(DiffsService);
 
     module.close();
   });
@@ -122,6 +133,107 @@ describe('VersionControlController', () => {
       expect(
         versionControlService.getHistorySet,
       ).toHaveBeenCalledWith(versionSetDTO);
+    });
+  });
+
+  describe('getSnapshot', () => {
+    it('should call versionControlService.getSnapshot', async () => {
+      const snapshotDTO = new SnapshotDTO();
+
+      jest
+        .spyOn(
+          versionControlService,
+          'getSnapshot',
+        )
+        .mockResolvedValue(null);
+
+      const result = await controller.getSnapshot(
+        snapshotDTO,
+      );
+
+      expect(result).toBeNull();
+      expect(
+        versionControlService.getSnapshot,
+      ).toHaveBeenCalledWith(snapshotDTO);
+    });
+  });
+
+  describe('loadHistory', () => {
+    it('should build a versionHistoryDTO object and return it', async () => {
+      const markdownFileDTO =
+        new MarkdownFileDTO();
+
+      const returnedSnapshots = [
+        new Snapshot(),
+        new Snapshot(),
+      ];
+
+      const returnedSnapshotDTOs = [
+        new SnapshotDTO(),
+        new SnapshotDTO(),
+      ];
+
+      const returnedDiffs = [
+        new Diff(),
+        new Diff(),
+      ];
+
+      const returnedDiffDTOs = [
+        new DiffDTO(),
+        new DiffDTO(),
+      ];
+
+      const expectedVersionHistoryDTO =
+        new VersionHistoryDTO();
+      expectedVersionHistoryDTO.SnapshotHistory =
+        returnedSnapshotDTOs;
+      expectedVersionHistoryDTO.DiffHistory =
+        returnedDiffDTOs;
+
+      jest
+        .spyOn(snapshotService, 'getAllSnapshots')
+        .mockResolvedValue(returnedSnapshots);
+
+      jest
+        .spyOn(
+          versionControlService,
+          'convertSnapshotsToSnapshotDTOs',
+        )
+        .mockResolvedValue(returnedSnapshotDTOs);
+
+      jest
+        .spyOn(diffsService, 'getAllDiffs')
+        .mockResolvedValue(returnedDiffs);
+
+      jest
+        .spyOn(
+          versionControlService,
+          'convertDiffsToDiffDTOs',
+        )
+        .mockResolvedValue(returnedDiffDTOs);
+
+      const result = await controller.loadHistory(
+        markdownFileDTO,
+      );
+
+      expect(result).toEqual(
+        expectedVersionHistoryDTO,
+      );
+
+      expect(
+        snapshotService.getAllSnapshots,
+      ).toHaveBeenCalledWith(markdownFileDTO);
+      expect(
+        versionControlService.convertSnapshotsToSnapshotDTOs,
+      ).toHaveBeenCalledWith(returnedSnapshots);
+      expect(
+        diffsService.getAllDiffs,
+      ).toHaveBeenCalledWith(
+        markdownFileDTO.MarkdownID,
+      );
+      expect(
+        versionControlService.convertDiffsToDiffDTOs,
+      ).toHaveBeenCalledWith(returnedDiffs);
     });
   });
 });
