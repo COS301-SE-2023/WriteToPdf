@@ -265,4 +265,30 @@ describe('VersionControlService', () => {
       );
     });
   });
+
+  describe('resetSubsequentDiffs', () => {
+    it('should reset subsequent diffs', async () => {
+      const markdownID = 'test';
+      const diffIndicesToReset = [1, 2, 3];
+
+      jest
+        .spyOn(
+          diffsService,
+          'updateDiffsAfterRestore',
+        )
+        .mockResolvedValueOnce(null);
+
+      await service.resetSubsequentDiffs(
+        markdownID,
+        diffIndicesToReset,
+      );
+
+      expect(
+        diffsService.updateDiffsAfterRestore,
+      ).toHaveBeenCalledWith(
+        markdownID,
+        diffIndicesToReset,
+      );
+    });
+  });
 });
