@@ -16,6 +16,7 @@ import { Snapshot } from '../snapshots/entities/snapshots.entity';
 import { DiffDTO } from '../diffs/dto/diffs.dto';
 import { SnapshotDTO } from '../snapshots/dto/snapshot.dto';
 import { MarkdownFileDTO } from '../markdown_files/dto/markdown_file.dto';
+import { VersionRollbackDTO } from './dto/version_rollback.dto';
 
 describe('VersionControlService', () => {
   let service: VersionControlService;
@@ -350,7 +351,7 @@ describe('VersionControlService', () => {
       process.env.MAX_DIFFS = '3';
       try {
         const result =
-          await service.getDiffIndicesToReset(
+          service.getDiffIndicesToReset(
             nextDiffIndex,
             restorationDIffIndex,
           );
@@ -359,6 +360,65 @@ describe('VersionControlService', () => {
       } finally {
         process.env.MAX_DIFFS = originalMaxDiffs;
       }
+    });
+  });
+
+  describe('buildREstoreVersionDTO', () => {
+    it('should build the restore version dto', async () => {
+      const versionRollbackDTO =
+        new VersionRollbackDTO();
+      versionRollbackDTO.MarkdownID = 'test';
+      versionRollbackDTO.UserID = 0;
+      versionRollbackDTO.Content = 'test';
+
+      const nextDiffIndex = 1;
+      const nextSnapshotIndex = 2;
+
+      const expectedMarkdownFileDTO =
+        new MarkdownFileDTO();
+      expectedMarkdownFileDTO.MarkdownID =
+        versionRollbackDTO.MarkdownID;
+      expectedMarkdownFileDTO.UserID =
+        versionRollbackDTO.UserID;
+      expectedMarkdownFileDTO.Content =
+        versionRollbackDTO.Content;
+      expectedMarkdownFileDTO.NextDiffIndex =
+        nextDiffIndex;
+      expectedMarkdownFileDTO.NextSnapshotIndex =
+        nextSnapshotIndex;
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'getNextDiffIndex',
+        )
+        .mockResolvedValue(nextDiffIndex);
+
+      jest
+        .spyOn(
+          markdownFilesService,
+          'getNextSnapshotIndex',
+        )
+        .mockResolvedValue(nextSnapshotIndex);
+
+      const result =
+        await service.buildRestoreVersionDTO(
+          versionRollbackDTO,
+        );
+
+      expect(result).toEqual(
+        expectedMarkdownFileDTO,
+      );
+      expect(
+        markdownFilesService.getNextDiffIndex,
+      ).toHaveBeenCalledWith(
+        versionRollbackDTO.MarkdownID,
+      );
+      expect(
+        markdownFilesService.getNextSnapshotIndex,
+      ).toHaveBeenCalledWith(
+        versionRollbackDTO.MarkdownID,
+      );
     });
   });
 });
