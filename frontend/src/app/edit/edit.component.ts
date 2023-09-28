@@ -205,6 +205,7 @@ export class EditComponent implements AfterViewInit, OnInit {
               summary: 'Error',
               detail: 'Version not copied',
             });
+            this.disableReadOnly();
             this.loading = false;
 
         },
