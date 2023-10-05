@@ -195,9 +195,20 @@ export class UsersService {
   async login(
     loginUserDTO: UserDTO,
   ): Promise<any> {
-    const user = await this.findOneByEmail(
-      loginUserDTO.Email,
-    );
+    let user;
+    try {
+      user = await this.findOneByEmail(
+        loginUserDTO.Email,
+      );
+    } catch (e) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          error: 'Invalid credentials',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
     if (
       user?.Password !==
       this.getPepperedPassword(
