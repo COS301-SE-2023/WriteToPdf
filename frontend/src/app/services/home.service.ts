@@ -342,15 +342,15 @@ export class NodeService {
 
   getUniqueName(name: string, path: string | undefined, type: string): string {
     let newName = name;
-    let i = 0;
+    let i = 1;
     if (type === 'folder') {
       while (this.checkIfFolderExists(newName, path)) {
-        newName = name + '(' + i + ')';
+        newName = name + ' (' + i + ')';
         i++;
       }
     } else {
       while (this.checkIfFileExists(newName, path)) {
-        newName = name + '(' + i + ')';
+        newName = name + ' (' + i + ')';
         i++;
       }
     }
