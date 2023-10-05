@@ -83,7 +83,7 @@ describe('UserController (integration)', () => {
         'Invalid credentials',
       );
       expect(response.status).toBe(
-        HttpStatus.NOT_FOUND,
+        HttpStatus.UNAUTHORIZED,
       );
     });
 
