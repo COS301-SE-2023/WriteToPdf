@@ -153,7 +153,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         command: () => (this.createNewFolderDialogVisible = true),
       },
       {
-        label: 'Create New File',
+        label: 'Create New Document',
         icon: 'pi pi-file',
         command: () => (this.createNewDocumentDialogVisible = true),
       },

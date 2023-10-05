@@ -123,7 +123,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
-      header: 'Upload Files',
+      header: 'Upload File',
       showHeader: true,
       closable: true,
       closeOnEscape: true,
