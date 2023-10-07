@@ -2,7 +2,7 @@ import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { AssetService } from '../services/asset.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { ImageCroppedEvent, LoadedImage } from 'ngx-image-cropper';
+import { CropperPosition, ImageCroppedEvent, LoadedImage } from 'ngx-image-cropper';
 import { DomSanitizer } from '@angular/platform-browser';
 import { doc } from 'prettier';
 
@@ -32,6 +32,12 @@ export class CameraComponent {
   loading: boolean = false;
 
   imageChangedEvent: any = '';
+  cropperSettings: CropperPosition = {
+    x1: 0,
+    y1: 0,
+    x2: 0,
+    y2: 0,
+  };
 
   croppedImage: any = '';
 
@@ -261,10 +267,14 @@ export class CameraComponent {
 
 
   async applyFilters() {
+    let c = JSON.parse(JSON.stringify(this.cropperSettings));
     const contrastImage = await this.adjustBrightness(this.originalImage);
     const brightnessImage = await this.adjustContrast(contrastImage);
     this.sysImage = brightnessImage;
     this.imageChangedEvent = brightnessImage;
+    setTimeout(() => {
+    this.cropperSettings = c;
+  },50);
   }
 
   clamp(value: number, min = 0, max = 255): number {
@@ -284,8 +294,6 @@ export class CameraComponent {
   async imageCropped(event: ImageCroppedEvent) {
     console.log(event);
     this.croppedImage = await this.cropImage(this.sysImage, event.imagePosition.x1, event.imagePosition.y1, event.imagePosition.x2, event.imagePosition.y2);
-    console.log(this.sysImage);
-    console.log(this.croppedImage);
   }
   imageLoaded(image: LoadedImage) {
     // show cropper
