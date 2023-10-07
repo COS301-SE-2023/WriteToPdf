@@ -2,6 +2,10 @@
 <div class="header">
     <div class="logoWrapper">
         <img class = "logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="">
+        <div style="display:grid;margin:auto;">
+            <p-button label="Login" [style]="{maxWidth:'100px',width:'10svw',marginBottom:'20px'}" (click)="navigateToLogin()"></p-button>
+            <p-button label="Sign Up" [style]="{maxWidth:'100px',width:'10svw',marginTop:'20px'}" (click)="navigateToSignup()"></p-button>
+        </div>
     </div>
     <div class="navItemWrapper" (click)="setContent(1)" [style.backgroundImage]="'url(assets/MockData/fileMan.jpg)'">
         <p>High Speed File Management</p>
@@ -25,4 +29,9 @@
     <div class="contentColumn">
         <img src="assets/MockData/bg4.jpg" alt="" class="contentImg img3">
     </div>
+</div>
+
+<div class="loginWrapper">
+    <p-button label="Login" [style]="{minWidth:'100px',width:'10svw',marginBottom:'5px'}" (click)="navigateToLogin()"></p-button>
+    <p-button label="Sign Up" [style]="{minWidth:'100px',width:'10svw',marginTop:'5px'}" (click)="navigateToSignup()"></p-button>
 </div>

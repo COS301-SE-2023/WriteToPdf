@@ -1,5 +1,6 @@
 .logo {
-    width: 100px;
+    width: 10svw;
+    max-width: 100px;
     margin: auto;
 }
 
@@ -15,11 +16,37 @@
     display: flex;
 }
 
+.loginWrapper {
+    display: none;
+}
+
+@media only screen and (max-width: 900px) {
+    .header {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .logoWrapper {
+        display: none;
+    }
+
+    .loginWrapper {
+        position: absolute;
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        bottom: 25px;
+        right: 25px;
+        border-radius: 5px;
+        padding:5px;
+        background: #e0e0e077;
+    }
+}
+
 .navItemWrapper {
     transition: 0.3s;
     cursor: pointer;
 
-    background-size: 100% auto; 
+    background-size: 100% auto;
     background-position: center center;
 }
 
