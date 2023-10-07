@@ -1,4 +1,5 @@
 import { Component, ElementRef } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-landing-page',
@@ -7,7 +8,7 @@ import { Component, ElementRef } from '@angular/core';
 })
 export class LandingPageComponent {
 
-  constructor(private elementRef: ElementRef) { }
+  constructor(private elementRef: ElementRef, private router: Router) { }
 
   ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
@@ -27,5 +28,13 @@ export class LandingPageComponent {
     } else if (contentNumber == 3) {
       content.style.gridTemplateColumns = "1fr 1fr 5fr";
     } 
+  }
+
+  navigateToSignup(): void {
+    this.router.navigate(['/signup']).then(() => window.location.reload());
+  }
+
+  navigateToLogin(): void {
+    this.router.navigate(['/login']).then(() => window.location.reload());
   }
 }
