@@ -123,7 +123,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
-      header: 'Upload Files',
+      header: 'Upload File',
       showHeader: true,
       closable: true,
       closeOnEscape: true,
@@ -186,7 +186,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         icon: 'pi pi-copy',
         command: async () => {
           this.loading = true;
-          if(await this.fileService.createDocument(this.editService.getName()+'(copy)', this.editService.getPath(), this.editService.getParentFolderID()))
+          if(await this.fileService.createDocument(this.editService.getName()+' (copy)', this.editService.getPath(), this.editService.getParentFolderID()))
           { 
             await this.fileService.saveDocument(this.currentContextMenuObject.Content, this.editService.getMarkdownID(), this.editService.getPath(), this.editService.getSafeLock());
             this.messageService.add({

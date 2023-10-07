@@ -463,6 +463,8 @@ export class FileService {
     .table {display: table;margin: 0.9em auto;}
     </style></head>` + content;
 
+    content = this.refactorHtmlForExport(content);
+
     let blob: Blob;
     let fileURL: string;
     let link: HTMLAnchorElement;
@@ -788,5 +790,26 @@ export class FileService {
       'Bearer ' + this.userService.getAuthToken()
     );
     return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+  refactorHtmlForExport(content: string): string {
+    // Create a temporary container element to parse the HTML string
+    const container = document.createElement('div');
+    container.innerHTML = content;
+  
+    // Find all <figure> elements within the container
+    const figureElements = container.querySelectorAll('figure');
+  
+    // Loop through each <figure> element and apply its width to the nested <img> element
+    figureElements.forEach((figureElement) => {
+      const figureStyle = figureElement.getAttribute('style');
+      const imgElement = figureElement.querySelector('img');
+  
+      if (imgElement && figureStyle) {
+        imgElement.style.width = figureStyle.match(/width:\s*(\d+px)/)?.[1] || '';
+      }
+    });
+
+    return container.innerHTML;
   }
 }
