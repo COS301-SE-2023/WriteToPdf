@@ -1,0 +1,28 @@
+
+<div class="header">
+    <div class="logoWrapper">
+        <img class = "logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="">
+    </div>
+    <div class="navItemWrapper" (click)="setContent(1)" [style.backgroundImage]="'url(assets/MockData/fileMan.jpg)'">
+        <p>High Speed File Management</p>
+    </div>
+    <div class="navItemWrapper" (click)="setContent(2)" [style.backgroundImage]="'url(assets/MockData/download.jpg)'">
+        <p>Intuitive Document Editing</p>
+    </div>
+    <div class="navItemWrapper" (click)="setContent(3)" [style.backgroundImage]="'url(assets/MockData/handWritten.jpg)'">
+        <p>Accurate Handwritten text conversion</p>
+    </div>
+
+</div>
+
+<div class="content" id="content">
+    <div class="contentColumn">
+        <img src="assets/MockData/bg1.jpg" alt="" class="contentImg img1">
+    </div>
+    <div class="contentColumn">
+        <img src="assets/MockData/bg2.jpg" alt="" class="contentImg img2">
+    </div>
+    <div class="contentColumn">
+        <img src="assets/MockData/bg4.jpg" alt="" class="contentImg img3">
+    </div>
+</div>
