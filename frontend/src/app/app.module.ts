@@ -57,6 +57,7 @@ import { environment } from 'src/environments/environment';
 import { TableModule } from 'primeng/table';
 import { NgOptimizedImage } from "@angular/common";
 import { AuthInterceptor } from './auth.interceptor';
+import { LandingPageComponent } from './landing-page/landing-page.component';
 
 export function tokenGetter() {
   return localStorage.getItem('authToken');
@@ -71,7 +72,8 @@ export function tokenGetter() {
     FileUploadPopupComponent,
     ClickAtCoordinateDirective,
     ImageUploadPopupComponent,
-    OcrPopupComponent
+    OcrPopupComponent,
+    LandingPageComponent
   ],
   imports: [
     TableModule,
