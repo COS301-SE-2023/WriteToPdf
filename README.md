@@ -21,44 +21,6 @@
 
 <div align="center"><img src="https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/c151ddb6-fc79-4366-87ea-f91a033dfe10" /></div>
 
-
-## Description
-
-WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritten notes into structured documents that can be edited and shared with others.
-
-## Demos
-- [Demo 1](https://drive.google.com/drive/folders/1D8awdHGBDuI7PGQYF_jtX9iGq_9PWY3x?usp=sharing)
-- [Demo 2](https://drive.google.com/drive/folders/1QVIrOEi5PJAhG8DMwNrwjIcF7Gocu8LK?usp=sharing)
-- [Demo 3](https://drive.google.com/drive/folders/1cW53_1X3Y5Wp2fSbiyTv9ax8rGFM-JwM?usp=sharing)
-- [Demo 4](https://drive.google.com/drive/folders/1-VIEUnEXivpa1MBX3zZxIqFsuRqCtaOw?usp=sharing)
-
-## Documentation
-### Software requirements specification
-- [SRS v1](https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing)
-- [SRS v2](https://docs.google.com/document/d/196IHwe8rBytZlJOIvh8gGMJUIhs1joQ91NA5TIrqbV4/edit?usp=sharing)
-- [SRS v3](https://docs.google.com/document/d/1TKv0xJzYFy35HWXMa736Qu16aRPZn0SIqjJhXzTakWA/edit?usp=sharing)
-- [SRS v4](https://docs.google.com/document/d/1ffNz8lR5174rZGvfkqQwVSL6W1XFLB4NAVX3sdUM6pk/edit?usp=sharing)
-
-### Architecture
-- [Architecture v1](https://docs.google.com/document/d/1skoEPk1VvtO8P9fyWIVFyUuf0ssU1aI8G-wrYYNbeyg/edit?usp=sharing)
-- [Architecture v2](https://docs.google.com/document/d/1FTGkhilcBonjeJdZc6e2ykf3x_l8cgZlwjZvC8O_KZ8/edit?usp=sharing)
-- [Architecture v3](https://docs.google.com/document/d/1vsMHJwqzcz90eAQDmRtiRptpSUpqpPzTstwP2HO-iX4/edit?usp=sharing)
-
-### User Manual
-- [User manual v1](https://docs.google.com/document/d/1zUkgP6SMe9ti3cEWSjjO4yTOUCb1NZnV1_J4SeadA7A/edit?usp=sharing)
-- [User manual v2](https://docs.google.com/document/d/1zs5NqddSAby1zNL-tTCPOdJPDTYQJnAWIyChKixjNN4/edit?usp=sharing)
-- [User manual v3](https://docs.google.com/document/d/12Uag_t3BlGlAL3nD44a2yeA2PvYsky7Kt2yfeQ_1Zkc/edit?usp=sharing)
-
-### Technical installation document
-- [Technical installation v1](https://docs.google.com/document/d/1HG9QVSEh2NsHbrRTlXPBjiq3keQMapmmiDbTFK07tNU/edit?usp=sharing)
-
-### Coding standards
-
-- [Coding standards v1](https://docs.google.com/document/d/1Cr68PKEo6_hPQoYYXzmPtlQXInFmrAkXNnmFUIf08tE/edit?usp=sharing)
-
-### Member contributions
-- [Member contributions](https://docs.google.com/document/d/14n7aEG_Lwh3dXSq6ltJ8XE_rzAREMGsH-3B-crGn2fM/edit?usp=sharing)
-
 ## Tech Stack
 
 <a href="https://angular.io">
@@ -82,11 +44,49 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
   <img alt="MARIADB" src="https://img.shields.io/badge/mariadb-142958?style=for-the-badge&logo=mariadb&logoColor=white" />
 </a>
 
+## Description
+
+WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritten notes into structured documents that can be edited and shared with others.
+
+<!-- ## Demos
+- [Demo 1](https://drive.google.com/drive/folders/1D8awdHGBDuI7PGQYF_jtX9iGq_9PWY3x?usp=sharing)
+- [Demo 2](https://drive.google.com/drive/folders/1QVIrOEi5PJAhG8DMwNrwjIcF7Gocu8LK?usp=sharing)
+- [Demo 3](https://drive.google.com/drive/folders/1cW53_1X3Y5Wp2fSbiyTv9ax8rGFM-JwM?usp=sharing)
+- [Demo 4](https://drive.google.com/drive/folders/1-VIEUnEXivpa1MBX3zZxIqFsuRqCtaOw?usp=sharing) -->
+
+## Documentation
+### Software requirements specification
+- [SRS v1](https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing)
+- [SRS v2](https://docs.google.com/document/d/196IHwe8rBytZlJOIvh8gGMJUIhs1joQ91NA5TIrqbV4/edit?usp=sharing)
+- [SRS v3](https://docs.google.com/document/d/1TKv0xJzYFy35HWXMa736Qu16aRPZn0SIqjJhXzTakWA/edit?usp=sharing)
+- [SRS v4](https://docs.google.com/document/d/1ffNz8lR5174rZGvfkqQwVSL6W1XFLB4NAVX3sdUM6pk/edit?usp=sharing)
+
+### Coding standards
+- [Coding standards v1](https://docs.google.com/document/d/1Cr68PKEo6_hPQoYYXzmPtlQXInFmrAkXNnmFUIf08tE/edit?usp=sharing)
+
+### Testing document
+- Placeholder
+
 ## Organisation & Management
 We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issues</a> and <a href="https://github.com/COS301-SE-2023/WriteToPdf/projects?query=is%3Aopen">Github Projects</a> to organise our team, with different members being assigned to specific tasks to ensure effective use of each member’s time. 
 
+### User Manual
+- [User manual v1](https://docs.google.com/document/d/1zUkgP6SMe9ti3cEWSjjO4yTOUCb1NZnV1_J4SeadA7A/edit?usp=sharing)
+- [User manual v2](https://docs.google.com/document/d/1zs5NqddSAby1zNL-tTCPOdJPDTYQJnAWIyChKixjNN4/edit?usp=sharing)
+- [User manual v3](https://docs.google.com/document/d/12Uag_t3BlGlAL3nD44a2yeA2PvYsky7Kt2yfeQ_1Zkc/edit?usp=sharing)
 
-## Branching strategy
+<!-- ### Architecture
+- [Architecture v1](https://docs.google.com/document/d/1skoEPk1VvtO8P9fyWIVFyUuf0ssU1aI8G-wrYYNbeyg/edit?usp=sharing)
+- [Architecture v2](https://docs.google.com/document/d/1FTGkhilcBonjeJdZc6e2ykf3x_l8cgZlwjZvC8O_KZ8/edit?usp=sharing)
+- [Architecture v3](https://docs.google.com/document/d/1vsMHJwqzcz90eAQDmRtiRptpSUpqpPzTstwP2HO-iX4/edit?usp=sharing)
+
+### Technical installation document
+- [Technical installation v1](https://docs.google.com/document/d/1HG9QVSEh2NsHbrRTlXPBjiq3keQMapmmiDbTFK07tNU/edit?usp=sharing) -->
+
+<!-- ### Member contributions
+- [Member contributions](https://docs.google.com/document/d/14n7aEG_Lwh3dXSq6ltJ8XE_rzAREMGsH-3B-crGn2fM/edit?usp=sharing) -->
+
+<!-- ## Branching strategy
 The main branch is the live/deployed branch.
 Test branch is used to run all tests. These two branches are the stable branches.
 The codecov branch is used to merge completed features into and is the branch where tests get fixed before being pushed to the Test branch.
@@ -110,7 +110,7 @@ The `backend` folder contains the server-side code responsible for handling data
 
 To address the need for infrastructure as code, the `infrastructure` folder houses all the necessary configurations and scripts for provisioning and managing the underlying infrastructure components. This allows for automated and reproducible deployment and scaling of the application.
 
-By structuring the repository in this manner, we maintain a clear separation of concerns, enabling efficient collaboration and ease of maintenance across different parts of the project.
+By structuring the repository in this manner, we maintain a clear separation of concerns, enabling efficient collaboration and ease of maintenance across different parts of the project. -->
 
 ## Team Members
 <details>
@@ -214,8 +214,16 @@ Julian has experience with design patterns and data structures giving him a good
  
 </details>
 
-<!-- Badge links & images -->
-[issues-shield]: https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf.svg?style=for-the-badge
-[issues-url]: https://github.com/COS301-SE-2023/WriteToPdf/issues
-[stars-shield]: https://img.shields.io/github/stars/COS301-SE-2023/WriteToPdf.svg?style=for-the-badge
-[stars-url]: ttps://github.com/COS301-SE-2023/WriteToPdf/stargazers
+<!-- Slideshow summary -->
+
+<!-- App ad -->
+
+<!-- Research done -->
+
+<!-- Deployment info -->
+
+<!-- Tutorial of system? -->
+
+<!-- Instructions to download & install app on mobile -->
+
+<!-- Instructions how to contribute to repo -->
