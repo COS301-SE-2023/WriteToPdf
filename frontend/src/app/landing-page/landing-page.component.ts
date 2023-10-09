@@ -21,12 +21,15 @@ export class LandingPageComponent {
     console.log(contentNumber);
     let content = document.getElementById('content');
     if(!content) return;
-    if (contentNumber == 1) {
-      content.style.gridTemplateColumns = "5fr 1fr 1fr";
+    if (contentNumber == 0) {
+      content.style.gridTemplateColumns = "5fr 1fr 1fr 1fr";
+    } 
+    else if (contentNumber == 1) {
+      content.style.gridTemplateColumns = "1fr 5fr 1fr 1fr";
     } else if (contentNumber == 2) {
-      content.style.gridTemplateColumns = "1fr 5fr 1fr";
+      content.style.gridTemplateColumns = "1fr 1fr 5fr 1fr";
     } else if (contentNumber == 3) {
-      content.style.gridTemplateColumns = "1fr 1fr 5fr";
+      content.style.gridTemplateColumns = "1fr 1fr 1fr 5fr";
     } 
   }
 
