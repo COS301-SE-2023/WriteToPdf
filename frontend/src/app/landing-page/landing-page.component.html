@@ -7,13 +7,13 @@
             <p-button label="Sign Up" [style]="{minWidth:'100px',width:'10svw',marginTop:'20px',background:'#ffffff', color:'#000000',border:'black solid 1px'}" (click)="navigateToSignup()"></p-button>
         </div>
     </div>
-    <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/fileMan.jpg)'">
+    <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/fileMan.jpg)'" (click)="scrollToSection('fileSection')">
         <p>High Speed File Management</p>
     </div>
-    <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/download.jpg)'">
+    <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/download.jpg)'" (click)="scrollToSection('editSection')">
         <p>Intuitive Document Editing</p>
     </div>
-    <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/handWritten.jpg)'">
+    <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/handWritten.jpg)'" (click)="scrollToSection('ocrSection')">
         <p>Accurate Handwritten text conversion</p>
     </div>
 
@@ -27,26 +27,31 @@
     <img class = "mainLogo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="">
     <h4 class="centeredText">A system by</h4>
     <img class = "groupLogo" src="assets/Logos/clear_Logo.png" alt="">    
+    <p class="centeredText" style="margin-bottom:0; margin-top: 40px;">Read More</p>
+    <h1 style="font-weight: bolder;font-size: 78px; margin-top: 0;" class="centeredText">&#11015;</h1>
 </div>
 
 <div class="spacing"></div>
 
-<div class="fileDisplay">
+<div class="fileDisplay" id="fileSection">
     <h1 class="centeredText">High Speed File Management</h1>
     <hr class="line"/>
     <p class="centeredText">WriteToPDF is a high speed file management system that allows you to upload, download, and edit your files with ease.</p>
+    <div style="height: 700px"></div>
 </div>
 
-<div class="fileDisplay">
+<div class="fileDisplay" id="editSection">
     <h1 class="centeredText">Intuitive Document Editing</h1>
     <hr class="line"/>
     <p class="centeredText">WriteToPDF allows you to edit your documents with ease. You can edit your documents with our intuitive editor, or you can upload your own documents and edit them.</p>
+    <div style="height: 700px"></div>
 </div>
 
-<div class="fileDisplay">
+<div class="fileDisplay" id="ocrSection">
     <h1 class="centeredText">Accurate Handwritten Text Conversion</h1>
     <hr class="line"/>
     <p class="centeredText">WriteToPDF allows you to convert your handwritten text to digital text with ease. You can upload your handwritten documents and convert them to digital text.</p>
+    <div style="height: 700px"></div>
 </div>
 
 <div class="spacing"></div>

@@ -24,4 +24,24 @@ export class LandingPageComponent {
   navigateToLogin(): void {
     this.router.navigate(['/login']).then(() => window.location.reload());
   }
+
+  // scrollToSection(section: string): void {
+  //   const element = document.querySelector('#' + section);
+  //   element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // }
+
+  scrollToSection(section: string): void {
+    var targetSection = document.getElementById(section);
+    var offset = 200; // Adjust this value as needed
+
+    if (targetSection) {
+      const top = targetSection.getBoundingClientRect().top + window.scrollY;
+
+      window.scrollTo({
+        top: top - offset,
+        behavior: 'smooth'
+      });
+    }
+  }
+
 }
