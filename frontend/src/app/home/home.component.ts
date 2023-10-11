@@ -355,6 +355,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     // Below is the function that initially populates the fileTree
 
     await this.nodeService.getFilesAndFolders().then(() => {
+
       const hist = localStorage.getItem('folderIDHistory');
       const pos = localStorage.getItem('folderIDHistoryPosition');
 
@@ -368,6 +369,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
 
       const data = this.nodeService.getTreeTableNodesData();
+      console.log(data);
       this.filesDirectoryTree = this.generateTreeNodes(data);
 
       // Below is the function that populates the treeTable
