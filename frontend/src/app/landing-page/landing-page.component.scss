@@ -5,11 +5,27 @@
 }
 
 .header {
+    position: fixed;
     width: 100%;
     height: 150px;
-    background: #e0e0e0;
+    background: #f0f6f7;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.headerPosition {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    width:100%;
+    height: 150px;
+    z-index: -1;
+}
+
+.spacing {
+    width: 100%;
+    height: 25svh;
 }
 
 .logoWrapper {
@@ -22,7 +38,7 @@
 
 @media only screen and (max-width: 900px) {
     .header {
-        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
     }
 
     .logoWrapper {
@@ -30,7 +46,7 @@
     }
 
     .loginWrapper {
-        position: absolute;
+        position: fixed;
         display: grid;
         justify-content: center;
         align-items: center;
@@ -67,31 +83,36 @@
     margin-top: 60px;
 }
 
-.content {
-    transition: 0.5;
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    transition: grid-template-columns 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.contentColumn {
+.mainLogoWrapper {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    transition: grid-template-columns 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-
 }
 
-.contentImg {
+.centeredText {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     height: 100%;
-    width: auto;
-    display: block;
-    transition: grid-template-columns 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    padding: 0 15svw;
+    margin: 10px;
+}
+
+.mainLogo {
+    width: 15svw;
+    min-width: 100px;
+    max-width: 200px;
+    margin:auto;
+}
+.groupLogo {
+    width: 15svw;
+    min-width: 100px;
+    max-width: 200px;
+    margin:auto;
+}
+
+.line {
+    width: 80%;
+    height: 1px;
+    background: #e0e0e0;
 }

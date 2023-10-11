@@ -3,41 +3,56 @@
     <div class="logoWrapper">
         <img class = "logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="">
         <div style="display:grid;margin:auto;">
-            <p-button label="Login" [style]="{maxWidth:'100px',width:'10svw',marginBottom:'20px'}" (click)="navigateToLogin()"></p-button>
-            <p-button label="Sign Up" [style]="{maxWidth:'100px',width:'10svw',marginTop:'20px'}" (click)="navigateToSignup()"></p-button>
+            <p-button label="Login" [style]="{minWidth:'100px',width:'10svw',marginBottom:'20px',background:'#ffffff', color:'#000000',border:'black solid 1px'}" (click)="navigateToLogin()"></p-button>
+            <p-button label="Sign Up" [style]="{minWidth:'100px',width:'10svw',marginTop:'20px',background:'#ffffff', color:'#000000',border:'black solid 1px'}" (click)="navigateToSignup()"></p-button>
         </div>
     </div>
-    <div class="navItemWrapper" (click)="setContent(0)" [style.backgroundImage]="'url(assets/MockData/home.png)'">
-        <p>Home</p>
-    </div>
-    <div class="navItemWrapper" (click)="setContent(1)" [style.backgroundImage]="'url(assets/MockData/fileMan.jpg)'">
+    <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/fileMan.jpg)'">
         <p>High Speed File Management</p>
     </div>
-    <div class="navItemWrapper" (click)="setContent(2)" [style.backgroundImage]="'url(assets/MockData/download.jpg)'">
+    <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/download.jpg)'">
         <p>Intuitive Document Editing</p>
     </div>
-    <div class="navItemWrapper" (click)="setContent(3)" [style.backgroundImage]="'url(assets/MockData/handWritten.jpg)'">
+    <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/handWritten.jpg)'">
         <p>Accurate Handwritten text conversion</p>
     </div>
 
 </div>
 
-<div class="content" id="content">
-    <div class="contentColumn">
-        <img src="assets/Logos/WriteToPdf_Logo_white.png" alt="" class="contentImg">
-    </div>
-    <div class="contentColumn">
-        <img src="assets/MockData/bg1.jpg" alt="" class="contentImg">
-    </div>
-    <div class="contentColumn">
-        <img src="assets/MockData/bg2.jpg" alt="" class="contentImg">
-    </div>
-    <div class="contentColumn">
-        <img src="assets/MockData/bg4.jpg" alt="" class="contentImg">
-    </div>
+<div class="headerPosition"></div>
+
+<div class="spacing"></div>
+
+<div class="mainLogoWrapper">
+    <img class = "mainLogo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="">
+    <h4 class="centeredText">A system by</h4>
+    <img class = "groupLogo" src="assets/Logos/clear_Logo.png" alt="">    
 </div>
 
-<div class="loginWrapper">
-    <p-button label="Login" [style]="{minWidth:'100px',width:'10svw',marginBottom:'5px'}" (click)="navigateToLogin()"></p-button>
-    <p-button label="Sign Up" [style]="{minWidth:'100px',width:'10svw',marginTop:'5px'}" (click)="navigateToSignup()"></p-button>
+<div class="spacing"></div>
+
+<div class="fileDisplay">
+    <h1 class="centeredText">High Speed File Management</h1>
+    <hr class="line"/>
+    <p class="centeredText">WriteToPDF is a high speed file management system that allows you to upload, download, and edit your files with ease.</p>
 </div>
+
+<div class="fileDisplay">
+    <h1 class="centeredText">Intuitive Document Editing</h1>
+    <hr class="line"/>
+    <p class="centeredText">WriteToPDF allows you to edit your documents with ease. You can edit your documents with our intuitive editor, or you can upload your own documents and edit them.</p>
+</div>
+
+<div class="fileDisplay">
+    <h1 class="centeredText">Accurate Handwritten Text Conversion</h1>
+    <hr class="line"/>
+    <p class="centeredText">WriteToPDF allows you to convert your handwritten text to digital text with ease. You can upload your handwritten documents and convert them to digital text.</p>
+</div>
+
+<div class="spacing"></div>
+
+<div class="loginWrapper">
+    <p-button label="Login" [style]="{minWidth:'100px',width:'10svw',marginBottom:'5px',background:'#ffffff', color:'#000000',border:'black solid 1px'}" (click)="navigateToLogin()"></p-button>
+    <p-button label="Sign Up" [style]="{minWidth:'100px',width:'10svw',marginTop:'5px',background:'#ffffff', color:'#000000',border:'black solid 1px'}" (click)="navigateToSignup()"></p-button>
+</div>
+

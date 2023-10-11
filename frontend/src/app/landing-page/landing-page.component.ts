@@ -17,22 +17,6 @@ export class LandingPageComponent {
     this.elementRef.nativeElement.ownerDocument.body.style.height = '100svh';
   }
 
-  setContent(contentNumber:number) {
-    console.log(contentNumber);
-    let content = document.getElementById('content');
-    if(!content) return;
-    if (contentNumber == 0) {
-      content.style.gridTemplateColumns = "5fr 1fr 1fr 1fr";
-    } 
-    else if (contentNumber == 1) {
-      content.style.gridTemplateColumns = "1fr 5fr 1fr 1fr";
-    } else if (contentNumber == 2) {
-      content.style.gridTemplateColumns = "1fr 1fr 5fr 1fr";
-    } else if (contentNumber == 3) {
-      content.style.gridTemplateColumns = "1fr 1fr 1fr 5fr";
-    } 
-  }
-
   navigateToSignup(): void {
     this.router.navigate(['/signup']).then(() => window.location.reload());
   }
