@@ -36,6 +36,18 @@
     display: none;
 }
 
+.githubIconWrapper {
+    width: 55px;
+    height: 55px;
+    margin: auto;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.githubIcon {
+    width:100%;
+}
+
 @media only screen and (max-width: 900px) {
     .header {
         grid-template-columns: 1fr 1fr 1fr;
@@ -96,6 +108,8 @@
     height: 100%;
     padding: 0 15svw;
     margin: 10px;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .mainLogo {
@@ -103,6 +117,10 @@
     min-width: 100px;
     max-width: 200px;
     margin:auto;
+}
+
+.fileDisplay {
+    display: grid;
 }
 .groupLogo {
     width: 15svw;
