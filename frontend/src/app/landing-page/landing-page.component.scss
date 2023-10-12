@@ -122,10 +122,8 @@
 
 .navItemWrapper:hover {
     background-size: 35%;
-}
-
-.navItemWrapper:hover p {
-    margin-top: 60px;
+    background-color: #e0e0e077;
+    border-radius: 10px;
 }
 
 .mainLogoWrapper {
@@ -154,6 +152,7 @@
 
 .fileDisplay {
     display: grid;
+    margin-bottom: 50px;
 }
 
 .groupLogo {
@@ -204,6 +203,12 @@
     margin: auto;
     width: 100%;
     max-width: 300px;
+}
+.demoImageEdit {
+    margin: auto;
+    width: 100%;
+    max-width: 500px;
+    border: solid 1px #808080;
 }
 
 .demoImageArrow {
