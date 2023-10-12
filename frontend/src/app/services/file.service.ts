@@ -691,16 +691,20 @@ export class FileService {
       return CryptoJS.SHA256(key).toString();
   }
 
+  generateKey(password: string) {
+    return CryptoJS.PBKDF2(password, '', {
+      keySize: 256 / 32, // 256 bits for the key
+      iterations: 500000 // iterations for the key
+    }).toString();
+  }
+  
   encryptSafeLockDocument(
     content: string | undefined,
     userDocumentPassword: string
   ) {
     const signature = this.generateSignature(userDocumentPassword);
     if (userDocumentPassword && (content || content == '')) {
-      const key = CryptoJS.PBKDF2(userDocumentPassword, '', {
-        keySize: 256 / 32, // 256 bits for the key
-        iterations: 10000 // iterations for the key
-      }).toString();
+      const key = this.generateKey(userDocumentPassword);
       content = content + signature;
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
       return encryptedMessage;
@@ -728,10 +732,7 @@ export class FileService {
   ): string | null {
     if (userDocumentPassword && (content || content == '')) {
       try{
-        const key = CryptoJS.PBKDF2(userDocumentPassword, '', {
-          keySize: 256 / 32, // 256 bits for the key
-          iterations: 10000 // iterations for the key
-        }).toString();
+        const key = this.generateKey(userDocumentPassword);
         const decryptedMessageBeforeReplace = CryptoJS.AES.decrypt(content, key)
           .toString(CryptoJS.enc.Utf8);
           const decryptedMessage = decryptedMessageBeforeReplace.replace(/^"(.*)"$/, '$1');
