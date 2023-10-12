@@ -13,12 +13,17 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
+.noSelect {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 .headerPosition {
     position: relative;
     top: 0;
     left: 0;
     right: 0;
-    width:100%;
+    width: 100%;
     height: 150px;
     z-index: -1;
 }
@@ -45,7 +50,34 @@
 }
 
 .githubIcon {
-    width:100%;
+    width: 100%;
+}
+
+.readMore {
+    transition: 0.3s;
+    width: 200px;
+    margin: auto;
+    text-align: center;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+}
+
+.notUnderLined {
+    display: block;
+}
+.underline {
+    display: none;
+}
+.readMore:hover .underline {
+    display: block;
+}
+.readMore:hover .notUnderlined {
+    display: none;
+}
+.readMore:hover {
+    color:#272727;
+    scale: 1.1;
 }
 
 @media only screen and (max-width: 900px) {
@@ -65,7 +97,7 @@
         bottom: 25px;
         right: 25px;
         border-radius: 5px;
-        padding:5px;
+        padding: 5px;
         background: #e0e0e077;
     }
 }
@@ -74,8 +106,9 @@
     transition: 0.3s;
     cursor: pointer;
 
-    background-size: 100% auto;
+    background-size: 25%;
     background-position: center center;
+    background-repeat: no-repeat;
 }
 
 .navItemWrapper p {
@@ -88,7 +121,7 @@
 }
 
 .navItemWrapper:hover {
-    background-size: 110% auto;
+    background-size: 35%;
 }
 
 .navItemWrapper:hover p {
@@ -116,21 +149,64 @@
     width: 15svw;
     min-width: 100px;
     max-width: 200px;
-    margin:auto;
+    margin: auto;
 }
 
 .fileDisplay {
     display: grid;
 }
+
 .groupLogo {
     width: 15svw;
     min-width: 100px;
     max-width: 200px;
-    margin:auto;
+    margin: auto;
 }
 
 .line {
     width: 80%;
     height: 1px;
     background: #e0e0e0;
+}
+
+.ocrDemoBig {
+    margin: auto;
+    width: 80svw;
+    display: grid;
+    grid-template-columns: 3fr 1fr 3fr;
+}
+
+.ocrDemoSmall {
+    display: none;
+    margin: auto;
+    width: 80svw;
+}
+
+@media screen and (max-width: 900px) {
+    .ocrDemoBig {
+        display: none;
+    }
+
+    .ocrDemoSmall {
+        display: grid;
+    }
+}
+
+.demoImageWrapper {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    margin: auto;
+}
+
+.demoImage {
+    margin: auto;
+    width: 100%;
+    max-width: 300px;
+}
+
+.demoImageArrow {
+    margin: auto;
+    width: 100%;
 }
