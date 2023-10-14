@@ -58,7 +58,7 @@
 
 .spacing {
     width: 100%;
-    height: 75px;
+    height: 50px;
 }
 
 .logoWrapper {
@@ -136,7 +136,7 @@
     transition: 0.3s;
     cursor: pointer;
 
-    background-size: max(20%, 70px);
+    background-size: max(20%, 50px);
     background-position: center center;
     background-repeat: no-repeat;
 }
@@ -151,7 +151,7 @@
 }
 
 .navItemWrapper:hover {
-    background-size: max(25%, 75px);
+    background-size: max(25%, 65px);
     background-color: #e0e0e077;
     border-radius: 10px;
 }
@@ -234,6 +234,12 @@
     margin: auto;
     width: 100%;
     max-width: 300px;
+    border: solid 1px #808080;
+}
+.demoImageWrap {
+    margin: auto;
+    width: 100%;
+    max-width: 300px;
 }
 
 .demoImageEdit {
@@ -247,3 +253,31 @@
     margin: auto;
     width: 100%;
 }
+
+.footer {
+    padding: 25px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 150px;
+    min-height: 75px;
+    display: flex;
+    justify-content: center;
+}
+
+.footer p {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+@media screen and (max-width: 550px) {
+    .footer p{
+        text-align: left;
+        margin-right:140px;
+        padding:0;
+    }
+}
+    
