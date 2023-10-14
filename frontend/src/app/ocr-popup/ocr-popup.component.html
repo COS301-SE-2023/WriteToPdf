@@ -2,7 +2,7 @@
     <div class="popup-heading">
         <h2>Extracted Features</h2>
         <p-button (click)="closeDialog()" class="backButton" icon="pi pi-times" label="Back"
-                  styleClass="p-button-rounded"></p-button>
+                  styleClass="p-button"></p-button>
     </div>
     <div class="dialog-container">
         <div class="left-section">
@@ -20,7 +20,7 @@
                     <textarea [(ngModel)]="paragraphText" class="editableForm" cols="40" rows="6"></textarea>
                     <p-button (click)="copyFormData()" class="copyFormData" icon="pi pi-copy"
                               label="Copy"
-                              styleClass="p-button-rounded"></p-button>
+                              styleClass="p-button"></p-button>
                 </mat-tab>
                 <mat-tab (click)="activeTab =1" label="Tables">
                     <ng-template mat-tab-label>
@@ -62,9 +62,9 @@
                         <p class = "pasteDescriptor">Add To Document:</p>
                         <div class = "pasteButtons">
                         <p-button (click)="copyCurrentTable()" class="copyButton" icon="pi pi-copy" label="Copy Table"
-                                  styleClass="p-button-rounded"></p-button>
+                                  styleClass="p-button"></p-button>
                         <p-button (click)="copyAllTables()" class="copyButton" icon="pi pi-copy" label="Copy All Tables"
-                                  styleClass="p-button-rounded"></p-button>
+                                  styleClass="p-button"></p-button>
                         </div>
                         </div>
                     </ng-template>

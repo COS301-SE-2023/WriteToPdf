@@ -67,6 +67,7 @@ $page-height: 29.7cm;
     min-width: 200px;
 }
 
+
 @media only screen and (max-width: 360px) {
     .documentTitle {
         min-width: 100px;
@@ -405,8 +406,18 @@ div[contenteditable="true"]:focus {
 .buttonsWrapper {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 100px auto;
+    grid-template-rows: 50px auto;
     grid-gap: 10px;
+}
+
+.fileOperations {
+  padding-bottom: 20px;
+}
+
+.shareButtons {
+  padding-top: 20px;
+  display:flex;
+  justify-content: space-between;
 }
 
 .assetDescription {
