@@ -250,14 +250,27 @@ export class VersionControlService {
       .replace(pattern_para, '\n')
       .replace(pattern_nbsp, '');
 
-    const dpsDiff = this.DiffPatchService.diff_main(repl_text1, repl_text2);
+    // const dpsDiff = this.DiffPatchService.diff_main(repl_text1, repl_text2);
+    const dpsDiff = this.LineDiff(repl_text1, repl_text2);
     this.DiffPatchService.diff_cleanupSemantic(dpsDiff);
 
     const prettyHtml = this.DiffPatchService.diff_prettyHtml(dpsDiff);
+    const replPretty = prettyHtml
+      .replace(pattern_amp, '&')
+      .replace(pattern_lt, '<')
+      .replace(pattern_gt, '>')
+      .replace(pattern_para, '\n')
+      .replace(open_ins, '<span')
+      .replace(close_ins, '</span')
+      .replace(open_del, '<span')
+      .replace(close_del, '</span')
+      .replace(del_color, '#f995ab')
+      .replace(ins_color, '#96ff9f');
+
     console.log('version.control.getPrettyHtml.repl_text1:', repl_text1);
     console.log('version.control.getPrettyHtml.repl_text2:', repl_text2);
     console.log('version.control.getPrettyHtml.dpsDiff:', dpsDiff);
-    console.log('version.control.getPrettyHtml.prettyHtml:', prettyHtml);
+    console.log('version.control.getPrettyHtml.prettyHtml:', replPretty);
 
     return prettyHtml
       .replace(pattern_amp, '&')
@@ -270,6 +283,16 @@ export class VersionControlService {
       .replace(close_del, '</span')
       .replace(del_color, '#f995ab')
       .replace(ins_color, '#96ff9f');
+  }
+
+  LineDiff(text1: string, text2: string) {
+    var charConvert = this.DiffPatchService.diff_linesToChars_(text1, text2);
+    var lineText1 = charConvert.chars1;
+    var lineText2 = charConvert.chars2;
+    var lineArray = charConvert.lineArray;
+    var diffs = this.DiffPatchService.diff_main(lineText1, lineText2, false);
+    this.DiffPatchService.diff_charsToLines_(diffs, lineArray);
+    return diffs;
   }
 
   snapshotRestore(snapshot: SnapshotDTO): void {
