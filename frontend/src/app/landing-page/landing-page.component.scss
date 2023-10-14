@@ -1,13 +1,15 @@
 .logo {
     width: 10svw;
     max-width: 100px;
+    min-width:75px;
     margin: auto;
 }
 
 .header {
     position: fixed;
     width: 100%;
-    height: 150px;
+    height: 15svh;
+    min-height: 110px;
     background: #f0f6f7;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -24,22 +26,23 @@
     left: 0;
     right: 0;
     width: 100%;
-    height: 150px;
+    height: 15svh;
+    min-height: 110px;
     z-index: -1;
 }
 
 .spacing {
     width: 100%;
-    height: 25svh;
+    height: 75px;
 }
 
 .logoWrapper {
     display: flex;
 }
 
-.loginWrapper {
-    display: none;
-}
+// .loginWrapper {
+//     display: none;
+// }
 
 .githubIconWrapper {
     width: 55px;
@@ -66,47 +69,49 @@
 .notUnderlined {
     display: block;
 }
+
 .underline {
     display: none;
 }
+
 .readMore:hover .underline {
     display: block;
 }
+
 .readMore:hover .notUnderlined {
     display: none;
 }
+
 .readMore:hover {
-    color:#272727;
-    scale: 1.1;
+    color: #272727;
+    scale: 1.2;
+}
+
+.loginWrapper {
+    position: fixed;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    bottom: 25px;
+    right: 25px;
+    border-radius: 5px;
+    padding: 5px;
+    background: #e0e0e077;
 }
 
 @media only screen and (max-width: 900px) {
-    .header {
-        grid-template-columns: 1fr 1fr 1fr;
-    }
+    // .header {
+    //     grid-template-columns: 1fr 1fr 1fr;
+    // }
 
-    .logoWrapper {
-        display: none;
-    }
 
-    .loginWrapper {
-        position: fixed;
-        display: grid;
-        justify-content: center;
-        align-items: center;
-        bottom: 25px;
-        right: 25px;
-        border-radius: 5px;
-        padding: 5px;
-        background: #e0e0e077;
-    }
 }
 
 .navItemWrapper {
     transition: 0.3s;
     cursor: pointer;
 
-    background-size: max( 25%, 75px);
+    background-size: max(20%, 70px);
     background-position: center center;
     background-repeat: no-repeat;
 }
@@ -121,7 +126,7 @@
 }
 
 .navItemWrapper:hover {
-    background-size: 35%;
+    background-size: max(25%,75px);
     background-color: #e0e0e077;
     border-radius: 10px;
 }
@@ -204,6 +209,7 @@
     width: 100%;
     max-width: 300px;
 }
+
 .demoImageEdit {
     margin: auto;
     width: 100%;
