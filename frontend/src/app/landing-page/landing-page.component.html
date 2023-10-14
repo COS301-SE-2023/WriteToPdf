@@ -1,26 +1,27 @@
 <div class="header">
-    <div class="logoWrapper">
-        <img class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="">
-        <div style="display:grid;margin:auto;">
+    <div class="logoWrapper navItemWrapper" [style.backgroundImage]="'url(assets/Logos/WriteToPdf_Logo_white.png)'"
+        (click)="scrollToSection('aboutSection')">
+        <!-- <img class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt=""> -->
+        <!-- <div style="display:grid;margin:auto;">
             <p-button label="Login"
                 [style]="{minWidth:'100px',width:'10svw',marginBottom:'20px',background:'#ffffff', color:'#000000',border:'black solid 1px'}"
                 (click)="navigateToLogin()"></p-button>
             <p-button label="Sign Up"
                 [style]="{minWidth:'100px',width:'10svw',marginTop:'20px',background:'#ffffff', color:'#000000',border:'black solid 1px'}"
                 (click)="navigateToSignup()"></p-button>
-        </div>
+        </div> -->
     </div>
     <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/folder.png)'"
         (click)="scrollToSection('fileSection')">
-        <p class="noSelect">High Speed File Management</p>
+        <!-- <p class="noSelect">High Speed File Management</p> -->
     </div>
     <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/editing.png)'"
         (click)="scrollToSection('editSection')">
-        <p class="noSelect">Intuitive Document Editing</p>
+        <!-- <p class="noSelect">Intuitive Document Editing</p> -->
     </div>
     <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/scan.png)'"
         (click)="scrollToSection('ocrSection')">
-        <p class="noSelect">Accurate Handwritten text conversion</p>
+        <!-- <p class="noSelect">Accurate Handwritten text conversion</p> -->
     </div>
 
 </div>
@@ -40,7 +41,7 @@
             <u >
                 <p style="margin-bottom:0; margin-top: 30px;">Read More</p>
             </u>
-            <h1 style="font-weight: bolder;font-size: 78px; margin-top: 0;">&#11015;</h1>
+            <h1 class="arrow" style="font-weight: bolder;font-size: 78px; margin-top: 0;">&#11015;</h1>
         </div>
         <div class="notUnderlined">
             <p style="margin-bottom:0; margin-top: 30px;">Read More</p>
@@ -51,12 +52,20 @@
 
 <div class="spacing"></div>
 
+<div class="fileDisplay" id="aboutSection">
+    <h1 class="centeredText">About Us</h1>
+    <hr class="line" />
+    <p class="centeredText">WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritten notes into structured documents that
+    can be edited and shared with others.</p>
+</div>
+
+<div class="spacing"></div>
+
 <div class="fileDisplay" id="fileSection">
     <h1 class="centeredText">High Speed Document Management</h1>
     <hr class="line" />
     <p class="centeredText">WriteToPDF has a high speed document management system that allows you to upload, download,
         and manage your documents with ease.</p>
-    <div style="height: 700px"></div>
 </div>
 
 <div class="spacing"></div>
@@ -126,9 +135,9 @@
 
 <div class="loginWrapper">
     <p-button label="Login"
-        [style]="{minWidth:'100px',width:'10svw',marginBottom:'5px',background:'#ffffff', color:'#000000',border:'black solid 1px'}"
+        [style]="{width:'100px',marginBottom:'5px',background:'#ffffff', color:'#000000',border:'black solid 1px'}"
         (click)="navigateToLogin()"></p-button>
     <p-button label="Sign Up"
-        [style]="{minWidth:'100px',width:'10svw',marginTop:'5px',background:'#ffffff', color:'#000000',border:'black solid 1px'}"
+        [style]="{width:'100px',marginTop:'5px',background:'#ffffff', color:'#000000',border:'black solid 1px'}"
         (click)="navigateToSignup()"></p-button>
 </div>
