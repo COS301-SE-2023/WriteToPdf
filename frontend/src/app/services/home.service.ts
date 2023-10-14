@@ -226,7 +226,7 @@ export class NodeService {
   private getRootFiles() {
     let rootFiles: any[] = [];
     for (let file of this.files) {
-      if (file.Path === '') {
+      if (file.ParentFolderID === '' || file.ParentFolderID === 'undefined/undefined') {
         rootFiles.push(file);
       }
     }
@@ -236,7 +236,7 @@ export class NodeService {
   private getRootFolders() {
     let rootFolders: any[] = [];
     for (let folder of this.folders) {
-      if (folder.Path === '') {
+      if (folder.ParentFolderID === ''||folder.ParentFolderID==='undefined/undefined') {
         rootFolders.push(folder);
       }
     }

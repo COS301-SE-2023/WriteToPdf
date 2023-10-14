@@ -6,10 +6,11 @@ import { EditComponent } from './edit/edit.component';
 import { CameraComponent } from './camera/camera.component';
 import { EditAssetComponent } from './edit-asset/edit-asset.component';
 import { SignupComponent } from './signup/signup.component';
+import { LandingPageComponent } from './landing-page/landing-page.component';
 import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
-  { path: '', component: LoginComponent },
+  { path: '', component: LandingPageComponent },
   { path: 'login', component: LoginComponent },
   {
     path: 'home',
@@ -31,6 +32,7 @@ const routes: Routes = [
     component: EditAssetComponent, canActivate: [AuthGuard],
   },
   { path: 'signup', component: SignupComponent },
+  { path: 'landing-page', component: LandingPageComponent },
   { path: '**', redirectTo: '' },
 ];
 

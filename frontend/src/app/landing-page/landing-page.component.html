@@ -1,0 +1,171 @@
+<div class="backgroundImage">
+
+</div>
+
+<div class="header">
+    <div class="logoWrapper navItemWrapper" [style.backgroundImage]="'url(assets/Logos/WriteToPdf_Logo_white.png)'"
+        (click)="scrollToSection('aboutSection')">
+        <!-- <img class="logo" src="assets/Logos/WriteToPdf_Logo_white.png" alt=""> -->
+        <!-- <div style="display:grid;margin:auto;">
+            <p-button label="Login"
+                [style]="{minWidth:'100px',width:'10svw',marginBottom:'20px',background:'#ffffff', color:'#000000',border:'black solid 1px'}"
+                (click)="navigateToLogin()"></p-button>
+            <p-button label="Sign Up"
+                [style]="{minWidth:'100px',width:'10svw',marginTop:'20px',background:'#ffffff', color:'#000000',border:'black solid 1px'}"
+                (click)="navigateToSignup()"></p-button>
+        </div> -->
+    </div>
+    <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/folder.png)'"
+        (click)="scrollToSection('fileSection')">
+        <!-- <p class="noSelect">High Speed File Management</p> -->
+    </div>
+    <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/editing.png)'"
+        (click)="scrollToSection('editSection')">
+        <!-- <p class="noSelect">Intuitive Document Editing</p> -->
+    </div>
+    <div class="navItemWrapper" [style.backgroundImage]="'url(assets/MockData/scan.png)'"
+        (click)="scrollToSection('ocrSection')">
+        <!-- <p class="noSelect">Accurate Handwritten text conversion</p> -->
+    </div>
+
+</div>
+
+<div class="headerPosition"></div>
+
+<div class="spacing"></div>
+
+<div class="mainLogoWrapper">
+    <img class="mainLogo" src="assets/Logos/WriteToPdf_Logo_white.png" alt="">
+    <h4 class="centeredText">A system by</h4>
+    <img class="groupLogo" src="assets/Logos/clear_Logo.png" alt="">
+    <a class="githubIconWrapper" href="https://github.com/COS301-SE-2023/WriteToPdf" target="_blank" rel="noopener"><img
+            class="githubIcon" src="assets/Logos/github.png" alt="GitHub"> </a>
+    <div class="readMore" (click)="scrollToSection('aboutSection')">
+        <div class="underline">
+            <u>
+                <p style="margin-bottom:0; margin-top: 30px;">Read More</p>
+            </u>
+            <h1 class="arrow" style="font-weight: bolder;font-size: 78px; margin-top: 0;">&#11015;</h1>
+        </div>
+        <div class="notUnderlined">
+            <p style="margin-bottom:0; margin-top: 30px;">Read More</p>
+            <h1 style="font-weight: bolder;font-size: 78px; margin-top: 0;">&#11015;</h1>
+        </div>
+    </div>
+</div>
+
+<div class="spacing"></div>
+
+<div class="fileDisplay" id="aboutSection">
+    <h1 class="centeredText">About Us</h1>
+    <hr class="line" />
+    <h4 class="centeredText">WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritten notes
+        into structured documents that
+        can be edited and shared with others.</h4>
+    <div class="centeredText">
+
+        <p class="noMargin">We are team </p>
+        <img class="groupLogo" src="assets/Logos/clear_Logo.png" alt="">
+        <p class="noMargin"> comprised of:</p>
+    </div>
+    <div class="centeredText">
+        <p class="noMargin"><b>Janco Spies</b> (Team Lead)</p>
+        <p class="noMargin"><b>Jake Weatherhead </b> (Services Engineer)</p>
+        <p class="noMargin"><b>Conrad Strasheim </b> (UI Engineer)</p>
+        <p class="noMargin"><b>Dylan Kapnias </b>(Dev Ops)</p>
+        <p class="noMargin"><b>Julian Pienaar </b>(UI Engineer)</p>
+    </div>
+</div>
+
+<div class="spacing"></div>
+
+<div class="fileDisplay" id="fileSection">
+    <h1 class="centeredText">High Speed Document Management</h1>
+    <hr class="line" />
+    <h4 class="centeredText">WriteToPDF has a high speed document management system that allows you to upload, download,
+        and manage your documents with ease.</h4>
+    <br>
+    <img class="demoImageEdit" src="assets/LandingPage/homeDemo/homePage.png" alt="">
+    <br>
+    <p class="centeredText">Our user friendly interface allows for quick interactions.  </p>
+    <br>
+    <img class="demoImageEdit" src="assets/LandingPage/homeDemo/homeCtx.png" alt="">
+</div>
+
+<div class="spacing"></div>
+
+<div class="fileDisplay" id="editSection">
+    <h1 class="centeredText">Intuitive Document Editing</h1>
+    <hr class="line" />
+    <h4 class="centeredText">WriteToPDF allows you to edit your documents seamlessly. You can edit your documents with
+        our intuitive editor, or you can upload your own documents and edit them.</h4>
+    <br />
+    <br />
+    <div class="demoImageWrapper" width="80svw">
+        <img class="demoImageEdit" src="assets/LandingPage/editDemo/editOptions.png" alt="">
+        <img class="demoImageEdit" src="assets/LandingPage/editDemo/inEditor.png" alt="">
+        <p class="centeredText">With a variety of options you can edit your document to look exactly how you want.</p>
+    </div>
+    <br />
+    <br />
+
+    <div class="demoImageWrapper" width="80svw">
+        <img class="demoImageEdit" src="assets/LandingPage/editDemo/exportOptions.png" alt="">
+        <img class="demoImageEdit" src="assets/LandingPage/editDemo/outputPdf.png" alt="">
+        <p class="centeredText">Then when you are done with your document you can export it to multiple formats.</p>
+    </div>
+</div>
+
+<div class="spacing"></div>
+
+<div class="fileDisplay" id="ocrSection">
+    <h1 class="centeredText">Accurate Handwritten Text Conversion</h1>
+    <hr class="line" />
+    <h4 class="centeredText">WriteToPDF allows you to convert your handwritten text to digital text easily. You can
+        upload your handwritten documents and convert them to digital text to be used in your document.</h4>
+    <br />
+    <div class="demoImageWrapper" width="80svw">
+        <img class="demoImage" src="assets/LandingPage/ocrDemo/uploadAssetButton.png" alt="">
+        <p class="centeredText">Upload a text asset by clicking on this dropdown item.</p>
+    </div>
+    <br />
+    <div class="ocrDemoBig">
+        <div class="demoImageWrap">
+            <img class="demoImage" src="assets/LandingPage/ocrDemo/inputTable.jpg" alt="">
+        </div>
+        <div class="demoImageWrap">
+            <img class="demoImageWrap" src="assets/Icons/landingPageIcons/right-arrow.png" alt="">
+        </div>
+        <div class="demoImageWrap">
+            <img class="demoImage" src="assets/LandingPage/ocrDemo/outputText.png" alt="">
+        </div>
+    </div>
+    <div class="ocrDemoSmall">
+        <div class="demoImageWrap">
+            <img class="demoImage" src="assets/LandingPage/ocrDemo/inputTable.jpg" alt="">
+        </div>
+        <div class="demoImageWrap">
+            <h1 style="font-weight: bolder;font-size: 78px; margin-top: 0;" class="centeredText">&#11015;</h1>
+        </div>
+        <div class="demoImageWrap">
+            <img class="demoImage" src="assets/LandingPage/ocrDemo/outputText.png" alt="">
+        </div>
+    </div>
+    <p class="centeredText">Our system will convert your input image to digital form for use in a document.</p>
+
+</div>
+
+<div class="spacing"></div>
+
+<div class="loginWrapper">
+    <p-button label="Login"
+        [style]="{width:'100px',marginBottom:'5px',background:'#ffffff', color:'#000000',border:'black solid 1px'}"
+        (click)="navigateToLogin()"></p-button>
+    <p-button label="Sign Up"
+        [style]="{width:'100px',marginTop:'5px',background:'#ffffff', color:'#000000',border:'black solid 1px'}"
+        (click)="navigateToSignup()"></p-button>
+</div>
+<hr class="line">
+<div class="footer">
+    <p>&copy; 2023 xParadigm. All rights reserved.<br><a href="mailto:infoxparadigm@gmail.com">infoxparadigm@gmail.com</a></p>
+</div>

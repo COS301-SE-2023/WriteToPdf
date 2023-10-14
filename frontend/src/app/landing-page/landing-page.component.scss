@@ -1,0 +1,283 @@
+.backgroundImage {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    /* Uncomment the following line if you want to use a linear gradient fallback */
+    /* background: radial-gradient(at center, #3498db, #9b59b6); */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /* Center the background image */
+    z-index: -5;
+    background-image: url(/assets/MockData/BGIW.jpg);
+    opacity: 0.18;
+}
+
+.logo {
+    width: 10svw;
+    max-width: 100px;
+    min-width: 75px;
+    margin: auto;
+}
+
+.header {
+    position: fixed;
+    width: 100%;
+    height: 15svh;
+    min-height: 110px;
+    background: #f0f6f7bb;
+
+    background-image: linear-gradient(to top, #f3f3f3bb, #f3f3f3, #f3f3f3);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+
+    box-shadow: 0px 0px 10px 0px #00000033;
+}
+
+.noSelect {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.noMargin {
+    margin: 3px;
+}
+
+.headerPosition {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 15svh;
+    min-height: 110px;
+    z-index: -1;
+}
+
+.spacing {
+    width: 100%;
+    height: 50px;
+}
+
+.logoWrapper {
+    display: flex;
+}
+
+// .loginWrapper {
+//     display: none;
+// }
+
+.githubIconWrapper {
+    width: 55px;
+    height: 55px;
+    margin: auto;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.githubIcon {
+    width: 100%;
+}
+
+.readMore {
+    transition: 0.3s;
+    width: 200px;
+    margin: auto;
+    text-align: center;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+}
+
+.notUnderlined {
+    display: block;
+}
+
+.underline {
+    display: none;
+}
+
+.readMore:hover .underline {
+    display: block;
+}
+
+.readMore:hover .notUnderlined {
+    display: none;
+}
+
+.readMore:hover {
+    color: #272727;
+    scale: 1.2;
+}
+
+.loginWrapper {
+    position: fixed;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    bottom: 25px;
+    right: 25px;
+    border-radius: 5px;
+    padding: 5px;
+    background: #e0e0e077;
+}
+
+@media only screen and (max-width: 900px) {
+    // .header {
+    //     grid-template-columns: 1fr 1fr 1fr;
+    // }
+
+
+}
+
+.navItemWrapper {
+    transition: 0.3s;
+    cursor: pointer;
+
+    background-size: max(20%, 50px);
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.navItemWrapper p {
+    transition: 0.3s;
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    background: #e0e0e0cc;
+    border-radius: 5px;
+}
+
+.navItemWrapper:hover {
+    background-size: max(25%, 65px);
+    background-color: #e0e0e077;
+    border-radius: 10px;
+}
+
+.mainLogoWrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.centeredText {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 15svw;
+    margin: 10px;
+    -webkit-user-select: none;
+    user-select: none;
+    text-align: center;
+}
+
+.mainLogo {
+    width: 15svw;
+    min-width: 100px;
+    max-width: 200px;
+    margin: auto;
+}
+
+.fileDisplay {
+    display: grid;
+    margin-bottom: 50px;
+}
+
+.groupLogo {
+    width: 15svw;
+    min-width: 100px;
+    max-width: 200px;
+    margin: auto;
+}
+
+.line {
+    width: 80%;
+    height: 1px;
+    background: #e0e0e0;
+}
+
+.ocrDemoBig {
+    margin: auto;
+    width: 80svw;
+    display: grid;
+    grid-template-columns: 3fr 1fr 3fr;
+}
+
+.ocrDemoSmall {
+    display: none;
+    margin: auto;
+    width: 80svw;
+}
+
+@media screen and (max-width: 900px) {
+    .ocrDemoBig {
+        display: none;
+    }
+
+    .ocrDemoSmall {
+        display: grid;
+    }
+}
+
+.demoImageWrapper {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    margin: auto;
+}
+
+.demoImage {
+    margin: auto;
+    width: 100%;
+    max-width: 300px;
+    border: solid 1px #808080;
+}
+.demoImageWrap {
+    margin: auto;
+    width: 100%;
+    max-width: 300px;
+}
+
+.demoImageEdit {
+    margin: auto;
+    width: 100%;
+    max-width: 500px;
+    border: solid 1px #808080;
+}
+
+.demoImageArrow {
+    margin: auto;
+    width: 100%;
+}
+
+.footer {
+    padding: 25px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 150px;
+    min-height: 75px;
+    display: flex;
+    justify-content: center;
+}
+
+.footer p {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+@media screen and (max-width: 550px) {
+    .footer p{
+        text-align: left;
+        margin-right:140px;
+        padding:0;
+    }
+}
+    
