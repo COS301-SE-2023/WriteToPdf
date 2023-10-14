@@ -63,7 +63,7 @@
     cursor: pointer;
 }
 
-.notUnderLined {
+.notUnderlined {
     display: block;
 }
 .underline {
@@ -106,7 +106,7 @@
     transition: 0.3s;
     cursor: pointer;
 
-    background-size: 25%;
+    background-size: max( 25%, 75px);
     background-position: center center;
     background-repeat: no-repeat;
 }

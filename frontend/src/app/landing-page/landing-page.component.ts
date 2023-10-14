@@ -12,7 +12,7 @@ export class LandingPageComponent {
 
   ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor =
-      '#FFFFFF';
+      '#fcfcfc';
     this.elementRef.nativeElement.ownerDocument.body.style.margin = '0';
     this.elementRef.nativeElement.ownerDocument.body.style.height = '100svh';
   }
