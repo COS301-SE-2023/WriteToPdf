@@ -85,12 +85,12 @@
         <img class="icon" src="assets/Icons/homeIcons/navbar/homeIcon.png" alt="" (click)="toRoot()"
               [ngClass]="{'hover': this.folderIDHistory[this.folderIDHistoryPosition] !== ''}" title="To Root Directory" />
       </div>
-        
+
       <div class="imgWrapper" (click)="$event.stopPropagation()">
         <img class="icon" src="assets/Icons/editIcons/undo.svg" alt="" (click)="undoFolder()"
           [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="Previous" />
       </div>
-        
+
       <div class="imgWrapper" (click)="$event.stopPropagation()">
         <img class="icon" src="assets/Icons/editIcons/redo.svg" alt="" (click)="redoFolder()"
           [ngClass]="{'hover': this.folderIDHistory.length > this.folderIDHistoryPosition + 1}"
@@ -112,10 +112,10 @@
         </div> -->
     </div>
     <div class="folderNameWrapper">
-              
+
 
       <h2 class="folderName">{{getCurrentFolderName()}}</h2>
-              
+
     </div>
     <div class="directoryContents" (click)="$event.stopPropagation();contextMenu.hide()" (contextmenu)="handleDirectoryRightClick($event)">
 
@@ -123,13 +123,13 @@
         <div class="iconSpacing">
 
 
-          <!-- <img class="icon" src="assets/Icons/homeIcons/navbar/homeIcon.png" alt="" (click)="toRoot()" 
+          <!-- <img class="icon" src="assets/Icons/homeIcons/navbar/homeIcon.png" alt="" (click)="toRoot()"
           [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="To Root Directory"/>
 
-          <img class="icon" src="assets/Icons/editIcons/undo.svg" alt="" (click)="undoFolder()" 
+          <img class="icon" src="assets/Icons/editIcons/undo.svg" alt="" (click)="undoFolder()"
           [ngClass]="{'hover': this.folderIDHistoryPosition > 0}" title="Back one Directory"/>
 
-          <img class="icon" src="assets/Icons/editIcons/redo.svg" alt="" (click)="redoFolder()" 
+          <img class="icon" src="assets/Icons/editIcons/redo.svg" alt="" (click)="redoFolder()"
           [ngClass]="{'hover': this.folderIDHistory.length > this.folderIDHistoryPosition + 1}" title="Forward one Directory"/> -->
 
         </div>
@@ -148,7 +148,7 @@
         </div>
       </div>
 
-      
+
       <!-- <div #directory style="display: grid;   grid-template-columns: repeat(auto-fill, 200px); grid-auto-rows: 200px; width:70vw;"> -->
       <div #directory>
       <!-- Folders Start -->
@@ -190,12 +190,12 @@
         </div>
       </div>
       <!-- Folders End -->
-      
+
       <!-- Files Start -->
-      <div *ngFor="let obj of currentFiles" class="fileItem" (dblclick) = "onOpenFileSelect(obj.MarkdownID)" 
-      (click)="handleClick($event, obj)" 
+      <div *ngFor="let obj of currentFiles" class="fileItem" (dblclick) = "onOpenFileSelect(obj.MarkdownID)"
+      (click)="handleClick($event, obj)"
       (contextmenu) ="handleRightClick($event, obj)"
-      [ngClass]="obj.Selected ? 'selectedFile' : 'defaultFile'" 
+      [ngClass]="obj.Selected ? 'selectedFile' : 'defaultFile'"
       [draggable]="obj.Selected"
       (dragstart)="onDragStart($event, obj)"
       (drop)="onDrop($event, obj)"
@@ -249,7 +249,7 @@
         <p-dialog [(visible)]="moveDialogVisible" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
           header="Select a Destination Folder" [focusOnShow]="true" (keydown.enter)="moveEntity()"
           (keydown.escape)="moveDialogVisible = false" (click)="$event.stopPropagation()">
-      
+
           <div *ngFor="let obj of getAllFolders()" class="moveFileItem" (dblclick)="moveEntity()"
             (click)="handleMoveClick($event, obj)" [ngClass]="{
                             'selectedFile': obj.MoveSelected,
@@ -270,11 +270,11 @@
             <div class="iconSpacing">
             </div>
           </div>
-      
+
           <p-button class="fileOperations-entity" [style]="{ marginTop: '20px' }" (click)="moveEntity()"
             label="Move"></p-button>
         </p-dialog>
-      
+
       </div>
       <!--    TODO FileManagerPopup above-->
       <!-- <div class="speedDialEditMenu">
@@ -284,46 +284,46 @@
               direction="down"
             ></p-speedDial>
           </div> -->
-      
+
       <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="createNewDocumentDialogVisible" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
-          header="Create Document" [focusOnShow]="true" (keydown.escape)="createNewDocumentDialogVisible = false"
+        <p-dialog [(visible)]="createNewDocumentDialogVisible" [modal]="true"
+          header="    Create Document" [focusOnShow]="true" (keydown.escape)="createNewDocumentDialogVisible = false"
           (click)="$event.stopPropagation()">
           <div class="fileOperations" style="display:grid; width:80%;">
-            <input placeholder="Document Name" [(ngModel)]="entityName" label="Document Name: " pInputText type="text"
+            <input class = "fileOperationsInput" placeholder="Document Name" [(ngModel)]="entityName" label="Document Name: " pInputText type="text"
               (keydown.enter)="createNewDocument()" (keydown.enter)="createNewDocumentDialogVisible = false"
-              [style]="{width: '100%', marginTop: '20px'}" />
+             />
             <br />
-            <p-button (click)="createNewDocument()" (click)="createNewDocumentDialogVisible = false"
+            <p-button class ="dialogButton" (click)="createNewDocument()" (click)="createNewDocumentDialogVisible = false"
               label="Create"></p-button>
           </div>
         </p-dialog>
       </div>
       <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="createNewFolderDialogVisible" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
+        <p-dialog [(visible)]="createNewFolderDialogVisible" [modal]="true"
           header="Create Folder" [focusOnShow]="true" (keydown.escape)="createNewFolderDialogVisible = false"
           (click)="$event.stopPropagation()">
           <div class="fileOperations" style="display:grid; width:80%;">
-            <input placeholder="Folder Name" class="fileOperations-entity" [(ngModel)]="entityName" label="Folder Name: "
+            <input class = "fileOperationsInput" placeholder="Folder Name" class="fileOperations-entity" [(ngModel)]="entityName" label="Folder Name: "
               pInputText type="text" (keydown.enter)="createNewFolder()"
-              (keydown.enter)="createNewFolderDialogVisible = false" [style]="{width: '100%', marginTop: '20px'}" />
+              (keydown.enter)="createNewFolderDialogVisible = false" />
             <br />
-            <p-button (click)="createNewFolder()" (click)="createNewFolderDialogVisible = false" label="Create"></p-button>
+            <p-button class = "dialogButton" (click)="createNewFolder()" (click)="createNewFolderDialogVisible = false" label="Create"></p-button>
           </div>
         </p-dialog>
       </div>
       <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="renameDialogVisible" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
+        <p-dialog [(visible)]="renameDialogVisible" [modal]="true"
           header="Rename" [focusOnShow]="true" (keydown.escape)="renameDialogVisible = false"
           (click)="$event.stopPropagation()">
           <div class="fileOperations" style="display: grid; width:80%;">
-            <input placeholder="{{getSelectedName()}}" class="fileOperations-entity" [(ngModel)]="entityRename" label="Name: "
-              pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" (keydown.enter)="renameEntity();this.renameDialogVisible=false"/>
+            <input class = "fileOperationsInput" placeholder="{{getSelectedName()}}" class="fileOperations-entity" [(ngModel)]="entityRename" label="Name: "
+              pInputText type="text" (keydown.enter)="renameEntity();this.renameDialogVisible=false"/>
             <br />
-            <p-button (click)="renameEntity()" (click)="renameDialogVisible = false" label="Rename"></p-button>
+            <p-button class = "dialogButton" (click)="renameEntity()" (click)="renameDialogVisible = false" label="Rename"></p-button>
           </div>
         </p-dialog>
       </div>
@@ -331,27 +331,25 @@
 
       <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="documentLockedPopup" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)' }"
+        <p-dialog [(visible)]="documentLockedPopup" [modal]="true"
           header="Enter Document Password" [focusOnShow]="true" (keydown.escape)="documentLockedPopup = false; userDocumentPassword = '';"
           (click)="$event.stopPropagation()"  (onHide)="userDocumentPassword = ''">
           <p>Password must be 8 characters long.</p>
           <div class="fileOperations" style="display: grid; width:80%;">
             <!-- <input placeholder="Enter Password" class="fileOperations-entity" [(ngModel)]="userDocumentPassword" label="Name: "
               pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" /> -->
-            <p-password name="password" id="password" placeholder="" class="fileOperations-entity"
+            <p-password  name="password" id="password" placeholder="" class="fileOperations-entity"
               [(ngModel)]="userDocumentPassword" [toggleMask]="true"
-              styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{width: '100%'}"
+              styleClass="p-password p-component p-inputwrapper p-input-icon-right"
               [feedback]="false" (keydown.enter)="lockDocument(); removeDocumentLock = false;"></p-password>
             <br />
-            <p-button (click)="lockDocument()" label="Set Password"></p-button>
+            <p-button class = "dialogButton" (click)="lockDocument()" label="Set Password"></p-button>
           </div>
         </p-dialog>
       </div>
-      <!--    TODO FileManagerPopup above-->
 
-      <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="openLockedDocumentPopup" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)' }"
+        <p-dialog [(visible)]="openLockedDocumentPopup" [modal]="true"
           header="Enter Document Password" [focusOnShow]="true" (keydown.escape)="openLockedDocumentPopup = false; userDocumentPassword = '';"
           (click)="$event.stopPropagation()" (onHide)="userDocumentPassword = ''">
           <div class="fileOperations" style="display: grid; width:80%;">
@@ -359,18 +357,15 @@
               pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" /> -->
             <p-password name="password" id="password" placeholder="" class="fileOperations-entity"
               [(ngModel)]="userDocumentPassword" [toggleMask]="true"
-              styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{width: '100%', marginTop: '20px'}"
+              styleClass="p-password p-component p-inputwrapper p-input-icon-right"
               [feedback]="false" (keydown.enter)="openLockedDocument(); removeDocumentLock = false;"></p-password>
             <br />
-            <p-button (click)="openLockedDocument()" label="Enter Password"></p-button>
+            <p-button class ="dialogButton" (click)="openLockedDocument()" label="Enter Password"></p-button>
           </div>
         </p-dialog>
       </div>
-      <!--    TODO FileManagerPopup above-->
-
-      <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="removeDocumentLock" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)' }"
+        <p-dialog [(visible)]="removeDocumentLock" [modal]="true"
           header="Enter Document Password" [focusOnShow]="true" (keydown.escape)="removeDocumentLock = false; userDocumentPassword = '';"
           (click)="$event.stopPropagation()"  (onHide)="userDocumentPassword = ''">
           <div class="fileOperations" style="display: grid; width:80%;">
@@ -378,10 +373,10 @@
               pInputText type="text" [style]="{width: '100%', marginTop: '20px'}" /> -->
             <p-password name="password" id="password" placeholder="" class="fileOperations-entity"
               [(ngModel)]="userDocumentPassword" [toggleMask]="true"
-              styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{width: '100%', marginTop: '20px'}"
+              styleClass="p-password p-component p-inputwrapper p-input-icon-right"
               [feedback]="false" (keydown.enter)="removeLock(); removeDocumentLock = false;"></p-password>
             <br />
-            <p-button (click)="removeLock()" label="Remove Document Lock"></p-button>
+            <p-button class = "dialogButton" (click)="removeLock()" label="Remove Document Lock"></p-button>
           </div>
         </p-dialog>
       </div>
@@ -389,18 +384,18 @@
 
       <!--    TODO FileManagerPopup below-->
       <div class="fileOperations-container">
-        <p-dialog [(visible)]="sharePopup" [modal]="true" [style]="{ width: '50vw', minWidth: 'min(500px,100vw)'  }"
+        <p-dialog [(visible)]="sharePopup" [modal]="true"
           header="Share" [focusOnShow]="true" (keydown.escape)="sharePopup = false" (click)="$event.stopPropagation()">
           <div class="fileOperations" style="display: grid; width:80%;">
-            <input placeholder="User Email" class="fileOperations-entity" [(ngModel)]="recipientEmail" label="Name: " pInputText
-              type="text" [style]="{width: '100%', marginTop: '20px'}" (keydown.enter)="shareDocument()" />
+            <input class = "fileOperationsInput" placeholder="User Email" class="fileOperations-entity" [(ngModel)]="recipientEmail" label="Name: " pInputText
+              type="text"  (keydown.enter)="shareDocument()" />
             <br />
             <div style="display:flex; justify-content: space-around;">
-              <p-button (click)="shareDocument()" label="Share" [style]="{width:'200px'}"></p-button>
+              <p-button class = "dialogButtonShare" (click)="shareDocument()" label="Share" [style]="{width:'200px'}"></p-button>
             </div>
           </div>
         </p-dialog>
       </div>
       <!--    TODO FileManagerPopup above-->
-  
+
 </div>

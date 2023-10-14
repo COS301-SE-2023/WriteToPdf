@@ -10,13 +10,23 @@ $file-height: 50px;
   // white-space: nowrap;
 }
 
-.fileOperations-container {}
 
-.fileOperations {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 80%;
+.fileOperations{
+  display:flex;
+  justify-content:space-between;
+  padding:20px;
+}
+
+.dialogButton {
+  padding-left:53px;
+}
+
+.dialogButton {
+  padding-left:36px;
+}
+
+.fileOperationsInput{
+  text-align: center;
 }
 
 .fileOperations-entity {
