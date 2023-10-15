@@ -69,17 +69,17 @@ export class AuthService {
     return newRefreshTokenDTO;
   }
 
-  signSignature(signatureDTO: SignatureDTO) {
+  signChecksum(signatureDTO: SignatureDTO) {
     const PRIVATE_KEY = process.env.PRIVATE_KEY;
     const key = this.ellipticCurve.keyFromPrivate(
       PRIVATE_KEY,
       'hex',
     );
-    const signedSignature = key.sign(
-      signatureDTO.Signature,
+    const signedChecksum = key.sign(
+      signatureDTO.Checksum,
     );
-    signatureDTO.SignedSignature =
-      signedSignature.toDER('hex');
+    signatureDTO.Signature =
+      signedChecksum.toDER('hex');
     return signatureDTO;
   }
 }
