@@ -635,7 +635,7 @@ ellipticCurve = new EC.ec('secp256k1');
     body.UserID = this.userService.getUserID();
     body.MarkdownID = markdownID;
     if (safeLock) {
-      body.Content = this.encryptSafeLockDocument(
+      body.Content = await this.encryptSafeLockDocument(
         content,
         userDocumentPassword
       );
@@ -685,6 +685,42 @@ ellipticCurve = new EC.ec('secp256k1');
     }
   }
 
+  getSignChecksum(signatureDTO: SignatureDTO) {
+    return new Promise<SignatureDTO>((resolve, reject) => {
+      this.getSignChecksumData(signatureDTO).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log("Non error: ",response);
+          if (response.status === 200) {
+            resolve(response.body as SignatureDTO);
+          } else {
+            resolve(null as any);
+          }
+        },
+        error: (error) => {
+          console.log("Failed: ",error);
+          this.messageService.add({
+            severity: 'error',
+            summary: error.error.error || error.error.message,
+          });
+          resolve(null as any);
+        },
+      });
+    });
+  }
+
+  getSignChecksumData(signatureDTO: SignatureDTO){
+const environmentURL = environment.apiURL;
+    const url = `${environmentURL}auth/sign_checksum`;
+    const body = signatureDTO;
+
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
 // Function to verify the encrypted signature using ECDSA with public key
 verifySignature(
   encryptedSignature: string,
@@ -696,13 +732,17 @@ verifySignature(
   return key.verify(matchingSignature, encryptedSignature);
 }
 
-  generateSignature(content: string) {
+  async generateSignature(content: string) {
     const signatureDTO = new SignatureDTO();
     signatureDTO.Checksum = this.calculateChecksum(content).toString();
     signatureDTO.UserID = this.userService.getUserID();
     signatureDTO.MarkdownID = this.editService.getMarkdownID();
-    //TODO send request to backend to sign the signature, then return the signed signature from the backend's dto
-    return signatureDTO.Signature;
+
+    const signedDTO = await this.getSignChecksum(signatureDTO);
+    if (signedDTO == null) {
+      return "";
+    }
+    return signedDTO.Signature;
   }
     // Function to calculate the MurmurHash3 for a string
  calculateChecksum(content: string): number {
@@ -719,13 +759,13 @@ verifySignature(
     }).toString();
   }
 
-  encryptSafeLockDocument(
+  async encryptSafeLockDocument(
     content: string | undefined,
     userDocumentPassword: string
   ) {
     const delimiter = '!@#$%^&*DELIMITER*^&%$#@!';
     if (userDocumentPassword && (content || content == '')) {
-      const signature = this.generateSignature(content);
+      const signature = await this.generateSignature(content);
       const key = this.generateKey(userDocumentPassword);
       content = content + delimiter + signature;
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
@@ -765,28 +805,21 @@ verifySignature(
     return signRemoved;
   }
 
-  decryptSafeLockDocument(
+  async decryptSafeLockDocument(
     content: string | undefined,
     userDocumentPassword: string
-  ): string | null {
+  ): Promise<string | null> {
     if (userDocumentPassword && (content || content == '')) {
       try{
         const key = this.generateKey(userDocumentPassword);
-        const decryptedMessageBeforeReplace = CryptoJS.AES.decrypt(content, key)
-          .toString(CryptoJS.enc.Utf8);
+        const decryptedMessageBeforeReplace = CryptoJS.AES.decrypt(content, key).toString(CryptoJS.enc.Utf8);
           const decryptedMessage = decryptedMessageBeforeReplace.replace(/^"(.*)"$/, '$1');
-          // const signature = this.generateSignature(userDocumentPassword);
           const delimiter = '!@#$%^&*DELIMITER*^&%$#@!';
 
           const receivedSignature = this.getSignature(decryptedMessage, delimiter);
           const receivedContent = this.removeSignature(decryptedMessage, delimiter);
-          const signature = this.generateSignature(receivedContent);
-          console.log("Received Signature: ", receivedSignature);
-          console.log("Expected signature: ", signature);
-          console.log("Received content: ", receivedContent);
-          console.log('Verify signature: ', this.verifySignature(receivedSignature, signature || ''));
-          if (this.verifySignature(receivedSignature, signature || '')) {
-            console.log("Matches");
+          const checkSum = this.calculateChecksum(receivedContent);
+          if (this.verifySignature(receivedSignature, checkSum.toString() || '')) {
             return receivedContent;
           } else {
             return null;
