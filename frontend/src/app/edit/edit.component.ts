@@ -123,7 +123,7 @@ export class EditComponent implements AfterViewInit, OnInit {
 
   showFileUploadPopup(): void {
     const ref = this.dialogService.open(FileUploadPopupComponent, {
-      header: 'Upload Files',
+      header: 'Upload File',
       showHeader: true,
       closable: true,
       closeOnEscape: true,
@@ -186,7 +186,7 @@ export class EditComponent implements AfterViewInit, OnInit {
         icon: 'pi pi-copy',
         command: async () => {
           this.loading = true;
-          if(await this.fileService.createDocument(this.editService.getName()+'(copy)', this.editService.getPath(), this.editService.getParentFolderID()))
+          if(await this.fileService.createDocument(this.editService.getName()+' (copy)', this.editService.getPath(), this.editService.getParentFolderID()))
           { 
             await this.fileService.saveDocument(this.currentContextMenuObject.Content, this.editService.getMarkdownID(), this.editService.getPath(), this.editService.getSafeLock());
             this.messageService.add({
@@ -205,6 +205,7 @@ export class EditComponent implements AfterViewInit, OnInit {
               summary: 'Error',
               detail: 'Version not copied',
             });
+            this.disableReadOnly();
             this.loading = false;
 
         },
@@ -373,7 +374,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     localStorage.setItem('content', contents);
     if (pass != '' && pass != undefined) {
       await this.fileService.saveDocument(
-        this.fileService.encryptSafeLockDocument(contents, pass),
+        await this.fileService.encryptSafeLockDocument(contents, pass),
         this.editService.getMarkdownID(),
         this.editService.getPath(),
         this.editService.getSafeLock()
@@ -381,7 +382,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       if (readablePatch !== '')
         await this.versioningApiService.saveDiff(
           markdownID ? (markdownID as string) : '',
-          this.fileService.encryptSafeLockDocument(readablePatch, pass)
+          await this.fileService.encryptSafeLockDocument(readablePatch, pass)
         );
     } else {
       await this.fileService.saveDocument(

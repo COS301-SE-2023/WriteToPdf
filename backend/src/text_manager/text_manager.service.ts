@@ -8,7 +8,6 @@ import { S3Service } from '../s3/s3.service';
 import { S3ServiceMock } from '../s3/__mocks__/s3.service';
 import { AssetsService } from '../assets/assets.service';
 import { TextractService } from '../textract/textract.service';
-import { find } from 'cheerio/lib/api/traversing';
 
 @Injectable()
 export class TextManagerService {
@@ -374,6 +373,9 @@ export class TextManagerService {
           cellBlock,
           concatenatedText,
         );
+      } else {
+        // Otherwise the cell is empty
+        this.fillCell(table, cellBlock, '');
       }
     }
     return table;

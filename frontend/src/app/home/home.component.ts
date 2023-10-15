@@ -153,7 +153,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         command: () => (this.createNewFolderDialogVisible = true),
       },
       {
-        label: 'Create New File',
+        label: 'Create New Document',
         icon: 'pi pi-file',
         command: () => (this.createNewDocumentDialogVisible = true),
       },
@@ -355,6 +355,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     // Below is the function that initially populates the fileTree
 
     await this.nodeService.getFilesAndFolders().then(() => {
+
       const hist = localStorage.getItem('folderIDHistory');
       const pos = localStorage.getItem('folderIDHistoryPosition');
 
@@ -368,6 +369,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
 
       const data = this.nodeService.getTreeTableNodesData();
+      console.log(data);
       this.filesDirectoryTree = this.generateTreeNodes(data);
 
       // Below is the function that populates the treeTable
@@ -1782,7 +1784,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   async openLockedDocument() {
     const selected = this.getSelected();
     if (selected.length === 1) {
-      const decryptedDocument = this.fileService.decryptSafeLockDocument(await this.documentPromise, this.userDocumentPassword);
+      const decryptedDocument = await this.fileService.decryptSafeLockDocument(await this.documentPromise, this.userDocumentPassword);
       if (decryptedDocument == null) {
         this.messageService.add({
           severity: 'warn',

@@ -731,6 +731,8 @@ export class FileManagerService {
     // Prepare the file to be added to the recipient's account
     fileCopyDTO.UserID = recipient.UserID;
     fileCopyDTO.MarkdownID = undefined;
+    fileCopyDTO.Path = '';
+    fileCopyDTO.ParentFolderID = '';
     fileCopyDTO.Name =
       fileCopyDTO.Name + ' (shared)';
 

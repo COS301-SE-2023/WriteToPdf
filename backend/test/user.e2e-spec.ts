@@ -80,10 +80,10 @@ describe('UserController (integration)', () => {
         .post('/users/login/')
         .send(requestUser);
       expect(response.body.error).toBe(
-        'User not found',
+        'Invalid credentials',
       );
       expect(response.status).toBe(
-        HttpStatus.NOT_FOUND,
+        HttpStatus.UNAUTHORIZED,
       );
     });
 
