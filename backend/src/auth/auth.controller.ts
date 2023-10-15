@@ -48,9 +48,9 @@ export class AuthController {
     );
   }
 
-  @Post('sign_signature')
+  @Post('sign_checksum')
   @HttpCode(HttpStatus.OK)
-  signSignature(
+  signChecksum(
     @Body() signatureDTO: SignatureDTO,
     @Req() request: Request,
   ) {
@@ -62,7 +62,7 @@ export class AuthController {
     }
 
     if (
-      !signatureDTO.Signature ||
+      !signatureDTO.Checksum ||
       !signatureDTO.UserID ||
       !signatureDTO.MarkdownID
     ) {
@@ -72,7 +72,7 @@ export class AuthController {
       );
     }
 
-    return this.authService.signSignature(
+    return this.authService.signChecksum(
       signatureDTO,
     );
   }

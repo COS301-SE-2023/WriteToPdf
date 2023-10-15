@@ -698,14 +698,14 @@ verifySignature(
 
   generateSignature(content: string) {
     const signatureDTO = new SignatureDTO();
-    signatureDTO.Signature = this.calculateMurmurHash3(content).toString();
+    signatureDTO.Checksum = this.calculateChecksum(content).toString();
     signatureDTO.UserID = this.userService.getUserID();
     signatureDTO.MarkdownID = this.editService.getMarkdownID();
     //TODO send request to backend to sign the signature, then return the signed signature from the backend's dto
-    return signatureDTO.SignedSignature;
+    return signatureDTO.Signature;
   }
     // Function to calculate the MurmurHash3 for a string
- calculateMurmurHash3(content: string): number {
+ calculateChecksum(content: string): number {
   const encoder = new TextEncoder();
   const data = encoder.encode(content);
   const hash = murmurhash3.x86.hash32(data);
