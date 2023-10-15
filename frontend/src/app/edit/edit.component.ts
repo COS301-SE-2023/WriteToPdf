@@ -374,7 +374,7 @@ export class EditComponent implements AfterViewInit, OnInit {
     localStorage.setItem('content', contents);
     if (pass != '' && pass != undefined) {
       await this.fileService.saveDocument(
-        this.fileService.encryptSafeLockDocument(contents, pass),
+        await this.fileService.encryptSafeLockDocument(contents, pass),
         this.editService.getMarkdownID(),
         this.editService.getPath(),
         this.editService.getSafeLock()
@@ -382,7 +382,7 @@ export class EditComponent implements AfterViewInit, OnInit {
       if (readablePatch !== '')
         await this.versioningApiService.saveDiff(
           markdownID ? (markdownID as string) : '',
-          this.fileService.encryptSafeLockDocument(readablePatch, pass)
+          await this.fileService.encryptSafeLockDocument(readablePatch, pass)
         );
     } else {
       await this.fileService.saveDocument(

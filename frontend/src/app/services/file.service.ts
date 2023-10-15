@@ -8,19 +8,24 @@ import { EditService } from './edit.service';
 import { DirectoryFilesDTO } from './dto/directory_files.dto';
 import { ImportDTO } from './dto/import.dto';
 import { ShareRequestDTO } from './dto/share_request.dto';
-// import { resolve } from 'path';
-// import { ExportDTO } from './dto/export.dto';
+import * as murmurhash3 from 'murmurhash3js-revisited';
 import { MessageService } from 'primeng/api';
 import { environment } from "../../environments/environment";
 import * as CryptoJS from 'crypto-js';
+// import * as NodeRSA from 'node-rsa';
+// import * as forge from 'node-forge';
+import * as EC from 'elliptic';
 
 import { ConversionService } from './conversion.service';
 import { env } from 'process';
+import { SignatureDTO } from './dto/signature.dto';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FileService {
+ellipticCurve = new EC.ec('secp256k1');
+
   constructor(
     private http: HttpClient,
     private userService: UserService,
@@ -630,7 +635,7 @@ export class FileService {
     body.UserID = this.userService.getUserID();
     body.MarkdownID = markdownID;
     if (safeLock) {
-      body.Content = this.encryptSafeLockDocument(
+      body.Content = await this.encryptSafeLockDocument(
         content,
         userDocumentPassword
       );
@@ -680,28 +685,89 @@ export class FileService {
     }
   }
 
-  generateSignature(userDocumentPassword: string) {
-    const iterations = 100000;
-  
-    const key = CryptoJS.PBKDF2(
-      userDocumentPassword + environment.frontendSignature, 
-      '', 
-      { keySize: 256 / 32, iterations }
-    );
-      return CryptoJS.SHA256(key).toString();
+  getSignChecksum(signatureDTO: SignatureDTO) {
+    return new Promise<SignatureDTO>((resolve, reject) => {
+      this.getSignChecksumData(signatureDTO).subscribe({
+        next: (response: HttpResponse<any>) => {
+          console.log("Non error: ",response);
+          if (response.status === 200) {
+            resolve(response.body as SignatureDTO);
+          } else {
+            resolve(null as any);
+          }
+        },
+        error: (error) => {
+          console.log("Failed: ",error);
+          this.messageService.add({
+            severity: 'error',
+            summary: error.error.error || error.error.message,
+          });
+          resolve(null as any);
+        },
+      });
+    });
   }
 
-  encryptSafeLockDocument(
+  getSignChecksumData(signatureDTO: SignatureDTO){
+const environmentURL = environment.apiURL;
+    const url = `${environmentURL}auth/sign_checksum`;
+    const body = signatureDTO;
+
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      'Bearer ' + this.userService.getAuthToken()
+    );
+    return this.http.post(url, body, { headers, observe: 'response' });
+  }
+
+// Function to verify the encrypted signature using ECDSA with public key
+verifySignature(
+  encryptedSignature: string,
+  matchingSignature: string
+): boolean {
+  const PUBLIC_KEY = environment.PUBLIC_KEY;
+  // Convert the hex-encoded public key to a key instance
+  const key = this.ellipticCurve.keyFromPublic(PUBLIC_KEY, 'hex');
+  return key.verify(matchingSignature, encryptedSignature);
+}
+
+  async generateSignature(content: string) {
+    const signatureDTO = new SignatureDTO();
+    signatureDTO.Checksum = this.calculateChecksum(content).toString();
+    signatureDTO.UserID = this.userService.getUserID();
+    signatureDTO.MarkdownID = this.editService.getMarkdownID();
+
+    const signedDTO = await this.getSignChecksum(signatureDTO);
+    if (signedDTO == null) {
+      return "";
+    }
+    return signedDTO.Signature;
+  }
+    // Function to calculate the MurmurHash3 for a string
+ calculateChecksum(content: string): number {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(content);
+  const hash = murmurhash3.x86.hash32(data);
+  return hash;
+}
+
+  generateKey(password: string) {
+    return CryptoJS.PBKDF2(password, '', {
+      keySize: 256 / 32, // 256 bits for the key
+      iterations: 50000 // iterations for the key
+    }).toString();
+  }
+
+  async encryptSafeLockDocument(
     content: string | undefined,
     userDocumentPassword: string
   ) {
-    const signature = this.generateSignature(userDocumentPassword);
+    const delimiter = '!@#$%^&*DELIMITER*^&%$#@!';
     if (userDocumentPassword && (content || content == '')) {
-      const key = CryptoJS.PBKDF2(userDocumentPassword, '', {
-        keySize: 256 / 32, // 256 bits for the key
-        iterations: 10000 // iterations for the key
-      }).toString();
-      content = content + signature;
+      const signature = await this.generateSignature(content);
+      const key = this.generateKey(userDocumentPassword);
+      content = content + delimiter + signature;
       const encryptedMessage = CryptoJS.AES.encrypt(content, key).toString();
       return encryptedMessage;
     } else {
@@ -722,29 +788,42 @@ export class FileService {
     }
   }
 
-  decryptSafeLockDocument(
+  getSignature(content:string, delimiter: string){
+    const signature = content.substring(
+      content.length - ((content.split(delimiter).pop() || '').length || 0),
+      content.length
+    );
+    return signature;
+  }
+
+  removeSignature(content:string | undefined, delimiter: string){
+    if (!content) return '';
+    const signRemoved = content.substring(
+      0,
+      content.length - delimiter.length - ((content.split(delimiter).pop() || '').length || 0)
+    );
+    return signRemoved;
+  }
+
+  async decryptSafeLockDocument(
     content: string | undefined,
     userDocumentPassword: string
-  ): string | null {
+  ): Promise<string | null> {
     if (userDocumentPassword && (content || content == '')) {
       try{
-        const key = CryptoJS.PBKDF2(userDocumentPassword, '', {
-          keySize: 256 / 32, // 256 bits for the key
-          iterations: 10000 // iterations for the key
-        }).toString();
-        const decryptedMessageBeforeReplace = CryptoJS.AES.decrypt(content, key)
-          .toString(CryptoJS.enc.Utf8);
+        const key = this.generateKey(userDocumentPassword);
+        const decryptedMessageBeforeReplace = CryptoJS.AES.decrypt(content, key).toString(CryptoJS.enc.Utf8);
           const decryptedMessage = decryptedMessageBeforeReplace.replace(/^"(.*)"$/, '$1');
-          const signature = this.generateSignature(userDocumentPassword);
-          if (decryptedMessage.endsWith(signature)) {
-          const signRemoved = decryptedMessage.substring(
-            0,
-            decryptedMessage.length - signature.length
-          );
-          return signRemoved;
-        } else {
-          return null;
-        }
+          const delimiter = '!@#$%^&*DELIMITER*^&%$#@!';
+
+          const receivedSignature = this.getSignature(decryptedMessage, delimiter);
+          const receivedContent = this.removeSignature(decryptedMessage, delimiter);
+          const checkSum = this.calculateChecksum(receivedContent);
+          if (this.verifySignature(receivedSignature, checkSum.toString() || '')) {
+            return receivedContent;
+          } else {
+            return null;
+          }
       } catch (error) {
         return null;
       }
