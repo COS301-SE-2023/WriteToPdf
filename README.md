@@ -42,10 +42,43 @@ Placeholder
 ### Technical installation document
 - [Technical installation v1](https://docs.google.com/document/d/1HG9QVSEh2NsHbrRTlXPBjiq3keQMapmmiDbTFK07tNU/edit?usp=sharing) -->
 
-<!-- ### Member contributions
-- [Member contributions](https://docs.google.com/document/d/14n7aEG_Lwh3dXSq6ltJ8XE_rzAREMGsH-3B-crGn2fM/edit?usp=sharing) -->
+### Coding standards
+- [Coding standards v1](https://docs.google.com/document/d/1Cr68PKEo6_hPQoYYXzmPtlQXInFmrAkXNnmFUIf08tE/edit?usp=sharing)
 
-<!-- ## Branching strategy
+### Testing policy
+- [Testing policy v1](https://docs.google.com/document/d/1HH952lB8jdQT5b2FsNNC1ycoR9ANm54ZuDqPMTWHiWg/edit?usp=sharing)
+
+### Member contributions
+- [Member contributions](https://docs.google.com/document/d/14n7aEG_Lwh3dXSq6ltJ8XE_rzAREMGsH-3B-crGn2fM/edit?usp=sharing)
+
+## Tech Stack
+
+<a href="https://angular.io">
+    <img alt="Angular" src="https://img.shields.io/badge/angular-dd0031?style=for-the-badge&logo=angular&logoColor=white" />
+</a>
+
+
+<a href="https://primeng.org/">
+    <img alt="Angular" src="https://img.shields.io/badge/primeng-dd0031?style=for-the-badge&logo=primeng&logoColor=white" />
+</a>
+
+<a href="https://nestjs.com/">
+  <img alt="NestJS" src="https://img.shields.io/badge/nestjs-e0234e?style=for-the-badge&logo=nestjs&logoColor=white" />
+</a>
+
+<a href="https://aws.amazon.com/ec2/">
+  <img alt="AWS EC2" src="https://img.shields.io/badge/amazon%20ec2-dd700f?style=for-the-badge&logo=aws&logoColor=white" />
+</a>
+
+<a href="https://mariadb.org/">
+  <img alt="MARIADB" src="https://img.shields.io/badge/mariadb-142958?style=for-the-badge&logo=mariadb&logoColor=white" />
+</a>
+
+## Organisation & Management
+We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issues</a> and <a href="https://github.com/COS301-SE-2023/WriteToPdf/projects?query=is%3Aopen">Github Projects</a> to organise our team, with different members being assigned to specific tasks to ensure effective use of each member’s time. 
+
+
+## Branching strategy
 The main branch is the live/deployed branch.
 Test branch is used to run all tests. These two branches are the stable branches.
 The codecov branch is used to merge completed features into and is the branch where tests get fixed before being pushed to the Test branch.
