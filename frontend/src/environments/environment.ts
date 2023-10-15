@@ -6,4 +6,5 @@ export const environment = {
   DEV_USER_EMAIL: 'secret',
   DEV_USER_PASSWORD: 'secret',
   frontendSignature: 'secret',
+  PUBLIC_KEY: 'secret',
 };

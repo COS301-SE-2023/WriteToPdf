@@ -4,10 +4,13 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenDTO } from './dto/refresh_token.dto';
+import { SignatureDTO } from './dto/signature.dto';
 import { UserDTO } from '../users/dto/user.dto';
+import * as EC from 'elliptic';
 
 @Injectable()
 export class AuthService {
+  ellipticCurve = new EC.ec('secp256k1');
   constructor(private jwtService: JwtService) {}
 
   async generateToken(
@@ -64,5 +67,19 @@ export class AuthService {
       await this.jwtService.signAsync(newPayload);
 
     return newRefreshTokenDTO;
+  }
+
+  signChecksum(signatureDTO: SignatureDTO) {
+    const PRIVATE_KEY = process.env.PRIVATE_KEY;
+    const key = this.ellipticCurve.keyFromPrivate(
+      PRIVATE_KEY,
+      'hex',
+    );
+    const signedChecksum = key.sign(
+      signatureDTO.Checksum,
+    );
+    signatureDTO.Signature =
+      signedChecksum.toDER('hex');
+    return signatureDTO;
   }
 }
