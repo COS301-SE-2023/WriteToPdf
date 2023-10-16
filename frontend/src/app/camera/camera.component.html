@@ -68,10 +68,10 @@
   <div class="footer" [ngClass]="{ 'notVisible': !captured }">
     <div style="display:flex; margin:auto">
       <p-checkbox class="checkbox" [(ngModel)]="isAsset" [binary]="true" label="Extract Text"
-      styleClass="p-button" [disabled]="isTable"></p-checkbox>
+       [disabled]="isTable"></p-checkbox>
       <div style="width:20px"></div>
       <p-checkbox class="checkbox" [(ngModel)]="isTable" [binary]="true" label="Extract Table"
-      styleClass="p-button" (click)="isAsset=isTable"></p-checkbox>
+       (click)="isAsset=isTable"></p-checkbox>
     </div>
     <input class="assetName" pInputText type="text" label="hi" title="Enter Asset Name" [(ngModel)]="assetName"
       placeholder="Enter Asset Name" />
