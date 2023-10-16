@@ -29,7 +29,7 @@
     background-position: center;
     /* Center the background image */
 
-    background-image: linear-gradient(rgba(100, 100, 100, 0.7), rgba(100, 100, 100, 0.7)), url(/assets/MockData/BGIW.jpg);
+    background-image: url(/assets/MockData/BGIW.jpg);
 }
 
 .loginWrapper {
@@ -50,7 +50,7 @@
     max-height: 95svh;
     overflow-y: auto;
     margin: auto;
-    background-color: rgba($light-grey, 0.6);
+    background-color: rgba($light-grey, 0.9);
 
     border-radius: 33px;
 
@@ -236,3 +236,4 @@ hr {
 .forgotEmail {
     width:100%;
 }
+

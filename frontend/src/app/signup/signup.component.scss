@@ -17,7 +17,7 @@
     max-height: 95svh;
     overflow-y: auto;
     margin: auto;
-    background-color: rgba($light-grey, 0.6);
+    background-color: rgba($light-grey, 0.85);
 
     border-radius: 33px;
 
@@ -37,7 +37,7 @@
     background-size: cover;
     background-position: center;
     /* Center the background image */
-    background-image: linear-gradient(rgba(100, 100, 100, 0.7), rgba(100, 100, 100, 0.7)), url(/assets/MockData/BGIW.jpg);
+    background-image: url(/assets/MockData/BGIW.jpg);
 }
 
 .signupForm {
