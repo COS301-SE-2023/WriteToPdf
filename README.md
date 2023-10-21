@@ -1,12 +1,4 @@
-<!-- Previous badges -->
-<!-- [![Issues][issues-shield]][issues-url]
-
-[![Stargazers][stars-shield]][stars-url] -->
-
 # WriteToPdf
-
-<!-- New badges -->
-<!--![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/COS301-SE-2023/WriteToPdf) -->
 [![codecov](https://codecov.io/gh/COS301-SE-2023/WriteToPdf/branch/main/graph/badge.svg?token=2CELOVRCM3)](https://codecov.io/gh/COS301-SE-2023/WriteToPdf)
 [![Build](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/build.yml)
 [![Test Backend](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-backend.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-backend.yml)
@@ -14,35 +6,8 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2023_WriteToPdf&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2023_WriteToPdf)  
 ![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf)
 [![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2023/WriteToPdf?color=blue)](https://github.com/COS301-SE-2023/WriteToPdf/issues?q=is%3Aissue+is%3Aclosed)
-<!-- [![Commits](https://img.shields.io/github/commit-activity/w/COS301-SE-2023/WriteToPdf)](https://github.com/COS301-SE-2023/WriteToPdf/issues) -->
-<!-- [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2023_WriteToPdf&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2023_WriteToPdf) -->
-<!-- [![Requirements Status](https://requires.io/github/COS301-SE-2023/WriteToPdf/requirements.svg?branch=main)](https://requires.io/github/COS301-SE-2023/WriteToPdf/requirements/?branch=main) -->
-<!-- [![CodeQL](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/codeql-analysis.yml) -->
 
 <div align="center"><img src="https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/c151ddb6-fc79-4366-87ea-f91a033dfe10" /></div>
-
-## Tech Stack
-
-<a href="https://angular.io">
-    <img alt="Angular" src="https://img.shields.io/badge/angular-dd0031?style=for-the-badge&logo=angular&logoColor=white" />
-</a>
-
-
-<a href="https://primeng.org/">
-    <img alt="Angular" src="https://img.shields.io/badge/primeng-dd0031?style=for-the-badge&logo=primeng&logoColor=white" />
-</a>
-
-<a href="https://nestjs.com/">
-  <img alt="NestJS" src="https://img.shields.io/badge/nestjs-e0234e?style=for-the-badge&logo=nestjs&logoColor=white" />
-</a>
-
-<a href="https://aws.amazon.com/ec2/">
-  <img alt="AWS EC2" src="https://img.shields.io/badge/amazon%20ec2-dd700f?style=for-the-badge&logo=aws&logoColor=white" />
-</a>
-
-<a href="https://mariadb.org/">
-  <img alt="MARIADB" src="https://img.shields.io/badge/mariadb-142958?style=for-the-badge&logo=mariadb&logoColor=white" />
-</a>
 
 ## Description
 
@@ -54,26 +19,20 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 - [Demo 3](https://drive.google.com/drive/folders/1cW53_1X3Y5Wp2fSbiyTv9ax8rGFM-JwM?usp=sharing)
 - [Demo 4](https://drive.google.com/drive/folders/1-VIEUnEXivpa1MBX3zZxIqFsuRqCtaOw?usp=sharing) -->
 
-## Documentation
 ### Software requirements specification
-- [SRS v1](https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing)
-- [SRS v2](https://docs.google.com/document/d/196IHwe8rBytZlJOIvh8gGMJUIhs1joQ91NA5TIrqbV4/edit?usp=sharing)
-- [SRS v3](https://docs.google.com/document/d/1TKv0xJzYFy35HWXMa736Qu16aRPZn0SIqjJhXzTakWA/edit?usp=sharing)
-- [SRS v4](https://docs.google.com/document/d/1ffNz8lR5174rZGvfkqQwVSL6W1XFLB4NAVX3sdUM6pk/edit?usp=sharing)
-
-### Coding standards
-- [Coding standards v1](https://docs.google.com/document/d/1Cr68PKEo6_hPQoYYXzmPtlQXInFmrAkXNnmFUIf08tE/edit?usp=sharing)
-
-### Testing document
 - Placeholder
 
-## Organisation & Management
+### Coding standards
+- Placeholder
+
+### Testing policy document
+- Placeholder
+
+### Organisation & Management
 We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issues</a> and <a href="https://github.com/COS301-SE-2023/WriteToPdf/projects?query=is%3Aopen">Github Projects</a> to organise our team, with different members being assigned to specific tasks to ensure effective use of each member’s time. 
 
 ### User Manual
-- [User manual v1](https://docs.google.com/document/d/1zUkgP6SMe9ti3cEWSjjO4yTOUCb1NZnV1_J4SeadA7A/edit?usp=sharing)
-- [User manual v2](https://docs.google.com/document/d/1zs5NqddSAby1zNL-tTCPOdJPDTYQJnAWIyChKixjNN4/edit?usp=sharing)
-- [User manual v3](https://docs.google.com/document/d/12Uag_t3BlGlAL3nD44a2yeA2PvYsky7Kt2yfeQ_1Zkc/edit?usp=sharing)
+Placeholder
 
 <!-- ### Architecture
 - [Architecture v1](https://docs.google.com/document/d/1skoEPk1VvtO8P9fyWIVFyUuf0ssU1aI8G-wrYYNbeyg/edit?usp=sharing)
@@ -215,15 +174,29 @@ Julian has experience with design patterns and data structures giving him a good
 </details>
 
 <!-- Slideshow summary -->
+## System summary
+Placeholder where we show a video demo (like our demo 4 presentation but for non technical people) as well as a slideshow summary of the app.
 
 <!-- App ad -->
+## WriteToPdf advertisement
+Placehoder to add video (maybe imbed through html?)
 
 <!-- Research done -->
+## Research and implementation decisions
+Placeholder for links to wow feature reasearch & reasoning docs
 
 <!-- Deployment info -->
+## Deployed system
+Our live systrem can be found at: [app.writetopdf.com](https://app.writetopdf.com)  
 
-<!-- Tutorial of system? -->
+<!-- Tutorial of system -->
+## System tutorial
+Placeholder for a tutorial of the system (description of how to use the app?)
 
-<!-- Instructions to download & install app on mobile -->
+<!-- How to download/install and use -->
+## How to use
+Placeholder description/GIF showing users how to get started on the app.
 
-<!-- Instructions how to contribute to repo -->
+<!-- How to participate in development -->
+## Contributing
+Placeholder (somethig about how to branch & create issues etc)
