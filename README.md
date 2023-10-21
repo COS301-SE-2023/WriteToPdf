@@ -54,7 +54,7 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 
 - ### [User Manual](https://drive.google.com/drive/folders/1j0s5OuKmb1sx3fOYqxAA3ZbO3ITTMOs9?usp=sharing)
 
-## Organisation & Management
+### Organisation & Management
 We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issues</a> and <a href="https://github.com/COS301-SE-2023/WriteToPdf/projects?query=is%3Aopen">Github Projects</a> to organise our team, with different members being assigned to specific tasks to ensure effective use of each member’s time. 
 
 <!-- ### Architecture
