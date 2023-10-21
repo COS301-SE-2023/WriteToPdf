@@ -8,29 +8,29 @@
 [![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2023/WriteToPdf?color=blue)](https://github.com/COS301-SE-2023/WriteToPdf/issues?q=is%3Aissue+is%3Aclosed)
 
 <div align="center"><img src="https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/c151ddb6-fc79-4366-87ea-f91a033dfe10" /></div>
-
-## Tech Stack
-
+<!-- 
+## Tech Stack-->
+<!-- 
 <a href="https://angular.io">
     <img alt="Angular" src="https://img.shields.io/badge/angular-dd0031?style=for-the-badge&logo=angular&logoColor=white" />
 </a>
+-->
 
-
-<a href="https://primeng.org/">
+<!-- <a href="https://primeng.org/">
     <img alt="Angular" src="https://img.shields.io/badge/primeng-dd0031?style=for-the-badge&logo=primeng&logoColor=white" />
-</a>
+</a> -->
 
-<a href="https://nestjs.com/">
+<!-- <a href="https://nestjs.com/">
   <img alt="NestJS" src="https://img.shields.io/badge/nestjs-e0234e?style=for-the-badge&logo=nestjs&logoColor=white" />
-</a>
+</a> -->
 
-<a href="https://aws.amazon.com/ec2/">
+<!-- <a href="https://aws.amazon.com/ec2/">
   <img alt="AWS EC2" src="https://img.shields.io/badge/amazon%20ec2-dd700f?style=for-the-badge&logo=aws&logoColor=white" />
-</a>
+</a> -->
 
-<a href="https://mariadb.org/">
+<!-- <a href="https://mariadb.org/">
   <img alt="MARIADB" src="https://img.shields.io/badge/mariadb-142958?style=for-the-badge&logo=mariadb&logoColor=white" />
-</a>
+</a> -->
 
 ## Description
 
