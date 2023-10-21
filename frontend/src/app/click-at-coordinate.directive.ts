@@ -1,5 +1,5 @@
 import { Directive, HostListener, ElementRef } from '@angular/core';
-import { CoordinateService } from './services/coordinate-service.service';
+import { CoordinateService } from './services/coordinate.service';
 
 @Directive({
   selector: '[appClickAtCoordinate]',
