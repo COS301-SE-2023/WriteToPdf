@@ -44,24 +44,25 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 
 ## Documentation
 ### Software requirements specification
-- [SRS v1](https://docs.google.com/document/d/1eXRBaujvePMya_IDnRlOymDTWH2KdxSV1RGHm0_erwY/edit?usp=sharing)
-- [SRS v2](https://docs.google.com/document/d/196IHwe8rBytZlJOIvh8gGMJUIhs1joQ91NA5TIrqbV4/edit?usp=sharing)
-- [SRS v3](https://docs.google.com/document/d/1TKv0xJzYFy35HWXMa736Qu16aRPZn0SIqjJhXzTakWA/edit?usp=sharing)
-- [SRS v4](https://docs.google.com/document/d/1ffNz8lR5174rZGvfkqQwVSL6W1XFLB4NAVX3sdUM6pk/edit?usp=sharing)
+- [SRS v1](https://drive.google.com/file/d/1ws97XLKsmrU7WRW-5KCRKJ8MIvF9fVLM/view?usp=sharing)
+- [SRS v2](https://drive.google.com/file/d/1flqqeE2NSdfQi3Sj1eA0_PchYMdgdHsv/view?usp=sharing)
+- [SRS v3](https://drive.google.com/file/d/1ZyKSwiIrJpf1WgcnDh7GzrBzR0fxitP3/view?usp=sharing)
+- [SRS v4](https://drive.google.com/file/d/1iV76L7RqGURAU5ckKPfNL43hCj4embq0/view?usp=sharing)
 
 ### Coding standards
-- [Coding standards v1](https://docs.google.com/document/d/1Cr68PKEo6_hPQoYYXzmPtlQXInFmrAkXNnmFUIf08tE/edit?usp=sharing)
+- [Coding standards v1](https://drive.google.com/file/d/17Ffsp7srXixhE2L2iiC6Fh0Bd6dgPnZe/view?usp=sharing)
+- [Coding standards v2](https://drive.google.com/file/d/12SWhFWNj9fA0ErqLug3xC_OroPj_6y5e/view?usp=sharing)
 
 ### Testing document
-- Placeholder
+- [Testing policy v1](https://drive.google.com/file/d/1JCMgZ0MYjpn0auH3QUK4gt2jV5kJlAET/view?usp=sharing)
 
 ## Organisation & Management
 We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issues</a> and <a href="https://github.com/COS301-SE-2023/WriteToPdf/projects?query=is%3Aopen">Github Projects</a> to organise our team, with different members being assigned to specific tasks to ensure effective use of each member’s time. 
 
 ### User Manual
-- [User manual v1](https://docs.google.com/document/d/1zUkgP6SMe9ti3cEWSjjO4yTOUCb1NZnV1_J4SeadA7A/edit?usp=sharing)
-- [User manual v2](https://docs.google.com/document/d/1zs5NqddSAby1zNL-tTCPOdJPDTYQJnAWIyChKixjNN4/edit?usp=sharing)
-- [User manual v3](https://docs.google.com/document/d/12Uag_t3BlGlAL3nD44a2yeA2PvYsky7Kt2yfeQ_1Zkc/edit?usp=sharing)
+- [User manual v1](https://drive.google.com/file/d/1ILkbCombL2B1pm2d5EaFxstm0ZovewJz/view?usp=sharing)
+- [User manual v2](https://drive.google.com/file/d/1XIIIClIL8JuzL7_lTHlFgh8T1wRA0HMD/view?usp=sharing)
+- [User manual v3](https://drive.google.com/file/d/1ORl7Xf34JZsVV1Nfj6ZIbAzdHSDzqgas/view?usp=sharing)
 
 <!-- ### Architecture
 - [Architecture v1](https://docs.google.com/document/d/1skoEPk1VvtO8P9fyWIVFyUuf0ssU1aI8G-wrYYNbeyg/edit?usp=sharing)
@@ -208,15 +209,17 @@ Placeholder where we show a video demo (like our demo 4 presentation but for non
 
 <!-- App ad -->
 ## WriteToPdf advertisement
-Placehoder to add video (maybe imbed through html?)
+Placeholder to add video (maybe imbed through html?)
 
 <!-- Research done -->
 ## Research and implementation decisions
-Placeholder for links to wow feature reasearch & reasoning docs
+- [Document locking research](https://drive.google.com/file/d/1kkVQzP3eiXK1t5KRCnXK4471cWeke4-i/view?usp=sharing)
+- [OCR decision reasoning](https://drive.google.com/file/d/12nViCbehOyc1xuqCYJMqHlwV7nDkBPzB/view?usp=sharing)
+- [Version control decision reasoning](https://drive.google.com/file/d/11v_9_doxd0K_wDmfm3wkOM8SvyXMbERM/view?usp=sharing)
 
 <!-- Deployment info -->
 ## Deployed system
-Our live systrem can be found at: [app.writetopdf.com](https://app.writetopdf.com)  
+Our live system can be found at: [app.writetopdf.com](https://app.writetopdf.com)  
 
 <!-- Tutorial of system -->
 ## System tutorial
@@ -228,4 +231,4 @@ Placeholder description/GIF showing users how to get started on the app.
 
 <!-- How to participate in development -->
 ## Contributing
-Placeholder (somethig about how to branch & create issues etc)
+To contribute to our project, start by creating a clear and detailed issue, then fork the repository to your GitHub account. Work on your changes in a new branch and be sure to follow our coding standards to maintain code quality. Afterward, open a pull request targeting the `codecov` branch, and don't forget to review our [coding standards document](https://drive.google.com/file/d/12SWhFWNj9fA0ErqLug3xC_OroPj_6y5e/view?usp=sharing) to ensure your code aligns with our guidelines before submitting your pull request for review. Your contributions are greatly appreciated and help us improve our project.
