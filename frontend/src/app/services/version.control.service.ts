@@ -235,6 +235,7 @@ export class VersionControlService {
     const close_del = /<\/del/g;
     const del_color = /#ffe6e6/g;
     const ins_color = /#e6ffe6/g;
+    const close_para = /<\/p>/g;
 
     const repl_text1 = text1
       .replace(pattern_amp, '&')
@@ -251,7 +252,10 @@ export class VersionControlService {
       .replace(pattern_nbsp, '');
 
     // const dpsDiff = this.DiffPatchService.diff_main(repl_text1, repl_text2);
-    const dpsDiff = this.LineDiff(repl_text1, repl_text2);
+    const dpsDiff = this.LineDiff(
+      repl_text1.replace(close_para, '</p>\n'),
+      repl_text2.replace(close_para, '</p>\n')
+    );
     this.DiffPatchService.diff_cleanupSemantic(dpsDiff);
 
     const prettyHtml = this.DiffPatchService.diff_prettyHtml(dpsDiff);
@@ -266,11 +270,6 @@ export class VersionControlService {
       .replace(close_del, '</span')
       .replace(del_color, '#f995ab')
       .replace(ins_color, '#96ff9f');
-
-    console.log('version.control.getPrettyHtml.repl_text1:', repl_text1);
-    console.log('version.control.getPrettyHtml.repl_text2:', repl_text2);
-    console.log('version.control.getPrettyHtml.dpsDiff:', dpsDiff);
-    console.log('version.control.getPrettyHtml.prettyHtml:', replPretty);
 
     return prettyHtml
       .replace(pattern_amp, '&')
