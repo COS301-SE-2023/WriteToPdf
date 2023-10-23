@@ -102,6 +102,7 @@ To address the need for infrastructure as code, the `infrastructure` folder hous
 By structuring the repository in this manner, we maintain a clear separation of concerns, enabling efficient collaboration and ease of maintenance across different parts of the project. -->
 
 ## Team Members
+<img src="https://user-images.githubusercontent.com/104741835/235907674-681152ec-0f46-4b1d-8c3b-4478a2e6290e.png" />
 <details>
 <summary>Janco Spies - u21434159</summary>
 <br>
@@ -109,7 +110,6 @@ By structuring the repository in this manner, we maintain a clear separation of 
 <p>
 Janco has experience working as a tutor for the module Data Structures and Algorithms at the University of Pretoria, where he enjoys problem-solving and collaborating with others. Janco has excelled academically during his time at the university and has a strong background in statistics. He is skilled in several programming languages and frameworks, including Java, NodeJS, C++, Angular, and Python.
 </p>
-<img src="https://user-images.githubusercontent.com/104741835/235907674-681152ec-0f46-4b1d-8c3b-4478a2e6290e.png" />
 <br/>
 <a href="https://www.linkedin.com/in/ACoAADDlAbMBzAMuf8KIqa4ZdJtrDAi1qu4EPz4?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3B1J9zjGT%2FSHeIpMlnKxWZvA%3D%3D">
 <img src="https://img.shields.io/badge/linkedin-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
@@ -120,8 +120,9 @@ Janco has experience working as a tutor for the module Data Structures and Algor
 </a>
  
 </details>
+<hr/>
 
-
+<img src="https://user-images.githubusercontent.com/104741835/235907757-81df79c3-b9e8-49ae-a481-c21bbb385913.png" />
 <details>
 <summary>Jake Weatherhead - u04929552</summary>
 <br/>
@@ -129,7 +130,6 @@ Janco has experience working as a tutor for the module Data Structures and Algor
 <p>
 Jake is a self-motivated and passionate individual who is highly enthusiastic about the practical applications of data science, machine learning and product design. He has experience as a tutor for the module Mathematical Modelling at the University of Pretoria where he tutored students in Pythonic data science. He has experience building, managing and integrating NoSQL databases, such as Google Cloud Firestore and MongoDB. He also has experience building APIs in PHP and Typescript through NestJS. Jake’s other relevant skills include Java, NestJS, Angular, C++ and LaTeX.
 </p>
-<img src="https://user-images.githubusercontent.com/104741835/235907757-81df79c3-b9e8-49ae-a481-c21bbb385913.png" />
 <br/>
 <a href="https://www.linkedin.com/in/ACoAADrYSskBc41A9bb97Sym87rcIbAqpKdQOY4/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BmboD%2FrmkRsKFxJTOheSOsQ%3D%3D">
 <img src="https://img.shields.io/badge/linkedin-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
@@ -140,8 +140,9 @@ Jake is a self-motivated and passionate individual who is highly enthusiastic ab
 </a>
  
 </details>
+<hr/>
 
-
+<img src="https://user-images.githubusercontent.com/104741835/235907809-53427a24-eb95-4ebc-8e3f-1fa38d514741.png" />
 <details>
 <summary>Dylan Kapnias - u18108467</summary>
 <br/>
@@ -149,7 +150,6 @@ Jake is a self-motivated and passionate individual who is highly enthusiastic ab
 <p>
 Dylan is a highly motivated individual with a solid academic background, finishing the second half of his 3rd year with a 75% average. He is proficient in a wide range of technologies, including: Python, C++, Java, ASM, JavaScript/TypeScript, Rust, PHP, Angular, NodeJS, Jest, and Cypress. His experience extends to tools and platforms such as Docker, Home Server maintenance, LaTeX, Doxygen, Google Cloud, and CI/CD workflows using GitHub Actions. Dylan is passionate about applying his technical expertise in diverse projects and environments, and he is always eager to learn and adopt new technologies.
 </p>
-<img src="https://user-images.githubusercontent.com/104741835/235907809-53427a24-eb95-4ebc-8e3f-1fa38d514741.png" />
 <br/>
 <a href="https://www.linkedin.com/in/dylan-kapnias-b41ab2277?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BDLZJVIFfQUyfGT%2FfBspbpg%3D%3D">
 <img src="https://img.shields.io/badge/linkedin-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
@@ -160,8 +160,9 @@ Dylan is a highly motivated individual with a solid academic background, finishi
 </a>
  
 </details>
+<hr/>
 
-
+<img src="https://user-images.githubusercontent.com/104741835/235907780-ec7959e3-e747-4264-a2f4-60244e0212ab.png" />
 <details>
 <summary>Conrad Strasheim - u04483716</summary>
 <br/>
@@ -169,7 +170,6 @@ Dylan is a highly motivated individual with a solid academic background, finishi
 <p>
 Conrad is an avid programmer, yogi and musician. He has experience in Python, R, MATLAB, C++, Java, Angular, React, Google Cloud and Docker. He has programmed an algorithmic music generator, whose music functions as accompaniment for musical improvisation, with Python as part of a master’s project collaboration at Tuks. His speciality is reading up on domain specific knowledge and implementing innovative solutions within that domain, as with the music application.
 </p>
-<img src="https://user-images.githubusercontent.com/104741835/235907780-ec7959e3-e747-4264-a2f4-60244e0212ab.png" />
 <br/>
 <a href="https://www.linkedin.com/in/conrad-strasheim-81810a26a?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAAEHeNBQBIAgklS52yGZGLqg_dsFeSpaTy84&lipi=urn%3Ali%3Apage%3Ad_flagship3_search_srp_all%3BIrFwHOqPRhixjO%2F3SKDhWA%3D%3D">
 <img src="https://img.shields.io/badge/linkedin-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
@@ -180,8 +180,9 @@ Conrad is an avid programmer, yogi and musician. He has experience in Python, R,
 </a>
  
 </details>
+<hr/>
 
-
+<img src="https://user-images.githubusercontent.com/104741835/235907734-cc6ce2a7-ac9a-4d3c-9dfe-03eb772b4b98.png" /> 
 <details >
 <summary>Julian Pienaar - u21599892</summary>
 <br/>
@@ -191,7 +192,6 @@ Conrad is an avid programmer, yogi and musician. He has experience in Python, R,
 Julian has experience with design patterns and data structures giving him a good understanding of algorithms. He has worked on large Angular projects as a UI Engineer. He has a high capacity to learn and understand complex ideas and is able to adapt to the change. He is proficient in multiple languages and frameworks such as C++, Java, NodeJS, Php, Javascript, Ionic,  Angular and Typescript. 
 </p>
 
-<img src="https://user-images.githubusercontent.com/104741835/235907734-cc6ce2a7-ac9a-4d3c-9dfe-03eb772b4b98.png" /> 
 <br/>
 <a href="https://www.linkedin.com/in/julian-pienaar-370208271/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3B0NeumpYtT8e%2FsXo8GIBScQ%3D%3D">
 <img src="https://img.shields.io/badge/linkedin-0a66c2?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
@@ -202,7 +202,7 @@ Julian has experience with design patterns and data structures giving him a good
 </a>
  
 </details>
-
+<hr/>
 <!-- Slideshow summary -->
 ## System summary
 Placeholder where we show a video demo (like our demo 4 presentation but for non technical people) as well as a slideshow summary of the app.
@@ -226,8 +226,40 @@ Our live system can be found at: [app.writetopdf.com](https://app.writetopdf.com
 Placeholder for a tutorial of the system (description of how to use the app?)
 
 <!-- How to download/install and use -->
-## How to use
-Placeholder description/GIF showing users how to get started on the app.
+## How to Use WriteToPdf
+1. **Accessing The App**:
+   - WriteToPdf is a web application available from [official website](https://app.writetopdf.com).
+
+2. **Account Setup**:
+   - In the WriteToPdf app sign in or create a new account if you don't already have one.
+
+3. **File Management**:
+   - Create documents to begin editing or create folders for better organization. Multiple operations can be performed on documents and folders such as renaming, moving, deleting and opening. These operations can be accessed by right clicking on the file item or by clicking on the context menu button to the right of the file item.
+
+4. **Editing Your Document**:
+   - The editor provides multiple options for changing a document to suit your needs such as font size, font colour, tables, bolding and so much more.
+
+5. **Uploading An Image Asset**:
+   - Click on the plus icon in the asset sidebar and upload from camera or from file system. Then the image will appear in the asset sidebar.
+
+6. **Converting Handwritten Text To Digital Form**:
+   - Click on the plus icon in the asset sidebar and upload from camera or from file system. Check the extract text and or extract table checkbox. The text asset will appear in the asset sidebar.
+
+7. **Export**:
+   - Export your document to various formats such as PDF, HTML, or plain text.
+
+8. **Share**:
+   - Click on the share button or right click on a document in the home menu and click share. Type in the user email of the user to which you want to share.
+  
+9. **Safe Lock Your Document**:
+    - In the home page right click on a document and click lock document. Enter a password longer than 8 characters. The document is now securely locked and will require the password on all subsequent opeings of the document.
+
+10. **Version Control**:
+    - Every time you save a new version of the document is created. Go to the history sidebar to interogate, roleback and make copies of previous document versions.
+
+11. **Refer to the User Manual**:
+    - For more detailed instructions and advanced features, consult the [WriteToPdf User Manual](https://drive.google.com/file/d/1ORl7Xf34JZsVV1Nfj6ZIbAzdHSDzqgas/view?usp=sharing). It provides comprehensive guidance on using all aspects of the application.
+
 
 <!-- How to participate in development -->
 ## Contributing
