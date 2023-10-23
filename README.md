@@ -209,7 +209,7 @@ Placeholder where we show a video demo (like our demo 4 presentation but for non
 
 <!-- App ad -->
 ## WriteToPdf advertisement
-Placeholder to add video (maybe imbed through html?)
+https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/bcbb9573-0dbd-4e79-8830-f0e11453c501
 
 <!-- Research done -->
 ## Research and implementation decisions
