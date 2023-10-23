@@ -43,26 +43,16 @@ WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritt
 - [Demo 4](https://drive.google.com/drive/folders/1-VIEUnEXivpa1MBX3zZxIqFsuRqCtaOw?usp=sharing) -->
 
 ## Documentation
-### Software requirements specification
-- [SRS v1](https://drive.google.com/file/d/1ws97XLKsmrU7WRW-5KCRKJ8MIvF9fVLM/view?usp=sharing)
-- [SRS v2](https://drive.google.com/file/d/1flqqeE2NSdfQi3Sj1eA0_PchYMdgdHsv/view?usp=sharing)
-- [SRS v3](https://drive.google.com/file/d/1ZyKSwiIrJpf1WgcnDh7GzrBzR0fxitP3/view?usp=sharing)
-- [SRS v4](https://drive.google.com/file/d/1iV76L7RqGURAU5ckKPfNL43hCj4embq0/view?usp=sharing)
+- ### [Software requirements specification](https://drive.google.com/drive/folders/17r0LoH5KJNISI1NUesoqVGlmE09viezb?usp=sharing)
 
-### Coding standards
-- [Coding standards v1](https://drive.google.com/file/d/17Ffsp7srXixhE2L2iiC6Fh0Bd6dgPnZe/view?usp=sharing)
-- [Coding standards v2](https://drive.google.com/file/d/12SWhFWNj9fA0ErqLug3xC_OroPj_6y5e/view?usp=sharing)
+- ### [Coding standards](https://drive.google.com/drive/folders/1oG067cCYEsS29nzmAEv_lH5uiQO1Nm7L?usp=sharing)
 
-### Testing document
-- [Testing policy v1](https://drive.google.com/file/d/1JCMgZ0MYjpn0auH3QUK4gt2jV5kJlAET/view?usp=sharing)
+- ### [Testing document](https://drive.google.com/drive/folders/14gJb4pjpBLlewWGnOFU1uu2pEmGgGLHp?usp=sharing)
+
+- ### [User Manual](https://drive.google.com/drive/folders/1j0s5OuKmb1sx3fOYqxAA3ZbO3ITTMOs9?usp=sharing)
 
 ## Organisation & Management
 We use <a href="https://github.com/COS301-SE-2023/WriteToPdf/issues">Github Issues</a> and <a href="https://github.com/COS301-SE-2023/WriteToPdf/projects?query=is%3Aopen">Github Projects</a> to organise our team, with different members being assigned to specific tasks to ensure effective use of each member’s time. 
-
-### User Manual
-- [User manual v1](https://drive.google.com/file/d/1ILkbCombL2B1pm2d5EaFxstm0ZovewJz/view?usp=sharing)
-- [User manual v2](https://drive.google.com/file/d/1XIIIClIL8JuzL7_lTHlFgh8T1wRA0HMD/view?usp=sharing)
-- [User manual v3](https://drive.google.com/file/d/1ORl7Xf34JZsVV1Nfj6ZIbAzdHSDzqgas/view?usp=sharing)
 
 <!-- ### Architecture
 - [Architecture v1](https://docs.google.com/document/d/1skoEPk1VvtO8P9fyWIVFyUuf0ssU1aI8G-wrYYNbeyg/edit?usp=sharing)
