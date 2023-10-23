@@ -198,7 +198,7 @@ Julian has experience with design patterns and data structures giving him a good
 
 <!-- Slideshow summary -->
 ## System demo
-A demonstration of our entire system can be found over here: [System Demo](https://drive.google.com/file/d/1rBJz_qG9DlVLB606aOAsoBIKaSgG-CCx/view?usp=share_link)
+https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/33c8263d-6e23-4c1d-b1a3-eff914980128
 
 <!-- Research done -->
 ## Research and implementation decisions
@@ -210,13 +210,13 @@ A demonstration of our entire system can be found over here: [System Demo](https
 ## Deployed system
 Our live system can be found at: [app.writetopdf.com](https://app.writetopdf.com)  
 
+<!-- How to download/install and use -->
+## How to Use WriteToPdf
+[How to use WriteToPdf Wiki](https://github.com/COS301-SE-2023/WriteToPdf/wiki/How-to-use-WriteToPdf)
+
 <!-- Tutorial of system -->
 ## System tutorial
 Placeholder for a tutorial of the system (description of how to use the app?)
-
-<!-- How to download/install and use -->
-## How to Use WriteToPdf
-link to wiki
 
 <!-- How to participate in development -->
 ## Contributing
