@@ -6,11 +6,11 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { AuthModule } from './auth.module';
 import { RefreshTokenDTO } from './dto/refresh_token.dto';
+import { SignatureDTO } from './dto/signature.dto';
 import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import e from 'express';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -129,6 +129,136 @@ describe('AuthController', () => {
       expect(
         authService.refreshToken,
       ).toBeCalledWith(refreshTokenDTO);
+    });
+  });
+
+  describe('sign_checksum', () => {
+    it('should throw exception if request method is not POST', async () => {
+      const request = { method: 'GET' };
+      const signatureDTO = new SignatureDTO();
+
+      try {
+        await controller.signChecksum(
+          signatureDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Method Not Allowed',
+        );
+        expect(error.status).toBe(
+          HttpStatus.METHOD_NOT_ALLOWED,
+        );
+      }
+    });
+
+    it('should throw an exception if UserID is undefined', async () => {
+      const signatureDTO = new SignatureDTO();
+      signatureDTO.Checksum = 'test';
+      signatureDTO.MarkdownID = 'test';
+
+      const request = { method: 'POST' };
+
+      try {
+        await controller.signChecksum(
+          signatureDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request body',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an exception if Checksum is undefined', async () => {
+      const signatureDTO = new SignatureDTO();
+      signatureDTO.UserID = 1;
+      signatureDTO.MarkdownID = 'test';
+
+      const request = { method: 'POST' };
+
+      try {
+        await controller.signChecksum(
+          signatureDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request body',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should throw an exception if MarkdownID is undefined', async () => {
+      const signatureDTO = new SignatureDTO();
+      signatureDTO.UserID = 1;
+      signatureDTO.Checksum = 'test';
+
+      const request = { method: 'POST' };
+
+      try {
+        await controller.signChecksum(
+          signatureDTO,
+          request as any,
+        );
+        expect(true).toBe(false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(
+          HttpException,
+        );
+        expect(error.message).toBe(
+          'Invalid request body',
+        );
+        expect(error.status).toBe(
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    });
+
+    it('should return a signed checksum', async () => {
+      const signatureDTO = new SignatureDTO();
+      signatureDTO.UserID = 1;
+      signatureDTO.Checksum = 'test';
+      signatureDTO.MarkdownID = 'test';
+
+      const request = { method: 'POST' };
+
+      (
+        jest.spyOn(
+          authService,
+          'signChecksum',
+        ) as any
+      ).mockResolvedValue(new SignatureDTO());
+
+      const result =
+        await controller.signChecksum(
+          signatureDTO,
+          request as any,
+        );
+
+      expect(result).toBeInstanceOf(SignatureDTO);
+      expect(
+        authService.signChecksum,
+      ).toBeCalledWith(signatureDTO);
     });
   });
 });
