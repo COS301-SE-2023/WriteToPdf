@@ -1,37 +1,40 @@
 # WriteToPdf
 [![codecov](https://codecov.io/gh/COS301-SE-2023/WriteToPdf/branch/main/graph/badge.svg?token=2CELOVRCM3)](https://codecov.io/gh/COS301-SE-2023/WriteToPdf)
-[![Build](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/build.yml)
 [![Test Backend](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-backend.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-backend.yml)
 [![Test Integration](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-integration.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/test-integration.yml)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2023_WriteToPdf&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2023_WriteToPdf)  
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=COS301-SE-2023_WriteToPdf&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=COS301-SE-2023_WriteToPdf)
+[![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2023/WriteToPdf?color=blue)](https://github.com/COS301-SE-2023/WriteToPdf/issues?q=is%3Aissue+is%3Aclosed) 
 ![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2023/WriteToPdf)
-[![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2023/WriteToPdf?color=blue)](https://github.com/COS301-SE-2023/WriteToPdf/issues?q=is%3Aissue+is%3Aclosed)
+[![Build](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/COS301-SE-2023/WriteToPdf/actions/workflows/build.yml)
 
-<div align="center"><img src="https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/c151ddb6-fc79-4366-87ea-f91a033dfe10" /></div>
-<!-- 
-## Tech Stack-->
-<!-- 
+<div align="center">
 <a href="https://angular.io">
     <img alt="Angular" src="https://img.shields.io/badge/angular-dd0031?style=for-the-badge&logo=angular&logoColor=white" />
 </a>
--->
 
-<!-- <a href="https://primeng.org/">
+<a href="https://primeng.org/">
     <img alt="Angular" src="https://img.shields.io/badge/primeng-dd0031?style=for-the-badge&logo=primeng&logoColor=white" />
-</a> -->
+</a>
 
-<!-- <a href="https://nestjs.com/">
+<a href="https://nestjs.com/">
   <img alt="NestJS" src="https://img.shields.io/badge/nestjs-e0234e?style=for-the-badge&logo=nestjs&logoColor=white" />
-</a> -->
+</a> 
 
-<!-- <a href="https://aws.amazon.com/ec2/">
+<a href="https://aws.amazon.com/ec2/">
   <img alt="AWS EC2" src="https://img.shields.io/badge/amazon%20ec2-dd700f?style=for-the-badge&logo=aws&logoColor=white" />
-</a> -->
+</a> 
 
-<!-- <a href="https://mariadb.org/">
+ <a href="https://mariadb.org/">
   <img alt="MARIADB" src="https://img.shields.io/badge/mariadb-142958?style=for-the-badge&logo=mariadb&logoColor=white" />
-</a> -->
+</a> 
+</div>
+<br/>
 
+<div align="center"><img src="https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/c151ddb6-fc79-4366-87ea-f91a033dfe10" /></div>
+
+<!-- App ad -->
+## WriteToPdf advertisement
+https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/bcbb9573-0dbd-4e79-8830-f0e11453c501
 ## Description
 
 WriteToPdf is a user-friendly ecosystem that enables the conversion of handwritten notes into structured documents that can be edited and shared with others.
@@ -192,14 +195,10 @@ Julian has experience with design patterns and data structures giving him a good
 </a>
  
 </details>
-<hr/>
-<!-- Slideshow summary -->
-## System summary
-Placeholder where we show a video demo (like our demo 4 presentation but for non technical people) as well as a slideshow summary of the app.
 
-<!-- App ad -->
-## WriteToPdf advertisement
-https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/bcbb9573-0dbd-4e79-8830-f0e11453c501
+<!-- Slideshow summary -->
+## System demo
+A demonstration of our entire system can be found over here: [System Demo](https://drive.google.com/file/d/1rBJz_qG9DlVLB606aOAsoBIKaSgG-CCx/view?usp=share_link)
 
 <!-- Research done -->
 ## Research and implementation decisions
@@ -217,39 +216,7 @@ Placeholder for a tutorial of the system (description of how to use the app?)
 
 <!-- How to download/install and use -->
 ## How to Use WriteToPdf
-1. **Accessing The App**:
-   - WriteToPdf is a web application available from [official website](https://app.writetopdf.com).
-
-2. **Account Setup**:
-   - In the WriteToPdf app sign in or create a new account if you don't already have one.
-
-3. **File Management**:
-   - Create documents to begin editing or create folders for better organization. Multiple operations can be performed on documents and folders such as renaming, moving, deleting and opening. These operations can be accessed by right clicking on the file item or by clicking on the context menu button to the right of the file item.
-
-4. **Editing Your Document**:
-   - The editor provides multiple options for changing a document to suit your needs such as font size, font colour, tables, bolding and so much more.
-
-5. **Uploading An Image Asset**:
-   - Click on the plus icon in the asset sidebar and upload from camera or from file system. Then the image will appear in the asset sidebar.
-
-6. **Converting Handwritten Text To Digital Form**:
-   - Click on the plus icon in the asset sidebar and upload from camera or from file system. Check the extract text and or extract table checkbox. The text asset will appear in the asset sidebar.
-
-7. **Export**:
-   - Export your document to various formats such as PDF, HTML, or plain text.
-
-8. **Share**:
-   - Click on the share button or right click on a document in the home menu and click share. Type in the user email of the user to which you want to share.
-  
-9. **Safe Lock Your Document**:
-    - In the home page right click on a document and click lock document. Enter a password longer than 8 characters. The document is now securely locked and will require the password on all subsequent opeings of the document.
-
-10. **Version Control**:
-    - Every time you save a new version of the document is created. Go to the history sidebar to interogate, roleback and make copies of previous document versions.
-
-11. **Refer to the User Manual**:
-    - For more detailed instructions and advanced features, consult the [WriteToPdf User Manual](https://drive.google.com/file/d/1ORl7Xf34JZsVV1Nfj6ZIbAzdHSDzqgas/view?usp=sharing). It provides comprehensive guidance on using all aspects of the application.
-
+link to wiki
 
 <!-- How to participate in development -->
 ## Contributing
