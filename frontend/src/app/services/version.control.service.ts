@@ -2,19 +2,14 @@ import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
 import { diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
-import { environment } from '../../environments/environment';
 
 import { DiffDTO } from './dto/diff.dto';
 import { SnapshotDTO } from './dto/snapshot.dto';
-import { MarkdownFileDTO } from './dto/markdown_file.dto';
 
 import { FileService } from './file.service';
 import { VersionDTO } from './dto/version.dto';
-import { VersionSetDTO } from './dto/version_set.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -34,22 +29,6 @@ export class VersionControlService {
   private latestVersion: VersionDTO = new VersionDTO();
   private DiffPatchService = new DiffMatchPatch();
 
-  // async test(): Promise<void> {
-  //   let text1: string = '';
-  //   let text2: string = '';
-  //   const filePath1 = '../assets/VersionControl/test1.txt';
-  //   const filePath2 = '../assets/VersionControl/test2.txt';
-  //   this.http.get(filePath1, { responseType: 'text' }).subscribe((data) => {
-  //     text1 = data;
-  //     this.http.get(filePath2, { responseType: 'text' }).subscribe((data) => {
-  //       text2 = data;
-
-  //       const diff = this.DiffPatchService.diff_main(text1, text2);
-  //       const patches = this.DiffPatchService.patch_make(diff);
-  //     });
-  //   });
-  // }
-
   async init(): Promise<void> {
     this.snapshotArr = [];
     this.diffArr = [];
@@ -68,7 +47,7 @@ export class VersionControlService {
 
     for (let element of snapshotPathArr) {
       this.http.get(element, { responseType: 'text' }).subscribe((data) => {
-        var tempDTO = new SnapshotDTO();
+        let tempDTO = new SnapshotDTO();
         tempDTO.MarkdownID = 'abc123';
         tempDTO.SnapshotNumber = +element.charAt(element.length - 1);
         tempDTO.Content = data;
@@ -78,9 +57,8 @@ export class VersionControlService {
 
     for (let element of diffPathArr) {
       this.http.get(element, { responseType: 'text' }).subscribe((data) => {
-        var tempDTO = new DiffDTO();
+        let tempDTO = new DiffDTO();
         tempDTO.MarkdownID = 'abc123';
-        // tempDTO.snapshotNumber = this.snapshotArr[0].snapshotNumber;
         tempDTO.Content = data;
         this.pushToDiffArr(tempDTO);
       });
@@ -115,25 +93,6 @@ export class VersionControlService {
   pushToSnapshotArr(element: SnapshotDTO): SnapshotDTO[] {
     this.snapshotArr.push(element);
     return this.snapshotArr;
-  }
-
-  sortSnapshotArr(inArr: SnapshotDTO[]): void {
-    // Ascending sort on snapshotNumber
-    inArr.sort((a, b) =>
-      a.SnapshotNumber > b.SnapshotNumber
-        ? 1
-        : a.SnapshotNumber < b.SnapshotNumber
-        ? -1
-        : 0
-    );
-  }
-
-  sortDiffArr(inArr: DiffDTO[]): void {
-    // Ascending sort on diffNumber
-    inArr.sort(
-      (a, b) =>
-        a.DiffNumber > b.DiffNumber ? 1 : a.DiffNumber < b.DiffNumber ? -1 : 0 // TODO: Rework
-    );
   }
 
   visualise(): void {
@@ -199,10 +158,8 @@ export class VersionControlService {
     let retString = snapshot.Content;
 
     const tempArr = this.diffArr.filter((ele) => {
-      return ele.DiffNumber < diff.DiffNumber; // TODO: Rework
+      return ele.DiffNumber < diff.DiffNumber;
     });
-
-    this.sortDiffArr(tempArr);
 
     for (let element of tempArr) {
       let patches = this.DiffPatchService.patch_fromText(element.Content);
@@ -235,6 +192,7 @@ export class VersionControlService {
     const close_del = /<\/del/g;
     const del_color = /#ffe6e6/g;
     const ins_color = /#e6ffe6/g;
+    const close_para = /<\/p>/g;
 
     const repl_text1 = text1
       .replace(pattern_amp, '&')
@@ -250,27 +208,13 @@ export class VersionControlService {
       .replace(pattern_para, '\n')
       .replace(pattern_nbsp, '');
 
-    // const dpsDiff = this.DiffPatchService.diff_main(repl_text1, repl_text2);
-    const dpsDiff = this.LineDiff(repl_text1, repl_text2);
+    const dpsDiff = this.LineDiff(
+      repl_text1.replace(close_para, '</p>\n'),
+      repl_text2.replace(close_para, '</p>\n')
+    );
     this.DiffPatchService.diff_cleanupSemantic(dpsDiff);
 
     const prettyHtml = this.DiffPatchService.diff_prettyHtml(dpsDiff);
-    const replPretty = prettyHtml
-      .replace(pattern_amp, '&')
-      .replace(pattern_lt, '<')
-      .replace(pattern_gt, '>')
-      .replace(pattern_para, '\n')
-      .replace(open_ins, '<span')
-      .replace(close_ins, '</span')
-      .replace(open_del, '<span')
-      .replace(close_del, '</span')
-      .replace(del_color, '#f995ab')
-      .replace(ins_color, '#96ff9f');
-
-    console.log('version.control.getPrettyHtml.repl_text1:', repl_text1);
-    console.log('version.control.getPrettyHtml.repl_text2:', repl_text2);
-    console.log('version.control.getPrettyHtml.dpsDiff:', dpsDiff);
-    console.log('version.control.getPrettyHtml.prettyHtml:', replPretty);
 
     return prettyHtml
       .replace(pattern_amp, '&')
@@ -286,17 +230,16 @@ export class VersionControlService {
   }
 
   LineDiff(text1: string, text2: string) {
-    var charConvert = this.DiffPatchService.diff_linesToChars_(text1, text2);
-    var lineText1 = charConvert.chars1;
-    var lineText2 = charConvert.chars2;
-    var lineArray = charConvert.lineArray;
-    var diffs = this.DiffPatchService.diff_main(lineText1, lineText2, false);
+    let charConvert = this.DiffPatchService.diff_linesToChars_(text1, text2);
+    let lineText1 = charConvert.chars1;
+    let lineText2 = charConvert.chars2;
+    let lineArray = charConvert.lineArray;
+    let diffs = this.DiffPatchService.diff_main(lineText1, lineText2, false);
     this.DiffPatchService.diff_charsToLines_(diffs, lineArray);
     return diffs;
   }
 
   snapshotRestore(snapshot: SnapshotDTO): void {
-    //TODO: Rework
     this.snapshotArr = this.snapshotArr.filter((ele) => {
       return ele.SnapshotNumber <= snapshot.SnapshotNumber;
     });
@@ -304,13 +247,9 @@ export class VersionControlService {
     this.diffArr = this.diffArr.filter((ele) => {
       return ele.SnapshotNumber <= snapshot.SnapshotNumber;
     });
-
-    this.sortSnapshotArr(this.snapshotArr);
-    this.sortDiffArr(this.diffArr);
   }
 
   diffRestore(diff: DiffDTO): void {
-    //TODO: Rework
     this.snapshotArr = this.snapshotArr.filter((ele) => {
       return ele.SnapshotNumber <= diff.SnapshotNumber;
     });
@@ -318,8 +257,5 @@ export class VersionControlService {
     this.diffArr = this.diffArr.filter((ele) => {
       return ele.SnapshotNumber <= diff.SnapshotNumber;
     });
-
-    this.sortSnapshotArr(this.snapshotArr);
-    this.sortDiffArr(this.diffArr);
   }
 }
