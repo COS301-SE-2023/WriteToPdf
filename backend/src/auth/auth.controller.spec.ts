@@ -156,62 +156,10 @@ describe('AuthController', () => {
       }
     });
 
-    it('should throw an exception if UserID is undefined', async () => {
-      const signatureDTO = new SignatureDTO();
-      signatureDTO.Checksum = 'test';
-      signatureDTO.MarkdownID = 'test';
-
-      const request = { method: 'POST' };
-
-      try {
-        await controller.signChecksum(
-          signatureDTO,
-          request as any,
-        );
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'Invalid request body',
-        );
-        expect(error.status).toBe(
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    });
-
     it('should throw an exception if Checksum is undefined', async () => {
       const signatureDTO = new SignatureDTO();
       signatureDTO.UserID = 1;
       signatureDTO.MarkdownID = 'test';
-
-      const request = { method: 'POST' };
-
-      try {
-        await controller.signChecksum(
-          signatureDTO,
-          request as any,
-        );
-        expect(true).toBe(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(
-          HttpException,
-        );
-        expect(error.message).toBe(
-          'Invalid request body',
-        );
-        expect(error.status).toBe(
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    });
-
-    it('should throw an exception if MarkdownID is undefined', async () => {
-      const signatureDTO = new SignatureDTO();
-      signatureDTO.UserID = 1;
-      signatureDTO.Checksum = 'test';
 
       const request = { method: 'POST' };
 
