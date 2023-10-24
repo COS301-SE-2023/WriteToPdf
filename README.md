@@ -216,8 +216,14 @@ Our live system can be found at: [app.writetopdf.com](https://app.writetopdf.com
 
 <!-- Tutorial of system -->
 ## System tutorial
-Placeholder for a tutorial of the system (description of how to use the app?)
+https://github.com/COS301-SE-2023/WriteToPdf/assets/104741835/5bad46b5-1ad8-48a4-8715-1a7825eca0d1
 
 <!-- How to participate in development -->
 ## Contributing
 To contribute to our project, start by creating a clear and detailed issue, then fork the repository to your GitHub account. Work on your changes in a new branch and be sure to follow our coding standards to maintain code quality. Afterward, open a pull request targeting the `codecov` branch, and don't forget to review our [coding standards document](https://drive.google.com/file/d/12SWhFWNj9fA0ErqLug3xC_OroPj_6y5e/view?usp=sharing) to ensure your code aligns with our guidelines before submitting your pull request for review. Your contributions are greatly appreciated and help us improve our project.
+
+<details>
+    <summary>Secret Message</summary>
+    <br/>
+    <p>Good luck to the Capstone Groups of 2024! :smile:</p>
+</details>
