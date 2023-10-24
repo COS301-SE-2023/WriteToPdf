@@ -27,7 +27,7 @@ import { UserService } from '../services/user.service';
 import { FileUploadPopupComponent } from '../file-upload-popup/file-upload-popup.component';
 import { EditService } from '../services/edit.service';
 import { FolderService } from '../services/folder.service';
-import { CoordinateService } from '../services/coordinate-service.service';
+import { CoordinateService } from '../services/coordinate.service';
 import { ImageUploadPopupComponent } from '../image-upload-popup/image-upload-popup.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ContextMenu } from 'primeng/contextmenu';
