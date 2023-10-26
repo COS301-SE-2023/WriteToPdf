@@ -24,7 +24,7 @@
     "pm2:start:app": "pm2 start pm2.cfg.json",
     "pm2:stop:app": "pm2 stop pm2.cfg.json",
     "pm2:destroy:app": "pm2 delete pm2.cfg.json",
-    "pm2:restart:app": "npm run pm2:stop:app && npm run pm2:deploy:app"  
+    "pm2:restart:app": "npm run pm2:stop:app && npm run pm2:deploy:app"
   },
   "dependencies": {
     "@angular/platform-browser": "^16.1.6",
